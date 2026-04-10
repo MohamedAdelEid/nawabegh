@@ -1,6 +1,9 @@
 import { cookies } from "next/headers";
 import { getRequestConfig } from "next-intl/server";
 
+import type { AppLocale } from "@/config/locale";
+import { appModules } from "./modules";
+
 import arCommon from "../../presentation/i18n/ar/common/index.json";
 import arPagination from "../../presentation/i18n/ar/pagination/index.json";
 import arTable from "../../presentation/i18n/ar/table/index.json";
@@ -8,13 +11,7 @@ import enCommon from "../../presentation/i18n/en/common/index.json";
 import enPagination from "../../presentation/i18n/en/pagination/index.json";
 import enTable from "../../presentation/i18n/en/table/index.json";
 
-import arAdminDashboard from "../../../modules/admin/presentation/i18n/ar/dashboard/index.json";
-import enAdminDashboard from "../../../modules/admin/presentation/i18n/en/dashboard/index.json";
-import arStudentDashboard from "../../../modules/student/presentation/i18n/ar/dashboard/index.json";
-import enStudentDashboard from "../../../modules/student/presentation/i18n/en/dashboard/index.json";
-
-const locales = ["ar", "en"] as const;
-export type Locale = (typeof locales)[number];
+export type Locale = AppLocale;
 export const defaultLocale: Locale = "ar";
 
 function mergeShared(
@@ -49,19 +46,16 @@ export default getRequestConfig(async ({ requestLocale }) => {
       ? mergeShared(arCommon, arTable, arPagination)
       : mergeShared(enCommon, enTable, enPagination);
 
-  const studentDashboard =
-    locale === "ar"
-      ? arStudentDashboard.dashboard
-      : enStudentDashboard.dashboard;
-  const adminDashboard =
-    locale === "ar" ? arAdminDashboard.dashboard : enAdminDashboard.dashboard;
+  const fromModules: Record<string, unknown> = {};
+  for (const mod of appModules) {
+    fromModules[mod.name] = await mod.getMessagesForLocale(locale);
+  }
 
   return {
     locale,
     messages: {
       ...sharedMessages,
-      student: { dashboard: studentDashboard },
-      admin: { dashboard: adminDashboard },
+      ...fromModules,
     },
   };
 });
