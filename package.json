@@ -1,0 +1,45 @@
+{
+  "name": "Nawabegh",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "@tanstack/react-query": "latest",
+    "@tanstack/react-table": "latest",
+    "axios": "latest",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "latest",
+    "lucide-react": "^1.8.0",
+    "next": "latest",
+    "next-auth": "latest",
+    "next-intl": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-hook-form": "^7.72.1",
+    "sonner": "latest",
+    "tailwind-merge": "latest",
+    "tw-animate-css": "latest",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "create-carch": "^1.0.1",
+    "postcss": "^8",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
+}
