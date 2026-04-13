@@ -1,6 +1,75 @@
 {
   "dashboard": {
     "title": "Student dashboard",
-    "description": "Welcome to your dashboard."
+    "description": "Welcome to your dashboard.",
+    "header": {
+      "searchPlaceholder": "Search for a lesson, file, or result...",
+      "actions": {
+        "settings": "Quick settings",
+        "notifications": "Notifications"
+      },
+      "mobileMenu": {
+        "open": "Open menu",
+        "close": "Close menu"
+      },
+      "menu": {
+        "settings": "Settings",
+        "logout": "Log out"
+      },
+      "user": {
+        "menuLabel": "Open account menu",
+        "guestName": "Dashboard user",
+        "roles": {
+          "admin": "System administrator",
+          "student": "Student"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "Main",
+      "footerSection": "Help & account",
+      "toggleExpand": "Expand sidebar",
+      "toggleCollapse": "Collapse sidebar",
+      "nav": {
+        "home": "Home",
+        "journey": "Journey to Excellence",
+        "studyMaterials": "Study materials",
+        "interactiveBook": "Interactive book",
+        "helpFiles": "Help files",
+        "helper": "Help",
+        "settings": "Settings",
+        "logout": "Log out"
+      }
+    },
+    "tabs": {
+      "home": {
+        "title": "Home",
+        "description": "Your overview and next steps."
+      },
+      "journey": {
+        "title": "Journey to Excellence",
+        "description": "Follow your excellence journey and milestones."
+      },
+      "studyMaterials": {
+        "title": "Study materials",
+        "description": "Access lessons, files, and resources."
+      },
+      "interactiveBook": {
+        "title": "Interactive book",
+        "description": "Open and continue your interactive book."
+      },
+      "helpFiles": {
+        "title": "Help files",
+        "description": "Documentation and how-to guides."
+      },
+      "helper": {
+        "title": "Help",
+        "description": "Get support and answers to common questions."
+      }
+    },
+    "settingsPage": {
+      "title": "Settings",
+      "description": "Manage your profile and preferences."
+    }
   }
 }

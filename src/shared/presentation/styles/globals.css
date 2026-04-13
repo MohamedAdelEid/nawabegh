@@ -21,27 +21,48 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Dashboard shell sidebar — rem-based widths scale with root font size */
+  --dashboard-sidebar-expanded: 17.5rem;
+  --dashboard-sidebar-collapsed: 5rem;
+  --sidebar: #2c4260;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #c7af6e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #c7af6e;
+  --sidebar-accent-foreground: #2c4260;
+  --sidebar-border: color-mix(in srgb, #ffffff 14%, #2c4260);
+  --sidebar-ring: #c7af6e;
+  --dashboard-primary: #2c4260;
+  --dashboard-primary-pressed: #1e2e42;
+  --dashboard-gold: #c7af6e;
+  --dashboard-gold-foreground: #8f6c0b;
+  --dashboard-surface: #ffffff;
+  --dashboard-surface-muted: #f8fafc;
+  --dashboard-surface-soft: #F6F7F7;
+  --dashboard-border-soft: #e2e8f0;
+  --dashboard-border-strong: #cbd5e1;
+  --dashboard-success: #67c23a;
+  --dashboard-success-soft: #dcfce7;
+  --dashboard-danger: #f25555;
+  --dashboard-danger-soft: #fef2f2;
+  --dashboard-warning-soft: #faf1da;
+  --dashboard-info-soft: #e8eef8;
+  --dashboard-shadow-soft: 0px 8px 0px 0px #0000000d;
+  --dashboard-shadow-button: 0px 4px 0px 0px #1e2e42;
+  --dashboard-shadow-button-muted: 0px 4px 0px 0px #cbd5e1;
 }
 
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: #2c4260;
+  --sidebar-foreground: #ffffff;
+  --sidebar-border: color-mix(in srgb, #ffffff 14%, #2c4260);
+  --sidebar-primary: #c7af6e;
+--sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #c7af6e;
+  --sidebar-accent-foreground: #2c4260;
+  --sidebar-ring: #c7af6e;
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.396 0.141 25.723);
@@ -52,6 +73,32 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+html[lang="ar"] body {
+  font-family: var(--font-ibm-plex-sans-arabic), system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.dashboard-raised-button {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+.dashboard-raised-button:hover:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+
+.dashboard-raised-button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none !important;
 }
 
 @theme inline {

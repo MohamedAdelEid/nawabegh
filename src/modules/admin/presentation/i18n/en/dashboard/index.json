@@ -1,6 +1,664 @@
 {
   "dashboard": {
     "title": "Admin dashboard",
-    "description": "Welcome to the admin panel."
+    "description": "Welcome to the admin panel.",
+    "header": {
+      "searchPlaceholder": "Search for a school, student, or result...",
+      "actions": {
+        "settings": "Quick settings",
+        "notifications": "Notifications"
+      },
+      "mobileMenu": {
+        "open": "Open menu",
+        "close": "Close menu"
+      },
+      "menu": {
+        "settings": "Settings",
+        "logout": "Log out"
+      },
+      "user": {
+        "menuLabel": "Open account menu",
+        "guestName": "Dashboard user",
+        "roles": {
+          "admin": "System administrator",
+          "student": "Platform member"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "Main",
+      "footerSection": "Help & account",
+      "toggleExpand": "Expand sidebar",
+      "toggleCollapse": "Collapse sidebar",
+      "nav": {
+        "home": "Home",
+        "userManagement": "User management",
+        "schoolManagement": "School management",
+        "contentManagement": "Content management",
+        "journeyEditor": "Editor of the Journey of Excellence",
+        "liveBroadcast": "Live broadcast management",
+        "interactiveBooks": "Interactive book management",
+        "helper": "Help",
+        "settings": "Settings",
+        "logout": "Log out"
+      }
+    },
+    "schoolManagement": {
+      "page": {
+        "title": "School management",
+        "description": "Monitor the performance of schools participating in the platform.",
+        "addSchool": "Add new school"
+      },
+      "addPage": {
+        "title": "Add a new school",
+        "description": "Fill in the required school data to register it on the platform."
+      },
+      "addForm": {
+        "sections": {
+          "identity": "School identity",
+          "contact": "Location and contact information",
+          "subscription": "Subscriptions and educational stages",
+          "location": "Location preview"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "submit": "Add school"
+        },
+        "fields": {
+          "schoolName": {
+            "label": "Full school name",
+            "placeholder": "Example: Future Vision Schools"
+          },
+          "schoolDescription": {
+            "label": "Brief description",
+            "placeholder": "Enter a short description about the school and its educational approach..."
+          },
+          "logo": {
+            "title": "Upload school logo",
+            "description": "PNG, JPG, JPEG, or WEBP up to 5 MB",
+            "uploadButton": "Choose image",
+            "changeButton": "Change image",
+            "uploading": "Preparing preview...",
+            "previewAlt": "School logo preview",
+            "invalidType": "Please choose a valid image file.",
+            "tooLarge": "The selected image must be smaller than 5 MB.",
+            "readError": "The selected image could not be loaded."
+          },
+          "city": {
+            "label": "City",
+            "placeholder": "Riyadh"
+          },
+          "address": {
+            "label": "Detailed address",
+            "placeholder": "Al Olaya district, near the white mosque"
+          },
+          "phoneNumber": {
+            "label": "Phone number",
+            "placeholder": "05XXXXXXXX"
+          },
+          "email": {
+            "label": "Official email",
+            "placeholder": "info@school.edu.sa"
+          },
+          "subscriptionPlan": {
+            "label": "Subscription plan"
+          },
+          "educationStages": {
+            "label": "Available educational stages"
+          }
+        },
+        "plans": {
+          "basic": {
+            "title": "Basic",
+            "description": "Basic features only"
+          },
+          "gold": {
+            "title": "Gold",
+            "description": "Advanced features"
+          },
+          "interactive": {
+            "title": "Interactive",
+            "description": "All available features"
+          }
+        },
+        "stages": {
+          "elementary": "Elementary",
+          "middle": "Middle",
+          "secondary": "Secondary"
+        },
+        "location": {
+          "previewCity": "Qena",
+          "previewRegion": "Egypt",
+          "providerLabel": "Leaflet map preview powered by OpenStreetMap",
+          "loading": "Resolving place and loading map...",
+          "empty": "No location was found for this place.",
+          "error": "The map could not resolve this place right now."
+        }
+      },
+      "stats": {
+        "activeSchools": {
+          "label": "Active schools",
+          "indicator": "98% active"
+        },
+        "averagePoints": {
+          "label": "Average points",
+          "indicator": "Stable"
+        },
+        "totalStudents": {
+          "label": "Total students",
+          "indicator": "+8.4%"
+        },
+        "totalSchools": {
+          "label": "Total schools",
+          "indicator": "+12%"
+        }
+      },
+      "table": {
+        "title": "Schools list",
+        "columns": {
+          "school": "School name",
+          "students": "Students",
+          "points": "Total points",
+          "rank": "Rank",
+          "performance": "Performance level",
+          "foundedAt": "Founded on",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "actions": {
+          "export": "Export",
+          "filter": "Filter",
+          "more": "More actions"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} schools",
+          "previous": "Previous page",
+          "next": "Next page"
+        },
+        "states": {
+          "loading": {
+            "title": "Loading schools",
+            "description": "Fetching the latest school list from the server."
+          },
+          "empty": {
+            "title": "No schools found",
+            "description": "No school data is available for the current query."
+          },
+          "error": {
+            "title": "Could not load schools",
+            "description": "Something went wrong while loading the school list."
+          },
+          "unauthorized": {
+            "title": "Login required",
+            "description": "Your session is missing or expired. Please sign in again to continue."
+          },
+          "forbidden": {
+            "title": "Access denied",
+            "description": "You do not have permission to view the schools table."
+          },
+          "actions": {
+            "retry": "Try again",
+            "goToLogin": "Go to login"
+          }
+        }
+      },
+      "rows": {
+        "riyadhPrivate": {
+          "name": "Riyadh Private Schools",
+          "city": "Riyadh, Saudi Arabia"
+        },
+        "almajdInternationalOne": {
+          "name": "Almajd International Schools",
+          "city": "Abha, Saudi Arabia"
+        },
+        "almajdInternationalTwo": {
+          "name": "Almajd International Schools",
+          "city": "Manama, Bahrain"
+        },
+        "performance": {
+          "excellent": "Excellent",
+          "veryGood": "Very good"
+        },
+        "status": {
+          "active": "Active"
+        }
+      },
+      "insights": {
+        "supervisorTip": {
+          "title": "Tip for the supervisor",
+          "description": "Riyadh Private Schools achieved the highest points rate this week. You can send an official congratulations note through the messaging system.",
+          "action": "Send message"
+        },
+        "updates": {
+          "title": "Dashboard updates",
+          "description": "A new performance reporting system has been added. You can now download detailed reports for each school on a recurring basis.",
+          "action": "Discover the feature"
+        }
+      }
+    },
+    "userManagement": {
+      "page": {
+        "title": "User management",
+        "description": "View and manage all student and teacher accounts across the platform.",
+        "addUser": "Add new user"
+      },
+      "stats": {
+        "totalStudents": {
+          "label": "Total students",
+          "indicator": "+12%"
+        },
+        "teachers": {
+          "label": "Teachers",
+          "indicator": "+3%"
+        },
+        "activeSubscriptions": {
+          "label": "Active subscriptions",
+          "indicator": "Excellent"
+        },
+        "blockedAccounts": {
+          "label": "Blocked accounts",
+          "indicator": ""
+        }
+      },
+      "filters": {
+        "roles": {
+          "label": "Role",
+          "all": "All"
+        },
+        "schools": {
+          "label": "School",
+          "all": "All schools"
+        },
+        "grades": {
+          "label": "Grade",
+          "all": "All grades"
+        },
+        "subscriptions": {
+          "label": "Subscription",
+          "all": "All"
+        },
+        "search": {
+          "label": "Search by name or phone",
+          "placeholder": "User name or phone number..."
+        }
+      },
+      "table": {
+        "title": "Users list",
+        "empty": "No users match the current filters.",
+        "columns": {
+          "avatar": "Avatar",
+          "fullName": "Full name",
+          "role": "Role",
+          "school": "School",
+          "grade": "Grade",
+          "subscription": "Subscription",
+          "status": "Status",
+          "lastActivity": "Last activity",
+          "actions": "Actions"
+        },
+        "actions": {
+          "more": "More actions"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} users",
+          "previous": "Previous page",
+          "next": "Next page"
+        }
+      },
+      "roles": {
+        "student": "Student",
+        "teacher": "Teacher"
+      },
+      "schools": {
+        "alnour": "Alnour Model School",
+        "riyadhPrivate": "Riyadh Private Schools",
+        "alfajr": "Alfajr Primary School"
+      },
+      "grades": {
+        "grade5": "Grade 5",
+        "grade4": "Grade 4"
+      },
+      "subscriptions": {
+        "active": "Active",
+        "inactive": "Expired"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "lastActivity": {
+        "tenMinutes": "10 minutes ago",
+        "twoHours": "2 hours ago",
+        "yesterday": "Yesterday"
+      },
+      "addUser": {
+        "modal": {
+          "title": "Add a new user",
+          "stepTitle": "Step 1: Choose the type of account you want to create",
+          "continue": "Continue",
+          "close": "Close add user modal",
+          "options": {
+            "student": {
+              "title": "Add student",
+              "description": "Create a new student account and link it to a parent."
+            },
+            "teacher": {
+              "title": "Add teacher",
+              "description": "Add a teacher account to the platform and configure its permissions."
+            },
+            "parent": {
+              "title": "Add parent",
+              "description": "Create a parent account and connect it with their children."
+            }
+          }
+        },
+        "shared": {
+          "actions": {
+            "cancel": "Cancel",
+            "cancelChanges": "Discard changes"
+          },
+          "sections": {
+            "basicInfo": "Basic information"
+          },
+          "fields": {
+            "avatar": {
+              "label": "Profile photo",
+              "hint": "Supports JPG, PNG, and WEBP up to 5 MB",
+              "previewAlt": "Uploaded user photo",
+              "upload": "Upload user image",
+              "invalidType": "Please choose a valid image file.",
+              "tooLarge": "The image must be smaller than 5 MB.",
+              "readError": "The selected image could not be loaded."
+            },
+            "fullName": "Full name",
+            "country": "Country",
+            "phoneNumber": "Phone number",
+            "email": "Email address",
+            "password": "Password"
+          },
+          "placeholders": {
+            "fullName": "Example: Ahmed Mohamed Ali",
+            "phoneNumber": "05xxxxxxxx",
+            "email": "student@example.com",
+            "password": "••••••••"
+          },
+          "countries": {
+            "egypt": "Egypt",
+            "saudi": "Saudi Arabia"
+          },
+          "stages": {
+            "primary": "Primary stage",
+            "middle": "Middle stage",
+            "secondary": "Secondary stage"
+          },
+          "schoolYears": {
+            "year1": "First school year",
+            "year2": "Second school year",
+            "year3": "Third school year"
+          },
+          "subscription": {
+            "trial": {
+              "title": "Trial",
+              "description": "Temporary experimental access"
+            },
+            "active": {
+              "title": "Active",
+              "description": "Current paid subscription"
+            },
+            "none": {
+              "title": "No subscription",
+              "description": "Account without active access"
+            }
+          }
+        },
+        "student": {
+          "page": {
+            "title": "Add a new student",
+            "description": "Fill in the student information and assign their educational subscription.",
+            "submit": "Add student"
+          },
+          "fields": {
+            "educationalStage": "Educational stage",
+            "schoolYear": "School year",
+            "schoolName": "School"
+          },
+          "placeholders": {
+            "schoolName": "School or educational institution name"
+          },
+          "parentSection": {
+            "title": "Link parent",
+            "toggle": "Link parent",
+            "createTitle": "Create a new parent",
+            "createDescription": "Create a parent account if one is not registered yet.",
+            "createAction": "Create parent",
+            "searchTitle": "Search for a parent",
+            "searchDescription": "Search by the registered phone number in the system.",
+            "searchPlaceholder": "Enter a phone number to search..."
+          },
+          "subscriptionSection": {
+            "title": "Subscription status",
+            "startDate": "Start date",
+            "endDate": "End date"
+          }
+        },
+        "teacher": {
+          "page": {
+            "title": "Add a new teacher",
+            "description": "Fill in the teacher information and configure academic permissions.",
+            "submit": "Add teacher"
+          },
+          "fields": {
+            "jobTitle": "Job title",
+            "schoolName": "School / institution name",
+            "address": "Detailed address"
+          },
+          "placeholders": {
+            "jobTitle": "Example: Arabic language teacher",
+            "schoolName": "Enter school name",
+            "address": "School or educational institution name"
+          },
+          "academicSection": {
+            "title": "Academic specialization",
+            "subjects": "Academic subjects",
+            "gradeLevels": "Assigned grades",
+            "addSubject": "Add subject"
+          },
+          "subjects": {
+            "arabic": "Arabic language",
+            "science": "Science",
+            "math": "Mathematics"
+          },
+          "gradeLevels": {
+            "first": "First",
+            "second": "Second",
+            "third": "Third",
+            "fourth": "Fourth",
+            "fifth": "Fifth",
+            "sixth": "Sixth"
+          },
+          "permissionsSection": {
+            "title": "System permissions"
+          },
+          "permissions": {
+            "createLessons": {
+              "title": "Create lessons",
+              "description": "Create and publish lessons for assigned grades."
+            },
+            "liveBroadcast": {
+              "title": "Live broadcast",
+              "description": "Start live lessons for current students."
+            },
+            "uploadFiles": {
+              "title": "Upload files",
+              "description": "Upload worksheets and additional files."
+            },
+            "addTests": {
+              "title": "Add tests",
+              "description": "Create tests, assignments, and assessments."
+            },
+            "manageChats": {
+              "title": "Manage chats",
+              "description": "Reply to student and parent chats."
+            }
+          }
+        },
+        "parent": {
+          "page": {
+            "title": "Add parent",
+            "description": "Fill in the parent information and connect the related students.",
+            "submit": "Add parent",
+            "bottomSubmit": "Save parent addition"
+          },
+          "fields": {
+            "fullName": "Parent full name",
+            "address": "Address"
+          },
+          "placeholders": {
+            "fullName": "Example: Ahmed Mohamed Ali",
+            "address": "Example: Arabic teacher"
+          },
+          "studentsSection": {
+            "title": "Link children (students)",
+            "optional": "Optional",
+            "addAction": "Add student",
+            "searchPlaceholder": "Search for a student by phone or academic number...",
+            "selectedLabel": "Currently added children:"
+          }
+        }
+      },
+      "details": {
+        "page": {
+          "description": "Monitor the student's weekly progress, related parent details, and subscription history."
+        },
+        "stats": {
+          "studyHours": "Study hours",
+          "testResults": "Test results",
+          "completedLessons": "Completed lessons"
+        },
+        "chart": {
+          "title": "Weekly performance",
+          "lessons": "Lessons",
+          "tests": "Tests",
+          "days": {
+            "sunday": "Sunday",
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday"
+          }
+        },
+        "profile": {
+          "school": "School",
+          "status": "Status",
+          "subscription": "Subscription",
+          "code": "Student code",
+          "edit": "Edit profile"
+        },
+        "parent": {
+          "badge": "Linked parent",
+          "type": "Parent",
+          "change": "Change parent",
+          "unlink": "Unlink parent",
+          "note": "The parent receives attendance and achievement alerts automatically."
+        },
+        "activities": {
+          "title": "Latest educational activities",
+          "scienceTest": {
+            "title": "Completed the science test (Chapter 4)",
+            "description": "The student scored 18/20.",
+            "time": "2 minutes ago"
+          },
+          "videoWatch": {
+            "title": "Watched a video: understanding force laws",
+            "description": "Watch duration 12 minutes.",
+            "time": "Yesterday, 4:30 PM"
+          },
+          "mathHomework": {
+            "title": "Started solving the next homework (Mathematics)",
+            "description": "Currently working on exercises 1-5.",
+            "time": "Yesterday, 1:15 PM"
+          }
+        },
+        "subscriptions": {
+          "title": "Subscriptions history",
+          "download": "Download invoices",
+          "columns": {
+            "plan": "Plan",
+            "startDate": "Start date",
+            "endDate": "End date",
+            "status": "Status",
+            "actions": "Actions"
+          },
+          "status": {
+            "active": "Highly active",
+            "inactive": "Ended"
+          },
+          "plans": {
+            "goldYearly": "Annual gold plan",
+            "termOne": "First semester plan",
+            "trialMonth": "Trial plan (month)"
+          },
+          "dates": {
+            "goldYearly": {
+              "start": "01 January 2024",
+              "end": "31 December 2024"
+            },
+            "termOne": {
+              "start": "01 September 2023",
+              "end": "30 December 2023"
+            },
+            "trialMonth": {
+              "start": "01 August 2023",
+              "end": "31 August 2023"
+            }
+          }
+        },
+        "floatingActions": {
+          "contact": "Contact the student",
+          "share": "Share profile",
+          "print": "Print profile"
+        }
+      }
+    },
+    "tabs": {
+      "home": {
+        "title": "Home",
+        "description": "Overview and shortcuts for administrators."
+      },
+      "userManagement": {
+        "title": "User management",
+        "description": "Manage users, roles, and access."
+      },
+      "schoolManagement": {
+        "title": "School management",
+        "description": "Manage schools, classes, and structure."
+      },
+      "contentManagement": {
+        "title": "Content management",
+        "description": "Create, review, and publish learning content."
+      },
+      "journeyEditor": {
+        "title": "Journey of Excellence editor",
+        "description": "Configure the excellence journey experience."
+      },
+      "liveBroadcast": {
+        "title": "Live broadcast management",
+        "description": "Schedule and manage live sessions."
+      },
+      "interactiveBooks": {
+        "title": "Interactive book management",
+        "description": "Manage interactive books and assets."
+      },
+      "helper": {
+        "title": "Help",
+        "description": "Guides and support for using the admin panel."
+      }
+    },
+    "settingsPage": {
+      "title": "Settings",
+      "description": "Configure admin preferences and integrations."
+    }
   }
 }

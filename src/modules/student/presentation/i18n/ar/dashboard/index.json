@@ -1,6 +1,75 @@
 {
   "dashboard": {
     "title": "لوحة الطالب",
-    "description": "مرحباً بك في لوحة التحكم."
+    "description": "مرحباً بك في لوحة التحكم.",
+    "header": {
+      "searchPlaceholder": "ابحث عن درس أو ملف أو نتيجة...",
+      "actions": {
+        "settings": "إعدادات سريعة",
+        "notifications": "الإشعارات"
+      },
+      "mobileMenu": {
+        "open": "فتح القائمة",
+        "close": "إغلاق القائمة"
+      },
+      "menu": {
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      },
+      "user": {
+        "menuLabel": "فتح قائمة الحساب",
+        "guestName": "مستخدم اللوحة",
+        "roles": {
+          "admin": "مدير النظام",
+          "student": "طالب"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "الصفحات الرئيسية",
+      "footerSection": "المساعدة والحساب",
+      "toggleExpand": "توسيع الشريط الجانبي",
+      "toggleCollapse": "طي الشريط الجانبي",
+      "nav": {
+        "home": "الرئيسية",
+        "journey": "رحلة التميز",
+        "studyMaterials": "المواد الدراسية",
+        "interactiveBook": "كتاب تفاعلي",
+        "helpFiles": "ملفات المساعدة",
+        "helper": "مساعدة",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "tabs": {
+      "home": {
+        "title": "الرئيسية",
+        "description": "نظرة عامة وخطواتك التالية."
+      },
+      "journey": {
+        "title": "رحلة التميز",
+        "description": "تابع رحلتك ومراحل التميز."
+      },
+      "studyMaterials": {
+        "title": "المواد الدراسية",
+        "description": "الوصول إلى الدروس والملفات والموارد."
+      },
+      "interactiveBook": {
+        "title": "كتاب تفاعلي",
+        "description": "افتح كتابك التفاعلي وواصل القراءة."
+      },
+      "helpFiles": {
+        "title": "ملفات المساعدة",
+        "description": "التوثيق ودليل الاستخدام."
+      },
+      "helper": {
+        "title": "المساعدة",
+        "description": "الدعم والإجابات على الأسئلة الشائعة."
+      }
+    },
+    "settingsPage": {
+      "title": "الإعدادات",
+      "description": "إدارة ملفك الشخصي وتفضيلاتك."
+    }
   }
 }

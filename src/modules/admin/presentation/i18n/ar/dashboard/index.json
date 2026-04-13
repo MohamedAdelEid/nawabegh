@@ -1,6 +1,664 @@
 {
   "dashboard": {
     "title": "لوحة المشرف",
-    "description": "مرحباً بك في لوحة الإدارة."
+    "description": "مرحباً بك في لوحة الإدارة.",
+    "header": {
+      "searchPlaceholder": "ابحث عن مدرسة أو طالب أو نتيجة...",
+      "actions": {
+        "settings": "إعدادات سريعة",
+        "notifications": "الإشعارات"
+      },
+      "mobileMenu": {
+        "open": "فتح القائمة",
+        "close": "إغلاق القائمة"
+      },
+      "menu": {
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      },
+      "user": {
+        "menuLabel": "فتح قائمة الحساب",
+        "guestName": "مستخدم اللوحة",
+        "roles": {
+          "admin": "مدير النظام",
+          "student": "عضو في المنصة"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "الصفحات الرئيسية",
+      "footerSection": "المساعدة والحساب",
+      "toggleExpand": "توسيع الشريط الجانبي",
+      "toggleCollapse": "طي الشريط الجانبي",
+      "nav": {
+        "home": "الرئيسية",
+        "userManagement": "إدارة المستخدمين",
+        "schoolManagement": "إدارة المدارس",
+        "contentManagement": "إدارة المحتوى",
+        "journeyEditor": "محرر رحلة التميز",
+        "liveBroadcast": "إدارة البث المباشر",
+        "interactiveBooks": "إدارة الكتاب التفاعلي",
+        "helper": "مساعدة",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "schoolManagement": {
+      "page": {
+        "title": "إدارة المدارس",
+        "description": "متابعة أداء المدارس المشتركة في المنصة",
+        "addSchool": "إضافة مدرسة جديدة"
+      },
+      "addPage": {
+        "title": "إضافة مدرسة جديدة",
+        "description": "قم بتعبئة بيانات المدرسة الأساسية للتسجيل في المنصة."
+      },
+      "addForm": {
+        "sections": {
+          "identity": "هوية المدرسة",
+          "contact": "الموقع ومعلومات الاتصال",
+          "subscription": "الاشتراك والمراحل التعليمية",
+          "location": "الموقع الجغرافي"
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "submit": "إضافة المدرسة"
+        },
+        "fields": {
+          "schoolName": {
+            "label": "اسم المدرسة بالكامل",
+            "placeholder": "مثال: مدارس رؤية المستقبل"
+          },
+          "schoolDescription": {
+            "label": "وصف مختصر",
+            "placeholder": "أدخل نبذة عن المدرسة ونهجها التعليمي..."
+          },
+          "logo": {
+            "title": "رفع شعار المدرسة",
+            "description": "PNG أو JPG أو JPEG أو WEBP بحجم يصل إلى 5 ميجابايت",
+            "uploadButton": "اختيار صورة",
+            "changeButton": "تغيير الصورة",
+            "uploading": "جارٍ تجهيز المعاينة...",
+            "previewAlt": "معاينة شعار المدرسة",
+            "invalidType": "يرجى اختيار ملف صورة صالح.",
+            "tooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
+            "readError": "تعذر تحميل الصورة المحددة."
+          },
+          "city": {
+            "label": "المدينة",
+            "placeholder": "الرياض"
+          },
+          "address": {
+            "label": "العنوان التفصيلي",
+            "placeholder": "حي العليا، قرب جامع الملك الأبيض"
+          },
+          "phoneNumber": {
+            "label": "رقم الهاتف",
+            "placeholder": "05XXXXXXXX"
+          },
+          "email": {
+            "label": "البريد الإلكتروني الرسمي",
+            "placeholder": "info@school.edu.sa"
+          },
+          "subscriptionPlan": {
+            "label": "نوع خطة الاشتراك"
+          },
+          "educationStages": {
+            "label": "المراحل التعليمية المتاحة"
+          }
+        },
+        "plans": {
+          "basic": {
+            "title": "أساسي",
+            "description": "مميزات أساسية فقط"
+          },
+          "gold": {
+            "title": "ذهبي",
+            "description": "مميزات متقدمة"
+          },
+          "interactive": {
+            "title": "تفاعلي",
+            "description": "جميع المميزات المتاحة"
+          }
+        },
+        "stages": {
+          "elementary": "الابتدائية",
+          "middle": "المتوسطة",
+          "secondary": "الثانوية"
+        },
+        "location": {
+          "previewCity": "قنا",
+          "previewRegion": "مصر",
+          "providerLabel": "معاينة خريطة Leaflet مدعومة من OpenStreetMap",
+          "loading": "جارٍ تحديد الموقع وتحميل الخريطة...",
+          "empty": "لم يتم العثور على موقع لهذا المكان.",
+          "error": "تعذر تحديد هذا المكان على الخريطة حالياً."
+        }
+      },
+      "stats": {
+        "activeSchools": {
+          "label": "المدارس النشطة",
+          "indicator": "98% فعال"
+        },
+        "averagePoints": {
+          "label": "متوسط النقاط",
+          "indicator": "مستقر"
+        },
+        "totalStudents": {
+          "label": "إجمالي الطلاب",
+          "indicator": "+8.4%"
+        },
+        "totalSchools": {
+          "label": "إجمالي المدارس",
+          "indicator": "+12%"
+        }
+      },
+      "table": {
+        "title": "قائمة المدارس",
+        "columns": {
+          "school": "اسم المدرسة",
+          "students": "عدد الطلاب",
+          "points": "إجمالي النقاط",
+          "rank": "الترتيب",
+          "performance": "مستوى الأداء",
+          "foundedAt": "تاريخ التأسيس",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "actions": {
+          "export": "تصدير",
+          "filter": "تصفية",
+          "more": "إجراءات إضافية"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} مدرسة",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        },
+        "states": {
+          "loading": {
+            "title": "جارٍ تحميل المدارس",
+            "description": "يتم الآن جلب أحدث قائمة المدارس من الخادم."
+          },
+          "empty": {
+            "title": "لا توجد مدارس",
+            "description": "لا توجد بيانات مدارس متاحة للبحث الحالي."
+          },
+          "error": {
+            "title": "تعذر تحميل المدارس",
+            "description": "حدث خطأ أثناء تحميل قائمة المدارس."
+          },
+          "unauthorized": {
+            "title": "تسجيل الدخول مطلوب",
+            "description": "انتهت الجلسة أو لا يوجد رمز دخول صالح. يرجى تسجيل الدخول مرة أخرى."
+          },
+          "forbidden": {
+            "title": "لا يوجد صلاحية",
+            "description": "ليس لديك صلاحية لعرض جدول المدارس."
+          },
+          "actions": {
+            "retry": "إعادة المحاولة",
+            "goToLogin": "الانتقال لتسجيل الدخول"
+          }
+        }
+      },
+      "rows": {
+        "riyadhPrivate": {
+          "name": "مدارس الرياض الأهلية",
+          "city": "الرياض - حي الملز"
+        },
+        "almajdInternationalOne": {
+          "name": "مدارس المجد العالمية",
+          "city": "أبها - حي المطار"
+        },
+        "almajdInternationalTwo": {
+          "name": "مدارس المجد العالمية",
+          "city": "المنامة - حي السيف"
+        },
+        "performance": {
+          "excellent": "ممتاز",
+          "veryGood": "جيد جداً"
+        },
+        "status": {
+          "active": "نشط"
+        }
+      },
+      "insights": {
+        "supervisorTip": {
+          "title": "نصيحة للمشرف",
+          "description": "مدارس الرياض الأهلية حققت أعلى معدل نقاط هذا الأسبوع. يمكنك إرسال برقية تهنئة رسمية عبر نظام الرسائل.",
+          "action": "إرسال رسالة"
+        },
+        "updates": {
+          "title": "تحديثات لوحة التحكم",
+          "description": "تم إضافة نظام تقارير الأداء الجديد. يمكنك الآن تحميل تقارير مفصلة لكل مدرسة بشكل دوري.",
+          "action": "اكتشف الميزة"
+        }
+      }
+    },
+    "userManagement": {
+      "page": {
+        "title": "إدارة المستخدمين",
+        "description": "عرض وإدارة جميع حسابات الطلاب والمعلمين في المنصة",
+        "addUser": "إضافة مستخدم جديد"
+      },
+      "stats": {
+        "totalStudents": {
+          "label": "إجمالي الطلاب",
+          "indicator": "+12%"
+        },
+        "teachers": {
+          "label": "المعلمون",
+          "indicator": "+3%"
+        },
+        "activeSubscriptions": {
+          "label": "اشتراكات نشطة",
+          "indicator": "ممتاز"
+        },
+        "blockedAccounts": {
+          "label": "حسابات محظورة",
+          "indicator": ""
+        }
+      },
+      "filters": {
+        "roles": {
+          "label": "الدور",
+          "all": "الكل"
+        },
+        "schools": {
+          "label": "المدرسة",
+          "all": "جميع المدارس"
+        },
+        "grades": {
+          "label": "الصف",
+          "all": "جميع الصفوف"
+        },
+        "subscriptions": {
+          "label": "الاشتراك",
+          "all": "الكل"
+        },
+        "search": {
+          "label": "بحث بالاسم أو الهاتف",
+          "placeholder": "اسم المستخدم أو رقم الهاتف..."
+        }
+      },
+      "table": {
+        "title": "قائمة المستخدمين",
+        "empty": "لا يوجد مستخدمون مطابقون للفلاتر الحالية.",
+        "columns": {
+          "avatar": "صورة",
+          "fullName": "الاسم الكامل",
+          "role": "الدور",
+          "school": "المدرسة",
+          "grade": "الصف",
+          "subscription": "الاشتراك",
+          "status": "الحالة",
+          "lastActivity": "آخر نشاط",
+          "actions": "إجراءات"
+        },
+        "actions": {
+          "more": "إجراءات إضافية"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} مستخدم",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        }
+      },
+      "roles": {
+        "student": "طالب",
+        "teacher": "معلم"
+      },
+      "schools": {
+        "alnour": "مدرسة النور النموذجية",
+        "riyadhPrivate": "مدارس الرياض الأهلية",
+        "alfajr": "ابتدائية الفجر"
+      },
+      "grades": {
+        "grade5": "الصف الخامس",
+        "grade4": "الصف الرابع"
+      },
+      "subscriptions": {
+        "active": "مفعل",
+        "inactive": "منتهي"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "متوقف"
+      },
+      "lastActivity": {
+        "tenMinutes": "منذ 10 دقائق",
+        "twoHours": "منذ ساعتين",
+        "yesterday": "أمس"
+      },
+      "addUser": {
+        "modal": {
+          "title": "إضافة مستخدم جديد",
+          "stepTitle": "الخطوة 1: اختر نوع الحساب الذي ترغب في إنشائه",
+          "continue": "متابعة",
+          "close": "إغلاق نافذة إضافة مستخدم",
+          "options": {
+            "student": {
+              "title": "إضافة طالب",
+              "description": "إنشاء حساب جديد لطالب وربطه بولي أمر."
+            },
+            "teacher": {
+              "title": "إضافة معلم",
+              "description": "إضافة معلم للمنصة وتحديد صلاحياته."
+            },
+            "parent": {
+              "title": "إضافة ولي أمر",
+              "description": "إنشاء حساب لولي أمر وربطه بالأبناء."
+            }
+          }
+        },
+        "shared": {
+          "actions": {
+            "cancel": "إلغاء",
+            "cancelChanges": "إلغاء التعديلات"
+          },
+          "sections": {
+            "basicInfo": "المعلومات الأساسية"
+          },
+          "fields": {
+            "avatar": {
+              "label": "صورة الملف",
+              "hint": "يدعم JPG وPNG وWEBP حتى 5 ميجابايت",
+              "previewAlt": "صورة المستخدم المرفوعة",
+              "upload": "رفع صورة الطالب",
+              "invalidType": "يرجى اختيار ملف صورة صالح.",
+              "tooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
+              "readError": "تعذر تحميل الصورة المحددة."
+            },
+            "fullName": "الاسم الكامل",
+            "country": "الدولة",
+            "phoneNumber": "رقم الهاتف",
+            "email": "البريد الإلكتروني",
+            "password": "كلمة المرور"
+          },
+          "placeholders": {
+            "fullName": "مثال: أحمد محمد علي",
+            "phoneNumber": "05xxxxxxxx",
+            "email": "student@example.com",
+            "password": "••••••••"
+          },
+          "countries": {
+            "egypt": "مصر",
+            "saudi": "السعودية"
+          },
+          "stages": {
+            "primary": "المرحلة الابتدائية",
+            "middle": "المرحلة الإعدادية",
+            "secondary": "المرحلة الثانوية"
+          },
+          "schoolYears": {
+            "year1": "السنة الدراسية الأولى",
+            "year2": "السنة الدراسية الثانية",
+            "year3": "السنة الدراسية الثالثة"
+          },
+          "subscription": {
+            "trial": {
+              "title": "تجريبي",
+              "description": "فترة تجريبية مؤقتة"
+            },
+            "active": {
+              "title": "نشط",
+              "description": "اشتراك مدفوع حالي"
+            },
+            "none": {
+              "title": "بدون اشتراك",
+              "description": "حساب بدون وصول نشط"
+            }
+          }
+        },
+        "student": {
+          "page": {
+            "title": "إضافة طالب جديد",
+            "description": "قم بتعبئة بيانات الطالب وتخصيص اشتراكه التعليمي",
+            "submit": "إضافة الطالب"
+          },
+          "fields": {
+            "educationalStage": "المرحلة التعليمية",
+            "schoolYear": "السنة الدراسية",
+            "schoolName": "المدرسة"
+          },
+          "placeholders": {
+            "schoolName": "اسم المدرسة أو المؤسسة التعليمية"
+          },
+          "parentSection": {
+            "title": "ربط ولي أمر",
+            "toggle": "ربط ولي أمر",
+            "createTitle": "إنشاء ولي أمر جديد",
+            "createDescription": "إنشاء ولي أمر جديد غير مسجل في النظام",
+            "createAction": "إضافة ولي أمر",
+            "searchTitle": "بحث عن ولي أمر",
+            "searchDescription": "ابحث بواسطة رقم الهاتف المسجل مسبقاً",
+            "searchPlaceholder": "أدخل رقم الهاتف للبحث..."
+          },
+          "subscriptionSection": {
+            "title": "حالة الاشتراك",
+            "startDate": "تاريخ البدء",
+            "endDate": "تاريخ الانتهاء"
+          }
+        },
+        "teacher": {
+          "page": {
+            "title": "إضافة معلم جديد",
+            "description": "قم بتعبئة بيانات المعلم وتحديد تخصصه وصلاحياته",
+            "submit": "إضافة المعلم"
+          },
+          "fields": {
+            "jobTitle": "المسمى الوظيفي",
+            "schoolName": "اسم المدرسة / المؤسسة",
+            "address": "العنوان بالتفصيل"
+          },
+          "placeholders": {
+            "jobTitle": "مثال: معلم لغة عربية",
+            "schoolName": "أدخل اسم مدرستك",
+            "address": "اسم المدرسة أو المؤسسة التعليمية"
+          },
+          "academicSection": {
+            "title": "التخصص الأكاديمي",
+            "subjects": "المواد الدراسية",
+            "gradeLevels": "الصفوف المسندة",
+            "addSubject": "إضافة مادة"
+          },
+          "subjects": {
+            "arabic": "اللغة العربية",
+            "science": "العلوم",
+            "math": "الرياضيات"
+          },
+          "gradeLevels": {
+            "first": "الأول",
+            "second": "الثاني",
+            "third": "الثالث",
+            "fourth": "الرابع",
+            "fifth": "الخامس",
+            "sixth": "السادس"
+          },
+          "permissionsSection": {
+            "title": "صلاحيات النظام"
+          },
+          "permissions": {
+            "createLessons": {
+              "title": "إنشاء الدروس",
+              "description": "إنشاء ونشر الدروس للصفوف المسندة."
+            },
+            "liveBroadcast": {
+              "title": "بث حصص مباشرة",
+              "description": "إجراء بث مباشر للطلاب الحاليين."
+            },
+            "uploadFiles": {
+              "title": "رفع الملفات",
+              "description": "مشاركة أوراق العمل والملفات الإضافية."
+            },
+            "addTests": {
+              "title": "إضافة الاختبارات",
+              "description": "إنشاء اختبارات وواجبات وتقييمات."
+            },
+            "manageChats": {
+              "title": "إدارة المحادثات",
+              "description": "الرد على محادثات الطلاب وأولياء الأمور."
+            }
+          }
+        },
+        "parent": {
+          "page": {
+            "title": "إضافة ولي الأمر",
+            "description": "قم بتعبئة بيانات ولي الأمر وربط الأبناء المرتبطين به",
+            "submit": "إضافة ولي الأمر",
+            "bottomSubmit": "حفظ إضافة ولي الأمر"
+          },
+          "fields": {
+            "fullName": "الاسم الكامل لولي الأمر",
+            "address": "العنوان"
+          },
+          "placeholders": {
+            "fullName": "مثال: أحمد محمد علي",
+            "address": "مثال: معلم لغة عربية"
+          },
+          "studentsSection": {
+            "title": "ربط الأبناء (الطلاب)",
+            "optional": "إختياري",
+            "addAction": "إضافة طالب",
+            "searchPlaceholder": "ابحث عن الطالب برقم الهاتف أو الرقم الأكاديمي...",
+            "selectedLabel": "الأبناء المضافون حالياً:"
+          }
+        }
+      },
+      "details": {
+        "page": {
+          "description": "متابعة التقدم الأسبوعي للطالب وبيانات ولي الأمر وسجل الاشتراكات."
+        },
+        "stats": {
+          "studyHours": "ساعات الدراسة",
+          "testResults": "نتائج الاختبارات",
+          "completedLessons": "دروس مكتملة"
+        },
+        "chart": {
+          "title": "الأداء الأسبوعي",
+          "lessons": "الدروس",
+          "tests": "الاختبارات",
+          "days": {
+            "sunday": "الأحد",
+            "monday": "الإثنين",
+            "tuesday": "الثلاثاء",
+            "wednesday": "الأربعاء",
+            "thursday": "الخميس",
+            "friday": "الجمعة",
+            "saturday": "السبت"
+          }
+        },
+        "profile": {
+          "school": "المدرسة",
+          "status": "الحالة",
+          "subscription": "الاشتراك",
+          "code": "رقم الاكاديمي",
+          "edit": "تعديل الملف الشخصي"
+        },
+        "parent": {
+          "badge": "ولي الأمر المرتبط",
+          "type": "الاب",
+          "change": "تغيير ولي الأمر",
+          "unlink": "فك الارتباط",
+          "note": "ولي الأمر يتلقى التنبيهات الخاصة بالحضور والإنجاز بشكل تلقائي."
+        },
+        "activities": {
+          "title": "آخر النشاطات التعليمية",
+          "scienceTest": {
+            "title": "أكمل اختبار العلوم (الفصل الرابع)",
+            "description": "حصل الطالب على نتيجة 18/20",
+            "time": "منذ دقيقتين"
+          },
+          "videoWatch": {
+            "title": "شاهد فيديو تعليمي: قوانين الحركة",
+            "description": "مدة المشاهدة 12 دقيقة",
+            "time": "أمس، 4:30 م"
+          },
+          "mathHomework": {
+            "title": "بدأ حل الواجب التالي (رياضيات)",
+            "description": "جارٍ العمل على التمارين 1-5",
+            "time": "أمس، 1:15 م"
+          }
+        },
+        "subscriptions": {
+          "title": "سجل الاشتراكات",
+          "download": "تحميل الفواتير",
+          "columns": {
+            "plan": "الباقة",
+            "startDate": "تاريخ البدء",
+            "endDate": "تاريخ الانتهاء",
+            "status": "الحالة",
+            "actions": "الإجراء"
+          },
+          "status": {
+            "active": "نشاط حاليا",
+            "inactive": "منتهي"
+          },
+          "plans": {
+            "goldYearly": "الباقة الذهبية السنوية",
+            "termOne": "باقة الفصل الدراسي الأول",
+            "trialMonth": "باقة تجريبية (شهر)"
+          },
+          "dates": {
+            "goldYearly": {
+              "start": "01 يناير 2024",
+              "end": "31 ديسمبر 2024"
+            },
+            "termOne": {
+              "start": "01 سبتمبر 2023",
+              "end": "30 ديسمبر 2023"
+            },
+            "trialMonth": {
+              "start": "01 أغسطس 2023",
+              "end": "31 أغسطس 2023"
+            }
+          }
+        },
+        "floatingActions": {
+          "contact": "تواصل مع الطالب",
+          "share": "مشاركة الملف",
+          "print": "طباعة الملف"
+        }
+      }
+    },
+    "tabs": {
+      "home": {
+        "title": "الرئيسية",
+        "description": "نظرة عامة واختصارات للمشرفين."
+      },
+      "userManagement": {
+        "title": "إدارة المستخدمين",
+        "description": "إدارة المستخدمين والأدوار والصلاحيات."
+      },
+      "schoolManagement": {
+        "title": "إدارة المدارس",
+        "description": "إدارة المدارس والصفوف والهيكل."
+      },
+      "contentManagement": {
+        "title": "إدارة المحتوى",
+        "description": "إنشاء المحتوى ومراجعته ونشره."
+      },
+      "journeyEditor": {
+        "title": "محرر رحلة التميز",
+        "description": "ضبط تجربة رحلة التميز."
+      },
+      "liveBroadcast": {
+        "title": "إدارة البث المباشر",
+        "description": "جدولة وإدارة الجلسات المباشرة."
+      },
+      "interactiveBooks": {
+        "title": "إدارة الكتاب التفاعلي",
+        "description": "إدارة الكتب التفاعلية والموارد."
+      },
+      "helper": {
+        "title": "المساعدة",
+        "description": "أدلة ودعم لاستخدام لوحة الإدارة."
+      }
+    },
+    "settingsPage": {
+      "title": "الإعدادات",
+      "description": "ضبط تفضيلات الإدارة والتكاملات."
+    }
   }
 }

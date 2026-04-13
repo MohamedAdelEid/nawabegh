@@ -1,7 +1,8 @@
 import type { AxiosRequestConfig } from "axios";
 import axiosClient from "./axiosClient";
 import { applyRequestInterceptor, applyResponseInterceptor } from "./interceptors";
-import { getToken } from "./tokenStore";
+import { getRequestLanguage, getToken } from "./tokenStore";
+import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 
 export type RequestOptions<TData = unknown> = {
   url: string;
@@ -12,12 +13,6 @@ export type RequestOptions<TData = unknown> = {
   isFormData?: boolean;
   withCredentials?: boolean;
   timeout?: number;
-};
-
-type ApiResult<T> = {
-  data?: T;
-  message?: string;
-  error?: { message: string };
 };
 
 function buildHeaders(
@@ -59,34 +54,35 @@ export function setOnUnauthorized(fn: () => void) {
 }
 
 applyRequestInterceptor(axiosClient, () => {
-  if (typeof window !== "undefined") return sessionStorage.getItem("token");
-  return null;
-});
+  return getToken();
+}, getRequestLanguage);
 
 applyResponseInterceptor(axiosClient, () => _onUnauthorized?.());
 
-async function get<T>(options: Omit<RequestOptions, "data" | "isFormData">): Promise<ApiResult<T>> {
-  return axiosClient.get(options.url, buildConfig(options)) as Promise<ApiResult<T>>;
+async function get<T>(
+  options: Omit<RequestOptions, "data" | "isFormData">,
+): Promise<BackendApiResponse<T>> {
+  return axiosClient.get(options.url, buildConfig(options)) as Promise<BackendApiResponse<T>>;
 }
 
-async function post<T>(options: RequestOptions): Promise<ApiResult<T>> {
-  return axiosClient.post(options.url, options.data, buildConfig(options)) as Promise<ApiResult<T>>;
+async function post<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
+  return axiosClient.post(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
 }
 
-async function put<T>(options: RequestOptions): Promise<ApiResult<T>> {
-  return axiosClient.put(options.url, options.data, buildConfig(options)) as Promise<ApiResult<T>>;
+async function put<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
+  return axiosClient.put(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
 }
 
-async function patch<T>(options: RequestOptions): Promise<ApiResult<T>> {
-  return axiosClient.patch(options.url, options.data, buildConfig(options)) as Promise<ApiResult<T>>;
+async function patch<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
+  return axiosClient.patch(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
 }
 
-async function del<T>(options: RequestOptions): Promise<ApiResult<T>> {
+async function del<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
   const { url, data, ...rest } = options;
   return axiosClient.delete(url, {
     ...buildConfig(rest),
     ...(data !== undefined ? { data } : {}),
-  }) as Promise<ApiResult<T>>;
+  }) as Promise<BackendApiResponse<T>>;
 }
 
 export const httpClient = { get, post, put, patch, delete: del };
