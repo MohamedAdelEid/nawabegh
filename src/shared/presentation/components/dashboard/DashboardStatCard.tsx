@@ -3,15 +3,8 @@
 import type React from "react";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { cn } from "@/shared/application/lib/cn";
+import { IconTone, iconToneClassNameMap } from "@/shared/domain/types/common.types";
 
-type IconTone = "primary" | "success" | "warning" | "info";
-
-const iconToneClasses: Record<IconTone, string> = {
-  primary: "bg-[#E8EEF8] text-[#2C4260]",
-  success: "bg-emerald-100 text-emerald-600",
-  warning: "bg-amber-100 text-amber-600",
-  info: "bg-sky-100 text-sky-600",
-};
 
 interface DashboardStatCardProps {
   label: string;
@@ -35,7 +28,8 @@ export function DashboardStatCard({
   return (
     <Card
       className={cn(
-        "rounded-[1.75rem] border-white/80 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.08)]",
+        "rounded-[1.75rem] border-white/80 bg-white",
+        "!shadow-[var(--dashboard-shadow-soft)]",
         className,
       )}
     >
@@ -56,7 +50,7 @@ export function DashboardStatCard({
         <div
           className={cn(
             "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl",
-            iconToneClasses[iconTone],
+            iconToneClassNameMap[iconTone as IconTone],
           )}
         >
           <Icon className="h-6 w-6" aria-hidden />

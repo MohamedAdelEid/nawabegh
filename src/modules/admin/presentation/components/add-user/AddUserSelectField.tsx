@@ -9,20 +9,23 @@ export function AddUserSelectField<T extends string>({
   value,
   options,
   onChange,
+  disabled = false,
 }: {
   label: string;
   hint?: string;
   value: T;
   options: Array<{ id: T; label: string }>;
   onChange: (value: T) => void;
+  disabled?: boolean;
 }) {
   return (
     <AddUserField label={label} hint={hint}>
       <div className="relative">
         <select
           value={value}
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value as T)}
-          className="h-14 w-full appearance-none rounded-2xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-soft)] px-4 text-right text-base text-slate-700 outline-none transition focus:border-[var(--dashboard-gold)] focus:ring-2 focus:ring-[var(--dashboard-gold)]/20"
+          className="h-14 w-full appearance-none rounded-2xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-soft)] px-4 text-right text-base text-slate-700 outline-none transition focus:border-[var(--dashboard-gold)] focus:ring-2 focus:ring-[var(--dashboard-gold)]/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {options.map((option) => (
             <option key={option.id} value={option.id}>

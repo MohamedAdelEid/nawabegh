@@ -1,7 +1,9 @@
 import { studentModule } from "@/modules/student/module.config";
 import { adminModule } from "@/modules/admin/module.config";
+import { authModule } from "@/modules/auth/module.config";
 
 export const appModules = [
+  authModule,
   studentModule,
   adminModule,
 ] as const;

@@ -21,7 +21,9 @@
         "guestName": "Dashboard user",
         "roles": {
           "admin": "System administrator",
-          "student": "Student"
+          "student": "Student",
+          "teacher": "Teacher",
+          "parent": "Parent"
         }
       }
     },

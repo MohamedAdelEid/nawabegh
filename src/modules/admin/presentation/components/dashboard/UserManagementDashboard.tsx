@@ -1,17 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ChevronDown,
   EllipsisVertical,
   Plus,
-  Search,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   userManagementDashboardData,
-  type UserManagementDashboardData,
   type UserManagementFilterOption,
   type UserManagementGradeId,
   type UserManagementRoleId,
@@ -19,23 +17,68 @@ import {
   type UserManagementStatusId,
   type UserManagementSubscriptionId,
 } from "@/modules/admin/domain/data/userManagementDashboardData";
+import {
+  deleteUserManagementUser,
+  getCountriesDropdown,
+  getEducationLevelsDropdown,
+  getUserManagementGradesDropdown,
+  getUserManagementSchoolsDropdown,
+  getUserManagementStats,
+  getUserManagementUsers,
+  normalizeUserManagementRole,
+  toggleUserManagementStatus,
+  type UserManagementListRow,
+  type UserManagementListPage,
+  type UserManagementStats,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
 import { cn } from "@/shared/application/lib/cn";
+import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
+import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
   DashboardBadge,
+  DashboardDataTable,
+  type DashboardDataTableColumn,
+  DashboardFilterSelect,
+  DashboardFiltersPanel,
+  type DashboardBadgeTone,
   DashboardPageHeader,
-  DashboardPagination,
+  DashboardSearchFilter,
   DashboardTableCard,
+  DashboardTableFooterPagination,
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { AddUserSelectionModal as AddUserModal } from "@/modules/admin/presentation/components/add-user";
+import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
+
+type CountryFilterId = "all" | (string & {});
+type EducationLevelFilterId = "all" | (string & {});
 
 type FilterState = {
   query: string;
   roleId: UserManagementRoleId;
+  countryId: CountryFilterId;
+  educationLevelId: EducationLevelFilterId;
   schoolId: UserManagementSchoolId;
   gradeId: UserManagementGradeId;
   subscriptionId: UserManagementSubscriptionId;
+};
+
+type DashboardUserRow = {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  roleLabel: string;
+  roleQuery: string;
+  roleTone: DashboardBadgeTone;
+  schoolLabel: string;
+  gradeLabel: string;
+  subscriptionId: Exclude<UserManagementSubscriptionId, "all">;
+  statusId: UserManagementStatusId;
+  lastActivityLabel: string;
+  avatarClassName: string;
+  avatarImageUrl: string | null;
 };
 
 function UserManagementStatCard({
@@ -90,104 +133,11 @@ function UserManagementStatCard({
   );
 }
 
-function FilterSelect<T extends string>({
-  label,
-  value,
-  options,
-  onChange,
-}: {
-  label: string;
-  value: T;
-  options: Array<UserManagementFilterOption<T> & { label: string }>;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <label className="min-w-[10rem] space-y-2 text-right">
-      <span className="block text-xs font-medium text-slate-400">{label}</span>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(event) => onChange(event.target.value as T)}
-          className="h-14 w-full appearance-none rounded-2xl border border-slate-100 bg-white px-4 text-right text-base text-slate-700 shadow-sm outline-none transition focus:border-[#C7AF6E] focus:ring-2 focus:ring-[#C7AF6E]/20"
-        >
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
-    </label>
-  );
-}
-
-function SearchFilter({
-  label,
-  placeholder,
-  value,
-  onChange,
-}: {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="min-w-[18rem] flex-1 space-y-2 text-right">
-      <span className="block text-xs font-medium text-slate-400">{label}</span>
-      <div className="relative">
-        <input
-          type="search"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={placeholder}
-          className="h-14 w-full rounded-2xl border border-slate-100 bg-white pr-4 pl-12 text-right text-base text-slate-700 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-[#C7AF6E] focus:ring-2 focus:ring-[#C7AF6E]/20"
-        />
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-      </div>
-    </label>
-  );
-}
-
-function StatusSwitch({
-  checked,
-  onChange,
-  activeLabel,
-  inactiveLabel,
-}: {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  activeLabel: string;
-  inactiveLabel: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={checked ? activeLabel : inactiveLabel}
-      onClick={(event) => {
-        event.stopPropagation();
-        onChange(!checked);
-      }}
-      className={cn(
-        "relative inline-flex h-8 w-14 items-center rounded-full transition-colors",
-        checked ? "bg-[#243B5A]" : "bg-slate-200",
-      )}
-    >
-      <span
-        className={cn(
-          "inline-block h-6 w-6 rounded-full bg-white shadow transition-transform",
-          checked ? "translate-x-[-0.2rem]" : "-translate-x-7",
-        )}
-      />
-    </button>
-  );
-}
-
-function roleTone(roleId: Exclude<UserManagementRoleId, "all">) {
-  return roleId === "teacher" ? "warning" : "primary";
+function roleTone(roleId: string): DashboardBadgeTone {
+  if (roleId === "teacher") return "warning";
+  if (roleId === "parent") return "info";
+  if (roleId === "admin") return "danger";
+  return "primary";
 }
 
 function subscriptionTone(subscriptionId: Exclude<UserManagementSubscriptionId, "all">) {
@@ -198,63 +148,568 @@ function statusTone(statusId: UserManagementStatusId) {
   return statusId === "active" ? "success" : "warning";
 }
 
-function matchesFilters(
-  row: UserManagementDashboardData["rows"][number],
-  filters: FilterState,
+const avatarToneClasses: readonly [string, string, string, string] = [
+  "bg-[#D9F2F7] text-[#127A9C]",
+  "bg-[#FCE7D6] text-[#9A4B1D]",
+  "bg-[#DBEEF6] text-[#255E8A]",
+  "bg-[#FEE2E2] text-[#B42318]",
+];
+
+function getAvatarClassName(seed: string) {
+  const sum = Array.from(seed).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return avatarToneClasses[sum % avatarToneClasses.length] ?? avatarToneClasses[0];
+}
+
+function formatLastActivity(value: string | null, locale: string) {
+  if (!value) return "—";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+
+  return new Intl.DateTimeFormat(locale.startsWith("ar") ? "ar-EG" : "en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
+function mapStatsValues(
+  stats: typeof userManagementDashboardData.stats,
+  apiStats: UserManagementStats | null,
 ) {
-  const normalizedQuery = filters.query.trim().toLowerCase();
-  const matchesQuery =
-    normalizedQuery.length === 0 ||
-    row.fullName.toLowerCase().includes(normalizedQuery) ||
-    row.phoneNumber.toLowerCase().includes(normalizedQuery);
+  if (!apiStats) return stats;
 
-  const matchesRole = filters.roleId === "all" || row.roleId === filters.roleId;
-  const matchesSchool =
-    filters.schoolId === "all" || row.schoolId === filters.schoolId;
-  const matchesGrade =
-    filters.gradeId === "allGrades" || row.gradeId === filters.gradeId;
-  const matchesSubscription =
-    filters.subscriptionId === "all" ||
-    row.subscriptionId === filters.subscriptionId;
+  return stats.map((stat) => {
+    switch (stat.id) {
+      case "totalStudents":
+        return { ...stat, value: apiStats.totalStudents.toLocaleString() };
+      case "teachers":
+        return { ...stat, value: apiStats.totalTeachers.toLocaleString() };
+      case "activeSubscriptions":
+        return { ...stat, value: apiStats.totalActiveUsers.toLocaleString() };
+      case "blockedAccounts":
+        return { ...stat, value: apiStats.totalInactiveUsers.toLocaleString() };
+      default:
+        return stat;
+    }
+  });
+}
 
-  return (
-    matchesQuery &&
-    matchesRole &&
-    matchesSchool &&
-    matchesGrade &&
-    matchesSubscription
-  );
+function buildRoleLabel(
+  role: string,
+  t: ReturnType<typeof useTranslations>,
+) {
+  const normalizedRole = normalizeUserManagementRole(role);
+  if (normalizedRole === "student") return t("userManagement.roles.student");
+  if (normalizedRole === "teacher") return t("userManagement.roles.teacher");
+  if (normalizedRole === "parent") return t("userManagement.roles.parent");
+  if (normalizedRole === "admin") return t("userManagement.roles.admin");
+  return role || "—";
+}
+
+function mapApiRowsToViewModel(
+  rows: UserManagementListRow[],
+  locale: string,
+  t: ReturnType<typeof useTranslations>,
+): DashboardUserRow[] {
+  return rows.map((row) => {
+    const normalizedRole = normalizeUserManagementRole(row.role);
+    const subscriptionId: Exclude<UserManagementSubscriptionId, "all"> = row.isActive
+      ? "active"
+      : "inactive";
+
+    return {
+      id: row.id,
+      fullName: row.fullName,
+      phoneNumber: row.phoneNumber,
+      roleLabel: buildRoleLabel(row.role, t),
+      roleQuery: normalizedRole,
+      roleTone: roleTone(normalizedRole),
+      schoolLabel: row.schoolName || "—",
+      gradeLabel: row.gradeName || "—",
+      subscriptionId,
+      statusId: row.isActive ? "active" : "inactive",
+      lastActivityLabel: formatLastActivity(row.lastActivity, locale),
+      avatarClassName: getAvatarClassName(row.id || row.fullName),
+      avatarImageUrl: row.profileImageUrl,
+    };
+  });
 }
 
 export function UserManagementDashboard() {
   const t = useTranslations("admin.dashboard");
+  const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const data = userManagementDashboardData;
   const [filters, setFilters] = useState<FilterState>({
     query: "",
     roleId: "all",
+    countryId: "all",
+    educationLevelId: "all",
     schoolId: "all",
     gradeId: "allGrades",
     subscriptionId: "all",
   });
-  const [currentPage, setCurrentPage] = useState(data.pagination.currentPage);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [rowStatuses, setRowStatuses] = useState<Record<string, UserManagementStatusId>>(
+  const [statsData, setStatsData] = useState<UserManagementStats | null>(null);
+  const [usersPage, setUsersPage] = useState<UserManagementListPage | null>(null);
+  const [countryOptions, setCountryOptions] = useState<
+    Array<UserManagementFilterOption<CountryFilterId> & { label: string }>
+  >([]);
+  const [educationLevelOptions, setEducationLevelOptions] = useState<
+    Array<UserManagementFilterOption<EducationLevelFilterId> & { label: string }>
+  >([]);
+  const [schoolOptions, setSchoolOptions] = useState<
+    Array<UserManagementFilterOption<UserManagementSchoolId> & { label: string }>
+  >([]);
+  const [gradeOptions, setGradeOptions] = useState<
+    Array<UserManagementFilterOption<UserManagementGradeId> & { label: string }>
+  >([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [menuOpenUserId, setMenuOpenUserId] = useState<string | null>(null);
+  const [pendingToggleUserId, setPendingToggleUserId] = useState<string | null>(null);
+  const [pendingDeleteUserId, setPendingDeleteUserId] = useState<string | null>(null);
+  const [deleteModalUser, setDeleteModalUser] = useState<DashboardUserRow | null>(null);
+  const requestSequenceRef = useRef(0);
+
+  const debouncedQuery = useMemo(() => filters.query.trim(), [filters.query]);
+  const refreshKey = searchParams.get("refresh");
+
+  const loadUsers = useCallback(async () => {
+    const requestId = ++requestSequenceRef.current;
+    setIsLoadingUsers(true);
+
+    const result = await getUserManagementUsers({
+      roleId: filters.roleId,
+      schoolId: filters.schoolId,
+      gradeId: filters.gradeId,
+      isActive:
+        filters.subscriptionId === "all"
+          ? undefined
+          : filters.subscriptionId === "active",
+      keyword: debouncedQuery,
+      pageNumber: currentPage,
+      pageSize: data.pagination.visibleItems,
+    });
+
+    if (requestId !== requestSequenceRef.current) return;
+
+    if (result.data) {
+      setUsersPage(result.data);
+    } else if (result.errorMessage) {
+      notify.error(result.errorMessage);
+    }
+
+    setIsLoadingUsers(false);
+  }, [
+    currentPage,
+    data.pagination.visibleItems,
+    debouncedQuery,
+    filters.gradeId,
+    filters.roleId,
+    filters.schoolId,
+    filters.subscriptionId,
+    refreshKey,
+  ]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    filters.roleId,
+    filters.countryId,
+    filters.educationLevelId,
+    filters.schoolId,
+    filters.gradeId,
+    filters.subscriptionId,
+    debouncedQuery,
+  ]);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      void loadUsers();
+    }, 250);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [loadUsers]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadDashboardMetadata = async () => {
+      const [statsResult, schoolsResult, countriesResult] = await Promise.all([
+        getUserManagementStats(),
+        getUserManagementSchoolsDropdown(),
+        getCountriesDropdown(),
+      ]);
+
+      if (!mounted) return;
+
+      if (statsResult.data) {
+        setStatsData(statsResult.data);
+      } else if (statsResult.errorMessage) {
+        notify.error(statsResult.errorMessage);
+      }
+
+      if (schoolsResult.data && schoolsResult.data.length > 0) {
+        setSchoolOptions([
+          {
+            id: "all",
+            labelKey: "userManagement.filters.schools.all",
+            label: t("userManagement.filters.schools.all"),
+          },
+          ...schoolsResult.data.map((option) => ({
+            id: option.id as UserManagementSchoolId,
+            labelKey: "",
+            label: option.name,
+          })),
+        ]);
+      } else {
+        setSchoolOptions(
+          data.filters.schools.map((option) => ({
+            ...option,
+            label: t(option.labelKey),
+          })),
+        );
+      }
+
+      if (countriesResult.data && countriesResult.data.length > 0) {
+        setCountryOptions([
+          {
+            id: "all",
+            labelKey: "userManagement.filters.countries.all",
+            label: t("userManagement.filters.countries.all"),
+          },
+          ...countriesResult.data.map((option) => ({
+            id: String(option.id) as CountryFilterId,
+            labelKey: "",
+            label: option.name,
+          })),
+        ]);
+      } else {
+        setCountryOptions([]);
+        if (countriesResult.errorMessage) {
+          notify.error(countriesResult.errorMessage);
+        }
+      }
+    };
+
+    void loadDashboardMetadata();
+
+    return () => {
+      mounted = false;
+    };
+  }, [data.filters.schools, t]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (filters.countryId === "all") {
+      setEducationLevelOptions([
+        {
+          id: "all",
+          labelKey: "userManagement.filters.educationLevels.all",
+          label: t("userManagement.filters.educationLevels.all"),
+        },
+      ]);
+      setGradeOptions([
+        {
+          id: "allGrades",
+          labelKey: "userManagement.filters.grades.all",
+          label: t("userManagement.filters.grades.all"),
+        },
+      ]);
+      return;
+    }
+
+    const countryId = Number(filters.countryId);
+    if (Number.isNaN(countryId)) return;
+
+    void (async () => {
+      const result = await getEducationLevelsDropdown(countryId);
+      if (cancelled) return;
+
+      if (result.data && result.data.length > 0) {
+        setEducationLevelOptions([
+          {
+            id: "all",
+            labelKey: "userManagement.filters.educationLevels.all",
+            label: t("userManagement.filters.educationLevels.all"),
+          },
+          ...result.data.map((option) => ({
+            id: String(option.id) as EducationLevelFilterId,
+            labelKey: "",
+            label: option.name,
+          })),
+        ]);
+      } else {
+        setEducationLevelOptions([
+          {
+            id: "all",
+            labelKey: "userManagement.filters.educationLevels.all",
+            label: t("userManagement.filters.educationLevels.all"),
+          },
+        ]);
+        if (result.errorMessage) {
+          notify.error(result.errorMessage);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filters.countryId, t]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (filters.countryId === "all" || filters.educationLevelId === "all") {
+      setGradeOptions([
+        {
+          id: "allGrades",
+          labelKey: "userManagement.filters.grades.all",
+          label: t("userManagement.filters.grades.all"),
+        },
+      ]);
+      return;
+    }
+
+    const educationLevelId = Number(filters.educationLevelId);
+    if (Number.isNaN(educationLevelId)) return;
+
+    void (async () => {
+      const result = await getUserManagementGradesDropdown(educationLevelId);
+      if (cancelled) return;
+
+      if (result.data && result.data.length > 0) {
+        setGradeOptions([
+          {
+            id: "allGrades",
+            labelKey: "userManagement.filters.grades.all",
+            label: t("userManagement.filters.grades.all"),
+          },
+          ...result.data.map((option) => ({
+            id: String(option.id) as UserManagementGradeId,
+            labelKey: "",
+            label: option.name,
+          })),
+        ]);
+      } else {
+        setGradeOptions([
+          {
+            id: "allGrades",
+            labelKey: "userManagement.filters.grades.all",
+            label: t("userManagement.filters.grades.all"),
+          },
+        ]);
+        if (result.errorMessage) {
+          notify.error(result.errorMessage);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filters.countryId, filters.educationLevelId, t]);
+
+  const statCards = useMemo(
+    () => mapStatsValues(data.stats, statsData),
+    [data.stats, statsData],
+  );
+  const resolvedCountryOptions = useMemo(
     () =>
-      Object.fromEntries(
-        data.rows.map((row) => [row.id, row.statusId]),
-      ) as Record<string, UserManagementStatusId>,
+      countryOptions.length > 0
+        ? countryOptions
+        : [
+            {
+              id: "all" as CountryFilterId,
+              labelKey: "userManagement.filters.countries.all",
+              label: t("userManagement.filters.countries.all"),
+            },
+          ],
+    [countryOptions, t],
+  );
+  const resolvedEducationLevelOptions = useMemo(
+    () =>
+      educationLevelOptions.length > 0
+        ? educationLevelOptions
+        : [
+            {
+              id: "all" as EducationLevelFilterId,
+              labelKey: "userManagement.filters.educationLevels.all",
+              label: t("userManagement.filters.educationLevels.all"),
+            },
+          ],
+    [educationLevelOptions, t],
+  );
+  const resolvedSchoolOptions = useMemo(
+    () =>
+      schoolOptions.length > 0
+        ? schoolOptions
+        : data.filters.schools.map((option) => ({
+            ...option,
+            label: t(option.labelKey),
+          })),
+    [data.filters.schools, schoolOptions, t],
+  );
+  const resolvedGradeOptions = useMemo(
+    () =>
+      gradeOptions.length > 0
+        ? gradeOptions
+        : [
+            {
+              id: "allGrades",
+              labelKey: "userManagement.filters.grades.all",
+              label: t("userManagement.filters.grades.all"),
+            },
+          ],
+    [gradeOptions, t],
   );
 
-  const filteredRows = useMemo(
-    () => data.rows.filter((row) => matchesFilters(row, filters)),
-    [data.rows, filters],
+  const tableRows = useMemo(
+    () => mapApiRowsToViewModel(usersPage?.rows ?? [], locale, t),
+    [locale, t, usersPage?.rows],
   );
 
-  const paginationPages = Array.from(
-    { length: data.pagination.totalPages },
-    (_, index) => index + 1,
+  const visibleRows = tableRows;
+  const tableColumns = useMemo<Array<DashboardDataTableColumn<DashboardUserRow>>>(
+    () => [
+      {
+        id: "avatar",
+        header: t("userManagement.table.columns.avatar"),
+        renderCell: (row) => (
+          <UserAvatarImageOrInitials
+            trackKey={row.id}
+            name={row.fullName}
+            imageUrl={row.avatarImageUrl}
+            size="md"
+            circleClassName={cn("font-bold", row.avatarClassName)}
+          />
+        ),
+      },
+      {
+        id: "fullName",
+        header: t("userManagement.table.columns.fullName"),
+        renderCell: (row) => (
+          <div className="min-w-[14rem] space-y-1 text-right">
+            <p className="font-semibold text-slate-800">{row.fullName}</p>
+            <p dir="ltr" className="text-xs text-slate-400">{row.phoneNumber}</p>
+          </div>
+        ),
+      },
+      {
+        id: "role",
+        header: t("userManagement.table.columns.role"),
+        renderCell: (row) => (
+          <DashboardBadge tone={row.roleTone}>
+            {row.roleLabel}
+          </DashboardBadge>
+        ),
+      },
+      {
+        id: "school",
+        header: t("userManagement.table.columns.school"),
+        cellClassName: "text-slate-700",
+        renderCell: (row) => row.schoolLabel,
+      },
+      {
+        id: "grade",
+        header: t("userManagement.table.columns.grade"),
+        cellClassName: "text-slate-600",
+        renderCell: (row) => row.gradeLabel,
+      },
+      {
+        id: "subscription",
+        header: t("userManagement.table.columns.subscription"),
+        renderCell: (row) => (
+          <DashboardBadge tone={subscriptionTone(row.subscriptionId)} withDot>
+            {t(`userManagement.subscriptions.${row.subscriptionId}`)}
+          </DashboardBadge>
+        ),
+      },
+      {
+        id: "status",
+        header: t("userManagement.table.columns.status"),
+        renderCell: (row) => (
+          <StatusSwitch
+            checked={row.statusId === "active"}
+            activeLabel={t("userManagement.status.active")}
+            inactiveLabel={t("userManagement.status.inactive")}
+            disabled={pendingToggleUserId === row.id}
+            onChange={() => {
+              void handleToggleStatus(row);
+            }}
+          />
+        ),
+      },
+      {
+        id: "lastActivity",
+        header: t("userManagement.table.columns.lastActivity"),
+        cellClassName: "text-slate-400",
+        renderCell: (row) => row.lastActivityLabel,
+      },
+    ],
+    [pendingToggleUserId, t],
   );
+
+  const paginationPages = useMemo(() => {
+    const totalPages = usersPage?.totalPages ?? 1;
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4);
+    const adjustedStart = Math.max(1, end - 4);
+
+    return Array.from({ length: end - adjustedStart + 1 }, (_, index) => adjustedStart + index);
+  }, [currentPage, usersPage?.totalPages]);
+
+  const summaryTotal = usersPage?.totalItems ?? 0;
+  const summaryVisible = visibleRows.length;
+
+  const handleOpenUser = (row: DashboardUserRow) => {
+    router.push(`${ROUTES.ADMIN.USER_MANAGEMENT.VIEW(row.id)}?role=${row.roleQuery}`);
+  };
+
+  const handleToggleStatus = async (row: DashboardUserRow) => {
+    setPendingToggleUserId(row.id);
+    const result = await toggleUserManagementStatus(row.id);
+    console.log(result);
+    if (
+      +result.status !== +"200" ||
+      !result.data ||
+      result.data.userId !== row.id
+    ) {
+      notify.error(result.errorMessage ?? "Failed to update user status");
+      setPendingToggleUserId(null);
+      return;
+    }
+
+    await loadUsers();
+    setPendingToggleUserId(null);
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    setPendingDeleteUserId(userId);
+    const result = await deleteUserManagementUser(userId);
+
+    if (+result.status !== +"200" || !result.data) {
+      notify.error(result.errorMessage ?? "Failed to delete user");
+      setPendingDeleteUserId(null);
+      return;
+    }
+
+    setMenuOpenUserId(null);
+    setDeleteModalUser(null);
+    if (visibleRows.length === 1 && currentPage > 1) {
+      setCurrentPage((page) => page - 1);
+    } else {
+      await loadUsers();
+    }
+    setPendingDeleteUserId(null);
+  };
 
   return (
     <div className="space-y-8">
@@ -284,9 +739,27 @@ export function UserManagementDashboard() {
         open={isAddUserModalOpen}
         onOpenChange={setIsAddUserModalOpen}
       />
+      <ChatGroupDeleteModal
+        open={deleteModalUser !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteModalUser(null);
+          }
+        }}
+        groupName={deleteModalUser?.fullName}
+        title={t("userManagement.deleteModal.title")}
+        description={t("userManagement.deleteModal.description")}
+        confirmLabel={t("userManagement.deleteModal.confirm")}
+        cancelLabel={t("userManagement.deleteModal.cancel")}
+        onConfirm={() => {
+          if (deleteModalUser) {
+            void handleDeleteUser(deleteModalUser.id);
+          }
+        }}
+      />
 
       <section className="grid gap-5 lg:grid-cols-4">
-        {data.stats.map((stat) => (
+        {statCards.map((stat) => (
           <UserManagementStatCard
             key={stat.id}
             label={t(stat.labelKey)}
@@ -299,11 +772,8 @@ export function UserManagementDashboard() {
         ))}
       </section>
 
-      <div className="rounded-[1.75rem] border border-white/80 bg-white p-5" style={{
-        boxShadow: "0px 8px 0px 0px #0000000D"
-      }}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
-          <FilterSelect
+      <DashboardFiltersPanel isLoading={isLoadingUsers}>
+          <DashboardFilterSelect
             label={t("userManagement.filters.roles.label")}
             value={filters.roleId}
             options={data.filters.roles.map((option) => ({
@@ -314,29 +784,52 @@ export function UserManagementDashboard() {
               setFilters((current) => ({ ...current, roleId: value }))
             }
           />
-          <FilterSelect
+          <DashboardFilterSelect
+            label={t("userManagement.filters.countries.label")}
+            value={filters.countryId}
+            options={resolvedCountryOptions}
+            onChange={(value) =>
+              setFilters((current) => ({
+                ...current,
+                countryId: value as CountryFilterId,
+                educationLevelId: "all",
+                gradeId: "allGrades",
+              }))
+            }
+          />
+          <DashboardFilterSelect
+            label={t("userManagement.filters.educationLevels.label")}
+            value={filters.educationLevelId}
+            options={resolvedEducationLevelOptions}
+            disabled={filters.countryId === "all"}
+            onChange={(value) =>
+              setFilters((current) => ({
+                ...current,
+                educationLevelId: value as EducationLevelFilterId,
+                gradeId: "allGrades",
+              }))
+            }
+          />
+          <DashboardFilterSelect
             label={t("userManagement.filters.schools.label")}
             value={filters.schoolId}
-            options={data.filters.schools.map((option) => ({
-              ...option,
-              label: t(option.labelKey),
-            }))}
+            options={resolvedSchoolOptions}
             onChange={(value) =>
               setFilters((current) => ({ ...current, schoolId: value }))
             }
           />
-          <FilterSelect
+          <DashboardFilterSelect
             label={t("userManagement.filters.grades.label")}
             value={filters.gradeId}
-            options={data.filters.grades.map((option) => ({
-              ...option,
-              label: t(option.labelKey),
-            }))}
+            options={resolvedGradeOptions}
+            disabled={
+              filters.countryId === "all" || filters.educationLevelId === "all"
+            }
             onChange={(value) =>
               setFilters((current) => ({ ...current, gradeId: value }))
             }
           />
-          <FilterSelect
+          <DashboardFilterSelect
             label={t("userManagement.filters.subscriptions.label")}
             value={filters.subscriptionId}
             options={data.filters.subscriptions.map((option) => ({
@@ -347,7 +840,7 @@ export function UserManagementDashboard() {
               setFilters((current) => ({ ...current, subscriptionId: value }))
             }
           />
-          <SearchFilter
+          <DashboardSearchFilter
             label={t("userManagement.filters.search.label")}
             placeholder={t("userManagement.filters.search.placeholder")}
             value={filters.query}
@@ -355,131 +848,67 @@ export function UserManagementDashboard() {
               setFilters((current) => ({ ...current, query: value }))
             }
           />
-        </div>
-      </div>
+      </DashboardFiltersPanel>
 
       <DashboardTableCard
         title={t("userManagement.table.title")}
         footer={
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <p className="text-right text-sm text-slate-400">
-              {t("userManagement.table.pagination.summary", {
-                visible:
-                  filteredRows.length > 0
-                    ? data.pagination.visibleItems
-                    : 0,
-                total: data.pagination.totalItems,
-              })}
-            </p>
-            <DashboardPagination
-              pages={paginationPages}
-              currentPage={currentPage}
-              previousLabel={t("userManagement.table.pagination.previous")}
-              nextLabel={t("userManagement.table.pagination.next")}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+          <DashboardTableFooterPagination
+            summary={t("userManagement.table.pagination.summary", {
+              visible: summaryVisible,
+              total: summaryTotal,
+            })}
+            pages={paginationPages}
+            currentPage={currentPage}
+            previousLabel={t("userManagement.table.pagination.previous")}
+            nextLabel={t("userManagement.table.pagination.next")}
+            onPageChange={setCurrentPage}
+          />
         }
       >
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-right">
-            <thead>
-              <tr className="border-b border-slate-100 text-sm text-slate-400">
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.avatar")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.fullName")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.role")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.school")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.grade")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.subscription")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.status")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.lastActivity")}</th>
-                <th className="px-6 py-5 font-medium">{t("userManagement.table.columns.actions")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredRows.length === 0 ? (
-                <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center text-sm text-slate-500">
-                    {t("userManagement.table.empty")}
-                  </td>
-                </tr>
-              ) : (
-                filteredRows.map((row) => {
-                  const currentStatus = rowStatuses[row.id] ?? row.statusId;
-
-                  return (
-                    <tr
-                      key={row.id}
-                      className="cursor-pointer border-b border-slate-100 text-sm text-slate-700 transition-colors duration-200 hover:bg-slate-50/70"
-                      onClick={() => router.push(ROUTES.ADMIN.USER_MANAGEMENT.VIEW(row.id))}
+        <DashboardDataTable
+          rows={visibleRows}
+          columns={tableColumns}
+          getRowKey={(row) => row.id}
+          emptyMessage={t("userManagement.table.empty")}
+          onRowClick={handleOpenUser}
+          actionsHeader={t("userManagement.table.columns.actions")}
+          renderActions={(row) => (
+            <>
+              <button
+                type="button"
+                className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                aria-label={t("userManagement.table.actions.more")}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setMenuOpenUserId((current) => (current === row.id ? null : row.id));
+                }}
+              >
+                <EllipsisVertical className="h-5 w-5" aria-hidden />
+              </button>
+              <div className="relative">
+                {menuOpenUserId === row.id ? (
+                  <div
+                    className="absolute left-0 top-2 z-20 min-w-[8rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      disabled={pendingDeleteUserId === row.id}
+                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                      onClick={() => {
+                        setMenuOpenUserId(null);
+                        setDeleteModalUser(row);
+                      }}
                     >
-                      <td className="px-6 py-5">
-                        <div
-                          className={cn(
-                            "flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold",
-                            row.avatarClassName,
-                          )}
-                        >
-                          {row.avatarInitials}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="min-w-[14rem] space-y-1 text-right">
-                          <p className="font-semibold text-slate-800">{row.fullName}</p>
-                          <p dir="ltr" className="text-xs text-slate-400">{row.phoneNumber}</p>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <DashboardBadge tone={roleTone(row.roleId)}>
-                          {t(`userManagement.roles.${row.roleId}`)}
-                        </DashboardBadge>
-                      </td>
-                      <td className="px-6 py-5 text-slate-700">
-                        {t(`userManagement.schools.${row.schoolId}`)}
-                      </td>
-                      <td className="px-6 py-5 text-slate-600">
-                        {row.gradeId ? t(`userManagement.grades.${row.gradeId}`) : "—"}
-                      </td>
-                      <td className="px-6 py-5">
-                        <DashboardBadge tone={subscriptionTone(row.subscriptionId)} withDot>
-                          {t(`userManagement.subscriptions.${row.subscriptionId}`)}
-                        </DashboardBadge>
-                      </td>
-                      <td className="px-6 py-5">
-                        <StatusSwitch
-                          checked={currentStatus === "active"}
-                          activeLabel={t("userManagement.status.active")}
-                          inactiveLabel={t("userManagement.status.inactive")}
-                          onChange={(checked) =>
-                            setRowStatuses((current) => ({
-                              ...current,
-                              [row.id]: checked ? "active" : "inactive",
-                            }))
-                          }
-                        />
-                      </td>
-                      <td className="px-6 py-5 text-slate-400">
-                        {t(row.lastActivityKey)}
-                      </td>
-                      <td className="px-6 py-5">
-                        <button
-                          type="button"
-                          className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                          aria-label={t("userManagement.table.actions.more")}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                          }}
-                        >
-                          <EllipsisVertical className="h-5 w-5" aria-hidden />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                      {t("userManagement.table.actions.delete")}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          )}
+        />
       </DashboardTableCard>
     </div>
   );

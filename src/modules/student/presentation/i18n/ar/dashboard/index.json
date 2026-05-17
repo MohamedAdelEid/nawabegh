@@ -21,7 +21,9 @@
         "guestName": "مستخدم اللوحة",
         "roles": {
           "admin": "مدير النظام",
-          "student": "طالب"
+          "student": "طالب",
+          "teacher": "معلّم",
+          "parent": "ولي أمر"
         }
       }
     },

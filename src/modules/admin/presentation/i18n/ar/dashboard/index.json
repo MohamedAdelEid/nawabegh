@@ -35,9 +35,17 @@
         "userManagement": "إدارة المستخدمين",
         "schoolManagement": "إدارة المدارس",
         "contentManagement": "إدارة المحتوى",
-        "journeyEditor": "محرر رحلة التميز",
+        "courseManagement": "إدارة المسارات والاعتمادات",
+        "helperFileManagement": "إدارة الملفات المساندة",
+        "pricingManagement": "إدارة الخطط والأسعار",
+        "paymentGatewaySettings": "إعدادات بوابات الدفع",
+        "articleEditor": "محرر المقالات",
+        "journeyEditor": "محرر رحلة التفوق",
         "liveBroadcast": "إدارة البث المباشر",
         "interactiveBooks": "إدارة الكتاب التفاعلي",
+        "chatGroups": "مجموعات الدردشة",
+        "sendNotification": "إرسال إشعار",
+        "questionBank": "بنك الأسئلة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
@@ -63,6 +71,10 @@
         "actions": {
           "cancel": "إلغاء",
           "submit": "إضافة المدرسة"
+        },
+        "messages": {
+          "createSuccess": "تم إنشاء المدرسة بنجاح.",
+          "createError": "تعذر إنشاء المدرسة. تحقق من البيانات وحاول مجدداً."
         },
         "fields": {
           "schoolName": {
@@ -100,6 +112,10 @@
             "label": "البريد الإلكتروني الرسمي",
             "placeholder": "info@school.edu.sa"
           },
+          "country": {
+            "label": "الدولة",
+            "placeholder": "اختر الدولة"
+          },
           "subscriptionPlan": {
             "label": "نوع خطة الاشتراك"
           },
@@ -129,6 +145,8 @@
         "location": {
           "previewCity": "قنا",
           "previewRegion": "مصر",
+          "fallbackCity": "المدينة",
+          "fallbackRegion": "العنوان",
           "providerLabel": "معاينة خريطة Leaflet مدعومة من OpenStreetMap",
           "loading": "جارٍ تحديد الموقع وتحميل الخريطة...",
           "empty": "لم يتم العثور على موقع لهذا المكان.",
@@ -136,21 +154,21 @@
         }
       },
       "stats": {
+        "totalSchools": {
+          "label": "إجمالي المدارس",
+          "indicator": "إجمالي المنصة"
+        },
         "activeSchools": {
           "label": "المدارس النشطة",
-          "indicator": "98% فعال"
+          "indicator": "نشطة حالياً"
         },
-        "averagePoints": {
-          "label": "متوسط النقاط",
-          "indicator": "مستقر"
+        "totalTeachers": {
+          "label": "إجمالي المعلمين",
+          "indicator": "عبر المدارس"
         },
         "totalStudents": {
           "label": "إجمالي الطلاب",
-          "indicator": "+8.4%"
-        },
-        "totalSchools": {
-          "label": "إجمالي المدارس",
-          "indicator": "+12%"
+          "indicator": "عبر المدارس"
         }
       },
       "table": {
@@ -265,6 +283,14 @@
           "label": "الدور",
           "all": "الكل"
         },
+        "countries": {
+          "label": "الدولة",
+          "all": "جميع الدول"
+        },
+        "educationLevels": {
+          "label": "المستوى التعليمي",
+          "all": "جميع المستويات"
+        },
         "schools": {
           "label": "المدرسة",
           "all": "جميع المدارس"
@@ -297,7 +323,8 @@
           "actions": "إجراءات"
         },
         "actions": {
-          "more": "إجراءات إضافية"
+          "more": "إجراءات إضافية",
+          "delete": "حذف المستخدم"
         },
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مستخدم",
@@ -307,7 +334,9 @@
       },
       "roles": {
         "student": "طالب",
-        "teacher": "معلم"
+        "teacher": "معلم",
+        "parent": "ولي أمر",
+        "admin": "مشرف"
       },
       "schools": {
         "alnour": "مدرسة النور النموذجية",
@@ -325,6 +354,12 @@
       "status": {
         "active": "نشط",
         "inactive": "متوقف"
+      },
+      "deleteModal": {
+        "title": "حذف المستخدم",
+        "description": "هل أنت متأكد من حذف هذا المستخدم؟ سيتم حذف الحساب نهائياً.",
+        "confirm": "تأكيد الحذف",
+        "cancel": "إلغاء"
       },
       "lastActivity": {
         "tenMinutes": "منذ 10 دقائق",
@@ -374,13 +409,21 @@
             "country": "الدولة",
             "phoneNumber": "رقم الهاتف",
             "email": "البريد الإلكتروني",
-            "password": "كلمة المرور"
+            "password": "كلمة المرور",
+            "school": "المدرسة"
           },
           "placeholders": {
             "fullName": "مثال: أحمد محمد علي",
             "phoneNumber": "05xxxxxxxx",
             "email": "student@example.com",
-            "password": "••••••••"
+            "password": "••••••••",
+            "selectCountry": "اختر الدولة",
+            "selectEducationLevel": "اختر المستوى التعليمي",
+            "selectGrade": "اختر الصف",
+            "selectSchool": "اختر المدرسة"
+          },
+          "messages": {
+            "noSchools": "لا توجد مدارس متاحة. حاول لاحقاً أو تواصل مع الدعم."
           },
           "countries": {
             "egypt": "مصر",
@@ -418,12 +461,12 @@
             "submit": "إضافة الطالب"
           },
           "fields": {
-            "educationalStage": "المرحلة التعليمية",
-            "schoolYear": "السنة الدراسية",
+            "educationalStage": "المستوى التعليمي",
+            "schoolYear": "الصف",
             "schoolName": "المدرسة"
           },
           "placeholders": {
-            "schoolName": "اسم المدرسة أو المؤسسة التعليمية"
+            "schoolName": "اختر مدرسة من القائمة"
           },
           "parentSection": {
             "title": "ربط ولي أمر",
@@ -622,6 +665,1416 @@
         }
       }
     },
+    "courseManagement": {
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "courseManagement": "إدارة المسارات والاعتمادات",
+        "create": "إضافة دورة",
+        "reject": "رفض الدورة التدريبية",
+        "rejectionDetails": "تفاصيل قرار الرفض"
+      },
+      "page": {
+        "title": "إدارة المسارات والاعتمادات",
+        "description": "راجع المساقات الجديدة بانتظار الموافقة وتحكم بحالة النشر.",
+        "addCourse": "إضافة دورة جديدة",
+        "export": "تصدير التقرير"
+      },
+      "stats": {
+        "loadWarning": "تعذّر تحديث مؤشرات الاعتماد. يُعرض الجدول أدناه كما هو.",
+        "totalCourses": {
+          "label": "إجمالي المساقات",
+          "indicator": "+12%"
+        },
+        "pendingApproval": {
+          "label": "بانتظار الموافقة",
+          "indicator": "هام"
+        },
+        "activeLearners": {
+          "label": "المتعلمون النشطون",
+          "indicator": "+25%"
+        },
+        "monthlyRevenue": {
+          "label": "إجمالي الإيرادات",
+          "indicator": "إجمالي الشهر"
+        },
+        "learningPathsTotal": {
+          "label": "إجمالي المسارات",
+          "indicator": "المراجعة"
+        },
+        "learningPathsPending": {
+          "label": "مسارات معلّقة",
+          "indicator": "تحتاج مراجعة"
+        },
+        "learningPathsApproved": {
+          "label": "مسارات معتمدة",
+          "indicator": "منشورة"
+        },
+        "learningPathsRejected": {
+          "label": "مسارات مرفوضة",
+          "indicator": "تتطلّب تصحيحاً"
+        },
+        "learningPathsDraft": {
+          "label": "مسارات مسوّدة",
+          "indicator": "غير منشورة"
+        }
+      },
+      "filters": {
+        "openAdvanced": "فتح الفلاتر المتقدمة",
+        "stages": {
+          "label": "المرحلة",
+          "all": "جميع المراحل"
+        },
+        "subjects": {
+          "label": "المادة",
+          "all": "جميع المواد"
+        },
+        "statuses": {
+          "label": "الحالة",
+          "all": "جميع الحالات"
+        },
+        "search": {
+          "label": "بحث سريع",
+          "placeholder": "البحث حسب عنوان المساق أو المعلم..."
+        }
+      },
+      "table": {
+        "title": "قائمة المسارات",
+        "loading": "جارٍ تحميل المسارات...",
+        "empty": "لا توجد مسارات مطابقة.",
+        "loadError": "تعذر تحميل المسارات. حاول مرة أخرى.",
+        "columns": {
+          "title": "عنوان المسار",
+          "teacher": "المعلم",
+          "subject": "المادة / المرحلة",
+          "access": "نوع الوصول",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "actions": {
+          "approve": "اعتماد",
+          "reject": "رفض",
+          "rejectionDetails": "تفاصيل الرفض",
+          "delete": "حذف المسار",
+          "edit": "تعديل المسار",
+          "view": "عرض المسار",
+          "more": "إجراءات إضافية"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} مساق",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        },
+        "confirmDelete": "حذف هذا المسار؟ هذا الإجراء لا يمكن التراجع عنه."
+      },
+      "access": {
+        "subscription": "اشتراك",
+        "free": "مجاني",
+        "paid": "مدفوع",
+        "unlisted": "غير محدد"
+      },
+      "status": {
+        "pending": "قيد الانتظار",
+        "approved": "معتمد",
+        "rejected": "مرفوض",
+        "draft": "مسودة"
+      },
+      "messages": {
+        "approved": "تم اعتماد الدورة بنجاح.",
+        "rejected": "تم رفض الدورة وإرسال الملاحظات.",
+        "deleted": "تم حذف المسار التعليمي."
+      },
+      "review": {
+        "loading": "جارٍ تحميل مراجعة الدورة...",
+        "notFound": "تعذر العثور على الدورة المطلوبة.",
+        "title": "مراجعة المسار التعليمي",
+        "description": "راجع المحتوى والمنهج قبل اعتماد النشر أو إرسال الرفض.",
+        "teacherLabel": "مدرس الدورة",
+        "actions": {
+          "viewPath": "عرض المرحلة التعليمية",
+          "editCourse": "تعديل الدورة",
+          "archive": "أرشفة"
+        },
+        "adminStats": {
+          "title": "إحصائيات الإدارة",
+          "students": "طالب مسجل حالياً",
+          "revenue": "إجمالي الإيرادات (SAR)",
+          "completion": "معدل إكمال الطلاب"
+        },
+        "decision": {
+          "title": "اتخاذ قرار المراجعة",
+          "placeholder": "أضف ملاحظات المراجعة في حال الرفض...",
+          "approve": "اعتماد ونشر المقرر",
+          "reject": "رفض المقرر"
+        },
+        "metrics": {
+          "subject": "المادة",
+          "stage": "المرحلة",
+          "lessons": "إجمالي الدروس",
+          "price": "السعر"
+        },
+        "curriculum": {
+          "title": "المسار التعليمي",
+          "empty": "تُدار محطّات المسار من محرّر الرحلات. لم يتوفر محتوى تفصيلي في شاشة الاعتماد هذه."
+        }
+      },
+      "create": {
+        "title": "إعداد دورة تعليمية جديدة",
+        "description": "قم بتعبئة التفاصيل اللازمة لإطلاق رحلتك التعليمية القادمة.",
+        "actions": {
+          "saveDraft": "حفظ كمسودة",
+          "saveCourse": "حفظ الدورة التعليمية",
+          "saving": "جارٍ الحفظ..."
+        },
+        "sections": {
+          "basic": "المعلومات الأساسية",
+          "pricing": "التسعير والوصول"
+        },
+        "fields": {
+          "title": "عنوان الدورة",
+          "description": "وصف الدورة",
+          "grade": "الصف الدراسي (Grade)",
+          "term": "الفصل الدراسي (Term)",
+          "teacher": "المعلم",
+          "subject": "المادة",
+          "basePrice": "السعر الأصلي (SAR)",
+          "offerPrice": "السعر بعد الخصم (SAR)"
+        },
+        "placeholders": {
+          "title": "مثال: الرياضيات المتقدمة للصف الثاني ثانوي",
+          "description": "اكتب وصفاً شاملاً للأهداف والمخرجات التعليمية..."
+        },
+        "options": {
+          "grade": {
+            "secondary2": "الثاني ثانوي"
+          },
+          "term": {
+            "term2": "الفصل الدراسي الثاني"
+          },
+          "teacher": {
+            "teacher-ahmed": "د. أحمد الرافعي"
+          },
+          "subject": {
+            "mathematics": "الرياضيات"
+          }
+        },
+        "pricing": {
+          "free": "مجانية",
+          "oneTime": "مدفوعة (لمرة واحدة)",
+          "monthly": "اشتراك شهري"
+        },
+        "upload": {
+          "title": "اسحب الصورة هنا أو تصفح الملفات",
+          "hint": "JPG أو PNG بنسبة 16:9 وبحجم لا يتجاوز 5MB",
+          "uploading": "جارٍ تجهيز معاينة الصورة...",
+          "previewAlt": "معاينة غلاف الدورة",
+          "invalidType": "يرجى اختيار ملف صورة صالح.",
+          "tooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
+          "readError": "تعذر تحميل الصورة المحددة."
+        },
+        "preview": {
+          "title": "معاينة الملخص",
+          "titleFallback": "اسم الدورة",
+          "subject": "المادة",
+          "grade": "الصف",
+          "lessons": "درس",
+          "paths": "مسار",
+          "viewPath": "عرض المسار التعليمي",
+          "typeOfAccess": "نوع الوصول",
+          "free": "مجاني",
+          "paid": "مدفوع"
+        },
+        "steps": {
+          "paths": "مسارات التعلم",
+          "pricing": "التسعير والوصول",
+          "basic": "المعلومات الأساسية"
+        },
+        "tip": "نصيحة الخبراء: إضافة صورة غلاف جذابة يزيد من معدل التسجيل والمشاركة.",
+        "messages": {
+          "error": "تعذر إنشاء الدورة. حاول مرة أخرى."
+        },
+        "success": {
+          "title": "تم إنشاء الكورس بنجاح!",
+          "description": "اكتمل إعداد المسار الآن في شكل مسودة. يمكنك إضافة محطات التعلم قبل النشر.",
+          "info": "يمكنك مشاهدته للمعاينة وإعادة ترتيب المحطات لضمان تجربة تعلم ناجحة.",
+          "later": "المتابعة لاحقاً",
+          "startPaths": "ابدأ إضافة المسارات"
+        }
+      },
+      "reject": {
+        "loading": "جارٍ تحميل بيانات الدورة...",
+        "title": "مراجعة ورفض المحتوى",
+        "description": "يرجى توضيح أسباب الرفض بدقة لمساعدة المعلم على تحسين المحتوى.",
+        "validation": "اختر سبباً واحداً على الأقل واكتب ملاحظة لا تقل عن 10 أحرف.",
+        "form": {
+          "title": "تفاصيل قرار الرفض",
+          "reasonsLabel": "أسباب الرفض الشائعة (يمكنك اختيار أكثر من سبب)",
+          "notesLabel": "شرح تفصيلي للملاحظات",
+          "notesPlaceholder": "اكتب هنا التوجيهات الدقيقة التي ستصل للمعلم لمساعدته في تعديل الدورة وإعادة تقديمها...",
+          "minHint": "الحد الأدنى للقبول هو 10 أحرف"
+        },
+        "reasons": {
+          "contentQuality": "جودة المحتوى",
+          "incompleteMaterials": "مواد غير مكتملة",
+          "technicalIssues": "مشاكل تقنية بالصوت/الصورة",
+          "policyConflict": "تعارض مع سياسة المحتوى",
+          "copyrightIssue": "مخالفة حقوق الملكية"
+        },
+        "actions": {
+          "cancel": "إلغاء العملية",
+          "submitting": "جارٍ تأكيد الرفض...",
+          "confirm": "تأكيد رفض الدورة"
+        },
+        "after": {
+          "title": "ماذا يحدث بعد النقر على \"تأكيد الرفض\"؟",
+          "body": "سيتم إرسال بريد إلكتروني رسمي ومفصل للمعلم يتضمن كافة ملاحظاتك، وستتحول حالة الدورة فوراً إلى مرفوضة."
+        }
+      },
+      "rejectionDetails": {
+        "loading": "جارٍ تحميل تفاصيل الرفض...",
+        "title": "تفاصيل قرار الرفض",
+        "actions": {
+          "editDecision": "تعديل القرار",
+          "contactTeacher": "تواصل مع المعلم",
+          "reReview": "إعادة التقييم الشامل"
+        },
+        "reasons": {
+          "title": "أسباب الرفض المحددة",
+          "help": "تم اختيار هذه الأسباب بناءً على المعايير الأكاديمية للمنصة."
+        },
+        "timeline": {
+          "title": "سجل العمليات",
+          "received": {
+            "title": "تم استلام الطلب",
+            "time": "12 أكتوبر 2023 - 09:30 ص"
+          },
+          "reviewStarted": {
+            "title": "بدء عملية المراجعة",
+            "time": "14 أكتوبر 2023 - 02:15 م"
+          },
+          "decisionIssued": {
+            "title": "تم إصدار قرار الرفض",
+            "time": "18 أكتوبر 2023 - 11:00 ص"
+          }
+        },
+        "notes": {
+          "title": "ملاحظات المراجع التفصيلية",
+          "reviewerRole": "عضو لجنة الاعتماد"
+        }
+      }
+    },
+    "interactiveBooks": {
+      "page": {
+        "title": "إدارة الكتب التفاعلية",
+        "description": "قم بإنشاء وتعديل ومراقبة الكتب التفاعلية الخاصة بك.",
+        "addBook": "إضافة كتاب تفاعلي"
+      },
+      "stats": {
+        "totalBooks": {
+          "label": "إجمالي الكتب التفاعلية",
+          "indicator": "+12%"
+        },
+        "activeReaders": {
+          "label": "قراء نشطون اليوم",
+          "indicator": "+24%"
+        },
+        "readingTime": {
+          "label": "متوسط القراءة لكل طالب",
+          "indicator": "-2%",
+          "value": "{value} دقيقة/يوم"
+        }
+      },
+      "table": {
+        "title": "قائمة الكتب التفاعلية",
+        "columns": {
+          "name": "اسم الكتاب",
+          "subject": "المادة",
+          "grade": "الصف",
+          "pages": "الصفحات",
+          "hotspots": "النقاط التفاعلية (نشط / الإجمالي)",
+          "views": "المشاهدات",
+          "status": "الحالة",
+          "createdAt": "تاريخ الإضافة",
+          "actions": "الإجراءات"
+        },
+        "status": {
+          "published": "منشور",
+          "draft": "مسودة"
+        },
+        "actions": {
+          "openFilter": "تصفية",
+          "view": "عرض الكتاب",
+          "edit": "تعديل الكتاب",
+          "delete": "حذف الكتاب"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} كتاباً",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        },
+        "loading": "جاري تحميل الكتب التفاعلية…",
+        "empty": "لا توجد كتب تفاعلية بعد.",
+        "loadError": "تعذر تحميل الكتب التفاعلية. حاول مرة أخرى."
+      },
+      "addModal": {
+        "title": "إضافة كتاب تفاعلي جديد",
+        "close": "إغلاق",
+        "fields": {
+          "bookName": {
+            "label": "اسم الكتاب",
+            "placeholder": "مثال: الرياضيات المتقدمة - الفصل الأول"
+          },
+          "pdf": {
+            "label": "رفع ملف PDF",
+            "hint": "اضغط لرفع الملف أو اسحب وأفلت",
+            "subhint": "الحد الأقصى لحجم الملف 50 ميجابايت (PDF فقط)"
+          },
+          "subject": {
+            "label": "اختيار المادة",
+            "options": {
+              "math": "الرياضيات",
+              "arabic": "لغة عربية",
+              "science": "العلوم"
+            }
+          },
+          "grade": {
+            "label": "اختيار الصف الدراسي",
+            "options": {
+              "grade10": "الصف العاشر",
+              "grade11": "الصف الحادي عشر",
+              "grade12": "الصف الثاني عشر"
+            }
+          },
+          "courseLink": {
+            "label": "ربط بكورس",
+            "badge": "إجباري",
+            "placeholder": "...أدخل رابط الكورس هنا"
+          },
+          "status": {
+            "title": "حالة الكتاب",
+            "description": "حدد ما إذا كان الكتاب متاحاً للطلاب فوراً",
+            "draft": "مسودة",
+            "published": "منشور"
+          }
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "submit": "إضافة الكتاب"
+        }
+      },
+      "filterModal": {
+        "title": "فلترة الكتب التفاعلية",
+        "close": "إغلاق",
+        "grades": {
+          "sec1": "أولى ثانوي",
+          "sec2": "ثانية ثانوي",
+          "sec3": "ثالثة ثانوي"
+        },
+        "subjects": {
+          "label": "المادة",
+          "placeholder": "اختر المواد...",
+          "removeTag": "إزالة المادة",
+          "tags": {
+            "math": "رياضيات",
+            "arabic": "لغة عربية"
+          }
+        },
+        "grade": {
+          "label": "الصف الدراسي"
+        },
+        "school": {
+          "label": "المدرسة",
+          "placeholder": "ابحث عن مدرسة...",
+          "removeTag": "إزالة المدرسة",
+          "tags": {
+            "schoolA": "مدرسة المتفوقين",
+            "schoolB": "مدرسة النيل"
+          }
+        },
+        "bookStatus": {
+          "label": "حالة الكتاب",
+          "options": {
+            "draft": "مسودة",
+            "published": "منشور",
+            "hidden": "مخفي",
+            "editing": "قيد التعديل"
+          }
+        },
+        "interaction": {
+          "label": "التفاعل داخل الكتاب",
+          "none": "بدون نقاط تفاعلية",
+          "hasPoints": "يحتوي على نقاط تفاعلية",
+          "moreThan10": "أكثر من 10 نقاط"
+        },
+        "usage": {
+          "label": "الاستخدام",
+          "mostReadWeek": "الأكثر قراءة هذا الأسبوع",
+          "mostUsed": "الأكثر استخداماً"
+        },
+        "dateRange": {
+          "label": "تاريخ الإضافة",
+          "from": "من تاريخ",
+          "to": "إلى تاريخ"
+        },
+        "actions": {
+          "apply": "تطبيق الفلترة",
+          "clear": "مسح الفلاتر"
+        }
+      },
+      "rows": {
+        "books": {
+          "advancedBiology": "الأحياء المتقدمة",
+          "advancedPhysics": "الفيزياء المتقدمة",
+          "advancedChemistry": "الكيمياء المتقدمة"
+        },
+        "subjects": {
+          "science": "العلوم"
+        },
+        "grades": {
+          "grade10": "العاشر"
+        }
+      },
+      "managePage": {
+        "title": "إدارة الكتاب التفاعلي",
+        "editTitle": "تعديل الكتاب التفاعلي",
+        "description": "مراقبة الجلسات الحالية وجدولة المحتوى التعليمي المباشر",
+        "breadcrumbs": {
+          "dashboard": "لوحة التحكم",
+          "content": "إدارة المحتوى",
+          "editBook": "تعديل الكتاب"
+        },
+        "edit": {
+          "loadError": "تعذر تحميل هذا الكتاب. أعد المحاولة من القائمة.",
+          "notFound": "لم يتم العثور على هذا الكتاب.",
+          "courseContext": "{course} · {grade}"
+        },
+        "actions": {
+          "addBook": "إضافة كتاب جديد"
+        },
+        "config": {
+          "subjectLabel": "اختر المادة الدراسية",
+          "subjectOptions": {
+            "chemistryGrade2": "أساسيات الكيمياء - الصف الثاني الثانوي"
+          },
+          "pdfLabel": "ملف الكتاب (PDF)",
+          "changeFile": "تغيير الملف"
+        },
+        "viewer": {
+          "pageOf": "الصفحة {current} من {total}",
+          "zoomIn": "تكبير",
+          "zoomOut": "تصغير",
+          "addInteractionPoint": "إضافة نقطة تفاعل",
+          "chapterTitle": "الفصل الثالث: الروابط الكيميائية",
+          "overlayCaption": "رسم توضيحي لجزيء الميثان"
+        },
+        "points": {
+          "title": "نقاط التفاعل الحالية",
+          "subtitle": "قائمة العناصر التفاعلية المضافة لهذه الصفحة",
+          "badge": "{count} نقطة",
+          "type": {
+            "video": "فيديو"
+          },
+          "items": {
+            "polarBond": {
+              "title": "شرح الرابطة القطبية",
+              "page": "صفحة 42"
+            }
+          },
+          "visibilityLabel": "الحالة:",
+          "visible": "مرئي للطلاب",
+          "hidden": "مخفي عن الطلاب",
+          "deletePoint": "حذف النقطة",
+          "editPoint": "تعديل النقطة",
+          "addNew": "إضافة نقطة جديدة"
+        },
+        "tip": {
+          "body": "أثبتت الدراسات أن إضافة فيديوهات لا تتجاوز 3 دقائق على نقاط التفاعل تزيد من استيعاب الطالب للمفاهيم الصعبة بنسبة 40%."
+        }
+      }
+    },
+    "liveBroadcast": {
+      "list": {
+        "page": {
+          "title": "إدارة البث المباشر والتسجيلات",
+          "description": "مراقبة الجلسات الحالية وجدولة المحتوى التعليمي المباشر",
+          "breadcrumb": "إدارة البث المباشر",
+          "scheduleNew": "جدولة بث جديد"
+        },
+        "stats": {
+          "totalSessions": {
+            "label": "إجمالي الجلسات",
+            "indicator": "+12%"
+          },
+          "liveNow": {
+            "label": "قيد البث الآن",
+            "indicator": "مباشر"
+          },
+          "upcoming": {
+            "label": "جلسات قادمة",
+            "indicator": "مجدولة"
+          },
+          "recorded": {
+            "label": "مسجلة",
+            "indicator": "متاحة"
+          }
+        },
+        "table": {
+          "title": "قائمة الجلسات",
+          "columns": {
+            "session": "اسم الجلسة",
+            "course": "الكورس / القسم",
+            "teacher": "المدرس",
+            "datetime": "التاريخ والوقت",
+            "duration": "المدة",
+            "status": "الحالة",
+            "recording": "التسجيل",
+            "actions": "الإجراءات"
+          },
+          "status": {
+            "live": "قيد البث",
+            "upcoming": "قادمة",
+            "ended": "انتهت"
+          },
+          "recording": {
+            "uploaded": "تم الرفع"
+          },
+          "actions": {
+            "export": "تصدير",
+            "filter": "تصفية",
+            "enter": "دخول الجلسة",
+            "edit": "تعديل",
+            "view": "عرض",
+            "delete": "حذف"
+          },
+          "pagination": {
+            "summary": "عرض {visible} من أصل {total} جلسة",
+            "previous": "الصفحة السابقة",
+            "next": "الصفحة التالية"
+          }
+        },
+        "rows": {
+          "organic": {
+            "title": "أساسيات الكيمياء العضوية",
+            "subtitle": "كيمياء المرحلة الثانوية",
+            "course": "الكيمياء — الصف الثاني الثانوي"
+          },
+          "biology": {
+            "title": "مراجعة الأحياء",
+            "subtitle": "تركيب الخلية",
+            "course": "الأحياء — الصف الأول الثانوي"
+          },
+          "math": {
+            "title": "أساسيات الرياضيات",
+            "subtitle": "مراجعة الجبر",
+            "course": "الرياضيات — الصف العاشر"
+          },
+          "teacher1": "د. أميرة منصور",
+          "teacher2": "د. سارة خالد",
+          "teacher3": "أ. هاني علي",
+          "sampleDate": "5 أبريل 2025",
+          "sampleTime": "02:00 م",
+          "sampleDate2": "6 أبريل 2025",
+          "sampleTime2": "10:00 ص",
+          "sampleDate3": "1 مارس 2025",
+          "sampleTime3": "04:30 م",
+          "duration1": "60 د",
+          "duration2": "45 د",
+          "duration3": "90 د"
+        }
+      },
+      "create": {
+        "page": {
+          "title": "إنشاء جلسة بث جديدة",
+          "description": "اضبط تفاصيل الجلسة والإشعارات وإعدادات التسجيل.",
+          "breadcrumb": "إنشاء جلسة",
+          "saveDraft": "حفظ البث"
+        },
+        "form": {
+          "title": "إنشاء جلسة بث جديدة",
+          "subtitle": "عن البيانات لجدولة حصتك المباشرة.",
+          "sessionTitle": "عنوان الجلسة",
+          "sessionTitlePlaceholder": "مثال: مراجعة فيزياء المرحلة الثانوية العامة",
+          "teacher": "اسم المدرس",
+          "teacherPlaceholder": "د. أحمد كمال",
+          "meetingLink": "رابط الاجتماع",
+          "meetingLinkPlaceholder": "https://zoom.us/j/...",
+          "subject": "المادة",
+          "subjectPlaceholder": "اختر المادة...",
+          "course": "الكورس",
+          "coursePlaceholder": "اختر الكورس...",
+          "startTime": "تاريخ ووقت البدء",
+          "duration": "المدة (بالدقائق)",
+          "notifyTitle": "إرسال إشعار للطلاب",
+          "notifyDescription": "إشعار الطلاب عبر التطبيق والبريد",
+          "countdownTitle": "عرض مؤقت العد التنازلي",
+          "countdownDescription": "عرض وقت الانتظار قبل بدء الجلسة",
+          "submit": "جدولة البث المباشر"
+        },
+        "recording": {
+          "title": "إعدادات التسجيل",
+          "hint": "اختر طريقة نشر التسجيل بعد الجلسة.",
+          "autoTitle": "ربط تلقائي",
+          "autoDescription": "رفع التسجيل إلى المكتبة فور توفره.",
+          "manualTitle": "ربط يدوي",
+          "manualDescription": "مراجعة الفيديو قبل النشر.",
+          "saveSettings": "حفظ الإعدادات"
+        },
+        "sessions": {
+          "upcoming": "جلسات قادمة",
+          "finished": "جلسات منتهية",
+          "liveNow": "يوجد بث مباشر الآن"
+        },
+        "cards": {
+          "liveBadge": "مباشر الآن",
+          "liveTitle": "الكيمياء العضوية…",
+          "teacher1": "د. أميرة منصور",
+          "views": "1,240 مشاهدة",
+          "enterLive": "دخول البث",
+          "upcomingBadge": "قادمة",
+          "upcomingTitle": "مراجعة الأحياء…",
+          "teacher2": "د. سارة خالد",
+          "remaining": "متبقي 4 ساعات",
+          "finishedBadge": "انتهت",
+          "finishedTitle": "أساسيات الرياضيات",
+          "recordingLinked": "تم ربط التسجيل بنجاح",
+          "watchRecording": "مشاهدة التسجيل"
+        }
+      },
+      "watch": {
+        "page": {
+          "title": "مشاهدة بث مسجل",
+          "subtitle": "مشاهدة بث أساسيات الكيمياء العضوية",
+          "breadcrumb": "مشاهدة بث مسجل"
+        },
+        "player": {
+          "play": "تشغيل الفيديو"
+        },
+        "lesson": {
+          "category": "كيمياء",
+          "title": "الدرس 3: أساسيات الكيمياء العضوية",
+          "instructorName": "أ. محمد صبحي",
+          "instructorRole": "خبير الكيمياء",
+          "metaDate": "14 أكتوبر 2023",
+          "metaDuration": "45:20 دقيقة",
+          "metaViews": "1.2 ألف مشاهدة"
+        },
+        "resources": {
+          "title": "المصادر والملفات",
+          "file1": "ملخص الكيمياء العضوية.pdf",
+          "size1": "2.4 ميجابايت",
+          "file2": "شرائح الفصل.pptx",
+          "size2": "5.1 ميجابايت",
+          "download": "تنزيل الملف"
+        },
+        "notes": {
+          "title": "ملاحظاتي الدراسية",
+          "badge": "3 ملاحظات",
+          "subtitle": "سجل أفكارك مرتبطة بوقت الدرس",
+          "time1": "12:45",
+          "time2": "18:10",
+          "time3": "32:45",
+          "body1": "تتشكل الروابط القطبية عندما يكون توزيع الإلكترونات غير متساوٍ بين الذرات.",
+          "body2": "راجع تدرج السالبية الكهربائية في الجدول الدوري.",
+          "body3": "تدرب على تسمية المركبات العضوية البسيطة للاختبار.",
+          "delete": "حذف الملاحظة",
+          "placeholder": "اكتب ملاحظتك هنا...",
+          "currentTime": "الوقت الحالي: 32:45",
+          "save": "حفظ الملاحظة"
+        }
+      }
+    },
+    "chatGroups": {
+      "title": "مجموعات الدردشة",
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "chatGroups": "مجموعات الدردشة"
+      },
+      "stats": {
+        "totalGroups": {
+          "label": "إجمالي المجموعات",
+          "indicator": "+5 هذا الشهر"
+        },
+        "activeMessages": {
+          "label": "الرسائل النشطة اليوم",
+          "indicator": "مرتفع"
+        },
+        "interactionRate": {
+          "label": "معدل التفاعل",
+          "indicator": "ممتاز"
+        },
+        "activeNow": {
+          "label": "نشط الآن",
+          "indicator": "مباشر"
+        }
+      },
+      "filters": {
+        "statuses": {
+          "label": "الحالة",
+          "all": "جميع الحالات",
+          "active": "نشط",
+          "paused": "متوقف"
+        },
+        "grades": {
+          "label": "الصف",
+          "all": "جميع الصفوف",
+          "grade1": "الصف الأول",
+          "grade2": "الصف الثاني",
+          "grade3": "الصف الثالث",
+          "grade4": "الصف الرابع",
+          "grade5": "الصف الخامس",
+          "grade6": "الصف السادس",
+          "grade7": "الصف السابع",
+          "grade8": "الصف الثامن",
+          "grade9": "الصف التاسع",
+          "grade10": "الصف العاشر",
+          "grade11": "الصف الحادي عشر",
+          "grade12": "الصف الثاني عشر"
+        },
+        "subjects": {
+          "label": "المادة",
+          "all": "جميع المواد",
+          "arabic": "اللغة العربية",
+          "english": "اللغة الإنجليزية",
+          "math": "الرياضيات",
+          "science": "العلوم",
+          "physics": "الفيزياء",
+          "chemistry": "الكيمياء",
+          "biology": "الأحياء",
+          "history": "التاريخ",
+          "geography": "الجغرافيا"
+        },
+        "search": {
+          "label": "بحث سريع"
+        }
+      },
+      "table": {
+        "title": "قائمة المجموعات",
+        "searchPlaceholder": "بحث سريع...",
+        "addButton": "إضافة مجموعة",
+        "columns": {
+          "groupName": "اسم المجموعة",
+          "studentCount": "عدد الطلاب",
+          "chatMode": "وضع الدردشة",
+          "attachments": "المرفقات",
+          "status": "الحالة",
+          "lastActivity": "آخر نشاط",
+          "actions": "الإجراءات"
+        },
+        "pagination": {
+          "showing": "عرض {visible} من أصل {total}",
+          "prev": "السابق",
+          "next": "التالي",
+          "page": "{current} من {total}"
+        }
+      },
+      "chatModes": {
+        "everyone": "مفتوح للجميع",
+        "teacherOnly": "المعلم فقط"
+      },
+      "statuses": {
+        "active": "نشط الآن",
+        "paused": "متوقف مؤقتاً"
+      },
+      "rows": {
+        "lastActivity": {
+          "twoMinutes": "منذ دقيقتين",
+          "fiveMinutes": "منذ 5 دقائق",
+          "tenMinutes": "منذ 10 دقائق",
+          "yesterday": "أمس",
+          "threeDays": "منذ 3 أيام"
+        }
+      },
+      "actions": {
+        "view": "عرض",
+        "settings": "إعدادات",
+        "pause": "إيقاف مؤقت",
+        "resume": "استئناف",
+        "delete": "حذف"
+      },
+      "deleteModal": {
+        "title": "حذف المجموعة",
+        "description": "هل أنت متأكد من حذف هذه المجموعة؟ سيتم حذف جميع الرسائل والمرفقات بشكل نهائي.",
+        "confirm": "تأكيد الحذف",
+        "cancel": "إلغاء"
+      },
+      "addPage": {
+        "title": "إضافة مجموعة جديدة",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "chatGroups": "مجموعات الدردشة",
+          "add": "إضافة مجموعة"
+        },
+        "sections": {
+          "identity": {
+            "title": "هوية المجموعة",
+            "subtitle": "المعلم المسؤول واسم المجموعة"
+          },
+          "sendPermissions": {
+            "title": "صلاحيات الإرسال",
+            "subtitle": "من يمكنه إرسال الرسائل في المجموعة"
+          },
+          "attachments": {
+            "title": "المرفقات",
+            "subtitle": "أنواع الملفات المسموح بها"
+          },
+          "linkedCourse": {
+            "title": "الربط بالمحتوى التعليمي",
+            "subtitle": "ربط المجموعة بكورس أو مادة دراسية"
+          },
+          "parentMode": {
+            "title": "وضع أولياء الأمور",
+            "subtitle": "صلاحيات المشاهدة لأولياء الأمور"
+          }
+        },
+        "fields": {
+          "teacher": {
+            "label": "اختر المعلم",
+            "placeholder": "اختر المعلم المسؤول عن المجموعة"
+          },
+          "groupName": {
+            "label": "اسم المجموعة",
+            "placeholder": "أدخل اسم المجموعة"
+          },
+          "chatMode": {
+            "everyone": "الجميع يمكنهم الإرسال",
+            "everyoneDesc": "الطلاب والمعلم يمكنهم إرسال الرسائل",
+            "teacherOnly": "المعلم فقط (وضع البث)",
+            "teacherOnlyDesc": "المعلم فقط يمكنه إرسال الرسائل"
+          },
+          "media": {
+            "files": "السماح بالملفات",
+            "images": "السماح بالصور",
+            "pdf": "السماح بملفات PDF",
+            "blockAll": "حظر جميع المرفقات",
+            "blockAllDesc": "سيتم حظر جميع أنواع المرفقات في هذه المجموعة"
+          },
+          "linkedCourse": {
+            "toggle": "ربط بكورس / مادة",
+            "toggleDesc": "ربط هذه المجموعة بمحتوى تعليمي محدد",
+            "urlLabel": "رابط الكورس",
+            "urlPlaceholder": "أدخل رابط الكورس من منصة التعليم",
+            "verify": "تحقق",
+            "verifying": "جاري التحقق...",
+            "verifiedMessage": "تم التحقق من الرابط بنجاح",
+            "linkedCourseLabel": "الكورس المرتبط"
+          },
+          "parentMode": {
+            "label": "السماح للأولياء بالمشاهدة فقط",
+            "description": "أولياء الأمور يمكنهم قراءة الرسائل دون إمكانية الرد"
+          }
+        },
+        "viewChangeLog": "عرض سجل التغييرات السابقة",
+        "buttons": {
+          "cancel": "إلغاء",
+          "save": "حفظ المجموعة"
+        }
+      },
+      "editPage": {
+        "titleWithName": "تعديل مجموعة {name}",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "chatGroups": "مجموعات الدردشة",
+          "edit": "تعديل"
+        },
+        "sections": {
+          "identity": {
+            "title": "هوية المجموعة",
+            "subtitle": "صورة المجموعة والمعلومات الأساسية"
+          },
+          "linkedCourse": {
+            "title": "الربط مع المساقات",
+            "subtitle": "ربط المجموعة بالمحتوى التعليمي"
+          },
+          "controlPrivacy": {
+            "title": "التحكم والخصوصية",
+            "subtitle": "إعدادات الإرسال والمرفقات"
+          }
+        },
+        "fields": {
+          "image": {
+            "upload": "رفع صورة",
+            "change": "تغيير الصورة",
+            "hint": "يفضل استخدام صور عالية الجودة بصيغة PNG أو JPG (الحد الأقصى 2 ميجابايت)."
+          },
+          "groupName": {
+            "label": "اسم المجموعة",
+            "placeholder": "أدخل اسم المجموعة"
+          },
+          "subject": {
+            "label": "المادة الدراسية",
+            "placeholder": "اختر المادة"
+          },
+          "grade": {
+            "label": "الصف الدراسي",
+            "placeholder": "اختر الصف"
+          },
+          "description": {
+            "label": "وصف المجموعة",
+            "placeholder": "أدخل وصفاً مختصراً للمجموعة..."
+          },
+          "linkedCourse": {
+            "intro": "يمكنك ربط هذه المجموعة بمساق تعليمي أو وحدة دراسية محددة لمشاركة الموارد تلقائياً مع الطلاب.",
+            "toggle": "ربط بكورس",
+            "toggleDesc": "ربط هذه المجموعة بكورس تعليمي",
+            "urlLabel": "رابط المساق (LMS URL)",
+            "urlPlaceholder": "my.scholar.com/courses/...",
+            "verify": "تحقق",
+            "verifying": "جاري التحقق...",
+            "verifiedMessage": "الرابط موثق",
+            "linkedCourseLabel": "الكورس المرتبط",
+            "linkedListTitle": "المسارات المرتبطة",
+            "removeCourse": "إزالة من القائمة",
+            "duplicateInList": "هذا الرابط موجود بالفعل في القائمة."
+          },
+          "chatMode": {
+            "title": "صلاحيات الإرسال",
+            "everyone": "الجميع يمكنهم الإرسال",
+            "everyoneDesc": "الطلاب والمعلم يمكنهم المشاركة",
+            "teacherOnly": "المعلم فقط",
+            "teacherOnlyDesc": "وضع البث - المعلم فقط يرسل"
+          },
+          "media": {
+            "title": "الوسائط المسموحة",
+            "files": "الملفات",
+            "images": "الصور",
+            "pdf": "ملفات PDF",
+            "webLinks": "روابط الويب",
+            "blockAll": "حظر الكل",
+            "blockAllDesc": "سيتم حظر جميع المرفقات"
+          },
+          "parentMode": {
+            "label": "وضع أولياء الأمور",
+            "description": "السماح للأولياء بالمشاهدة فقط (للقراءة)"
+          }
+        },
+        "subjects": {
+          "arabic": "اللغة العربية",
+          "english": "اللغة الإنجليزية",
+          "math": "الرياضيات",
+          "science": "العلوم",
+          "physics": "الفيزياء",
+          "chemistry": "الكيمياء",
+          "biology": "الأحياء",
+          "history": "التاريخ",
+          "geography": "الجغرافيا"
+        },
+        "grades": {
+          "grade1": "الصف الأول",
+          "grade2": "الصف الثاني",
+          "grade3": "الصف الثالث",
+          "grade4": "الصف الرابع",
+          "grade5": "الصف الخامس",
+          "grade6": "الصف السادس",
+          "grade7": "الصف السابع",
+          "grade8": "الصف الثامن",
+          "grade9": "الصف التاسع",
+          "grade10": "الصف العاشر",
+          "grade11": "الصف الحادي عشر",
+          "grade12": "الصف الثاني عشر"
+        },
+        "buttons": {
+          "cancel": "إلغاء",
+          "save": "حفظ التعديلات"
+        }
+      }
+    },
+    "articleEditor": {
+      "page": {
+        "title": "محرر المقالات",
+        "description": "متابعة تدفق مراجعة المقالات والموافقة وإجراءات الإشراف."
+      },
+      "stats": {
+        "totalArticles": {
+          "label": "إجمالي المقالات"
+        },
+        "pendingReview": {
+          "label": "قيد المراجعة"
+        },
+        "publishedToday": {
+          "label": "نُشر اليوم"
+        },
+        "reports": {
+          "label": "بلاغات"
+        }
+      },
+      "filters": {
+        "status": {
+          "label": "الحالة",
+          "all": "الكل",
+          "needsEdits": "يحتاج تعديلات",
+          "hidden": "مخفي",
+          "removed": "محذوف"
+        },
+        "schoolsLoadError": "تعذر تحميل قائمة المدارس للتصفية.",
+        "authorsLoadError": "تعذر تحميل قائمة المؤلفين للتصفية.",
+        "school": {
+          "label": "المدرسة",
+          "all": "كل المدارس",
+          "afaq": "مدرسة آفاق الدولية",
+          "future": "مدرسة رؤية المستقبل"
+        },
+        "author": {
+          "label": "المؤلف",
+          "all": "كل المؤلفين",
+          "sara": "سارة أحمد",
+          "mohamed": "محمد علي"
+        },
+        "search": {
+          "label": "بحث سريع",
+          "placeholder": "البحث في عناوين المقالات..."
+        }
+      },
+      "table": {
+        "title": "محرر المقالات",
+        "columns": {
+          "title": "عنوان المقال",
+          "author": "المؤلف",
+          "school": "المدرسة",
+          "interaction": "التفاعل",
+          "publishDate": "تاريخ النشر",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "row": {
+          "readTime": "{minutes} دقائق قراءة"
+        },
+        "status": {
+          "published": "تم النشر",
+          "pendingReview": "قيد المراجعة",
+          "draft": "مسودة",
+          "rejected": "محذوف",
+          "needsEdits": "يحتاج تعديلات",
+          "hidden": "مخفي"
+        },
+        "actions": {
+          "more": "إجراءات المقال",
+          "approve": "موافقة",
+          "reject": "رفض",
+          "toggleVisibility": "تبديل الظهور",
+          "view": "عرض المقال",
+          "delete": "حذف المقال",
+          "hide": "إخفاء المقال من المنصة",
+          "show": "إظهار المقال على المنصة",
+          "hideSuccess": "تم إخفاء المقال.",
+          "showSuccess": "المقال مرئي مرة أخرى."
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} مقال",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        },
+        "empty": "لا توجد مقالات مطابقة للفلاتر الحالية.",
+        "loadError": "تعذر تحميل المقالات. حاول مرة أخرى."
+      },
+      "modals": {
+        "delete": {
+          "title": "حذف المقال",
+          "description": "هل أنت متأكد من رغبتك في حذف هذا المقال نهائياً؟ لا يمكن التراجع عن هذا الإجراء بعد تنفيذه.",
+          "selectedLabel": "المقال المختار:",
+          "confirm": "تأكيد الحذف",
+          "cancel": "إلغاء"
+        },
+        "reject": {
+          "title": "رفض المقال",
+          "infoBanner": "يرجى تحديد سبب رفض المقال لإعلام الكاتب بالتعديلات المطلوبة.",
+          "reasonsTitle": "سبب الرفض الرئيسي:",
+          "notesLabel": "ملاحظات إضافية (اختياري):",
+          "notesPlaceholder": "اكتب تفاصيل التعديلات المطلوبة هنا...",
+          "confirm": "تأكيد الرفض",
+          "cancel": "إلغاء",
+          "close": "إغلاق",
+          "reasons": {
+            "inaccurateInfo": "معلومات غير دقيقة",
+            "inappropriate": "محتوى غير لائق",
+            "policyViolation": "عدم الالتزام بسياسة النشر",
+            "formatWeak": "ضعف التنسيق",
+            "unspecified": "لم يتم اختيار سبب محدد"
+          }
+        }
+      },
+      "reviewPage": {
+        "loading": "جاري تحميل مراجعة المقال...",
+        "notFound": {
+          "title": "المقال غير موجود",
+          "description": "تعذر العثور على هذا المقال ضمن قائمة المراجعة الحالية.",
+          "back": "العودة إلى المقالات"
+        },
+        "header": {
+          "title": "مراجعة المقال",
+          "description": "راجع جودة المحتوى ثم اعتمد النشر أو اطلب التعديلات.",
+          "breadcrumbs": {
+            "home": "الرئيسية",
+            "articleEditor": "محرر المقالات",
+            "review": "مراجعة المقال"
+          }
+        },
+        "summary": {
+          "title": "ملخص المراجعة",
+          "completionLabel": "اكتمال المعلومات",
+          "percent": "{value}%",
+          "tagsLabel": "الوسوم",
+          "tagsEmpty": "لا توجد وسوم لهذا المقال."
+        },
+        "actions": {
+          "title": "إجراءات المراجعة",
+          "notesPlaceholder": "اكتب التعديلات المطلوبة للكاتب...",
+          "approve": "اعتماد النشر",
+          "reject": "رفض المقال",
+          "requestChanges": "طلب تعديلات",
+          "requestAdditionalChanges": "طلب تعديلات إضافية",
+          "hideArticleFromPlatform": "إخفاء المقال من المنصة",
+          "showArticleOnPlatform": "إظهار المقال على المنصة",
+          "sendDecisionToAuthor": "إرسال القرار للكاتب",
+          "requestEditsNotesRequired": "يرجى إدخال ملاحظات المراجعة قبل الإرسال.",
+          "requestEditsSuccess": "تم إرسال طلب التعديل للكاتب.",
+          "requestEditsError": "تعذر إرسال طلب التعديل. حاول مرة أخرى.",
+          "currentDecision": "القرار الحالي",
+          "decisions": {
+            "approve": "تمت الموافقة",
+            "reject": "تم الرفض",
+            "needsChanges": "بحاجة لتعديلات"
+          },
+          "reasons": {
+            "language": "جودة اللغة",
+            "grammar": "الإملاء والنحو",
+            "format": "جودة التنسيق",
+            "imageQuality": "جودة صورة الغلاف",
+            "policy": "مطابقة سياسة النشر"
+          }
+        },
+        "tips": {
+          "title": "إرشادات المراجعة",
+          "body": "يفضل أن تكون الملاحظات مختصرة وقابلة للتنفيذ مع الإشارة لفقرات محددة تحتاج تعديل."
+        },
+        "content": {
+          "pendingBadge": "قيد المراجعة",
+          "readTime": "{minutes} دقائق قراءة",
+          "coverCaption": "صورة الغلاف (نموذج معاينة في لوحة الإدارة)",
+          "keyPointsTitle": "الملامح الجوهرية في المقال"
+        },
+        "comments": {
+          "title": "التعليقات ({count})",
+          "hiddenBadge": "مخفي",
+          "actions": {
+            "delete": "حذف",
+            "hide": "إخفاء",
+            "suspendAuthor": "توقيف الكاتب"
+          },
+          "moderationError": "تعذر تنفيذ الإجراء. حاول مرة أخرى.",
+          "suspendAuthorError": "تعذر توقيف هذا المستخدم. حاول مرة أخرى.",
+          "suspendAuthorSuccess": "تم توقيف المستخدم بنجاح.",
+          "moderationModal": {
+            "title": "إجراء على التعليق",
+            "description": "هل أنت متأكد من رغبتك في اتخاذ هذا الإجراء؟ لا يمكن التراجع عن حذف التعليق.",
+            "deleteComment": "حذف التعليق",
+            "hideComment": "إخفاء التعليق",
+            "hideReasonLabel": "سبب الإخفاء (مطلوب)",
+            "hideReasonPlaceholder": "سبب مختصر يُسجَّل في سجل الإشراف…",
+            "hideReasonRequired": "يرجى إدخال سبب قبل إخفاء التعليق.",
+            "cancel": "إلغاء",
+            "submitting": "يرجى الانتظار…"
+          },
+          "suspendAuthorModal": {
+            "title": "توقيف الكاتب",
+            "subtitle": "إدارة صلاحيات الوصول للمنصة",
+            "close": "إغلاق",
+            "activeAuthorBadge": "كاتب نشط",
+            "durationLabel": "مدة التوقيف",
+            "durationDay": "يوم",
+            "durationWeek": "أسبوع",
+            "durationMonth": "شهر",
+            "durationPermanent": "دائم",
+            "reasonLabel": "سبب التوقيف",
+            "reasonPlaceholder": "يرجى كتابة التفاصيل هنا ليتم إرسالها للكاتب...",
+            "warning": "سيتم حظر وصول الكاتب للمقالات ولوحة التحكم فور تأكيد الطلب. سيتم إخطار الكاتب بالقرار عبر البريد الإلكتروني.",
+            "cancel": "إلغاء",
+            "confirm": "تأكيد التوقيف",
+            "submitting": "يرجى الانتظار…"
+          }
+        },
+        "backToList": "العودة للقائمة"
+      },
+      "requestAmendmentsPage": {
+        "loading": "جاري التحميل…",
+        "notFound": {
+          "title": "المقال غير موجود",
+          "description": "تعذر تحميل هذا المقال لطلب التعديلات.",
+          "back": "العودة إلى المقالات"
+        },
+        "header": {
+          "title": "طلب التعديلات وإدارة ظهور المقال",
+          "description": "أرسل ملاحظات تفصيلية للكاتب وتحكم في ظهور المقال على المنصة.",
+          "breadcrumbs": {
+            "home": "الرئيسية",
+            "articleEditor": "محرر المقالات",
+            "review": "مراجعة المقال",
+            "current": "طلب التعديلات"
+          }
+        },
+        "main": {
+          "sectionTitle": "تفاصيل الملاحظات",
+          "articleTitleLabel": "عنوان المقال",
+          "reviewNotesLabel": "ملاحظات المراجعة التفصيلية",
+          "reviewNotesPlaceholder": "يرجى توضيح النقاط التي تحتاج إلى تعديل حتى يتمكن الكاتب من معالجتها بدقة.",
+          "statusBanner": "سيؤدي إرسال هذا النموذج تلقائيًا إلى تغيير حالة المقال إلى «بحاجة لتعديلات» وإخطار الكاتب فورًا."
+        },
+        "sidebar": {
+          "visibilityTitle": "ظهور المقال",
+          "visibilityToggleOn": "إخفاء من المنصة",
+          "visibilityToggleOff": "ظاهر على المنصة",
+          "visibilityDescription": "عند التفعيل، لا يظهر المقال للزوار حتى تتم الموافقة على التعديلات.",
+          "authorTitle": "الكاتب المسؤول",
+          "statsTitle": "إحصائيات سريعة",
+          "statsReads": "قراءة حالية",
+          "statsComments": "تعليق مغلق"
+        },
+        "actions": {
+          "cancel": "إلغاء الأمر",
+          "send": "إرسال طلب التعديلات",
+          "submitting": "يرجى الانتظار…",
+          "success": "تم إرسال طلب التعديلات.",
+          "notesRequired": "يرجى إدخال ملاحظات المراجعة قبل الإرسال."
+        }
+      },
+      "communitySettings": {
+        "entry": {
+          "button": "إعدادات مجتمع المعرفة",
+          "previewAlt": "معاينة إعدادات المجتمع"
+        },
+        "page": {
+          "title": "إعدادات المجتمع",
+          "description": "اضبط الخصوصية والتفاعل وطريقة مشاركة الأعضاء في محتوى المجتمع.",
+          "breadcrumbs": {
+            "home": "الرئيسية",
+            "articleEditor": "محرر المقالات",
+            "current": "إعدادات المجتمع"
+          }
+        },
+        "privacy": {
+          "title": "إعدادات الخصوصية",
+          "publicTitle": "مجتمع عام",
+          "publicDescription": "متاح للجميع للقراءة والمشاركة.",
+          "schoolTitle": "مجتمع مدرسي (مقيد)",
+          "schoolDescription": "يقتصر الدخول على البريد المؤسسي فقط."
+        },
+        "engagement": {
+          "sectionTitle": "تفاعل المجتمع",
+          "metricValue": "+1,240",
+          "metricSubtitle": "مساهمة هذا الشهر",
+          "cta": "عرض التقارير"
+        },
+        "controls": {
+          "title": "تحكمات المجتمع",
+          "on": "مفعّل",
+          "off": "غير مفعّل",
+          "publishing": "تفعيل النشر",
+          "publishingDescription": "يسمح للأعضاء بنشر مقالات وملاحظات جديدة.",
+          "evaluation": "تفعيل التقييم",
+          "evaluationDescription": "يسمح للمستخدمين بتقييم المحتوى الأكاديمي.",
+          "comments": "تفعيل التعليقات",
+          "commentsDescription": "قسم النقاش أسفل كل منشور.",
+          "likes": "تفعيل الإعجابات",
+          "likesDescription": "زر التفاعل السريع (قلب) على المنشورات.",
+          "following": "تفعيل المتابعة",
+          "followingDescription": "متابعة الباحثين المفضلين."
+        },
+        "badges": {
+          "title": "أوسمة المساهمين المتميزين",
+          "add": "إضافة وسام جديد",
+          "manage": "إدارة الأوسمة",
+          "table": {
+            "icon": "الأيقونة",
+            "name": "اسم الوسام",
+            "condition": "شرط الاستحقاق",
+            "recipients": "عدد الحاصلين عليه",
+            "actions": "إجراءات"
+          },
+          "rows": {
+            "star": {
+              "name": "مساهم نجم",
+              "condition": "أكثر من 50 إعجابًا على منشور واحد",
+              "recipients": "14 مستخدمًا",
+              "action": "تعطيل"
+            },
+            "factChecker": {
+              "name": "مدقق حقائق",
+              "condition": "تصحيح 10 مراجعات أكاديمية",
+              "recipients": "5 مستخدمين",
+              "action": "تعطيل"
+            },
+            "researcher": {
+              "name": "باحث نهم (معطل)",
+              "condition": "قراءة 100 مقال كامل",
+              "recipients": "لا يوجد",
+              "action": "تفعيل"
+            }
+          }
+        }
+      },
+      "communityBadgeAdd": {
+        "page": {
+          "title": "إضافة وسام جديد",
+          "description": "عرّف هوية الوسام وشروط الاستحقاق ومعاينة شكله للطلاب.",
+          "breadcrumbs": {
+            "home": "الرئيسية",
+            "articleEditor": "محرر المقالات",
+            "communitySettings": "إعدادات المجتمع",
+            "current": "إضافة وسام"
+          }
+        },
+        "identity": {
+          "title": "هوية الوسام",
+          "nameLabel": "اسم الوسام",
+          "namePlaceholder": "مثلاً: محارب المعرفة",
+          "levelLabel": "المستوى",
+          "levels": {
+            "bronze": "برونزي",
+            "silver": "فضي",
+            "gold": "ذهبي"
+          },
+          "descriptionLabel": "وصف الوسام",
+          "descriptionPlaceholder": "اكتب وصفاً قصيراً يحفز الطلاب للحصول على هذا الوسم…",
+          "uploadTitle": "اسحب الصورة هنا أو تصفح الملفات",
+          "uploadHint": "PNG أو SVG بحد أقصى 2 ميجابايت — يُفضّل 512×512."
+        },
+        "eligibility": {
+          "title": "شروط الاستحقاق",
+          "activityLabel": "نوع النشاط",
+          "activity": {
+            "posts": "المنشورات",
+            "comments": "التعليقات",
+            "likes": "الإعجابات",
+            "lessons": "الدروس المكتملة"
+          },
+          "minimumLabel": "الحد الأدنى للإنجاز",
+          "banner": "سيتم منح هذا الوسم تلقائياً عند تحقق الطالب للحد المطلوب."
+        },
+        "preview": {
+          "title": "معاينة مباشرة",
+          "imageAlt": "مرجع تصميم نموذج الوسام",
+          "caption": "مرجع تصميم — اربط واجهات البرمجة لعرض حالة الوسام الفعلية.",
+          "nameFallback": "اسم الوسم هنا",
+          "descriptionFallback": "وصف قصير يحفز الطلاب…",
+          "levelRibbon": "ذهبي",
+          "progress": "{current} / {target}",
+          "typeOfAccess": "نوع الوصول",
+          "free": "مجاني",
+          "paid": "مدفوع"
+        },
+        "tip": {
+          "title": "نصيحة إدارية",
+          "body": "استخدم أيقونات ذات تباين عالٍ لضمان وضوحها في الوضعين الفاتح والداكن لتطبيق الطلاب."
+        },
+        "actions": {
+          "save": "حفظ",
+          "cancel": "إلغاء",
+          "saving": "جاري الحفظ…",
+          "saved": "تم حفظ الوسام."
+        },
+        "validation": {
+          "nameRequired": "يرجى إدخال اسم الوسام."
+        }
+      }
+    },
     "tabs": {
       "home": {
         "title": "الرئيسية",
@@ -639,9 +2092,17 @@
         "title": "إدارة المحتوى",
         "description": "إنشاء المحتوى ومراجعته ونشره."
       },
+      "courseManagement": {
+        "title": "إدارة المسارات والاعتمادات",
+        "description": "إدارة المسارات التعليمية ومراجعتها واعتمادها."
+      },
+      "articleEditor": {
+        "title": "محرر المقالات",
+        "description": "مراجعة مقالات المنصة وإدارتها واعتمادها."
+      },
       "journeyEditor": {
-        "title": "محرر رحلة التميز",
-        "description": "ضبط تجربة رحلة التميز."
+        "title": "محرر رحلة التفوق",
+        "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة."
       },
       "liveBroadcast": {
         "title": "إدارة البث المباشر",
@@ -651,14 +2112,1269 @@
         "title": "إدارة الكتاب التفاعلي",
         "description": "إدارة الكتب التفاعلية والموارد."
       },
+      "chatGroups": {
+        "title": "مجموعات الدردشة",
+        "description": "إدارة مجموعات الدردشة والمحادثات التعليمية."
+      },
       "helper": {
         "title": "المساعدة",
         "description": "أدلة ودعم لاستخدام لوحة الإدارة."
       }
     },
+    "journeyEditor": {
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "journeyEditor": "محرر رحلة التفوق",
+        "flashcardGroup": "مجموعة البطاقات",
+        "addFlashcard": "إضافة بطاقة",
+        "liveBroadcastAdd": "إضافة محطة بث مباشر",
+        "liveBroadcastView": "عرض محطة بث مباشر",
+        "challengeEditor": "محرر التحديات",
+        "examEditor": "محرر الاختبارات",
+        "examPreview": "عرض أسئلة الاختبار",
+        "examEditQuestions": "تعديل أسئلة الاختبار"
+      },
+      "dashboard": {
+        "readyBadge": "{percent}% جاهز",
+        "points": "نقطة",
+        "hours": "{count} ساعة",
+        "paths": "{count} مسارات",
+        "openEditor": "فتح المحرر"
+      },
+      "editor": {
+        "title": "محرر رحلة التفوق",
+        "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
+        "actions": {
+          "saveChanges": "حفظ التغييرات",
+          "previewJourney": "معاينة الرحلة"
+        },
+        "sidebar": {
+          "title": "إضافة محطة أو مسار جديد",
+          "subtitle": "أدخل تفاصيل المحطة لدمجها في المسار.",
+          "stationName": "اسم المحطة",
+          "stationNamePlaceholder": "مثال: تحدي الذاكرة",
+          "stationType": "نوع المحطة",
+          "completionRule": "قاعدة الإكمال",
+          "path": "المسار",
+          "subscribersOnly": "للمشتركين فقط",
+          "createStation": "إنشاء المحطة",
+          "createPath": "إنشاء مسار جديد",
+          "newPathPlaceholder": "اسم المسار الجديد...",
+          "stats": {
+            "title": "إحصائيات الرحلة",
+            "points": "إجمالي النقاط",
+            "learningTime": "وقت التعلم",
+            "pathReadiness": "جاهزية المسار",
+            "hours": "ساعة"
+          }
+        },
+        "stationTypes": {
+          "flashcard": "بطاقات استذكار",
+          "liveBroadcast": "بث مباشر",
+          "challenge": "تحدي",
+          "exam": "اختبار",
+          "helperFile": "ملفات مساعدة"
+        },
+        "completionRules": {
+          "viewAll": "إكمال المشاهدة (100%)",
+          "passScore": "قاعدة الاجتياز بنسبة",
+          "unlockOnSuccess": "تلقائي عند النجاح",
+          "allTasks": "إتمام كافة المهام"
+        },
+        "path": {
+          "stationsCount": "تمت إضافة {count} محطات",
+          "minutes": "دقيقة",
+          "addStation": "إضافة محطة جديدة لهذا القسم"
+        },
+        "station": {
+          "dragHandleAria": "سحب لإعادة ترتيب المحطات",
+          "notHandledBadge": "بدون محرر",
+          "openEditorHint": "افتح المحرر",
+          "accessBadge": {
+            "open": "مفتوح",
+            "locked": "مقفل",
+            "subscribersOnly": "للمشتركين"
+          },
+          "completionBadge": {
+            "passScore": "قاعدة الإكمال: {value}%",
+            "unlockOnSuccess": "تلقائي عند النجاح",
+            "viewAll": "إكمال المشاهدة"
+          },
+          "typeLabels": {
+            "flashcard": "بطاقات الاستذكار",
+            "liveBroadcast": "بث مباشر",
+            "challenge": "تحدي",
+            "exam": "اختبارات",
+            "helperFile": "ملفات مساعدة"
+          }
+        }
+      },
+      "addStationModal": {
+        "title": "إضافة محطة جديدة للمسار",
+        "stationName": "اسم المحطة",
+        "stationNamePlaceholder": "مثال: مقدمة في النسبية العامة",
+        "stationType": "نوع المحطة",
+        "iconPicker": "اختيار الأيقونة",
+        "completionRule": "قاعدة الإكمال",
+        "permissions": "الصلاحيات",
+        "subscribersOnly": "للمشتركين فقط",
+        "addStation": "إضافة المحطة",
+        "cancel": "إلغاء"
+      },
+      "flashcardGroup": {
+        "title": "استعراض مجموعة البطاقات: {title}",
+        "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
+        "actions": {
+          "publish": "نشر المجموعة",
+          "addCard": "إضافة بطاقة"
+        },
+        "stats": {
+          "totalCards": "إجمالي البطاقات",
+          "avgDifficulty": "متوسط الصعوبة",
+          "reviewTime": "وقت المراجعة",
+          "card": "بطاقة",
+          "minute": "دقيقة"
+        },
+        "cardList": "قائمة البطاقات",
+        "addNewCard": "إضافة بطاقة جديدة",
+        "cardActions": {
+          "viewAnswer": "عرض الإجابة",
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "difficulty": {
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        }
+      },
+      "flashcardAdd": {
+        "title": "إضافة بطاقة استذكار جديدة",
+        "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
+        "actions": {
+          "saveAndAddAnother": "حفظ وإضافة أخرى",
+          "addToGroup": "إضافة للمجموعة والعودة"
+        },
+        "completionRate": "نسبة الاجتياز الخاصة بالمحطة",
+        "completionRateLabel": "{value}% من الإجابات الصحيحة",
+        "aiGenerate": "توليد السؤال بالذكاء الاصطناعي",
+        "fields": {
+          "front": "السؤال (الوجه الأمامي)",
+          "frontPlaceholder": "اكتب السؤال هنا...",
+          "back": "الإجابة (الوجه الخلفي)",
+          "backPlaceholder": "اكتب الإجابة النموذجية هنا...",
+          "difficulty": "مستوى الصعوبة",
+          "reviewTime": "وقت المراجعة (ثانية)",
+          "sources": "رفع للملفات والمصادر (ملف واحد فقط)",
+          "image": "إضافة صورة"
+        },
+        "difficulty": {
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        },
+        "upload": {
+          "dragDrop": "اسحب ملف تعليمي واحد أو انقر للتصفح",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "بحد أقصى 197 ميجابايت للملف",
+          "browse": "تصفح الملفات",
+          "imageDragDrop": "اسحب وأسقط الصورة هنا",
+          "imageFormats": "PNG, JPG, SVG بحجم لا يتجاوز من جيجابايت 1",
+          "imageUploading": "جاري رفع الصورة...",
+          "imageUploaded": "تم رفع الصورة",
+          "imagePreviewAlt": "معاينة الصورة المرفوعة",
+          "removeImage": "إزالة الصورة"
+        },
+        "tip": {
+          "text": "استخدم جملة قصيرة ومركزة في السؤال وركز على تحسين سرعة الاسترجاع. الهدف تنشيط الذهن في الطالب."
+        },
+        "preview": {
+          "title": "معاينة البطاقة",
+          "frontFace": "الوجه الأمامي",
+          "backFace": "الوجه الخلفي",
+          "frontLabel": "عنوان السؤال يظهر هنا بشكل مركزي",
+          "backLabel": "انقر/اربط الإجابة على الوجه الآخر",
+          "swipeHint": "اربط/ارفع الإجابة بشكل مركزي"
+        }
+      },
+      "aiGenerateModal": {
+        "title": "إعدادات توليد المحتوى باستخدام الذكاء الاصطناعي",
+        "subtitle": "حدد التفضيلات المطلوبة ليقوم الذكاء الاصطناعي بتوليد بطاقات استذكار دقيقة.",
+        "difficulty": "مستوى الصعوبة",
+        "count": "عدد البطاقات",
+        "reviewTime": "متوسط وقت الاستذكار",
+        "seconds": "ثانية",
+        "cards": "بطاقات",
+        "startGeneration": "ابدأ التوليد الآن",
+        "cancel": "إلغاء"
+      },
+      "liveBroadcastAdd": {
+        "title": "إضافة محطة بث مباشر",
+        "description": "قم بإنشاء محطة تعليمية جديدة للبث المباشر.",
+        "actions": {
+          "saveAndPublish": "حفظ ونشر المحطة",
+          "cancel": "إلغاء",
+          "addLearningGoal": "إضافة هدف"
+        },
+        "steps": {
+          "basicInfo": "المعلومات الأساسية",
+          "additionalDetails": "التفاصيل الإضافية",
+          "educationalContent": "المحتوى التعليمي"
+        },
+        "sections": {
+          "basicInfo": "المعلومات الأساسية",
+          "broadcastDetails": "تفاصيل البث والجلسة",
+          "educationalContent": "المحتوى التعليمي",
+          "preTasks": "مهام ما قبل الحصة"
+        },
+        "fields": {
+          "title": "عنوان الجلسة المباشرة",
+          "titlePlaceholder": "مثال: جلسة المبادئ الكيميائية في العصر الحديث",
+          "thumbnail": "غلاف المحطة",
+          "description": "نبذة عن المحطة",
+          "descriptionPlaceholder": "وصف موجز للمحتوى والأهداف التعليمية لهذه الطلبة",
+          "presenter": "المحاضر المسؤول",
+          "duration": "مدة طلبة",
+          "durationMinutes": "دقيقة",
+          "date": "تاريخ البث",
+          "time": "وقت البدء",
+          "broadcastLink": "رابط البث",
+          "broadcastLinkPlaceholder": "https://zoom.us/j/...",
+          "objectives": "أهداف التعلم",
+          "objectivePlaceholder": "مثال: أتقن مبادئ معالجة الكمبيوتر التعليمية.",
+          "attachments": "المنشآت والمرافقات",
+          "preTask": "مهام ما قبل الحصة",
+          "preTaskLabel": "وصف المهمة",
+          "preTaskSubtitle": "تعليمات إضافية",
+          "addPreTask": "إضافة مهمة"
+        },
+        "upload": {
+          "drag": "اسحب ملف الصورة أو ضعه هنا",
+          "formats": "JPG, PNG أو WEBP بحجم يصل إلى 5 ميجابايت",
+          "attachmentDrag": "اسحب ملف هنا أو انقر للتصفح",
+          "attachmentFormats": "PDF, PPTX, XLSX"
+        },
+        "tip": "تأكد من اختبار الصوت والفيديو قبل انطلاق الحصة، وتأكد مما ربط أدلة البث الصحيحة لضمان سلامة التجربة التعليمية."
+      },
+      "liveBroadcastView": {
+        "title": "عرض محطة بث مباشر",
+        "description": "قم بإنشاء محطة بث مباشر تفاعلية لطلابك.",
+        "actions": {
+          "joinRoom": "الانضمام للقاعة",
+          "registerNote": "إلغاء التسجيل في الحصة",
+          "waitNote": "سيتم الإبلاغ المشتركين قبل بدء الحصة بـ {minutes} دقيقة."
+        },
+        "live": "مباشر",
+        "liveNow": "جلسة تفاعلية مباشرة",
+        "registered": "{count} طالب مسجل",
+        "showProfile": "عرض الملف التعريفي",
+        "countdown": {
+          "hours": "ساعة",
+          "minutes": "دقيقة",
+          "seconds": "ثانية"
+        },
+        "sections": {
+          "overview": "نظرة عامة على الدرس",
+          "presenter": "تنبيه المعلم",
+          "educationalPath": "المخرج التعليمي",
+          "objectives": "أهداف التعلم",
+          "attachments": "المرفقات والمصادر",
+          "related": "جلسات ذات صلة",
+          "preTasks": "مهام ما قبل الحصة",
+          "details": "تفاصيل الجلسة"
+        },
+        "details": {
+          "date": "التاريخ",
+          "time": "التوقيت",
+          "duration": "المدة",
+          "minutes": "دقيقة"
+        }
+      },
+      "challengeEditor": {
+        "title": "محرر التحديات",
+        "description": "قم بإنشاء محطة تحدي مختلفة لطلابك.",
+        "actions": {
+          "saveChallenge": "حفظ التحدي",
+          "previewChallenge": "معاينة التحدي",
+          "saveAndPublish": "حفظ ونشر التحدي"
+        },
+        "sidebar": {
+          "title": "ملخص التحدي",
+          "type": "نوع التحدي",
+          "questionsCount": "عدد الأسئلة",
+          "questions": "أسئلة",
+          "time": "الوقت المخصص",
+          "minutes": "دقائق",
+          "level": "المستوى",
+          "previewChallenge": "معاينة التحدي",
+          "saveAndPublish": "حفظ ونشر التحدي",
+          "locked": "ممنوعة",
+          "aiNote": "سيتم إنشاء الأسئلة تلقائياً باستخدام الذكاء الاصطناعي بناءً على الإعدادات التي تحددها"
+        },
+        "sections": {
+          "type": "اختر نوع التحدي",
+          "settings": "إعدادات التحدي",
+          "sources": "رفع الملفات والمصادر"
+        },
+        "types": {
+          "timeChallenge": "تحدي الوقت",
+          "timeDescription": "التركيز على الإجابة قبل انتهاء المدة المحددة",
+          "shortQuiz": "اختبار قصير",
+          "shortQuizDescription": "قياس الفهم العميق للمادة الدراسية",
+          "speedChallenge": "تحدي السرعة",
+          "speedDescription": "المنافسة المباشرة بين الطلاب"
+        },
+        "settings": {
+          "questionsCount": "عدد الأسئلة",
+          "duration": "مدة التحدي (دقائق)",
+          "difficulty": "مستوى الصعوبة"
+        },
+        "difficulty": {
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        },
+        "upload": {
+          "drag": "اسحب الملفات التعليمية هنا أو انقر للتصفح",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "بحد أقصى 100 ميجابايت للملف"
+        }
+      },
+      "examEditor": {
+        "title": "محرر الاختبارات",
+        "description": "قم بإنشاء محطة اختبار تفاعلية لطلابك.",
+        "actions": {
+          "saveAndPublish": "حفظ وإنشاء الاختبار",
+          "preview": "معاينة الاختبار بالكامل"
+        },
+        "sidebar": {
+          "title": "ملخص الاختبار",
+          "questionsCount": "عدد الأسئلة",
+          "questions": "سؤال",
+          "time": "الوقت المحدد",
+          "minutes": "دقيقة",
+          "difficulty": "مستوى الصعوبة",
+          "passing": "درجة النجاح",
+          "points": "نقطة",
+          "totalPoints": "إجمالي النقاط",
+          "saveAndPublish": "حفظ وإنشاء الاختبار",
+          "preview": "معاينة الاختبار بالكامل"
+        },
+        "sections": {
+          "settings": "إعدادات الاختبار",
+          "sources": "رفع الملفات والمصادر",
+          "questions": "إدارة الأسئلة"
+        },
+        "settings": {
+          "examName": "اسم الاختبار",
+          "examNamePlaceholder": "أدخل عنوان الاختبار التعليمي...",
+          "duration": "المدة الزمنية (دقيقة)",
+          "difficulty": "مستوى الصعوبة",
+          "passingGrade": "درجة النجاح",
+          "attempts": "عدد المحاولات المسموحة",
+          "attemptsOptions": {
+            "one": "محاولة واحدة",
+            "two": "محاولتان",
+            "three": "ثلاث محاولات",
+            "unlimited": "غير محدود"
+          }
+        },
+        "difficulty": {
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        },
+        "upload": {
+          "drag": "اسحب الملفات التعليمية هنا أو انقر للتصفح",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "بحد أقصى 100 ميجابايت للملف"
+        },
+        "aiButton": "ملء الأسئلة بالذكاء الاصطناعي",
+        "bankButton": "ملء باستخدام بنك الأسئلة",
+        "questionItem": {
+          "multipleChoice": "اختيار من متعدد",
+          "trueFalse": "صح أو خطأ",
+          "correctAnswer": "الإجابة الصحيحة"
+        }
+      },
+      "examPreview": {
+        "title": "عرض أسئلة اختبار {name}",
+        "description": "قم بإنشاء محطة اختبار تفاعلية لطلابك.",
+        "actions": {
+          "editQuestions": "تعديل الأسئلة",
+          "exportPdf": "تصدير PDF"
+        },
+        "status": {
+          "published": "مؤشف",
+          "draft": "مسودة"
+        },
+        "lastEdit": "تاريخ التعديل الأخير:",
+        "today": "اليوم",
+        "stats": {
+          "totalQuestions": "إجمالي",
+          "questions": "سؤال"
+        },
+        "info": {
+          "subject": "المادة",
+          "level": "المستوى",
+          "secondary": "الثانوية"
+        },
+        "settings": {
+          "title": "إعدادات الاختبار",
+          "passing": "درجة النجاح",
+          "duration": "مدة الاختبار",
+          "minutes": "دقيقة",
+          "randomOrder": "ترتيب عشوائي",
+          "randomOrderDesc": "تبديل ترتيب الأسئلة",
+          "enabled": "مفعّل",
+          "totalPoints": "إجمالي النقاط"
+        },
+        "readyBadge": "جاهز للنشر",
+        "readyDesc": "تم التحقق من جميع الأسئلة والإجابات الصحيحة."
+      },
+      "examEditQuestions": {
+        "title": "تعديل أسئلة اختبار {name}",
+        "description": "قم بإنشاء محطة اختبار تفاعلية لطلابك.",
+        "actions": {
+          "saveChanges": "حفظ التغييرات",
+          "exportPdf": "تصدير PDF"
+        },
+        "stats": {
+          "totalQuestions": "إجمالي الأسئلة",
+          "questions": "سؤال",
+          "totalPoints": "إجمالي الدرجات",
+          "points": "درجة",
+          "examName": "اسم الاختبار"
+        },
+        "question": {
+          "title": "تعديل سؤال {order}",
+          "level": "المستوى:",
+          "points": "الدرجة:",
+          "multipleChoice": "اختيار من متعدد",
+          "trueFalse": "صح أو خطأ",
+          "text": "نص السؤال:",
+          "editQuestion": "تعديل السؤال",
+          "deleteQuestion": "حذف السؤال",
+          "saveChanges": "حفظ التعديلات",
+          "cancel": "إلغاء"
+        },
+        "addQuestion": "إضافة سؤال جديد",
+        "difficulty": {
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        }
+      }
+    },
     "settingsPage": {
       "title": "الإعدادات",
       "description": "ضبط تفضيلات الإدارة والتكاملات."
+    },
+    "homeOverview": {
+      "title": "لوحة المتابعة العامة",
+      "description": "مؤشرات سريعة للوحدات التعليمية والتنبيهات.",
+      "actions": {
+        "openOverview": "نظره عامه",
+        "sendNotification": "إرسال إشعار"
+      },
+      "stats": {
+        "totalTests": "إجمالي الاختبارات",
+        "questionBank": "بنك الأسئلة",
+        "activeStudents": "الطلاب بالحضور",
+        "issuedCertificates": "الشهادات المصدرة"
+      },
+      "successRate": {
+        "title": "نسبة النجاح العامة",
+        "subtitle": "إجمالي"
+      },
+      "latestTests": {
+        "title": "آخر الاختبارات المضافة",
+        "columns": {
+          "testName": "اسم الاختبار",
+          "subject": "المادة",
+          "status": "الحالة",
+          "participants": "المشاركين"
+        }
+      }
+    },
+    "overviewInsights": {
+      "title": "نظرة عامة",
+      "description": "مرحباً بك وتحكم بقيمك والبيانات.",
+      "actions": {
+        "createStation": "إنشاء اختبار يدوي ذكي",
+        "createRandom": "إنشاء اختبار عشوائي ذكي"
+      },
+      "stats": {
+        "totalTests": "إجمالي الاختبارات",
+        "questionBank": "بنك الأسئلة",
+        "students": "الطلاب بالحضور",
+        "certificates": "الشهادات المصدرة"
+      },
+      "stationTest": {
+        "title": "إنشاء اختبار يدوي ذكي",
+        "description": "قم بتصميم رحلة تقييم شاملة للطلاب.",
+        "formTitle": "المعلومات الأساسية",
+        "actions": {
+          "publish": "نشر الاختبار الآن"
+        }
+      },
+      "randomTest": {
+        "title": "إنشاء اختبار عشوائي ذكي",
+        "description": "قم بتصميم رحلة تقييم شاملة للطلاب بحسب أسئلة جاهزة.",
+        "actions": {
+          "generate": "توليد الاختبار الآن"
+        }
+      }
+    },
+    "sendNotification": {
+      "title": "إرسال إشعار",
+      "description": "قم بإنشاء وتخصيص التنبيهات وإرسالها للمجتمع الأكاديمي.",
+      "formTitle": "اختيار الجمهور المستهدف",
+      "sendNow": "إرسال الإشعار الآن"
+    },
+    "questionBank": {
+      "title": "بنك الأسئلة",
+      "description": "إدارة وتصنيف الأسئلة الأكاديمية لجميع المسارات التعليمية.",
+      "actions": {
+        "openManage": "معاينة بنك الأسئلة"
+      },
+      "filters": {
+        "questionType": {
+          "label": "نوع السؤال",
+          "all": "كل الأنواع",
+          "mcq": "اختيار من متعدد",
+          "tf": "صح / خطأ",
+          "shortAnswer": "إجابة قصيرة"
+        },
+        "difficultyLevel": {
+          "label": "مستوى الصعوبة",
+          "all": "كل المستويات",
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        },
+        "subject": {
+          "label": "المادة",
+          "all": "كل المواد",
+          "arabic": "اللغة العربية",
+          "math": "الرياضيات",
+          "science": "العلوم"
+        },
+        "search": {
+          "label": "البحث بالعنوان",
+          "placeholder": "عنوان السؤال..."
+        }
+      },
+      "stats": {
+        "total": "إجمالي الأسئلة",
+        "approved": "تمت مراجعتها",
+        "pendingApproval": "قيد المراجعة",
+        "draft": "مسودة"
+      },
+      "table": {
+        "title": "قائمة الأسئلة",
+        "loading": "جارٍ تحميل الأسئلة...",
+        "empty": "لا توجد أسئلة مطابقة للفلاتر الحالية.",
+        "loadError": "تعذر تحميل الأسئلة. حاول مرة أخرى.",
+        "columns": {
+          "question": "نص السؤال",
+          "type": "النوع",
+          "status": "الحالة",
+          "subject": "المادة",
+          "difficulty": "الصعوبة",
+          "actions": "الإجراءات"
+        },
+        "actions": {
+          "preview": "معاينة",
+          "delete": "حذف",
+          "confirmDelete": "هل أنت متأكد من حذف هذا السؤال؟",
+          "deleteSuccess": "تم حذف السؤال بنجاح."
+        }
+      }
+    },
+    "questionBankManage": {
+      "title": "معاينة بنك الأسئلة",
+      "description": "قم بمراجعة وإدارة الأسئلة داخل البنك.",
+      "listTitle": "قائمة النتائج",
+      "stats": {
+        "total": "إجمالي المستودع",
+        "mcq": "اختيار من متعدد",
+        "tf": "صح / خطأ",
+        "level": "مستويات الصعوبة"
+      },
+      "actions": {
+        "addQuestion": "إضافة سؤال",
+        "deleteSample": "حذف عينة"
+      },
+      "deleteModal": {
+        "title": "حذف السؤال",
+        "description": "هل أنت متأكد من حذف السؤال؟ لا يمكن التراجع عن الإجراء.",
+        "item": "ما هو ناتج حل المعادلة التربيعية؟",
+        "confirm": "تأكيد الحذف",
+        "cancel": "إلغاء"
+      }
+    },
+    "questionBankAdd": {
+      "title": "إضافة سؤال جديد",
+      "description": "قم بتعبئة بيانات إنشاء سؤال جديد وحفظه.",
+      "formTitle": "بيانات السؤال",
+      "actions": {
+        "save": "حفظ السؤال",
+        "saveAndAdd": "حفظ وإضافة آخر",
+        "preview": "معاينة السؤال",
+        "cancel": "إلغاء التعديلات"
+      },
+      "fields": {
+        "questionType": "نوع السؤال",
+        "selectSubject": "اختر المادة الدراسية",
+        "subject": "المادة",
+        "questionText": "نص السؤال",
+        "attachment": "الصورة المرفقة",
+        "attachmentUrl": "رابط الصورة المرفقة",
+        "difficulty": "مستوى الصعوبة",
+        "reviewMode": "وضع النشر",
+        "explanation": "توضيح الإجابة (اختياري)",
+        "hint": "تلميح للطالب (اختياري)"
+      },
+      "placeholders": {
+        "questionText": "مثال: إذا كانت س + 5 = 12، فما قيمة س؟",
+        "attachmentUrl": "https://example.com/question-image.png",
+        "shortAnswer": "اكتب الإجابة القصيرة المتوقعة...",
+        "explanation": "اشرح لماذا هذه الإجابة صحيحة...",
+        "hint": "أضف تلميحاً قصيراً يساعد الطالب...",
+        "choice": "الاختيار {index}"
+      },
+      "answers": {
+        "title": "خيارات الإجابة",
+        "trueOption": "صح",
+        "falseOption": "خطأ",
+        "shortAnswer": "الإجابة القصيرة الصحيحة",
+        "markAsCorrect": "تحديد هذا الاختيار كإجابة صحيحة"
+      },
+      "review": {
+        "submitForReview": "إرسال للمراجعة",
+        "saveDraft": "حفظ كمسودة"
+      },
+      "side": {
+        "attachmentTitle": "الصورة المرفقة",
+        "chooseImage": "اختيار رابط صورة",
+        "imageFormats": "PNG, JPG, JPEG",
+        "questionSettingsTitle": "معلومات السؤال",
+        "generalQuestion": "سؤال عام",
+        "timerToggle": "تفعيل المؤقت",
+        "studentPreviewTitle": "معاينة السؤال (للطالب)",
+        "studentPreviewTag": "وضع المعاينة المباشرة"
+      },
+      "messages": {
+        "createSuccess": "تم إنشاء السؤال بنجاح.",
+        "createError": "تعذر إنشاء السؤال. يرجى مراجعة البيانات وإعادة المحاولة."
+      },
+      "validation": {
+        "questionTextRequired": "يرجى إدخال نص السؤال.",
+        "enumsRequired": "يرجى اختيار نوع السؤال ومستوى الصعوبة.",
+        "shortAnswerRequired": "يرجى إدخال الإجابة القصيرة.",
+        "choiceTextRequired": "يرجى إدخال نص لجميع الاختيارات.",
+        "correctChoiceRequired": "يرجى تحديد إجابة صحيحة واحدة."
+      }
+    },
+    "questionBankPreviewAll": {
+      "title": "معاينة بنك الاسئلة",
+      "description": "قم بمراجعة وإدارة جميع الأسئلة المخزنة في بنك الأسئلة.",
+      "breadcrumbs": {
+        "addNewQuestion": "إضافة سؤال جديد"
+      },
+      "actions": {
+        "saveQuestion": "حفظ السؤال",
+        "addNewQuestion": "إضافة سؤال جديد",
+        "filterResults": "تصفية النتائج",
+        "resetFilters": "إعادة تعيين"
+      },
+      "stats": {
+        "difficulty": {
+          "label": "مستويات الصعوبة",
+          "indicator": "محدث",
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب",
+          "tooltip": "سيتم احتساب التوزيع تلقائياً عند توفّره من الواجهة الخلفية."
+        },
+        "trueFalse": "صح / خطأ",
+        "mcq": "اختيار من متعدد",
+        "total": "إجمالي المستودع",
+        "comingSoonTooltip": "سيتم احتساب هذه الإحصائية عند توفّرها من الواجهة الخلفية."
+      },
+      "card": {
+        "standardAnswer": "الإجابة النموذجية",
+        "approved": "معتمد",
+        "actions": {
+          "details": "تفاصيل السؤال",
+          "edit": "تعديل السؤال",
+          "delete": "حذف السؤال"
+        }
+      },
+      "list": {
+        "loading": "جارٍ تحميل الأسئلة...",
+        "empty": "لا توجد أسئلة مطابقة للفلاتر الحالية.",
+        "loadError": "تعذر تحميل الأسئلة. حاول مرة أخرى."
+      }
+    },
+    "questionBankPreview": {
+      "title": "معاينة بنك الأسئلة",
+      "description": "تحقق من شكل السؤال قبل النشر.",
+      "badge": "إجابات سريعة",
+      "questionTypeBadge": "سؤال اختيار من متعدد",
+      "attachmentAlt": "مرفق السؤال",
+      "emptyChoice": "بدون نص",
+      "explanationTitle": "تفسير الإجابة",
+      "meta": {
+        "title": "بيانات السؤال"
+      },
+      "quickActions": {
+        "title": "الإجراءات السريعة"
+      },
+      "stats": {
+        "totalChoices": "عدد الاختيارات",
+        "correctChoices": "الاختيارات الصحيحة",
+        "correctRatio": "نسبة الاختيارات الصحيحة"
+      },
+      "actions": {
+        "save": "حفظ السؤال",
+        "edit": "تعديل السؤال",
+        "close": "إغلاق المعاينة"
+      },
+      "messages": {
+        "loading": "جارٍ تحميل تفاصيل السؤال...",
+        "loadError": "تعذر تحميل تفاصيل السؤال.",
+        "notFoundTitle": "السؤال غير موجود",
+        "notFoundDescription": "قد يكون هذا السؤال محذوفًا أو غير متاح."
+      }
+    },
+    "contentManagement": {
+      "page": {
+        "title": "إدارة الملفات المساندة",
+        "description": "تتبع وتنظيم جميع الموارد التعليمية المتاحة على المنصة.",
+        "addFile": "إضافة ملف جديد",
+        "loading": "جاري تحميل ملفات المحتوى..."
+      },
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "content": "إدارة الملفات المساندة",
+        "add": "إضافة",
+        "edit": "تعديل"
+      },
+      "stats": {
+        "revenue": {
+          "label": "الإيرادات",
+          "indicator": "ريال سعودي هذا الشهر"
+        },
+        "activeStudents": {
+          "label": "نشط الآن",
+          "indicator": "طالب مسجل في الدورات"
+        },
+        "pendingApproval": {
+          "label": "قيد المراجعة",
+          "indicator": "تنتظر موافقة الإدارة"
+        },
+        "totalFiles": {
+          "label": "المجموع",
+          "indicator": "إجمالي الملفات المسجلة"
+        }
+      },
+      "filters": {
+        "subject": {
+          "label": "المادة الدراسية",
+          "all": "الكل",
+          "physics": "الفيزياء",
+          "math": "الرياضيات"
+        },
+        "grade": {
+          "label": "الصف الدراسي",
+          "all": "الكل",
+          "grade11": "الصف الحادي عشر",
+          "grade12": "الصف الثاني عشر"
+        },
+        "fileType": {
+          "label": "نوع الملف",
+          "all": "الكل",
+          "pdf": "PDF",
+          "video": "فيديو",
+          "zip": "مضغوط"
+        },
+        "search": {
+          "label": "بحث سريع",
+          "placeholder": "ابحث باسم ملف معين..."
+        }
+      },
+      "policy": {
+        "public": "عام",
+        "subscribersOnly": "للمشتركين"
+      },
+      "table": {
+        "title": "قائمة ملفات المحتوى",
+        "columns": {
+          "fileName": "اسم الملف",
+          "course": "الدورة التدريبية",
+          "teacher": "المعلم",
+          "policy": "السياسة",
+          "downloads": "التحميلات",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "status": {
+          "active": "نشط",
+          "inactive": "غير نشط"
+        },
+        "actions": {
+          "view": "عرض",
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من {total} ملف",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        }
+      },
+      "activity": {
+        "title": "آخر النشاطات على الملفات",
+        "items": {
+          "upload": {
+            "title": "تم رفع \"الاختبار التجريبي 2024\"",
+            "detail": "قبل 15 دقيقة • س. يوسف",
+            "action": "عرض"
+          },
+          "policy": {
+            "title": "تعديل سياسة الوصول لملف \"مذكرة النحو\"",
+            "detail": "من \"عام\" إلى \"للمشتركين\" • قبل ساعتين",
+            "action": "عرض"
+          },
+          "delete": {
+            "title": "حذف ملف \"محاضرة قديمة 2022\"",
+            "detail": "بأمر إداري • أمس",
+            "action": "عرض"
+          }
+        }
+      },
+      "form": {
+        "loading": "جاري تحميل نموذج الملف...",
+        "addTitle": "إضافة ملف تعليمي جديد",
+        "editTitle": "تعديل ملف تعليمي",
+        "pageDescription": "ارفع واربط المصادر التعليمية المساندة للدورات النشطة.",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "content": "إدارة الملفات المساندة",
+          "add": "إضافة",
+          "edit": "تعديل"
+        },
+        "defaults": {
+          "editDescription": "قم بتحديث بيانات هذا الملف وفق آخر ملاحظات المراجعة."
+        },
+        "summary": {
+          "title": "ملخص العملية",
+          "step1": "ربط الدورة المستهدفة",
+          "step2": "رفع الملفات التعليمية",
+          "step3": "تحديد سياسة الوصول"
+        },
+        "sections": {
+          "linkCourse": "ربط الدورة التدريبية",
+          "upload": "رفع الملفات والمصادر",
+          "identity": "هوية الملف",
+          "accessPolicy": "سياسة الوصول والخصوصية"
+        },
+        "fields": {
+          "courseLink": "رابط الدورة",
+          "fileName": "اسم الملف التعليمي",
+          "fileNamePlaceholder": "مثال: ملخص الجبر المتقدم",
+          "description": "وصف مختصر",
+          "descriptionPlaceholder": "اكتب نبذة مختصرة عن محتوى هذا الملف."
+        },
+        "upload": {
+          "title": "اسحب الملفات التعليمية هنا",
+          "subtitle": "أو اختر ملفات من جهازك"
+        },
+        "access": {
+          "public": {
+            "title": "للجميع",
+            "description": "متاح لجميع أعضاء المنصة."
+          },
+          "subscribers": {
+            "title": "للمشتركين فقط",
+            "description": "متاح للمشتركين النشطين فقط."
+          }
+        },
+        "warning": "نشر ملف جديد يحدث حالة الإتاحة مباشرة ويقوم بإشعار المستخدمين المؤهلين.",
+        "actions": {
+          "verifyLink": "تحقق من الرابط",
+          "publish": "تأكيد ونشر المصدر",
+          "saving": "جاري الحفظ...",
+          "cancel": "إلغاء العملية"
+        }
+      },
+      "details": {
+        "loading": "جاري تحميل تفاصيل الملف...",
+        "description": "إدارة وربط المصادر التعليمية للدورات التدريبية النشطة.",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "content": "إدارة الملفات المساندة"
+        },
+        "actions": {
+          "edit": "تعديل البيانات",
+          "delete": "حذف الملف"
+        },
+        "notFound": {
+          "title": "الملف غير موجود",
+          "description": "تعذر العثور على ملف المحتوى المطلوب.",
+          "back": "العودة للملفات"
+        },
+        "status": {
+          "available": "متاح حاليا"
+        },
+        "hero": {
+          "uploadDate": "تاريخ الرفع",
+          "teacher": "المعلم",
+          "downloads": "التحميلات",
+          "version": "رقم النسخة"
+        },
+        "chart": {
+          "title": "إحصائيات النشاط (آخر 30 يوم)"
+        },
+        "quickActions": {
+          "title": "إجراءات سريعة",
+          "edit": "تعديل البيانات",
+          "delete": "حذف الملف"
+        },
+        "policy": {
+          "title": "سياسة الوصول",
+          "visibility": {
+            "title": "عرض مباشر",
+            "subtitle": "مسموح لجميع الطلاب",
+            "active": "ظاهر",
+            "inactive": "مخفي"
+          },
+          "download": {
+            "title": "تحميل الملف",
+            "subtitle": "متاح للمستخدمين المؤهلين",
+            "active": "التحميل مفعل",
+            "inactive": "التحميل معطل"
+          }
+        },
+        "side": {
+          "linkInfo": "معلومات الارتباط",
+          "course": "الدورة التدريبية",
+          "teacher": "المعلم المسؤول",
+          "subject": "المادة",
+          "grade": "الصف",
+          "help": {
+            "title": "تحتاج مساعدة؟",
+            "body": "إذا واجهت مشكلة في صلاحيات الملف أو الروابط التعليمية يمكنك التواصل مع الدعم الفني.",
+            "button": "تحدث مع الدعم"
+          }
+        },
+        "deleteModal": {
+          "title": "حذف الملف",
+          "description": "هل أنت متأكد من رغبتك في حذف هذا الملف؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirm": "تأكيد الحذف",
+          "cancel": "إلغاء"
+        }
+      }
+    },
+    "pricingManagement": {
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "list": "إدارة الخطط والأسعار",
+        "add": "إضافة خطة",
+        "edit": "تعديل الخطة"
+      },
+      "page": {
+        "title": "إدارة خطط التسعير",
+        "description": "قم بإدارة وتعديل أسعار الكورسات والاشتراكات الشهرية.",
+        "addPlan": "إضافة خطة جديدة",
+        "paymentGateways": "إعدادات بوابات الدفع",
+        "loading": "جاري تحميل خطط التسعير..."
+      },
+      "overview": {
+        "title": "نظرة عامة على الفواتير",
+        "description": "مرحباً مجدداً إليك ملخص نشاطك المالي اليوم.",
+        "managePlans": "إدارة الخطط والأسعار",
+        "manageSubscriptions": "إدارة اشتراكات الطلاب",
+        "manageTransactions": "سجل المعاملات المالية",
+        "pending": "معلق",
+        "cards": {
+          "totalRevenue": "إجمالي الإيرادات",
+          "activeSubscriptions": "الاشتراكات النشطة",
+          "failedPayments": "عمليات فشل الدفع",
+          "pendingTasks": "مهام قيد الانتظار"
+        },
+        "revenueTitle": "الإيرادات الشهرية",
+        "transactionsTitle": "آخر المعاملات",
+        "table": {
+          "user": "الآباء / المستخدم",
+          "student": "الطالب",
+          "amount": "المبلغ",
+          "status": "الحالة",
+          "date": "التاريخ",
+          "success": "ناجحة",
+          "failed": "فاشلة"
+        }
+      },
+      "subscriptions": {
+        "page": {
+          "title": "إدارة اشتراكات الطلاب",
+          "description": "متابعة وتحديث اشتراكات أولياء الأمور والطلاب في منصة فصول التعليمية."
+        },
+        "stats": {
+          "total": "إجمالي الاشتراكات",
+          "active": "الاشتراكات النشطة",
+          "review": "منتهية الصلاحية"
+        },
+        "table": {
+          "title": "قائمة الاشتراكات الحالية",
+          "summary": "عرض 1 إلى 4 من أصل 1,284 اشتراك",
+          "columns": {
+            "parent": "اسم ولي الأمر",
+            "student": "اسم الطالب",
+            "plan": "نوع الخطة",
+            "startDate": "تاريخ البدء",
+            "endDate": "تاريخ الانتهاء",
+            "status": "الحالة",
+            "actions": "الإجراءات"
+          },
+          "plan": {
+            "gold": "الخطة الذهبية",
+            "basic": "الخطة الأساسية"
+          },
+          "status": {
+            "active": "نشط",
+            "inactive": "منتهي"
+          },
+          "actions": {
+            "view": "عرض"
+          }
+        },
+        "cards": {
+          "supportTitle": "الدعم الفوري المباشر",
+          "supportBody": "فريقنا متاح لمساعدتك في حل مشكلات تتبّع اشتراكات أولياء الأمور والطلاب.",
+          "journeyTitle": "تحسين رحلة المستخدم",
+          "journeyBody": "تابع مؤشرات الاشتراك لتطوير التواصل مع أولياء الأمور."
+        }
+      },
+      "subscriptionDetails": {
+        "loading": "جاري تحميل تفاصيل الاشتراك...",
+        "title": "تفاصيل اشتراك الطالب",
+        "description": "متابعة الحالة الزمنية للاشتراك وسجل المدفوعات المرتبط.",
+        "cards": {
+          "paid": "إجمالي المدفوعات",
+          "parent": "ولي الأمر (الدافع)",
+          "student": "الطالب"
+        },
+        "timelineTitle": "الجدول الزمني للاشتراك",
+        "packageTitle": "تفاصيل الباقة",
+        "packageBody": "باقة النبوغ السنوية • تاريخ الدفع 12 يناير 2023 • طريقة الدفع مدى",
+        "paymentsTitle": "سجل المدفوعات",
+        "table": {
+          "invoice": "رقم الفاتورة",
+          "date": "التاريخ",
+          "amount": "المبلغ",
+          "status": "الحالة"
+        }
+      },
+      "transactions": {
+        "title": "سجل المعاملات المالية",
+        "description": "متابعة جميع عمليات الدفع وتحليل الأداء المالي.",
+        "cards": {
+          "total": "إجمالي الإيرادات",
+          "success": "عمليات ناجحة",
+          "failed": "عمليات فشلت",
+          "pending": "قيد المعالجة"
+        },
+        "status": {
+          "success": "ناجحة",
+          "failed": "فاشلة",
+          "pending": "قيد انتظار",
+          "refunded": "مستردة"
+        },
+        "table": {
+          "title": "جدول المعاملات",
+          "summary": "عرض 10 من أصل 1,324 معاملة",
+          "columns": {
+            "bankRef": "المعرّف",
+            "user": "ولي الأمر / المستخدم",
+            "student": "اسم الطالب",
+            "type": "النوع",
+            "amount": "المبلغ",
+            "status": "الحالة",
+            "date": "التاريخ",
+            "actions": "الإجراء"
+          }
+        }
+      },
+      "stats": {
+        "activePlans": {
+          "label": "إجمالي الخطط النشطة",
+          "indicator": "خطة"
+        },
+        "averageSubscription": {
+          "label": "متوسط سعر الاشتراك",
+          "indicator": "ريال سعودي"
+        },
+        "expectedRevenue": {
+          "label": "الإيرادات المتوقعة",
+          "indicator": "هذا الشهر"
+        }
+      },
+      "table": {
+        "title": "إدارة خطط التسعير",
+        "columns": {
+          "planName": "اسم الخطة",
+          "type": "النوع",
+          "linkedContent": "المحتوى المرتبط",
+          "price": "السعر",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "types": {
+          "oneTime": "مرة واحدة",
+          "yearly": "سنوي",
+          "monthly": "شهري"
+        },
+        "status": {
+          "active": "نشط",
+          "inactive": "غير نشط"
+        },
+        "actions": {
+          "edit": "تعديل"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} خطة",
+          "previous": "السابق",
+          "next": "التالي"
+        }
+      },
+      "distribution": {
+        "title": "توزيع أنواع الخطط",
+        "monthly": "اشتراكات شهرية",
+        "oneTime": "دفع لمرة واحدة",
+        "yearly": "اشتراكات سنوية"
+      },
+      "tip": {
+        "title": "تحديث أسعار الباقات القادم",
+        "body": "يمكنك جدولة تحديث الأسعار للباقات الذهبية تلقائياً في أول يوم من الشهر مع إرسال إشعار للمستخدمين.",
+        "button": "جدولة التغييرات"
+      },
+      "form": {
+        "loading": "جاري تحميل بيانات الخطة...",
+        "addTitle": "إضافة خطة تسعير جديدة",
+        "editTitle": "تعديل خطة التسعير",
+        "description": "قم بإعداد نوع الخطة والسعر وربطها بالمحتوى التعليمي.",
+        "warning": "تأكد من اختيار نوع التسعير الصحيح. لا يمكن تغيير نوع الخطة من \"دورية\" إلى \"اشتراك\" بعد الحفظ.",
+        "sections": {
+          "planType": "نوع التسعير",
+          "pricing": "تفاصيل السعر",
+          "linkContent": "ربط المحتوى"
+        },
+        "types": {
+          "oneTime": {
+            "title": "دفع مرة واحدة",
+            "description": "دفع لمرة واحدة للوصول الكامل"
+          },
+          "yearly": {
+            "title": "اشتراك سنوي",
+            "description": "وصول سنوي متجدد"
+          },
+          "monthly": {
+            "title": "اشتراك شهري",
+            "description": "دفع متكرر شهرياً"
+          }
+        },
+        "fields": {
+          "planName": {
+            "label": "اسم الخطة",
+            "placeholder": "مثال: الباقة الذهبية"
+          },
+          "currency": {
+            "label": "العملة",
+            "sar": "ريال سعودي (SAR)"
+          },
+          "basePrice": {
+            "label": "السعر الأساسي"
+          },
+          "offerPrice": {
+            "label": "سعر العرض (اختياري)"
+          },
+          "linkedContent": {
+            "label": "بحث عن دورة أو مسار تعليمي لربطه...",
+            "placeholder": "اختر المحتوى المرتبط",
+            "options": {
+              "pythonBasics": "أساسيات البرمجة بايثون",
+              "scienceTracks": "جميع مسارات العلوم",
+              "teachersToolkit": "مجموعة أدوات المعلمين"
+            }
+          },
+          "status": {
+            "title": "تفعيل الخطة فوراً",
+            "subtitle": "ستظهر الخطة للمستخدمين مباشرة بعد الحفظ",
+            "active": "نشط",
+            "inactive": "غير نشط"
+          }
+        },
+        "preview": {
+          "badge": "PREVIEW",
+          "planTitleFallback": "اسم الخطة",
+          "subtitle": "باقة الوصول الكامل للدورة",
+          "cta": "اشترك الآن"
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "create": "إنشاء الخطة",
+          "save": "حفظ التعديلات"
+        }
+      }
+    },
+    "paymentGatewaySettings": {
+      "page": {
+        "title": "إعدادات بوابات الدفع",
+        "description": "قم بربط وتكوين بوابات الدفع الخاصة بمنصة إدارة العمليات المالية."
+      },
+      "switch": {
+        "active": "مفعل",
+        "inactive": "غير مفعل"
+      },
+      "status": {
+        "connected": "مفعل",
+        "connectedTrial": "مفعل (تجريبي)",
+        "notConnected": "غير مفعل"
+      },
+      "fields": {
+        "testMode": "وضع الاختبار",
+        "stripe": {
+          "publicKey": "Public Key (المفتاح العام)",
+          "secretKey": "Secret Key (المفتاح السري)"
+        },
+        "paymob": {
+          "apiKey": "API Key",
+          "iframeId": "IFRAME ID"
+        },
+        "paypal": {
+          "clientId": "Client ID",
+          "clientSecret": "Client Secret"
+        }
+      },
+      "actions": {
+        "saveChanges": "حفظ التغييرات",
+        "linkAccount": "ربط الحساب",
+        "updateSettings": "تحديث الإعدادات"
+      },
+      "security": {
+        "title": "أمان المعاملات المالية",
+        "body": "لا تشارك مفاتيح API الخاصة بك قبل تخزينها في قاعدة البيانات. يرجى التأكد من عدم مشاركة المفتاح السري مع أي جهة خارجية. يمكنك استخدام وضع الاختبار لتجربة عمليات الدفع دون خصم مبالغ حقيقية.",
+        "logs": "سجل العمليات",
+        "contactSupport": "طلب دعم فني"
+      },
+      "footer": {
+        "unsavedChanges": "تم إجراء 3 تغييرات غير محفوظة",
+        "cancel": "إلغاء",
+        "saveAll": "حفظ كافة الإعدادات"
+      }
     }
   }
 }

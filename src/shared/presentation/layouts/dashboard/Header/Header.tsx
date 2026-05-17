@@ -6,7 +6,7 @@ import { Bell, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/shared/application/hooks/useAuth";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSession";
 import {
   HeaderActionButton,
   MobileMenuButton,
@@ -29,8 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   const router = useRouter();
   const t = useTranslations(translationNamespace);
   const { user } = useAuth();
-  const settingsHref =
-    user?.role === "Admin" ? ROUTES.ADMIN.SETTINGS : ROUTES.USER.SETTINGS;
+  const settingsHref = getSettingsPathForRole(user?.role);
 
   return (
     <motion.header

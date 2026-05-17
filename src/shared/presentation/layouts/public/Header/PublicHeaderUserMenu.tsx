@@ -9,6 +9,7 @@ import { useAuth } from "@/shared/application/hooks/useAuth";
 import { useDropdown } from "../../dashboard/Header/hooks/useDropdown";
 import { dropdownVariants } from "../../dashboard/Header/constants/animations";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { cn } from "@/shared/application/lib/cn";
 
 function getInitials(name: string): string {
@@ -74,7 +75,7 @@ export function PublicHeaderUserMenu({ onNavigate, className }: PublicHeaderUser
     );
   }
 
-  const dashboardHref = isAdminRole(user.role) ? ROUTES.ADMIN.HOME : ROUTES.USER.HOME;
+  const dashboardHref = isAdminRole(user.role) ? ROUTES.ADMIN.HOME : getRedirectPathForRole(user.role);
 
   return (
     <div className={cn("relative shrink-0", className)} ref={dropdownRef}>

@@ -1,7 +1,7 @@
 import type { ComponentType, SVGProps } from "react";
 
 /** Lucide icons and inline SVG components both accept `className` / SVG props. */
-export type SidebarIcon = ComponentType<SVGProps<SVGSVGElement>>;
+export type SidebarIcon = ComponentType<SVGProps<SVGSVGElement> & { fillColor?: string }>;
 
 export type SidebarItem = {
   id: string;

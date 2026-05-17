@@ -1,22 +1,31 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  addUserCountryOptions,
-  addUserSchoolYearOptions,
-  addUserStageOptions,
   addUserSubscriptionOptions,
   availableParentOptions,
   defaultStudentAccountValues,
 } from "@/modules/admin/domain/data/addUserFormData";
-import type { AddUserStageId } from "@/modules/admin/domain/types/addUser.types";
+import {
+  createStudentUser,
+  getCountriesDropdown,
+  getEducationLevelsDropdown,
+  getUserManagementGradesDropdown,
+  getUserManagementSchoolsDropdown,
+  searchParentByPhone,
+  uploadUserImage,
+  type UserManagementDropdownOption,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
+import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import {
   AddUserAnimatedSection,
+  AddUserDateField,
   AddUserFormSectionCard,
   AddUserInputField,
   AddUserPageShell,
@@ -30,18 +39,36 @@ import Credit from "../assets/icons/Credit";
 import CalenderIcon from "../assets/icons/CalenderIcon";
 import ExpireCalender from "../assets/icons/ExpireCalender";
 
+type DropdownRow = { id: string; label: string };
+
 export function AdminAddStudentPage() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
   const [values, setValues] = useState(defaultStudentAccountValues);
+  const [apiParentOption, setApiParentOption] = useState<(typeof availableParentOptions)[number] | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<{
+    message?: string;
+    validationErrors?: unknown;
+  } | null>(null);
+
+  const [countryRows, setCountryRows] = useState<UserManagementDropdownOption<number>[]>([]);
+  const [educationLevelRows, setEducationLevelRows] = useState<UserManagementDropdownOption<number>[]>([]);
+  const [gradeRows, setGradeRows] = useState<UserManagementDropdownOption<number>[]>([]);
+  const [schoolRows, setSchoolRows] = useState<UserManagementDropdownOption<string>[]>([]);
+  const [schoolsLoading, setSchoolsLoading] = useState(true);
 
   const parentResults = useMemo(
-    () =>
-      availableParentOptions.filter((parent) =>
+    () => {
+      const mockResults = availableParentOptions.filter((parent) =>
         parent.name.includes(values.parentSearch) ||
         parent.secondaryLabel.includes(values.parentSearch),
-      ),
-    [values.parentSearch],
+      );
+
+      if (!apiParentOption) return mockResults;
+      return [apiParentOption, ...mockResults.filter((item) => item.id !== apiParentOption.id)];
+    },
+    [apiParentOption, values.parentSearch],
   );
 
   const setField = <K extends keyof typeof values>(
@@ -50,6 +77,198 @@ export function AdminAddStudentPage() {
   ) => {
     setValues((current) => ({ ...current, [key]: value }));
   };
+
+  const loadEducationLevels = useCallback(async (countryId: string) => {
+    const id = Number(countryId);
+    if (!countryId || Number.isNaN(id)) {
+      setEducationLevelRows([]);
+      return;
+    }
+    const result = await getEducationLevelsDropdown(id);
+    if (result.data) {
+      setEducationLevelRows(result.data);
+    } else if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      setEducationLevelRows([]);
+    }
+  }, []);
+
+  const loadGrades = useCallback(async (educationLevelId: string) => {
+    const id = Number(educationLevelId);
+    if (!educationLevelId || Number.isNaN(id)) {
+      setGradeRows([]);
+      return;
+    }
+    const result = await getUserManagementGradesDropdown(id);
+    if (result.data) {
+      setGradeRows(result.data);
+    } else if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      setGradeRows([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const [countriesResult, schoolsResult] = await Promise.all([
+        getCountriesDropdown(),
+        getUserManagementSchoolsDropdown(" "),
+      ]);
+
+      if (cancelled) return;
+
+      if (countriesResult.data) {
+        setCountryRows(countriesResult.data);
+      } else if (countriesResult.errorMessage) {
+        notify.error(countriesResult.errorMessage);
+      }
+
+      if (schoolsResult.data) {
+        setSchoolRows(schoolsResult.data);
+      } else if (schoolsResult.errorMessage) {
+        notify.error(schoolsResult.errorMessage);
+      }
+      setSchoolsLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleCountryChange = (value: string) => {
+    setValues((current) => ({
+      ...current,
+      countryId: value,
+      educationLevelId: "",
+      gradeId: "",
+    }));
+    setEducationLevelRows([]);
+    setGradeRows([]);
+    void loadEducationLevels(value);
+  };
+
+  const handleEducationLevelChange = (value: string) => {
+    setValues((current) => ({
+      ...current,
+      educationLevelId: value,
+      gradeId: "",
+    }));
+    setGradeRows([]);
+    void loadGrades(value);
+  };
+
+  const handleSchoolChange = (value: string) => {
+    const row = schoolRows.find((s) => String(s.id) === value);
+    setValues((current) => ({
+      ...current,
+      schoolId: value,
+      schoolName: row?.name ?? "",
+    }));
+  };
+
+  useEffect(() => {
+    if (!values.linkParentEnabled || values.parentSearch.trim().length < 3) {
+      setApiParentOption(null);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(async () => {
+      const result = await searchParentByPhone(values.parentSearch.trim());
+
+      if (result.data) {
+        setApiParentOption({
+          id: result.data.parentUserId,
+          name: result.data.fullName,
+          secondaryLabel: `رقم الهاتف: ${result.data.phoneNumber}`,
+          tertiaryLabel: "نتيجة من البحث المباشر",
+          avatarInitials: result.data.fullName.trim().slice(0, 2) || "و",
+          avatarClassName: "bg-[#E8EEF8] text-[#243B5A]",
+        });
+      } else {
+        setApiParentOption(null);
+      }
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [values.linkParentEnabled, values.parentSearch]);
+
+  const countryOptions: DropdownRow[] = useMemo(
+    () => [
+      { id: "", label: t("userManagement.addUser.shared.placeholders.selectCountry") },
+      ...countryRows.map((row) => ({ id: String(row.id), label: row.name })),
+    ],
+    [countryRows, t],
+  );
+
+  const educationLevelOptions: DropdownRow[] = useMemo(
+    () => [
+      { id: "", label: t("userManagement.addUser.shared.placeholders.selectEducationLevel") },
+      ...educationLevelRows.map((row) => ({ id: String(row.id), label: row.name })),
+    ],
+    [educationLevelRows, t],
+  );
+
+  const gradeOptions: DropdownRow[] = useMemo(
+    () => [
+      { id: "", label: t("userManagement.addUser.shared.placeholders.selectGrade") },
+      ...gradeRows.map((row) => ({ id: String(row.id), label: row.name })),
+    ],
+    [gradeRows, t],
+  );
+
+  const schoolOptions: DropdownRow[] = useMemo(
+    () => [
+      { id: "", label: t("userManagement.addUser.shared.placeholders.selectSchool") },
+      ...schoolRows.map((row) => ({ id: String(row.id), label: row.name })),
+    ],
+    [schoolRows, t],
+  );
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    setSubmitError(null);
+    setIsSubmitting(true);
+    let avatarFilePath = values.avatarFilePath;
+
+    if (values.avatarFile) {
+      const uploadResult = await uploadUserImage(values.avatarFile);
+      if (!uploadResult.data?.filePath) {
+        setSubmitError({
+          message: uploadResult.errorMessage ?? "Failed to upload image.",
+          validationErrors: uploadResult.validationErrors,
+        });
+        notify.error(uploadResult.errorMessage ?? "Failed to upload image.");
+        setIsSubmitting(false);
+        return;
+      }
+      avatarFilePath = uploadResult.data.filePath;
+    }
+
+    const result = await createStudentUser({
+      ...values,
+      avatarFilePath,
+    });
+    console.log(result);
+
+    if (result.data) {
+      notify.success(result.message ?? "Student created successfully.");
+      router.push(`${ROUTES.ADMIN.HOME}?tab=userManagement&refresh=${Date.now()}`);
+      return;
+    }
+
+    setSubmitError({
+      message: result.errorMessage ?? "Failed to create student.",
+      validationErrors: result.validationErrors,
+    });
+    notify.error(result.errorMessage ?? "Failed to create student.");
+    setIsSubmitting(false);
+  };
+
+  const schoolEmpty = !schoolsLoading && schoolRows.length === 0;
 
   return (
     <AddUserPageShell
@@ -62,10 +281,16 @@ export function AdminAddStudentPage() {
       ]}
       cancelLabel={t("userManagement.addUser.shared.actions.cancel")}
       submitLabel={t("userManagement.addUser.student.page.submit")}
-      onSubmit={() => {
-        console.info("Create student payload", values);
-      }}
+      onSubmit={handleSubmit}
     >
+      {submitError ? (
+        <ApiFailureAlert
+          message={submitError.message}
+          validationErrors={submitError.validationErrors}
+          className="mb-2"
+        />
+      ) : null}
+
       <AddUserAnimatedSection delay={0.05}>
         <AddUserFormSectionCard
           title={t("userManagement.addUser.shared.sections.basicInfo")}
@@ -87,6 +312,7 @@ export function AdminAddStudentPage() {
               onChange={(next) => {
                 setField("avatarFile", next.file);
                 setField("avatarPreviewUrl", next.previewUrl);
+                setField("avatarFilePath", null);
               }}
             />
 
@@ -100,29 +326,22 @@ export function AdminAddStudentPage() {
               <AddUserSelectField
                 label={t("userManagement.addUser.shared.fields.country")}
                 value={values.countryId}
-                options={addUserCountryOptions.map((option) => ({
-                  id: option.id,
-                  label: t(option.labelKey),
-                }))}
-                onChange={(value) => setField("countryId", value)}
+                options={countryOptions}
+                onChange={handleCountryChange}
               />
               <AddUserSelectField
                 label={t("userManagement.addUser.student.fields.educationalStage")}
-                value={values.educationalStageId}
-                options={addUserStageOptions.map((option) => ({
-                  id: option.id,
-                  label: t(option.labelKey),
-                }))}
-                onChange={(value) => setField("educationalStageId", value as AddUserStageId)}
+                value={values.educationLevelId}
+                options={educationLevelOptions}
+                disabled={!values.countryId}
+                onChange={handleEducationLevelChange}
               />
               <AddUserSelectField
                 label={t("userManagement.addUser.student.fields.schoolYear")}
-                value={values.schoolYearId}
-                options={addUserSchoolYearOptions.map((option) => ({
-                  id: option.id,
-                  label: t(option.labelKey),
-                }))}
-                onChange={(value) => setField("schoolYearId", value)}
+                value={values.gradeId}
+                options={gradeOptions}
+                disabled={!values.educationLevelId}
+                onChange={(value) => setField("gradeId", value)}
               />
               <AddUserInputField
                 label={t("userManagement.addUser.shared.fields.phoneNumber")}
@@ -130,12 +349,20 @@ export function AdminAddStudentPage() {
                 value={values.phoneNumber}
                 onChange={(event) => setField("phoneNumber", event.target.value)}
               />
-              <AddUserInputField
-                label={t("userManagement.addUser.student.fields.schoolName")}
-                placeholder={t("userManagement.addUser.student.placeholders.schoolName")}
-                value={values.schoolName}
-                onChange={(event) => setField("schoolName", event.target.value)}
-              />
+              <div className="space-y-2">
+                <AddUserSelectField
+                  label={t("userManagement.addUser.shared.fields.school")}
+                  value={values.schoolId}
+                  options={schoolOptions}
+                  disabled={schoolsLoading || schoolEmpty}
+                  onChange={handleSchoolChange}
+                />
+                {schoolEmpty ? (
+                  <p className="text-sm text-amber-700 text-right">
+                    {t("userManagement.addUser.shared.messages.noSchools")}
+                  </p>
+                ) : null}
+              </div>
               <AddUserInputField
                 label={t("userManagement.addUser.shared.fields.email")}
                 placeholder={t("userManagement.addUser.shared.placeholders.email")}
@@ -166,9 +393,6 @@ export function AdminAddStudentPage() {
             onChange={(checked) => setField("linkParentEnabled", checked)}
             ariaLabel={t("userManagement.addUser.student.parentSection.toggle")}
           />
-          {/* <span className="text-sm text-slate-500">
-            {t("userManagement.addUser.student.parentSection.toggle")}
-          </span> */}
         </div>
         <div className="space-y-5 border-t-2 border-[#F6F7F7] pt-5">
           <div className="grid gap-4 lg:grid-cols-2">
@@ -258,17 +482,17 @@ export function AdminAddStudentPage() {
             />
 
             <div className="grid gap-4 md:grid-cols-2">
-              <AddUserInputField
+              <AddUserDateField
                 label={t("userManagement.addUser.student.subscriptionSection.startDate")}
                 icon={CalenderIcon}
                 value={values.subscriptionStartDate}
-                onChange={(event) => setField("subscriptionStartDate", event.target.value)}
+                onChange={(value) => setField("subscriptionStartDate", value)}
               />
-              <AddUserInputField
+              <AddUserDateField
                 label={t("userManagement.addUser.student.subscriptionSection.endDate")}
                 value={values.subscriptionEndDate}
                 icon={ExpireCalender}
-                onChange={(event) => setField("subscriptionEndDate", event.target.value)}
+                onChange={(value) => setField("subscriptionEndDate", value)}
               />
             </div>
           </div>

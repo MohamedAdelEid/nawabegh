@@ -1,6 +1,62 @@
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 
+export type SchoolKpis = {
+  totalSchools: number;
+  activeSchools: number;
+  totalTeachers: number;
+  totalStudents: number;
+};
+
+export type SchoolKpisResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: SchoolKpis | null;
+};
+
+export type CreateSchoolPayload = {
+  name: string;
+  logoUrl: string;
+  phoneNumber: string;
+  address: string;
+  email: string;
+  description: string;
+  city: string;
+  country: string;
+  points: number;
+  performanceLevel: string;
+  establishmentDate: string;
+  subscriptionPlanId: string;
+};
+
+export type CreatedSchool = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  phoneNumber: string;
+  address: string;
+  email: string;
+  description: string;
+  city: string;
+  country: string;
+  points: number;
+  performanceLevel: string;
+  establishmentDate: string;
+  subscriptionPlanId: string;
+  status: string;
+  createdAt: string;
+};
+
+export type CreateSchoolResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: CreatedSchool | null;
+};
+
 export interface GetSchoolsParams {
   keyword?: string;
   pageNumber: number;
@@ -94,6 +150,7 @@ function readArray(record: UnknownRecord | null, keys: string[]): unknown[] | nu
   return null;
 }
 
+
 function formatNumber(value: number | null, fallback = "—"): string {
   return value === null ? fallback : new Intl.NumberFormat("en-US").format(value);
 }
@@ -186,6 +243,120 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
     status,
     flag: inferFlag(city),
   };
+}
+
+function mapSchoolKpisPayload(data: unknown): SchoolKpis | null {
+  const record = asRecord(data);
+  if (!record) return null;
+  return {
+    totalSchools: readNumber(record, ["totalSchools"]) ?? 0,
+    activeSchools: readNumber(record, ["activeSchools"]) ?? 0,
+    totalTeachers: readNumber(record, ["totalTeachers"]) ?? 0,
+    totalStudents: readNumber(record, ["totalStudents"]) ?? 0,
+  };
+}
+
+function mapCreatedSchool(data: unknown): CreatedSchool | null {
+  const record = asRecord(data);
+  if (!record) return null;
+  const id = readString(record, ["id"]);
+  if (!id) return null;
+  return {
+    id,
+    name: readString(record, ["name"]) ?? "",
+    logoUrl: readString(record, ["logoUrl"]) ?? "",
+    phoneNumber: readString(record, ["phoneNumber"]) ?? "",
+    address: readString(record, ["address"]) ?? "",
+    email: readString(record, ["email"]) ?? "",
+    description: readString(record, ["description"]) ?? "",
+    city: readString(record, ["city"]) ?? "",
+    country: readString(record, ["country"]) ?? "",
+    points: readNumber(record, ["points"]) ?? 0,
+    performanceLevel: readString(record, ["performanceLevel"]) ?? "",
+    establishmentDate: readString(record, ["establishmentDate"]) ?? "",
+    subscriptionPlanId: readString(record, ["subscriptionPlanId"]) ?? "",
+    status: readString(record, ["status"]) ?? "",
+    createdAt: readString(record, ["createdAt"]) ?? "",
+  };
+}
+
+export async function getSchoolKpis(): Promise<SchoolKpisResult> {
+  try {
+    const response = await httpClient.get<unknown>({
+      url: "/api/v1/School/kpis",
+    });
+
+    const payload = asRecord(response.data);
+    const nested = payload ? asRecord(payload["data"]) : null;
+    const kpis = mapSchoolKpisPayload(nested ?? payload);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      validationErrors: response.error?.validationErrors ?? null,
+      data: kpis,
+    };
+  } catch (error) {
+    const axiosError = asRecord(error);
+    const response = asRecord(axiosError?.response);
+    const httpStatusCode = readNumber(response, ["status"]);
+    const data = asRecord(response?.data) as BackendApiResponse<unknown> | null;
+
+    return {
+      status:
+        (data?.status as BackendStatus | string | undefined) ??
+        mapHttpStatus(httpStatusCode),
+      message: data?.message,
+      errorMessage:
+        data?.error?.message ??
+        (axiosError?.message as string | undefined) ??
+        "Failed to load school KPIs",
+      validationErrors: data?.error?.validationErrors ?? null,
+      data: null,
+    };
+  }
+}
+
+export async function createSchool(
+  payload: CreateSchoolPayload,
+): Promise<CreateSchoolResult> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: "/api/v1/School",
+      data: payload,
+    });
+
+    const envelope = asRecord(response.data);
+    const nested = envelope ? asRecord(envelope["data"]) : null;
+    const created = mapCreatedSchool(nested ?? envelope);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      validationErrors: response.error?.validationErrors ?? null,
+      data: created,
+    };
+  } catch (error) {
+    const axiosError = asRecord(error);
+    const response = asRecord(axiosError?.response);
+    const httpStatusCode = readNumber(response, ["status"]);
+    const data = asRecord(response?.data) as BackendApiResponse<unknown> | null;
+
+    return {
+      status:
+        (data?.status as BackendStatus | string | undefined) ??
+        mapHttpStatus(httpStatusCode),
+      message: data?.message,
+      errorMessage:
+        data?.error?.message ??
+        (axiosError?.message as string | undefined) ??
+        "Failed to create school",
+      validationErrors: data?.error?.validationErrors ?? null,
+      data: null,
+    };
+  }
 }
 
 export async function getSchools(params: GetSchoolsParams): Promise<SchoolTableResult> {

@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, EllipsisVertical, SlidersHorizontal } from "lucide-react";
 import AddSchoolIcon from "@/modules/admin/presentation/assets/icons/AddSchool.svg";
+import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   DashboardBadge,
+  DashboardDataTable,
+  type DashboardDataTableColumn,
   DashboardInsightCard,
   DashboardPageHeader,
   DashboardPagination,
@@ -17,6 +20,8 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { useSchoolsTable } from "@/modules/admin/application/hooks/useSchoolsTable";
 import { schoolManagementDashboardData } from "@/modules/admin/domain/data/schoolManagementDashboardData";
+import { getSchoolKpis, type SchoolKpis } from "@/modules/admin/infrastructure/api/schoolApi";
+import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 function statusTone(status: string) {
@@ -84,17 +89,128 @@ function TableLoadingState({
 
 export function SchoolManagementDashboard() {
   const t = useTranslations("admin.dashboard");
+  const locale = useLocale();
   const router = useRouter();
   const data = schoolManagementDashboardData;
   const schoolsTable = useSchoolsTable();
   const responseStatus = schoolsTable.data?.status ?? "Success";
   const page = schoolsTable.page;
+  const [kpis, setKpis] = useState<SchoolKpis | null>(null);
+  const schoolTableColumns = useMemo<Array<DashboardDataTableColumn<any>>>(
+    () => [
+      {
+        id: "school",
+        header: t("schoolManagement.table.columns.school"),
+        renderCell: (row) => (
+          <div className="flex min-w-[15rem] items-center justify-start gap-3">
+            <div className="text-3xl" aria-hidden>
+              {row.flag}
+            </div>
+            <div className="space-y-1 text-right">
+              <p className="font-semibold text-slate-800">{row.schoolName}</p>
+              <p className="text-xs text-slate-400">{row.city}</p>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "students",
+        header: t("schoolManagement.table.columns.students"),
+        cellClassName: "font-medium text-slate-600",
+        renderCell: (row) => row.studentCount,
+      },
+      {
+        id: "points",
+        header: t("schoolManagement.table.columns.points"),
+        cellClassName: "font-bold text-slate-700",
+        renderCell: (row) => row.totalPoints,
+      },
+      {
+        id: "rank",
+        header: t("schoolManagement.table.columns.rank"),
+        renderCell: (row) => (
+          row.ranking ? (
+            <DashboardBadge tone={row.ranking === 1 ? "gold" : "primary"}>
+              {row.ranking}
+            </DashboardBadge>
+          ) : (
+            <span className="text-slate-400">—</span>
+          )
+        ),
+      },
+      {
+        id: "performance",
+        header: t("schoolManagement.table.columns.performance"),
+        renderCell: (row) => (
+          <DashboardBadge tone={performanceTone(row.performanceStatus)}>
+            {row.performance}
+          </DashboardBadge>
+        ),
+      },
+      {
+        id: "foundedAt",
+        header: t("schoolManagement.table.columns.foundedAt"),
+        cellClassName: "text-slate-500",
+        renderCell: (row) => row.foundedAt,
+      },
+      {
+        id: "status",
+        header: t("schoolManagement.table.columns.status"),
+        renderCell: (row) => (
+          <DashboardBadge tone={statusTone(row.status)} withDot>
+            {row.status}
+          </DashboardBadge>
+        ),
+      },
+    ],
+    [t],
+  );
+
+  const formatKpiValue = useCallback(
+    (statId: string) => {
+      if (!kpis) {
+        return data.stats.find((s) => s.id === statId)?.value ?? "—";
+      }
+      const n =
+        statId === "totalSchools"
+          ? kpis.totalSchools
+          : statId === "activeSchools"
+            ? kpis.activeSchools
+            : statId === "totalTeachers"
+              ? kpis.totalTeachers
+              : statId === "totalStudents"
+                ? kpis.totalStudents
+                : null;
+      if (n === null) return "—";
+      return new Intl.NumberFormat(locale).format(n);
+    },
+    [data.stats, kpis, locale],
+  );
+
+  const statCards = useMemo(
+    () =>
+      data.stats.map((stat) => ({
+        ...stat,
+        value: formatKpiValue(stat.id),
+      })),
+    [data.stats, formatKpiValue],
+  );
 
   useEffect(() => {
     if (responseStatus === "Unauthorized") {
       router.replace(ROUTES.AUTH.LOGIN);
     }
   }, [responseStatus, router]);
+
+  useEffect(() => {
+    void getSchoolKpis().then((result) => {
+      if (result.data) {
+        setKpis(result.data);
+      } else if (result.errorMessage) {
+        notify.error(result.errorMessage);
+      }
+    });
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -108,19 +224,19 @@ export function SchoolManagementDashboard() {
         action={
           <Button
             type="button"
-            className="h-14 rounded-2xl bg-[#2C4260] px-6 text-base font-semibold text-white shadow-[0_14px_30px_rgba(44,66,96,0.22)] hover:bg-[#243751] cursor-pointer"
+            className="h-14 rounded-2xl bg-[#2C4260] px-6 text-base font-semibold text-white hover:bg-[#243751] cursor-pointer shadow-[var(--dashboard-shadow-button)]"
             onClick={() => {
               router.push(ROUTES.ADMIN.SCHOOL_MANAGEMENT.ADD);
             }}
           >
-            <img src={AddSchoolIcon.src} alt="Add School" width={22} height={22} aria-hidden />
+            <IconComp src={AddSchoolIcon} alt="Add School" width={22} height={22} aria-hidden />
             {t("schoolManagement.page.addSchool")}
           </Button>
         }
       />
 
       <section className="grid gap-5 lg:grid-cols-4">
-        {data.stats.map((stat) => (
+        {statCards.map((stat) => (
           <DashboardStatCard
             key={stat.id}
             label={t(stat.labelKey)}
@@ -212,73 +328,23 @@ export function SchoolManagementDashboard() {
             }
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-right">
-              <thead>
-                <tr className="border-b border-slate-100 text-sm text-slate-400">
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.school")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.students")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.points")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.rank")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.performance")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.foundedAt")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.status")}</th>
-                  <th className="px-6 py-5 font-medium">{t("schoolManagement.table.columns.actions")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {page.rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="border-b border-slate-100 text-sm text-slate-700 transition-colors duration-200 hover:bg-slate-50/80"
-                  >
-                    <td className="px-6 py-5">
-                      <div className="flex min-w-[15rem] items-center justify-start gap-3">
-                        <div className="text-3xl" aria-hidden>
-                          {row.flag}
-                        </div>
-                        <div className="space-y-1 text-right">
-                          <p className="font-semibold text-slate-800">{row.schoolName}</p>
-                          <p className="text-xs text-slate-400">{row.city}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 font-medium text-slate-600">{row.studentCount}</td>
-                    <td className="px-6 py-5 font-bold text-slate-700">{row.totalPoints}</td>
-                    <td className="px-6 py-5">
-                      {row.ranking ? (
-                        <DashboardBadge tone={row.ranking === 1 ? "gold" : "primary"}>
-                          {row.ranking}
-                        </DashboardBadge>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-5">
-                      <DashboardBadge tone={performanceTone(row.performanceStatus)}>
-                        {row.performance}
-                      </DashboardBadge>
-                    </td>
-                    <td className="px-6 py-5 text-slate-500">{row.foundedAt}</td>
-                    <td className="px-6 py-5">
-                      <DashboardBadge tone={statusTone(row.status)} withDot>
-                        {row.status}
-                      </DashboardBadge>
-                    </td>
-                    <td className="px-6 py-5">
-                      <button
-                        type="button"
-                        className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                        aria-label={t("schoolManagement.table.actions.more")}
-                      >
-                        <EllipsisVertical className="h-5 w-5" aria-hidden />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DashboardDataTable
+            rows={page.rows}
+            columns={schoolTableColumns}
+            getRowKey={(row) => row.id}
+            emptyMessage="—"
+            rowClassName="hover:bg-slate-50/80"
+            actionsHeader={t("schoolManagement.table.columns.actions")}
+            renderActions={() => (
+              <button
+                type="button"
+                className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                aria-label={t("schoolManagement.table.actions.more")}
+              >
+                <EllipsisVertical className="h-5 w-5" aria-hidden />
+              </button>
+            )}
+          />
         )}
       </DashboardTableCard>
 

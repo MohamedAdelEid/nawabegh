@@ -7,13 +7,9 @@ import {
 } from "lucide-react";
 import type { SidebarIcon } from "@/shared/domain/types/sidebar.types";
 
-export type UserManagementRoleId = "all" | "student" | "teacher";
-export type UserManagementSchoolId =
-  | "all"
-  | "alnour"
-  | "riyadhPrivate"
-  | "alfajr";
-export type UserManagementGradeId = "all" | "allGrades" | "grade5" | "grade4";
+export type UserManagementRoleId = "all" | "student" | "teacher" | "parent";
+export type UserManagementSchoolId = "all" | (string & {});
+export type UserManagementGradeId = "all" | "allGrades" | (string & {});
 export type UserManagementSubscriptionId = "all" | "active" | "inactive";
 export type UserManagementStatusId = "active" | "inactive";
 
@@ -107,6 +103,7 @@ export const userManagementDashboardData: UserManagementDashboardData = {
       { id: "all", labelKey: "userManagement.filters.roles.all" },
       { id: "student", labelKey: "userManagement.roles.student" },
       { id: "teacher", labelKey: "userManagement.roles.teacher" },
+      { id: "parent", labelKey: "userManagement.roles.parent" },
     ],
     schools: [
       { id: "all", labelKey: "userManagement.filters.schools.all" },

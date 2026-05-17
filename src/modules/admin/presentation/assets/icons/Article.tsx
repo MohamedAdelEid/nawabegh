@@ -1,0 +1,9 @@
+import type { SVGProps } from "react";
+
+export function Article(props: SVGProps<SVGSVGElement>) {
+    return (
+        <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden {...props} >
+            <path d="M5 17.5H13.75V15H5V17.5ZM5 12.5H17.5V10H5V12.5ZM5 7.5H17.5V5H5V7.5ZM2.5 22.5C1.8125 22.5 1.22396 22.2552 0.734375 21.7656C0.244792 21.276 0 20.6875 0 20V2.5C0 1.8125 0.244792 1.22396 0.734375 0.734375C1.22396 0.244792 1.8125 0 2.5 0H20C20.6875 0 21.276 0.244792 21.7656 0.734375C22.2552 1.22396 22.5 1.8125 22.5 2.5V20C22.5 20.6875 22.2552 21.276 21.7656 21.7656C21.276 22.2552 20.6875 22.5 20 22.5H2.5ZM2.5 20H20V2.5H2.5V20ZM2.5 2.5V20V2.5Z" fill="#2B415E" />
+        </svg>
+    );
+}

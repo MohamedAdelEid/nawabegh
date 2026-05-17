@@ -2,6 +2,8 @@
 
 import type React from "react";
 import { cn } from "@/shared/application/lib/cn";
+import { iconToneClassNameMap, IconTone } from "@/shared/domain/types/common.types";
+
 
 export type DashboardBadgeTone =
   | "neutral"
@@ -24,7 +26,7 @@ const toneClasses: Record<DashboardBadgeTone, string> = {
 
 interface DashboardBadgeProps {
   children: React.ReactNode;
-  tone?: DashboardBadgeTone;
+  tone?: DashboardBadgeTone | IconTone;
   withDot?: boolean;
   className?: string;
 }
@@ -39,7 +41,7 @@ export function DashboardBadge({
     <span
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium",
-        toneClasses[tone],
+        typeof tone === "string" ? toneClasses[tone as DashboardBadgeTone] : iconToneClassNameMap[tone as IconTone],
         className,
       )}
     >

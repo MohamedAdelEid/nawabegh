@@ -24,7 +24,7 @@ export const SidebarNavSection: React.FC<SidebarNavSectionProps> = ({
       {items.map((item, index) => (
         <SidebarNavItem
           key={item.id}
-          item={item}
+        item={item}
           displayLabel={resolveLabel(item)}
           index={startIndex + index}
           isCollapsed={isCollapsed}

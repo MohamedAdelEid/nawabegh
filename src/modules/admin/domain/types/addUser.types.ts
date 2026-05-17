@@ -34,15 +34,23 @@ export interface AddUserPickerOption {
 
 export interface StudentAccountFormValues {
   fullName: string;
-  countryId: AddUserCountryId;
-  educationalStageId: AddUserStageId;
-  schoolYearId: AddUserSchoolYearId;
+  /** Numeric id from Countries dropdown (string for controlled select values). */
+  countryId: string;
+  /** Numeric id from EducationLevels dropdown for the selected country. */
+  educationLevelId: string;
+  /** Numeric id from Grades dropdown for the selected education level. */
+  gradeId: string;
   phoneNumber: string;
+  /** School GUID from School dropdown. */
+  schoolId: string;
+  /** Selected school display name (sent as address / context). */
   schoolName: string;
   email: string;
   password: string;
   avatarFile: File | null;
   avatarPreviewUrl: string | null;
+  /** Stored backend file path returned by FileUpload endpoint. */
+  avatarFilePath: string | null;
   linkParentEnabled: boolean;
   parentSearch: string;
   selectedParentId: string | null;
@@ -54,27 +62,38 @@ export interface StudentAccountFormValues {
 export interface TeacherAccountFormValues {
   fullName: string;
   phoneNumber: string;
-  countryId: AddUserCountryId;
+  /** Numeric id from Countries dropdown. */
+  countryId: string;
+  /** Numeric id from EducationLevels dropdown (used to load grades). */
+  educationLevelId: string;
   jobTitle: string;
+  /** School GUID from School dropdown. */
+  schoolId: string;
   schoolName: string;
   password: string;
   address: string;
   avatarFile: File | null;
   avatarPreviewUrl: string | null;
+  /** Stored backend file path returned by FileUpload endpoint. */
+  avatarFilePath: string | null;
   subjectIds: AddUserSubjectId[];
-  gradeLevelIds: AddUserGradeLevelId[];
+  /** Grade ids from Grades dropdown (numeric strings). */
+  gradeLevelIds: string[];
   permissionIds: AddUserPermissionId[];
 }
 
 export interface ParentAccountFormValues {
   fullName: string;
   phoneNumber: string;
-  countryId: AddUserCountryId;
+  /** Numeric id from Countries dropdown (string for controlled select values). */
+  countryId: string;
   address: string;
   email: string;
   password: string;
   avatarFile: File | null;
   avatarPreviewUrl: string | null;
+  /** Stored backend file path returned by FileUpload endpoint. */
+  avatarFilePath: string | null;
   studentSearch: string;
   selectedStudentIds: string[];
 }

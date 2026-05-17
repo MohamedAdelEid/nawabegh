@@ -6,10 +6,13 @@ import { Sidebar } from "./Sidebar";
 import { MobileOverlay, DashboardContent } from "./components";
 import { useMobileDetection, useDashboardState } from "./hooks";
 import { adminSidebarItems } from "@/modules/admin/domain/data/adminSidebarItems";
-import { studentSidebarItems } from "@/modules/student/domain/data/studentSidebarItems";
+import {
+  buildStudentShellSidebar,
+  studentSidebarItems,
+} from "@/modules/student/domain/data/studentSidebarItems";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 
-export type DashboardShellVariant = "admin" | "student";
+export type DashboardShellVariant = "admin" | "student" | "teacher" | "parent";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -21,7 +24,19 @@ interface DashboardLayoutProps {
 }
 
 function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
-  return variant === "admin" ? adminSidebarItems : studentSidebarItems;
+  if (variant === "admin") return adminSidebarItems;
+  if (variant === "teacher") {
+    return buildStudentShellSidebar("/teacher/dashboard", "/teacher/settings");
+  }
+  if (variant === "parent") {
+    return buildStudentShellSidebar("/parent/dashboard", "/parent/settings");
+  }
+  return studentSidebarItems;
+}
+
+function intlNamespaceForVariant(variant: DashboardShellVariant): string {
+  if (variant === "admin") return "admin.dashboard";
+  return "student.dashboard";
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
@@ -29,7 +44,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   variant,
 }) => {
   const sidebarItems: SidebarItems = sidebarForVariant(variant);
-  const translationNamespace = `${variant}.dashboard`;
+  const translationNamespace = intlNamespaceForVariant(variant);
   const isMobile = useMobileDetection();
   const { isSidebarCollapsed, isMobileMenuOpen, toggleSidebar, closeMobileMenu } =
     useDashboardState(isMobile);

@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "login": {
+      "meta": {
+        "title": "تسجيل الدخول"
+      },
+      "brandAlt": "شعار أكاديمية نوابغ",
+      "form": {
+        "title": "تسجيل الدخول",
+        "description": "مرحبا بك في عالم المعرفة",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "example@email.com",
+        "passwordLabel": "كلمة المرور",
+        "passwordPlaceholder": "••••••••",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "submit": "تسجيل الدخول",
+        "submitting": "جارٍ تسجيل الدخول...",
+        "divider": "أو",
+        "google": "التسجيل بواسطة جوجل",
+        "signupPrompt": "ليس لديك حساب بعد؟",
+        "signupAction": "إنشاء حساب",
+        "countryName": "السعودية",
+        "countryCode": "+966"
+      },
+      "validation": {
+        "emailRequired": "يرجى إدخال البريد الإلكتروني.",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صالح.",
+        "passwordRequired": "يرجى إدخال كلمة المرور.",
+        "genericError": "تعذر تسجيل الدخول حاليًا. حاول مرة أخرى."
+      },
+      "actions": {
+        "backHome": "العودة إلى الرئيسية",
+        "showPassword": "إظهار كلمة المرور",
+        "hidePassword": "إخفاء كلمة المرور"
+      }
+    }
+  }
+}

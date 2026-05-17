@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "login": {
+      "meta": {
+        "title": "Login"
+      },
+      "brandAlt": "Nawabegh academy logo",
+      "form": {
+        "title": "Sign in",
+        "description": "Welcome to the world of knowledge",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "forgotPassword": "Forgot password?",
+        "submit": "Sign in",
+        "submitting": "Signing in...",
+        "divider": "or",
+        "google": "Sign in with Google",
+        "signupPrompt": "Don't have an account yet?",
+        "signupAction": "Create account",
+        "countryName": "Saudi Arabia",
+        "countryCode": "+966"
+      },
+      "validation": {
+        "emailRequired": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address.",
+        "passwordRequired": "Please enter your password.",
+        "genericError": "Unable to sign in right now. Please try again."
+      },
+      "actions": {
+        "backHome": "Back to home",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
+      }
+    }
+  }
+}

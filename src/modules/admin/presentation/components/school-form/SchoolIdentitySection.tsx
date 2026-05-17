@@ -7,6 +7,7 @@ import Image from "next/image";
 import { UploadIcon } from "@/modules/admin/presentation/assets/icons/Upload";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
+import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
 import { SchoolFormSectionCard } from "./SchoolFormSectionCard";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
@@ -206,23 +207,18 @@ export function SchoolIdentitySection({
             />
           </div>
 
-          <div className="space-y-2 text-right">
-            <label className="text-sm font-medium text-[#64748B]">
-              {descriptionLabel}
-            </label>
-            <textarea
-              value={value.schoolDescription}
-              onChange={(event) =>
-                onChange({
-                  ...value,
-                  schoolDescription: event.target.value,
-                })
-              }
-              placeholder={descriptionPlaceholder}
-              rows={4}
-              className="flex w-full rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4 text-right text-sm text-slate-700 outline-none placeholder:text-[#94A3B8] focus-visible:ring-2 focus-visible:ring-[#C7AF6E]/40"
-            />
-          </div>
+          <LabeledTextarea
+            className="text-right"
+            label={descriptionLabel}
+            value={value.schoolDescription}
+            placeholder={descriptionPlaceholder}
+            onChange={(next) =>
+              onChange({
+                ...value,
+                schoolDescription: next,
+              })
+            }
+          />
         </div>
       </div>
     </SchoolFormSectionCard>

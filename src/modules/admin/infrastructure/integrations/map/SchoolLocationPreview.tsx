@@ -2,7 +2,6 @@
 
 import { DivIcon } from "leaflet";
 import { useEffect, useMemo, useState } from "react";
-import { MapPin } from "lucide-react";
 import {
   MapContainer,
   Marker,
@@ -33,6 +32,8 @@ const LOCATION_MARKER_ICON = new DivIcon({
 interface SchoolLocationPreviewProps {
   cityLabel: string;
   regionLabel: string;
+  /** Country name; included in geocoding query with city and region. */
+  countryLabel: string;
   providerLabel: string;
   loadingLabel: string;
   emptyLabel: string;
@@ -57,6 +58,7 @@ function MapViewportUpdater({ center }: { center: [number, number] }) {
 export function SchoolLocationPreview({
   cityLabel,
   regionLabel,
+  countryLabel,
   providerLabel,
   loadingLabel,
   emptyLabel,
@@ -67,10 +69,9 @@ export function SchoolLocationPreview({
     "loading",
   );
 
-  // todo: change it to use location from response instead of city and region.
   const placeQuery = useMemo(
-    () => [cityLabel, regionLabel].filter(Boolean).join(", "),
-    [cityLabel, regionLabel],
+    () => [cityLabel, countryLabel, regionLabel].filter(Boolean).join(", "),
+    [cityLabel, countryLabel, regionLabel],
   );
 
   useEffect(() => {

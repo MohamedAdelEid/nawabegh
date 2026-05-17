@@ -2,7 +2,7 @@
 export const ROUTES = {
   HOME: "/",
   AUTH: {
-    LOGIN: "/api/auth/signin",
+    LOGIN: "/login",
   },
   ADMIN: {
     HOME: "/admin/dashboard",
@@ -28,10 +28,115 @@ export const ROUTES = {
       SORT: (sort: string) => `/admin/school-management?sort=${sort}`,
       SEARCH: (search: string) => `/admin/school-management?search=${search}`,
     },
+    CHAT_GROUPS: {
+      LIST: "/admin/chat-groups",
+      EDIT: (id: string) => `/admin/chat-groups/${id}/edit`,
+      VIEW: (id: string) => `/admin/chat-groups/${id}`,
+    },
+    CONTENT_MANAGEMENT: {
+      LIST: "/admin/content-management",
+      ADD: "/admin/content-management/add",
+      VIEW: (fileId: string) => `/admin/content-management/${fileId}`,
+      EDIT: (fileId: string) => `/admin/content-management/${fileId}/edit`,
+    },
+    COURSE_MANAGEMENT: {
+      LIST: "/admin/course-management",
+      CREATE: "/admin/course-management/create",
+      REVIEW: (courseId: string) => `/admin/course-management/${courseId}`,
+      REJECT: (courseId: string) => `/admin/course-management/${courseId}/reject`,
+      REJECTION_DETAILS: (courseId: string) =>
+        `/admin/course-management/${courseId}/rejection-details`,
+    },
+    HELPER_FILE_MANAGEMENT: {
+      LIST: "/admin/helper-file-management",
+      ADD: "/admin/helper-file-management/add",
+      VIEW: (fileId: string) => `/admin/helper-file-management/${fileId}`,
+      EDIT: (fileId: string) => `/admin/helper-file-management/${fileId}/edit`,
+    },
+    PRICING_MANAGEMENT: {
+      LIST: "/admin/pricing-management",
+      PLANS: {
+        LIST: "/admin/pricing-management/plans",
+        ADD: "/admin/pricing-management/plans/add",
+        EDIT: (planId: string) => `/admin/pricing-management/plans/${planId}/edit`,
+      },
+      PAYMENT_GATEWAYS: "/admin/pricing-management/payment-gateway-settings",
+      SUBSCRIPTIONS: {
+        LIST: "/admin/pricing-management/subscriptions",
+        VIEW: (subscriptionId: string) => `/admin/pricing-management/subscriptions/${subscriptionId}`,
+      },
+      TRANSACTIONS: "/admin/pricing-management/transactions",
+    },
+    OVERVIEW_INSIGHTS: {
+      LIST: "/admin/overview-insights",
+      CREATE_STATION_TEST: "/admin/overview-insights/create-station-test",
+      CREATE_RANDOM_TEST: "/admin/overview-insights/create-random-test",
+    },
+    SEND_NOTIFICATION: {
+      LIST: "/admin/send-notification",
+    },
+    QUESTION_BANK: {
+      LIST: "/admin/question-bank",
+      MANAGE: "/admin/question-bank/manage",
+      ADD: "/admin/question-bank/add",
+      PREVIEW: "/admin/question-bank/preview",
+      PREVIEW_All: "/admin/question-bank/preview-all",
+    },
+    ARTICLE_EDITOR: {
+      LIST: "/admin/article-editor",
+      VIEW: (id: string) => `/admin/article-editor/${id}`,
+      REQUEST_AMENDMENTS: (id: string) =>
+        `/admin/article-editor/${id}/request-amendments`,
+      COMMUNITY_SETTINGS: "/admin/article-editor/community-settings",
+      COMMUNITY_BADGE_ADD: "/admin/article-editor/community-settings/badges/add",
+    },
+    JOURNEY_EDITOR: {
+      EDITOR: (journeyId: string) => `/admin/journey-editor/${journeyId}`,
+      FLASHCARD_GROUP: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/flashcard/${stationId}`,
+      FLASHCARD_ADD: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/flashcard/${stationId}/add`,
+      LIVE_BROADCAST_ADD: (journeyId: string) =>
+        `/admin/journey-editor/${journeyId}/live-broadcast/add`,
+      LIVE_BROADCAST_VIEW: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/live-broadcast/${stationId}`,
+      CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/challenge/${stationId}`,
+      EXAM_EDITOR: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/exam/${stationId}`,
+      EXAM_PREVIEW: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/exam/${stationId}/preview`,
+      EXAM_EDIT_QUESTIONS: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/exam/${stationId}/edit-questions`,
+    },
+    INTERACTIVE_BOOKS: {
+      LIST: "/admin/interactive-books",
+      ADD: "/admin/interactive-books/add",
+      MANAGE: "/admin/interactive-books/manage",
+      MANAGE_EDIT: (bookId: string) =>
+        `/admin/interactive-books/manage/${encodeURIComponent(bookId)}/edit`,
+    },
+    LIVE_BROADCAST: {
+      CREATE: "/admin/live-broadcast/create",
+      WATCH: (sessionId: string) => `/admin/live-broadcast/${sessionId}/watch`,
+    },
   },
   USER: {
+    /** Default non-admin home; prefer `getRedirectPathForRole` for post-login routing. */
     HOME: "/student/dashboard",
     SETTINGS: "/student/settings",
+    STUDENT: {
+      HOME: "/student/dashboard",
+      SETTINGS: "/student/settings",
+    },
+    TEACHER: {
+      HOME: "/teacher/dashboard",
+      SETTINGS: "/teacher/settings",
+    },
+    PARENT: {
+      HOME: "/parent/dashboard",
+      SETTINGS: "/parent/settings",
+    },
   },
   PUBLIC: {
     LIBRARY: "/library",

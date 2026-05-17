@@ -3,3 +3,4 @@ export { SidebarFolderIcon } from "./FolderIcon";
 export { SidebarBookIcon } from "./BookIcon";
 export { SidebarMessageIcon } from "./MessageIcon";
 export { SidebarMapIcon } from "./MapIcon";
+export { SidebarChatGroupIcon } from "./ChatGroupIcon";

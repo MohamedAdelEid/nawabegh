@@ -1,12 +1,22 @@
 "use client";
 
 import type React from "react";
-import { Input } from "@/shared/presentation/components/ui/input";
+import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
+import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import { SchoolFormSectionCard } from "./SchoolFormSectionCard";
+
+export interface SchoolCountryOption {
+  id: string;
+  label: string;
+}
 
 interface SchoolContactSectionProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
+  countryFieldLabel: string;
+  countryPlaceholder: string;
+  countryValue: string;
+  countryOptions: SchoolCountryOption[];
   cityLabel: string;
   addressLabel: string;
   phoneLabel: string;
@@ -19,39 +29,20 @@ interface SchoolContactSectionProps {
   addressValue: string;
   phoneValue: string;
   emailValue: string;
+  onCountryChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onAddressChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onEmailChange: (value: string) => void;
 }
 
-function Field({
-  label,
-  value,
-  placeholder,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  placeholder: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <div className="space-y-2 text-right">
-      <label className="text-sm font-medium text-[#64748B]">{label}</label>
-      <Input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={placeholder}
-        className="h-14 rounded-2xl border-slate-100 bg-slate-50 px-4 text-right placeholder:text-[#94A3B8] focus-visible:ring-[#C7AF6E]/40"
-      />
-    </div>
-  );
-}
-
 export function SchoolContactSection({
   icon,
   title,
+  countryFieldLabel,
+  countryPlaceholder,
+  countryValue,
+  countryOptions,
   cityLabel,
   addressLabel,
   phoneLabel,
@@ -64,33 +55,46 @@ export function SchoolContactSection({
   addressValue,
   phoneValue,
   emailValue,
+  onCountryChange,
   onCityChange,
   onAddressChange,
   onPhoneChange,
   onEmailChange,
 }: SchoolContactSectionProps) {
+  const countrySelectOptions = [
+    { value: "", label: countryPlaceholder },
+    ...countryOptions.map((o) => ({ value: o.id, label: o.label })),
+  ];
+
   return (
     <SchoolFormSectionCard icon={icon} title={title}>
       <div className="grid gap-5 md:grid-cols-2">
-        <Field
+        <LabeledSelect
+          id="school-country-select"
+          label={countryFieldLabel}
+          options={countrySelectOptions}
+          value={countryValue}
+          onChange={onCountryChange}
+        />
+        <LabeledInput
           label={cityLabel}
           value={cityValue}
           placeholder={cityPlaceholder}
           onChange={onCityChange}
         />
-        <Field
+        <LabeledInput
           label={addressLabel}
           value={addressValue}
           placeholder={addressPlaceholder}
           onChange={onAddressChange}
         />
-        <Field
+        <LabeledInput
           label={phoneLabel}
           value={phoneValue}
           placeholder={phonePlaceholder}
           onChange={onPhoneChange}
         />
-        <Field
+        <LabeledInput
           label={emailLabel}
           value={emailValue}
           placeholder={emailPlaceholder}

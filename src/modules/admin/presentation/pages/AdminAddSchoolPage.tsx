@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { MapPinned, BookOpenCheck } from "lucide-react";
+import { MapPinned } from "lucide-react";
 import { SchoolIcon } from "@/modules/admin/presentation/assets/icons/school";
 import { SubscriptionIcon } from "@/modules/admin/presentation/assets/icons/subscraption";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -18,22 +18,114 @@ import type {
   SchoolEducationStageId,
   SchoolFormValues,
 } from "@/modules/admin/domain/types/schoolForm.types";
+import {
+  createSchool,
+  type CreateSchoolPayload,
+} from "@/modules/admin/infrastructure/api/schoolApi";
+import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
+import { notify } from "@/shared/application/lib/toast";
 import { SchoolFormActions } from "@/modules/admin/presentation/components/school-form/SchoolFormActions";
 import { SchoolIdentitySection } from "@/modules/admin/presentation/components/school-form/SchoolIdentitySection";
 import { SchoolContactSection } from "@/modules/admin/presentation/components/school-form/SchoolContactSection";
 import { SchoolSubscriptionSection } from "@/modules/admin/presentation/components/school-form/SchoolSubscriptionSection";
 import { SchoolLocationSection } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
+import type { SchoolLocationInput } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
+import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+
+const ARABIC_INDIC_ZERO_CODE = "٠".charCodeAt(0);
+const EXTENDED_ARABIC_INDIC_ZERO_CODE = "۰".charCodeAt(0);
+
+function normalizeTextInput(value: string): string {
+  return value.normalize("NFC").trim().replace(/\s+/g, " ");
+}
+
+function normalizeDigitsToLatin(value: string): string {
+  return value.replace(/[٠-٩۰-۹]/g, (char) => {
+    const code = char.charCodeAt(0);
+    if (code >= ARABIC_INDIC_ZERO_CODE && code <= ARABIC_INDIC_ZERO_CODE + 9) {
+      return String(code - ARABIC_INDIC_ZERO_CODE);
+    }
+    if (
+      code >= EXTENDED_ARABIC_INDIC_ZERO_CODE &&
+      code <= EXTENDED_ARABIC_INDIC_ZERO_CODE + 9
+    ) {
+      return String(code - EXTENDED_ARABIC_INDIC_ZERO_CODE);
+    }
+    return char;
+  });
+}
+
+function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload {
+  const plan = schoolSubscriptionPlans.find((p) => p.id === values.subscriptionPlanId);
+  const rawLogo = values.schoolLogoPreviewUrl ?? "";
+  const logoUrl =
+    rawLogo.startsWith("http://") || rawLogo.startsWith("https://") ? rawLogo : "";
+
+  return {
+    name: normalizeTextInput(values.schoolName),
+    logoUrl,
+    phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
+    address: normalizeTextInput(values.address),
+    email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
+    description: normalizeTextInput(values.schoolDescription),
+    city: normalizeTextInput(values.city),
+    country: normalizeTextInput(values.country),
+    points: 0,
+    performanceLevel:
+      values.educationStageIds.length > 0
+        ? values.educationStageIds.join(", ")
+        : "standard",
+    establishmentDate: new Date().toISOString(),
+    subscriptionPlanId: plan?.apiId ?? "",
+  };
+}
 
 export function AdminAddSchoolPage() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
   const [values, setValues] = useState<SchoolFormValues>(defaultSchoolFormValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<{
+    message?: string;
+    validationErrors?: Record<string, string[]> | null;
+  } | null>(null);
+  const [countryOptions, setCountryOptions] = useState<Array<{ id: string; label: string }>>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const result = await getCountriesDropdown();
+      if (cancelled) return;
+      if (result.data && result.data.length > 0) {
+        setCountryOptions(
+          result.data.map((row) => ({
+            id: String(row.id),
+            label: row.name,
+          })),
+        );
+      } else if (result.errorMessage) {
+        notify.error(result.errorMessage);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const setField = <K extends keyof SchoolFormValues>(
     key: K,
     value: SchoolFormValues[K],
   ) => {
     setValues((current) => ({ ...current, [key]: value }));
+  };
+
+  const handleCountryChange = (value: string) => {
+    const row = countryOptions.find((c) => c.id === value);
+    setValues((current) => ({
+      ...current,
+      countryId: value,
+      country: row?.label ?? "",
+    }));
   };
 
   const toggleStage = (stageId: SchoolEducationStageId) => {
@@ -52,10 +144,51 @@ export function AdminAddSchoolPage() {
     router.push(`${ROUTES.ADMIN.HOME}?tab=schoolManagement`);
   };
 
-  const handleSubmit = () => {
-    // Placeholder until create-school endpoint is available.
-    console.info("Create school payload", values);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    const payload = buildCreateSchoolPayload(values);
+    const result = await createSchool(payload);
+    console.log(payload);
+
+    if (result.data?.id) {
+      notify.success(result.message ?? t("schoolManagement.addForm.messages.createSuccess"));
+      router.push(`${ROUTES.ADMIN.HOME}?tab=schoolManagement&refresh=${Date.now()}`);
+      return;
+    }
+
+    setSubmitError({
+      message: result.errorMessage ?? t("schoolManagement.addForm.messages.createError"),
+      validationErrors: result.validationErrors,
+    });
+    notify.error(result.errorMessage ?? t("schoolManagement.addForm.messages.createError"));
+    setIsSubmitting(false);
   };
+
+  const locationInput = useMemo<SchoolLocationInput>(
+    () => ({
+      city:
+        values.city.trim() || t("schoolManagement.addForm.location.fallbackCity"),
+      region:
+        values.address.trim() || t("schoolManagement.addForm.location.fallbackRegion"),
+      country: values.country.trim(),
+    }),
+    [values.city, values.address, values.country, t],
+  );
+
+  const plansForUi = useMemo(
+    () =>
+      schoolSubscriptionPlans.map((plan) => ({
+        id: plan.id,
+        labelKey: plan.labelKey,
+        descriptionKey: plan.descriptionKey,
+        label: t(plan.labelKey),
+        description: plan.descriptionKey ? t(plan.descriptionKey) : undefined,
+      })),
+    [t],
+  );
 
   return (
     <div className="space-y-8">
@@ -78,6 +211,13 @@ export function AdminAddSchoolPage() {
       />
 
       <div className="space-y-6">
+        {submitError ? (
+          <ApiFailureAlert
+            message={submitError.message}
+            validationErrors={submitError.validationErrors}
+          />
+        ) : null}
+
         <SchoolIdentitySection
           icon={SchoolIcon}
           title={t("schoolManagement.addForm.sections.identity")}
@@ -114,6 +254,10 @@ export function AdminAddSchoolPage() {
         <SchoolContactSection
           icon={MapPinned}
           title={t("schoolManagement.addForm.sections.contact")}
+          countryFieldLabel={t("schoolManagement.addForm.fields.country.label")}
+          countryPlaceholder={t("schoolManagement.addForm.fields.country.placeholder")}
+          countryValue={values.countryId}
+          countryOptions={countryOptions}
           cityLabel={t("schoolManagement.addForm.fields.city.label")}
           addressLabel={t("schoolManagement.addForm.fields.address.label")}
           phoneLabel={t("schoolManagement.addForm.fields.phoneNumber.label")}
@@ -126,6 +270,7 @@ export function AdminAddSchoolPage() {
           addressValue={values.address}
           phoneValue={values.phoneNumber}
           emailValue={values.email}
+          onCountryChange={handleCountryChange}
           onCityChange={(value) => setField("city", value)}
           onAddressChange={(value) => setField("address", value)}
           onPhoneChange={(value) => setField("phoneNumber", value)}
@@ -139,11 +284,7 @@ export function AdminAddSchoolPage() {
           stagesLabel={t("schoolManagement.addForm.fields.educationStages.label")}
           selectedPlanId={values.subscriptionPlanId}
           selectedStageIds={values.educationStageIds}
-          plans={schoolSubscriptionPlans.map((plan) => ({
-            ...plan,
-            label: t(plan.labelKey),
-            description: plan.descriptionKey ? t(plan.descriptionKey) : undefined,
-          }))}
+          plans={plansForUi}
           stages={schoolEducationStages.map((stage) => ({
             ...stage,
             label: t(stage.labelKey),
@@ -153,15 +294,13 @@ export function AdminAddSchoolPage() {
         />
 
         <SchoolLocationSection
+          icon={MapPinned}
           title={t("schoolManagement.addForm.sections.location")}
-          locationData={{
-            cityLabel: t(schoolLocationPreviewData.cityKey),
-            regionLabel: t(schoolLocationPreviewData.regionKey),
-            providerLabel: t(schoolLocationPreviewData.providerLabelKey),
-            loadingLabel: t(schoolLocationPreviewData.loadingLabelKey),
-            emptyLabel: t(schoolLocationPreviewData.emptyLabelKey),
-            errorLabel: t(schoolLocationPreviewData.errorLabelKey),
-          }}
+          locationInput={locationInput}
+          providerLabel={t(schoolLocationPreviewData.providerLabelKey)}
+          loadingLabel={t(schoolLocationPreviewData.loadingLabelKey)}
+          emptyLabel={t(schoolLocationPreviewData.emptyLabelKey)}
+          errorLabel={t(schoolLocationPreviewData.errorLabelKey)}
         />
       </div>
     </div>

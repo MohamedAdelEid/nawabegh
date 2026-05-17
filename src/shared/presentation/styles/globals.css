@@ -47,9 +47,23 @@
   --dashboard-danger-soft: #fef2f2;
   --dashboard-warning-soft: #faf1da;
   --dashboard-info-soft: #e8eef8;
+  --auth-background: #f6f7f7;
+  --auth-panel: #2c4260;
+  --auth-card: #ffffff;
+  --auth-border: #e2e8f0;
+  --auth-shadow: 0px 24px 80px rgba(44, 66, 96, 0.12);
+  --auth-panel-shadow: 0px 24px 64px rgba(44, 66, 96, 0.18);
   --dashboard-shadow-soft: 0px 8px 0px 0px #0000000d;
   --dashboard-shadow-button: 0px 4px 0px 0px #1e2e42;
   --dashboard-shadow-button-muted: 0px 4px 0px 0px #cbd5e1;
+  --chat-primary: #243b5a;
+  --chat-primary-dark: #1a2d45;
+  --chat-accent-green: #67c23a;
+  --chat-accent-blue: #5b93ff;
+  --chat-accent-amber: #ffb547;
+  --chat-accent-purple: #9b59b6;
+  --chat-danger: #f25555;
+  --chat-danger-dark: #c43d3d;
 }
 
 .dark {
@@ -99,6 +113,101 @@ html[lang="ar"] body {
 .dashboard-raised-button:active:not(:disabled) {
   transform: translateY(2px);
   box-shadow: none !important;
+}
+
+/* Dashboard modals & form patterns — reuse tokens from :root */
+.dashboard-modal-panel {
+  border-radius: 1.75rem;
+  border: 1px solid var(--dashboard-border-soft);
+  background: var(--dashboard-surface);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.16);
+}
+
+.dashboard-modal-field {
+  border-radius: 1rem;
+  border: 1px solid var(--dashboard-border-soft);
+  background: var(--dashboard-surface-muted);
+}
+
+.dashboard-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  background: var(--dashboard-warning-soft);
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--dashboard-gold-foreground);
+}
+
+.dashboard-choice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  border: 2px solid var(--dashboard-border-soft);
+  background: var(--dashboard-surface);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.dashboard-choice-card[data-state="active"] {
+  border-color: var(--dashboard-success);
+  background: var(--dashboard-success-soft);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--dashboard-success) 35%, transparent);
+}
+
+.dashboard-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  background-color: rgb(241 245 249);
+  color: rgb(100 116 139);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.dashboard-icon-btn:hover {
+  background-color: rgb(226 232 240);
+  color: rgb(51 65 85);
+}
+
+.dashboard-icon-btn--danger {
+  background-color: rgb(255 241 242);
+  color: rgb(244 63 94);
+}
+
+.dashboard-icon-btn--danger:hover {
+  background-color: rgb(255 228 230);
+  color: rgb(225 29 72);
+}
+
+.dashboard-recording-sidebar {
+  box-shadow: var(--dashboard-shadow-soft);
+}
+
+.dashboard-tip-card {
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--dashboard-gold) 35%, var(--dashboard-border-soft));
+  background: linear-gradient(
+    180deg,
+    #fffbeb 0%,
+    #fef9c3 100%
+  );
+  box-shadow: var(--dashboard-shadow-soft);
 }
 
 @theme inline {

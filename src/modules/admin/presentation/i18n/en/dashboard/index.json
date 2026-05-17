@@ -35,9 +35,17 @@
         "userManagement": "User management",
         "schoolManagement": "School management",
         "contentManagement": "Content management",
+        "courseManagement": "Course management",
+        "helperFileManagement": "Manage helper files",
+        "pricingManagement": "Pricing & plans",
+        "paymentGatewaySettings": "Payment gateway settings",
+        "articleEditor": "Article editor",
         "journeyEditor": "Editor of the Journey of Excellence",
         "liveBroadcast": "Live broadcast management",
         "interactiveBooks": "Interactive book management",
+        "chatGroups": "Chat groups",
+        "sendNotification": "Send notification",
+        "questionBank": "Question bank",
         "helper": "Help",
         "settings": "Settings",
         "logout": "Log out"
@@ -63,6 +71,10 @@
         "actions": {
           "cancel": "Cancel",
           "submit": "Add school"
+        },
+        "messages": {
+          "createSuccess": "School created successfully.",
+          "createError": "Could not create the school. Check the data and try again."
         },
         "fields": {
           "schoolName": {
@@ -100,6 +112,10 @@
             "label": "Official email",
             "placeholder": "info@school.edu.sa"
           },
+          "country": {
+            "label": "Country",
+            "placeholder": "Select country"
+          },
           "subscriptionPlan": {
             "label": "Subscription plan"
           },
@@ -129,6 +145,8 @@
         "location": {
           "previewCity": "Qena",
           "previewRegion": "Egypt",
+          "fallbackCity": "City",
+          "fallbackRegion": "Address",
           "providerLabel": "Leaflet map preview powered by OpenStreetMap",
           "loading": "Resolving place and loading map...",
           "empty": "No location was found for this place.",
@@ -136,21 +154,21 @@
         }
       },
       "stats": {
+        "totalSchools": {
+          "label": "Total schools",
+          "indicator": "Platform total"
+        },
         "activeSchools": {
           "label": "Active schools",
-          "indicator": "98% active"
+          "indicator": "Currently active"
         },
-        "averagePoints": {
-          "label": "Average points",
-          "indicator": "Stable"
+        "totalTeachers": {
+          "label": "Total teachers",
+          "indicator": "Across schools"
         },
         "totalStudents": {
           "label": "Total students",
-          "indicator": "+8.4%"
-        },
-        "totalSchools": {
-          "label": "Total schools",
-          "indicator": "+12%"
+          "indicator": "Across schools"
         }
       },
       "table": {
@@ -269,6 +287,14 @@
           "label": "School",
           "all": "All schools"
         },
+        "countries": {
+          "label": "Country",
+          "all": "All countries"
+        },
+        "educationLevels": {
+          "label": "Education level",
+          "all": "All levels"
+        },
         "grades": {
           "label": "Grade",
           "all": "All grades"
@@ -297,7 +323,8 @@
           "actions": "Actions"
         },
         "actions": {
-          "more": "More actions"
+          "more": "More actions",
+          "delete": "Delete user"
         },
         "pagination": {
           "summary": "Showing {visible} of {total} users",
@@ -307,7 +334,9 @@
       },
       "roles": {
         "student": "Student",
-        "teacher": "Teacher"
+        "teacher": "Teacher",
+        "parent": "Parent",
+        "admin": "Admin"
       },
       "schools": {
         "alnour": "Alnour Model School",
@@ -325,6 +354,12 @@
       "status": {
         "active": "Active",
         "inactive": "Inactive"
+      },
+      "deleteModal": {
+        "title": "Delete user",
+        "description": "Are you sure you want to delete this user? The account will be permanently removed.",
+        "confirm": "Confirm delete",
+        "cancel": "Cancel"
       },
       "lastActivity": {
         "tenMinutes": "10 minutes ago",
@@ -374,13 +409,21 @@
             "country": "Country",
             "phoneNumber": "Phone number",
             "email": "Email address",
-            "password": "Password"
+            "password": "Password",
+            "school": "School"
           },
           "placeholders": {
             "fullName": "Example: Ahmed Mohamed Ali",
             "phoneNumber": "05xxxxxxxx",
             "email": "student@example.com",
-            "password": "••••••••"
+            "password": "••••••••",
+            "selectCountry": "Select country",
+            "selectEducationLevel": "Select education level",
+            "selectGrade": "Select grade",
+            "selectSchool": "Select school"
+          },
+          "messages": {
+            "noSchools": "No schools were found. Try again later or contact support."
           },
           "countries": {
             "egypt": "Egypt",
@@ -418,12 +461,12 @@
             "submit": "Add student"
           },
           "fields": {
-            "educationalStage": "Educational stage",
-            "schoolYear": "School year",
+            "educationalStage": "Education level",
+            "schoolYear": "Grade",
             "schoolName": "School"
           },
           "placeholders": {
-            "schoolName": "School or educational institution name"
+            "schoolName": "Choose a school from the list"
           },
           "parentSection": {
             "title": "Link parent",
@@ -622,6 +665,1413 @@
         }
       }
     },
+    "courseManagement": {
+      "breadcrumbs": {
+        "home": "Home",
+        "courseManagement": "Course management",
+        "create": "Add course",
+        "reject": "Reject course",
+        "rejectionDetails": "Rejection decision details"
+      },
+      "page": {
+        "title": "Course management",
+        "description": "Review courses awaiting approval and manage publishing status.",
+        "addCourse": "Add new course",
+        "export": "Export report"
+      },
+      "stats": {
+        "loadWarning": "Could not refresh moderation KPIs. Listing data is shown below.",
+        "totalCourses": {
+          "label": "Total courses",
+          "indicator": "+12%"
+        },
+        "pendingApproval": {
+          "label": "Awaiting approval",
+          "indicator": "Important"
+        },
+        "activeLearners": {
+          "label": "Active learners",
+          "indicator": "+25%"
+        },
+        "monthlyRevenue": {
+          "label": "Total revenue",
+          "indicator": "This month"
+        },
+        "learningPathsTotal": {
+          "label": "Total learning paths",
+          "indicator": "Moderation"
+        },
+        "learningPathsPending": {
+          "label": "Awaiting moderation",
+          "indicator": "Needs review"
+        },
+        "learningPathsApproved": {
+          "label": "Approved paths",
+          "indicator": "Published"
+        },
+        "learningPathsRejected": {
+          "label": "Rejected paths",
+          "indicator": "Needs rework"
+        },
+        "learningPathsDraft": {
+          "label": "Draft paths",
+          "indicator": "Unpublished"
+        }
+      },
+      "filters": {
+        "openAdvanced": "Open advanced filters",
+        "stages": {
+          "label": "Stage",
+          "all": "All stages"
+        },
+        "subjects": {
+          "label": "Subject",
+          "all": "All subjects"
+        },
+        "statuses": {
+          "label": "Status",
+          "all": "All statuses"
+        },
+        "search": {
+          "label": "Quick search",
+          "placeholder": "Search by course title or teacher..."
+        }
+      },
+      "table": {
+        "title": "Learning paths list",
+        "loading": "Loading courses...",
+        "empty": "No matching courses.",
+        "loadError": "Could not load courses. Please try again.",
+        "columns": {
+          "title": "Path title",
+          "teacher": "Teacher",
+          "subject": "Subject / stage",
+          "access": "Access type",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject",
+          "rejectionDetails": "Rejection details",
+          "delete": "Delete course",
+          "edit": "Edit course",
+          "view": "View course",
+          "more": "More actions"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} courses",
+          "previous": "Previous page",
+          "next": "Next page"
+        },
+        "confirmDelete": "Delete this learning path? This cannot be undone."
+      },
+      "access": {
+        "subscription": "Subscription",
+        "free": "Free",
+        "paid": "Paid",
+        "unlisted": "Unlisted"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "draft": "Draft"
+      },
+      "messages": {
+        "approved": "Course approved successfully.",
+        "rejected": "Course rejected and notes sent.",
+        "deleted": "Learning path deleted."
+      },
+      "review": {
+        "loading": "Loading course review...",
+        "notFound": "The requested course could not be found.",
+        "title": "Review learning path",
+        "description": "Review content and curriculum before approving publication or rejecting it.",
+        "teacherLabel": "Course teacher",
+        "actions": {
+          "viewPath": "View learning path",
+          "editCourse": "Edit course",
+          "archive": "Archive"
+        },
+        "adminStats": {
+          "title": "Admin statistics",
+          "students": "currently enrolled students",
+          "revenue": "Total revenue (SAR)",
+          "completion": "Student completion rate"
+        },
+        "decision": {
+          "title": "Review decision",
+          "placeholder": "Add review notes if rejected...",
+          "approve": "Approve and publish",
+          "reject": "Reject course"
+        },
+        "metrics": {
+          "subject": "Subject",
+          "stage": "Stage",
+          "lessons": "Total lessons",
+          "price": "Price"
+        },
+        "curriculum": {
+          "title": "Learning path",
+          "empty": "Detailed stations are managed in Journey editor. Curriculum preview is unavailable on this moderation view."
+        }
+      },
+      "create": {
+        "title": "Prepare a new learning course",
+        "description": "Fill in the required details to launch the next learning journey.",
+        "actions": {
+          "saveDraft": "Save as draft",
+          "saveCourse": "Save course",
+          "saving": "Saving..."
+        },
+        "sections": {
+          "basic": "Basic information",
+          "pricing": "Pricing and access"
+        },
+        "fields": {
+          "title": "Course title",
+          "description": "Course description",
+          "grade": "Grade",
+          "term": "Term",
+          "teacher": "Teacher",
+          "subject": "Subject",
+          "basePrice": "Base price (SAR)",
+          "offerPrice": "Discount price (SAR)"
+        },
+        "placeholders": {
+          "title": "Example: Advanced mathematics for grade 11",
+          "description": "Write a complete description of objectives and learning outcomes..."
+        },
+        "options": {
+          "grade": {
+            "secondary2": "Second secondary"
+          },
+          "term": {
+            "term2": "Second term"
+          },
+          "teacher": {
+            "teacher-ahmed": "Dr. Ahmed Al-Rafei"
+          },
+          "subject": {
+            "mathematics": "Mathematics"
+          }
+        },
+        "pricing": {
+          "free": "Free",
+          "oneTime": "Paid (one time)",
+          "monthly": "Monthly subscription"
+        },
+        "upload": {
+          "title": "Drag an image here or browse files",
+          "hint": "JPG or PNG, 16:9 ratio, maximum 5MB",
+          "uploading": "Preparing image preview...",
+          "previewAlt": "Course cover preview",
+          "invalidType": "Please choose a valid image file.",
+          "tooLarge": "The image must be smaller than 5 MB.",
+          "readError": "The selected image could not be loaded."
+        },
+        "preview": {
+          "title": "Summary preview",
+          "titleFallback": "Course name",
+          "subject": "Subject",
+          "grade": "Grade",
+          "lessons": "lessons",
+          "paths": "paths",
+          "viewPath": "View learning path",
+          "typeOfAccess": "Type of access",
+          "free": "Free",
+          "paid": "Paid"
+        },
+        "steps": {
+          "paths": "Learning paths",
+          "pricing": "Pricing and access",
+          "basic": "Basic information"
+        },
+        "tip": "Expert tip: adding a strong cover image increases registration and engagement.",
+        "messages": {
+          "error": "Could not create the course. Please try again."
+        },
+        "success": {
+          "title": "Course created successfully!",
+          "description": "The course is now prepared as a draft. You can add learning stations before publishing.",
+          "info": "You can preview and reorder stations to ensure a successful learning experience.",
+          "later": "Continue later",
+          "startPaths": "Start adding paths"
+        }
+      },
+      "reject": {
+        "loading": "Loading course data...",
+        "title": "Review and reject content",
+        "description": "Explain rejection reasons clearly to help the teacher improve the content.",
+        "validation": "Choose at least one reason and write a note of at least 10 characters.",
+        "form": {
+          "title": "Rejection decision details",
+          "reasonsLabel": "Common rejection reasons (you can select more than one)",
+          "notesLabel": "Detailed notes",
+          "notesPlaceholder": "Write the exact guidance that will be sent to the teacher to help them revise and resubmit...",
+          "minHint": "Minimum accepted length is 10 characters"
+        },
+        "reasons": {
+          "contentQuality": "Content quality",
+          "incompleteMaterials": "Incomplete materials",
+          "technicalIssues": "Audio/video technical issues",
+          "policyConflict": "Content policy conflict",
+          "copyrightIssue": "Copyright violation"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "submitting": "Confirming rejection...",
+          "confirm": "Confirm course rejection"
+        },
+        "after": {
+          "title": "What happens after clicking \"Confirm rejection\"?",
+          "body": "A formal detailed email will be sent to the teacher with all notes, and the course status will immediately become rejected."
+        }
+      },
+      "rejectionDetails": {
+        "loading": "Loading rejection details...",
+        "title": "Rejection decision details",
+        "actions": {
+          "editDecision": "Edit decision",
+          "contactTeacher": "Contact teacher",
+          "reReview": "Run full re-review"
+        },
+        "reasons": {
+          "title": "Selected rejection reasons",
+          "help": "These reasons were selected based on the platform academic standards."
+        },
+        "timeline": {
+          "title": "Operation log",
+          "received": {
+            "title": "Request received",
+            "time": "12 Oct 2023 - 09:30 AM"
+          },
+          "reviewStarted": {
+            "title": "Review started",
+            "time": "14 Oct 2023 - 02:15 PM"
+          },
+          "decisionIssued": {
+            "title": "Rejection decision issued",
+            "time": "18 Oct 2023 - 11:00 AM"
+          }
+        },
+        "notes": {
+          "title": "Detailed reviewer notes",
+          "reviewerRole": "Accreditation committee member"
+        }
+      }
+    },
+    "interactiveBooks": {
+      "page": {
+        "title": "Interactive books management",
+        "description": "Create, edit, and monitor your platform interactive books.",
+        "addBook": "Add interactive book"
+      },
+      "stats": {
+        "totalBooks": {
+          "label": "Total interactive books",
+          "indicator": "+12%"
+        },
+        "activeReaders": {
+          "label": "Active readers today",
+          "indicator": "+24%"
+        },
+        "readingTime": {
+          "label": "Average reading time per student",
+          "indicator": "-2%",
+          "value": "{value} min/day"
+        }
+      },
+      "table": {
+        "title": "Interactive books list",
+        "columns": {
+          "name": "Book name",
+          "subject": "Subject",
+          "grade": "Grade",
+          "pages": "Pages",
+          "hotspots": "Hotspots (active / total)",
+          "views": "Views",
+          "status": "Status",
+          "createdAt": "Created at",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        },
+        "actions": {
+          "openFilter": "Filter",
+          "view": "View book",
+          "edit": "Edit book",
+          "delete": "Delete book"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} books",
+          "previous": "Previous page",
+          "next": "Next page"
+        },
+        "loading": "Loading interactive books…",
+        "empty": "No interactive books yet.",
+        "loadError": "Could not load interactive books. Please try again."
+      },
+      "addModal": {
+        "title": "Add a new interactive book",
+        "close": "Close",
+        "fields": {
+          "bookName": {
+            "label": "Book name",
+            "placeholder": "Example: Advanced Mathematics — First semester"
+          },
+          "pdf": {
+            "label": "Upload PDF file",
+            "hint": "Click to upload or drag and drop",
+            "subhint": "Maximum file size 50 MB (PDF only)"
+          },
+          "subject": {
+            "label": "Subject",
+            "options": {
+              "math": "Mathematics",
+              "arabic": "Arabic language",
+              "science": "Science"
+            }
+          },
+          "grade": {
+            "label": "Grade level",
+            "options": {
+              "grade10": "Grade 10",
+              "grade11": "Grade 11",
+              "grade12": "Grade 12"
+            }
+          },
+          "courseLink": {
+            "label": "Link to course",
+            "badge": "Mandatory",
+            "placeholder": "Enter course link here..."
+          },
+          "status": {
+            "title": "Book status",
+            "description": "Choose whether the book is available to students immediately.",
+            "draft": "Draft",
+            "published": "Published"
+          }
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "submit": "Add book"
+        }
+      },
+      "filterModal": {
+        "title": "Filter interactive books",
+        "close": "Close",
+        "grades": {
+          "sec1": "1st secondary",
+          "sec2": "2nd secondary",
+          "sec3": "3rd secondary"
+        },
+        "subjects": {
+          "label": "Subject",
+          "placeholder": "Choose subjects...",
+          "removeTag": "Remove subject",
+          "tags": {
+            "math": "Mathematics",
+            "arabic": "Arabic language"
+          }
+        },
+        "grade": {
+          "label": "Academic grade"
+        },
+        "school": {
+          "label": "School",
+          "placeholder": "Search for a school...",
+          "removeTag": "Remove school",
+          "tags": {
+            "schoolA": "Excellence School",
+            "schoolB": "Nile School"
+          }
+        },
+        "bookStatus": {
+          "label": "Book status",
+          "options": {
+            "draft": "Draft",
+            "published": "Published",
+            "hidden": "Hidden",
+            "editing": "Under editing"
+          }
+        },
+        "interaction": {
+          "label": "Interaction inside the book",
+          "none": "No interactive points",
+          "hasPoints": "Contains interactive points",
+          "moreThan10": "More than 10 points"
+        },
+        "usage": {
+          "label": "Usage",
+          "mostReadWeek": "Most read this week",
+          "mostUsed": "Most used"
+        },
+        "dateRange": {
+          "label": "Date added",
+          "from": "From",
+          "to": "To"
+        },
+        "actions": {
+          "apply": "Apply filters",
+          "clear": "Clear filters"
+        }
+      },
+      "rows": {
+        "books": {
+          "advancedBiology": "Advanced Biology",
+          "advancedPhysics": "Advanced Physics",
+          "advancedChemistry": "Advanced Chemistry"
+        },
+        "subjects": {
+          "science": "Science"
+        },
+        "grades": {
+          "grade10": "Grade 10"
+        }
+      },
+      "managePage": {
+        "title": "Interactive book management",
+        "editTitle": "Edit interactive book",
+        "description": "Monitor current sessions and schedule live educational content.",
+        "breadcrumbs": {
+          "dashboard": "Dashboard",
+          "content": "Content management",
+          "editBook": "Edit book"
+        },
+        "edit": {
+          "loadError": "Could not load this book. Try again from the list.",
+          "notFound": "This book was not found.",
+          "courseContext": "{course} · {grade}"
+        },
+        "actions": {
+          "addBook": "Add new book"
+        },
+        "config": {
+          "subjectLabel": "Select subject",
+          "subjectOptions": {
+            "chemistryGrade2": "Chemistry basics — Second secondary grade"
+          },
+          "pdfLabel": "Book file (PDF)",
+          "changeFile": "Change file"
+        },
+        "viewer": {
+          "pageOf": "Page {current} of {total}",
+          "zoomIn": "Zoom in",
+          "zoomOut": "Zoom out",
+          "addInteractionPoint": "Add interaction point",
+          "chapterTitle": "Chapter three: Chemical bonds",
+          "overlayCaption": "Illustration of a methane molecule"
+        },
+        "points": {
+          "title": "Current interaction points",
+          "subtitle": "Interactive elements added to this page",
+          "badge": "{count} points",
+          "type": {
+            "video": "Video"
+          },
+          "items": {
+            "polarBond": {
+              "title": "Polar bond explanation",
+              "page": "Page 42"
+            }
+          },
+          "visibilityLabel": "Status:",
+          "visible": "Visible to students",
+          "hidden": "Hidden from students",
+          "deletePoint": "Delete point",
+          "editPoint": "Edit point",
+          "addNew": "Add new point"
+        },
+        "tip": {
+          "body": "Studies show that adding videos of no more than 3 minutes to interaction points increases student comprehension of difficult concepts by 40%."
+        }
+      }
+    },
+    "liveBroadcast": {
+      "list": {
+        "page": {
+          "title": "Live stream and recording management",
+          "description": "Monitor current sessions and schedule live educational content.",
+          "breadcrumb": "Live management",
+          "scheduleNew": "Schedule new stream"
+        },
+        "stats": {
+          "totalSessions": {
+            "label": "Total sessions",
+            "indicator": "+12%"
+          },
+          "liveNow": {
+            "label": "Live now",
+            "indicator": "Live"
+          },
+          "upcoming": {
+            "label": "Upcoming sessions",
+            "indicator": "Scheduled"
+          },
+          "recorded": {
+            "label": "Recorded",
+            "indicator": "Available"
+          }
+        },
+        "table": {
+          "title": "Session list",
+          "columns": {
+            "session": "Session name",
+            "course": "Course / section",
+            "teacher": "Teacher",
+            "datetime": "Date and time",
+            "duration": "Duration",
+            "status": "Status",
+            "recording": "Recording",
+            "actions": "Actions"
+          },
+          "status": {
+            "live": "Live",
+            "upcoming": "Upcoming",
+            "ended": "Ended"
+          },
+          "recording": {
+            "uploaded": "Uploaded"
+          },
+          "actions": {
+            "export": "Export",
+            "filter": "Filter",
+            "enter": "Join session",
+            "edit": "Edit",
+            "view": "View",
+            "delete": "Delete"
+          },
+          "pagination": {
+            "summary": "Showing {visible} of {total} sessions",
+            "previous": "Previous page",
+            "next": "Next page"
+          }
+        },
+        "rows": {
+          "organic": {
+            "title": "Organic chemistry basics",
+            "subtitle": "High school chemistry",
+            "course": "Chemistry — Grade 12"
+          },
+          "biology": {
+            "title": "Biology revision",
+            "subtitle": "Cell structure",
+            "course": "Biology — Grade 11"
+          },
+          "math": {
+            "title": "Mathematics basics",
+            "subtitle": "Algebra review",
+            "course": "Mathematics — Grade 10"
+          },
+          "teacher1": "Dr. Amira Mansour",
+          "teacher2": "Dr. Sara Khaled",
+          "teacher3": "Mr. Hani Ali",
+          "sampleDate": "5 April 2025",
+          "sampleTime": "02:00 PM",
+          "sampleDate2": "6 April 2025",
+          "sampleTime2": "10:00 AM",
+          "sampleDate3": "1 March 2025",
+          "sampleTime3": "04:30 PM",
+          "duration1": "60 min",
+          "duration2": "45 min",
+          "duration3": "90 min"
+        }
+      },
+      "create": {
+        "page": {
+          "title": "Create a new broadcast session",
+          "description": "Configure session details, notifications, and recording preferences.",
+          "breadcrumb": "Create session",
+          "saveDraft": "Save broadcast"
+        },
+        "form": {
+          "title": "Create a new broadcast session",
+          "subtitle": "Fill in the details to schedule your live lesson.",
+          "sessionTitle": "Session title",
+          "sessionTitlePlaceholder": "Example: General secondary physics revision",
+          "teacher": "Teacher name",
+          "teacherPlaceholder": "Dr. Ahmed Kamal",
+          "meetingLink": "Meeting link",
+          "meetingLinkPlaceholder": "https://zoom.us/j/...",
+          "subject": "Subject",
+          "subjectPlaceholder": "Select subject...",
+          "course": "Course",
+          "coursePlaceholder": "Select course...",
+          "startTime": "Start date and time",
+          "duration": "Duration (minutes)",
+          "notifyTitle": "Send notification to students",
+          "notifyDescription": "Notify students via app and email",
+          "countdownTitle": "Show countdown timer",
+          "countdownDescription": "Display wait time before the session starts",
+          "submit": "Schedule live broadcast"
+        },
+        "recording": {
+          "title": "Recording settings",
+          "hint": "Choose how recordings are published after the session.",
+          "autoTitle": "Automatic link",
+          "autoDescription": "Upload recording to the library as soon as it is available.",
+          "manualTitle": "Manual link",
+          "manualDescription": "Review the video before publishing.",
+          "saveSettings": "Save settings"
+        },
+        "sessions": {
+          "upcoming": "Upcoming sessions",
+          "finished": "Finished sessions",
+          "liveNow": "Live broadcast now"
+        },
+        "cards": {
+          "liveBadge": "Live now",
+          "liveTitle": "Organic chemistry…",
+          "teacher1": "Dr. Amira Mansour",
+          "views": "1,240 views",
+          "enterLive": "Enter broadcast",
+          "upcomingBadge": "Upcoming",
+          "upcomingTitle": "Biology revision…",
+          "teacher2": "Dr. Sara Khaled",
+          "remaining": "4 hours remaining",
+          "finishedBadge": "Finished",
+          "finishedTitle": "Basics of mathematics",
+          "recordingLinked": "Recording linked successfully",
+          "watchRecording": "Watch recording"
+        }
+      },
+      "watch": {
+        "page": {
+          "title": "View recorded broadcast",
+          "subtitle": "Watching the Organic Chemistry Basics broadcast",
+          "breadcrumb": "View recording"
+        },
+        "player": {
+          "play": "Play video"
+        },
+        "lesson": {
+          "category": "Chemistry",
+          "title": "Lesson 3: Organic chemistry basics",
+          "instructorName": "Mr. Mohamed Sobhi",
+          "instructorRole": "Chemistry expert",
+          "metaDate": "14 October 2023",
+          "metaDuration": "45:20 minutes",
+          "metaViews": "1.2k views"
+        },
+        "resources": {
+          "title": "Resources and files",
+          "file1": "Organic chemistry summary.pdf",
+          "size1": "2.4 MB",
+          "file2": "Chapter slides.pptx",
+          "size2": "5.1 MB",
+          "download": "Download file"
+        },
+        "notes": {
+          "title": "My study notes",
+          "badge": "3 notes",
+          "subtitle": "Record your thoughts linked to the lesson time.",
+          "time1": "12:45",
+          "time2": "18:10",
+          "time3": "32:45",
+          "body1": "Polar bonds form when electrons are shared unequally between atoms.",
+          "body2": "Review electronegativity trends across the periodic table.",
+          "body3": "Practice naming simple organic compounds for the quiz.",
+          "delete": "Delete note",
+          "placeholder": "Write your note here...",
+          "currentTime": "Current time: 32:45",
+          "save": "Save note"
+        }
+      }
+    },
+    "chatGroups": {
+      "title": "Chat groups",
+      "breadcrumbs": {
+        "home": "Home",
+        "chatGroups": "Chat groups"
+      },
+      "stats": {
+        "totalGroups": {
+          "label": "Total groups",
+          "indicator": "+5 this month"
+        },
+        "activeMessages": {
+          "label": "Active messages today",
+          "indicator": "High"
+        },
+        "interactionRate": {
+          "label": "Interaction rate",
+          "indicator": "Excellent"
+        },
+        "activeNow": {
+          "label": "Active now",
+          "indicator": "Live"
+        }
+      },
+      "filters": {
+        "statuses": {
+          "label": "Status",
+          "all": "All statuses",
+          "active": "Active",
+          "paused": "Paused"
+        },
+        "grades": {
+          "label": "Grade",
+          "all": "All grades",
+          "grade1": "Grade 1",
+          "grade2": "Grade 2",
+          "grade3": "Grade 3",
+          "grade4": "Grade 4",
+          "grade5": "Grade 5",
+          "grade6": "Grade 6",
+          "grade7": "Grade 7",
+          "grade8": "Grade 8",
+          "grade9": "Grade 9",
+          "grade10": "Grade 10",
+          "grade11": "Grade 11",
+          "grade12": "Grade 12"
+        },
+        "subjects": {
+          "label": "Subject",
+          "all": "All subjects",
+          "arabic": "Arabic",
+          "english": "English",
+          "math": "Mathematics",
+          "science": "Science",
+          "physics": "Physics",
+          "chemistry": "Chemistry",
+          "biology": "Biology",
+          "history": "History",
+          "geography": "Geography"
+        },
+        "search": {
+          "label": "Quick search"
+        }
+      },
+      "table": {
+        "title": "Groups list",
+        "searchPlaceholder": "Quick search...",
+        "addButton": "Add group",
+        "columns": {
+          "groupName": "Group name",
+          "studentCount": "Students",
+          "chatMode": "Chat mode",
+          "attachments": "Attachments",
+          "status": "Status",
+          "lastActivity": "Last activity",
+          "actions": "Actions"
+        },
+        "pagination": {
+          "showing": "Showing {visible} of {total}",
+          "prev": "Previous",
+          "next": "Next",
+          "page": "{current} of {total}"
+        }
+      },
+      "chatModes": {
+        "everyone": "Open to all",
+        "teacherOnly": "Teacher only"
+      },
+      "statuses": {
+        "active": "Active now",
+        "paused": "Paused"
+      },
+      "rows": {
+        "lastActivity": {
+          "twoMinutes": "2 minutes ago",
+          "fiveMinutes": "5 minutes ago",
+          "tenMinutes": "10 minutes ago",
+          "yesterday": "Yesterday",
+          "threeDays": "3 days ago"
+        }
+      },
+      "actions": {
+        "view": "View",
+        "settings": "Settings",
+        "pause": "Pause",
+        "resume": "Resume",
+        "delete": "Delete"
+      },
+      "deleteModal": {
+        "title": "Delete group",
+        "description": "Are you sure you want to delete this group? All messages and attachments will be permanently deleted.",
+        "confirm": "Confirm delete",
+        "cancel": "Cancel"
+      },
+      "addPage": {
+        "title": "Add new group",
+        "breadcrumbs": {
+          "home": "Home",
+          "chatGroups": "Chat groups",
+          "add": "Add group"
+        },
+        "sections": {
+          "identity": {
+            "title": "Group identity",
+            "subtitle": "Responsible teacher and group name"
+          },
+          "sendPermissions": {
+            "title": "Send permissions",
+            "subtitle": "Who can send messages in this group"
+          },
+          "attachments": {
+            "title": "Attachments",
+            "subtitle": "Allowed file types"
+          },
+          "linkedCourse": {
+            "title": "Link to educational content",
+            "subtitle": "Connect group to a course or subject"
+          },
+          "parentMode": {
+            "title": "Parent mode",
+            "subtitle": "View permissions for parents"
+          }
+        },
+        "fields": {
+          "teacher": {
+            "label": "Select teacher",
+            "placeholder": "Choose the teacher responsible for this group"
+          },
+          "groupName": {
+            "label": "Group name",
+            "placeholder": "Enter group name"
+          },
+          "chatMode": {
+            "everyone": "Everyone can send",
+            "everyoneDesc": "Students and teacher can send messages",
+            "teacherOnly": "Teacher only (Broadcast mode)",
+            "teacherOnlyDesc": "Only the teacher can send messages"
+          },
+          "media": {
+            "files": "Allow files",
+            "images": "Allow images",
+            "pdf": "Allow PDF files",
+            "blockAll": "Block all attachments",
+            "blockAllDesc": "All attachments will be blocked in this group"
+          },
+          "linkedCourse": {
+            "toggle": "Link to course/subject",
+            "toggleDesc": "Connect this group to specific educational content",
+            "urlLabel": "Course URL",
+            "urlPlaceholder": "Enter course URL from education platform",
+            "verify": "Verify",
+            "verifying": "Verifying...",
+            "verifiedMessage": "URL verified successfully",
+            "linkedCourseLabel": "Linked course"
+          },
+          "parentMode": {
+            "label": "Allow parents to view only",
+            "description": "Parents can read messages but cannot reply"
+          }
+        },
+        "viewChangeLog": "View previous change log",
+        "buttons": {
+          "cancel": "Cancel",
+          "save": "Save group"
+        }
+      },
+      "editPage": {
+        "titleWithName": "Edit {name}",
+        "breadcrumbs": {
+          "home": "Home",
+          "chatGroups": "Chat groups",
+          "edit": "Edit"
+        },
+        "sections": {
+          "identity": {
+            "title": "Group identity",
+            "subtitle": "Group image and basic information"
+          },
+          "linkedCourse": {
+            "title": "Link to courses",
+            "subtitle": "Connect group to educational content"
+          },
+          "controlPrivacy": {
+            "title": "Control & privacy",
+            "subtitle": "Send and attachment settings"
+          }
+        },
+        "fields": {
+          "image": {
+            "upload": "Upload image",
+            "change": "Change image",
+            "hint": "Use high-quality PNG or JPG images (maximum 2 MB)."
+          },
+          "groupName": {
+            "label": "Group name",
+            "placeholder": "Enter group name"
+          },
+          "subject": {
+            "label": "Subject",
+            "placeholder": "Select subject"
+          },
+          "grade": {
+            "label": "Grade",
+            "placeholder": "Select grade"
+          },
+          "description": {
+            "label": "Group description",
+            "placeholder": "Enter a brief description..."
+          },
+          "linkedCourse": {
+            "intro": "You can link this group to an educational course or a specific study unit to automatically share resources with students.",
+            "toggle": "Link to course",
+            "toggleDesc": "Connect this group to an educational course",
+            "urlLabel": "Course URL",
+            "urlPlaceholder": "my.scholar.com/courses/...",
+            "verify": "Verify",
+            "verifying": "Verifying...",
+            "verifiedMessage": "URL verified",
+            "linkedCourseLabel": "Linked course",
+            "linkedListTitle": "Linked courses",
+            "removeCourse": "Remove from list",
+            "duplicateInList": "This link is already in the list."
+          },
+          "chatMode": {
+            "title": "Send permissions",
+            "everyone": "Everyone can send",
+            "everyoneDesc": "Students and teacher can participate",
+            "teacherOnly": "Teacher only",
+            "teacherOnlyDesc": "Broadcast mode - only teacher sends"
+          },
+          "media": {
+            "title": "Allowed media",
+            "files": "Files",
+            "images": "Images",
+            "pdf": "PDF files",
+            "webLinks": "Web links",
+            "blockAll": "Block all",
+            "blockAllDesc": "All attachments will be blocked"
+          },
+          "parentMode": {
+            "label": "Parent mode",
+            "description": "Allow parents to view only (read-only)"
+          }
+        },
+        "subjects": {
+          "arabic": "Arabic",
+          "english": "English",
+          "math": "Mathematics",
+          "science": "Science",
+          "physics": "Physics",
+          "chemistry": "Chemistry",
+          "biology": "Biology",
+          "history": "History",
+          "geography": "Geography"
+        },
+        "grades": {
+          "grade1": "Grade 1",
+          "grade2": "Grade 2",
+          "grade3": "Grade 3",
+          "grade4": "Grade 4",
+          "grade5": "Grade 5",
+          "grade6": "Grade 6",
+          "grade7": "Grade 7",
+          "grade8": "Grade 8",
+          "grade9": "Grade 9",
+          "grade10": "Grade 10",
+          "grade11": "Grade 11",
+          "grade12": "Grade 12"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "save": "Save changes"
+        }
+      }
+    },
+    "articleEditor": {
+      "page": {
+        "title": "Article editor",
+        "description": "Follow up article review flow, approval, and moderation actions."
+      },
+      "stats": {
+        "totalArticles": {
+          "label": "Total articles"
+        },
+        "pendingReview": {
+          "label": "Pending review"
+        },
+        "publishedToday": {
+          "label": "Published"
+        },
+        "reports": {
+          "label": "Reports"
+        }
+      },
+      "filters": {
+        "status": {
+          "label": "Status",
+          "all": "All",
+          "needsEdits": "Needs edits",
+          "hidden": "Hidden",
+          "removed": "Removed"
+        },
+        "schoolsLoadError": "Could not load schools for filters.",
+        "authorsLoadError": "Could not load authors for filters.",
+        "school": {
+          "label": "School",
+          "all": "All schools",
+          "afaq": "Afaq International School",
+          "future": "Future Vision School"
+        },
+        "author": {
+          "label": "Author",
+          "all": "All authors",
+          "sara": "Sara Ahmed",
+          "mohamed": "Mohamed Ali"
+        },
+        "search": {
+          "label": "Quick search",
+          "placeholder": "Search in article titles..."
+        }
+      },
+      "table": {
+        "title": "Articles editor",
+        "columns": {
+          "title": "Article title",
+          "author": "Author",
+          "school": "School",
+          "interaction": "Interaction",
+          "publishDate": "Publish date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "row": {
+          "readTime": "{minutes} min read"
+        },
+        "status": {
+          "published": "Published",
+          "pendingReview": "Under review",
+          "draft": "Draft",
+          "rejected": "Removed",
+          "needsEdits": "Needs edits",
+          "hidden": "Hidden"
+        },
+        "actions": {
+          "more": "Article actions",
+          "approve": "Approve",
+          "reject": "Reject",
+          "toggleVisibility": "Toggle visibility",
+          "view": "View article",
+          "delete": "Delete article",
+          "hide": "Hide article from platform",
+          "show": "Show article on platform",
+          "hideSuccess": "Article hidden.",
+          "showSuccess": "Article is visible again."
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} articles",
+          "previous": "Previous page",
+          "next": "Next page"
+        },
+        "empty": "No articles match the current filters.",
+        "loadError": "Could not load articles. Please try again."
+      },
+      "modals": {
+        "delete": {
+          "title": "Delete article",
+          "description": "Are you sure you want to delete this article permanently? This action cannot be undone.",
+          "selectedLabel": "Selected article:",
+          "confirm": "Confirm delete",
+          "cancel": "Cancel"
+        },
+        "reject": {
+          "title": "Reject article",
+          "infoBanner": "Please specify the rejection reason to notify the author with required corrections.",
+          "reasonsTitle": "Main rejection reason:",
+          "notesLabel": "Additional notes (optional):",
+          "notesPlaceholder": "Write required edits here...",
+          "confirm": "Confirm reject",
+          "cancel": "Cancel",
+          "close": "Close",
+          "reasons": {
+            "inaccurateInfo": "Inaccurate information",
+            "inappropriate": "Inappropriate content",
+            "policyViolation": "Policy violation",
+            "formatWeak": "Weak formatting",
+            "unspecified": "No specific reason selected"
+          }
+        }
+      },
+      "reviewPage": {
+        "loading": "Loading article review...",
+        "notFound": {
+          "title": "Article not found",
+          "description": "We could not find this article in the current review queue.",
+          "back": "Back to articles"
+        },
+        "header": {
+          "title": "Review article",
+          "description": "Review content quality and approve or request edits.",
+          "breadcrumbs": {
+            "home": "Home",
+            "articleEditor": "Article editor",
+            "review": "Review article"
+          }
+        },
+        "summary": {
+          "title": "Review summary",
+          "completionLabel": "Information completion",
+          "percent": "{value}%",
+          "tagsLabel": "Tags",
+          "tagsEmpty": "No tags on this article."
+        },
+        "actions": {
+          "title": "Review actions",
+          "notesPlaceholder": "Write the required edits for the author...",
+          "approve": "Approve publication",
+          "reject": "Reject article",
+          "requestChanges": "Request changes",
+          "requestAdditionalChanges": "Request additional modifications",
+          "hideArticleFromPlatform": "Hide article from the platform",
+          "showArticleOnPlatform": "Show article on the platform",
+          "sendDecisionToAuthor": "Send decision to author",
+          "requestEditsNotesRequired": "Please enter review notes before sending.",
+          "requestEditsSuccess": "Edit request sent to the author.",
+          "requestEditsError": "Could not send the edit request. Please try again.",
+          "currentDecision": "Current decision",
+          "decisions": {
+            "approve": "Approved",
+            "reject": "Rejected",
+            "needsChanges": "Needs changes"
+          },
+          "reasons": {
+            "language": "Language quality",
+            "grammar": "Grammar / spelling",
+            "format": "Formatting quality",
+            "imageQuality": "Cover image quality",
+            "policy": "Publishing policy match"
+          }
+        },
+        "tips": {
+          "title": "Review tips",
+          "body": "Prefer concise, actionable feedback and mention exact paragraphs that need edits."
+        },
+        "content": {
+          "pendingBadge": "Pending review",
+          "readTime": "{minutes} min read",
+          "coverCaption": "Cover image (placeholder in admin review)",
+          "keyPointsTitle": "Core points in this article"
+        },
+        "comments": {
+          "title": "Comments ({count})",
+          "hiddenBadge": "Hidden",
+          "actions": {
+            "delete": "Delete",
+            "hide": "Hide",
+            "suspendAuthor": "Suspend author"
+          },
+          "moderationError": "Could not complete this action. Please try again.",
+          "suspendAuthorError": "Could not suspend this user. Please try again.",
+          "suspendAuthorSuccess": "User suspended successfully.",
+          "moderationModal": {
+            "title": "Action on comment",
+            "description": "Are you sure you want to take this action? Deleting a comment cannot be undone.",
+            "deleteComment": "Delete comment",
+            "hideComment": "Hide comment",
+            "hideReasonLabel": "Reason for hiding (required)",
+            "hideReasonPlaceholder": "Brief reason shown in moderation logs…",
+            "hideReasonRequired": "Please enter a reason before hiding this comment.",
+            "cancel": "Cancel",
+            "submitting": "Please wait…"
+          },
+          "suspendAuthorModal": {
+            "title": "Suspend author",
+            "subtitle": "Manage access permissions to the platform",
+            "close": "Close",
+            "activeAuthorBadge": "Active author",
+            "durationLabel": "Suspension duration",
+            "durationDay": "Day",
+            "durationWeek": "Week",
+            "durationMonth": "Month",
+            "durationPermanent": "Permanent",
+            "reasonLabel": "Reason for suspension",
+            "reasonPlaceholder": "Please write details here so they can be sent to the author…",
+            "warning": "The author’s access to articles and the dashboard will be blocked as soon as you confirm. The author will be notified by email.",
+            "cancel": "Cancel",
+            "confirm": "Confirm suspension",
+            "submitting": "Please wait…"
+          }
+        },
+        "backToList": "Back to list"
+      },
+      "requestAmendmentsPage": {
+        "loading": "Loading…",
+        "notFound": {
+          "title": "Article not found",
+          "description": "We could not load this article for amendment requests.",
+          "back": "Back to articles"
+        },
+        "header": {
+          "title": "Request amendments and manage article visibility",
+          "description": "Send detailed notes to the author and control whether the article stays visible on the platform.",
+          "breadcrumbs": {
+            "home": "Home",
+            "articleEditor": "Article editor",
+            "review": "Article review",
+            "current": "Request amendments"
+          }
+        },
+        "main": {
+          "sectionTitle": "Note details",
+          "articleTitleLabel": "Article title",
+          "reviewNotesLabel": "Detailed review notes",
+          "reviewNotesPlaceholder": "Clarify the points that need changes so the author can address them accurately.",
+          "statusBanner": "Submitting this form will automatically set the article status to Needs amendments and notify the author immediately."
+        },
+        "sidebar": {
+          "visibilityTitle": "Article visibility",
+          "visibilityToggleOn": "Hide from platform",
+          "visibilityToggleOff": "Visible on platform",
+          "visibilityDescription": "When enabled, the article is hidden from visitors until changes are approved.",
+          "authorTitle": "Responsible author",
+          "statsTitle": "Quick statistics",
+          "statsReads": "Current reads",
+          "statsComments": "Closed comments"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "send": "Send amendment request",
+          "submitting": "Please wait…",
+          "success": "Amendment request sent.",
+          "notesRequired": "Please enter review notes before sending."
+        }
+      },
+      "communitySettings": {
+        "entry": {
+          "button": "Knowledge community settings",
+          "previewAlt": "Community settings preview"
+        },
+        "page": {
+          "title": "Community settings",
+          "description": "Configure privacy, engagement, and how members interact with community content.",
+          "breadcrumbs": {
+            "home": "Home",
+            "articleEditor": "Article editor",
+            "current": "Community settings"
+          }
+        },
+        "privacy": {
+          "title": "Privacy settings",
+          "publicTitle": "Public community",
+          "publicDescription": "Open for everyone to read and participate.",
+          "schoolTitle": "School community (restricted)",
+          "schoolDescription": "Access limited to institutional email addresses."
+        },
+        "engagement": {
+          "sectionTitle": "Community interaction",
+          "metricValue": "+1,240",
+          "metricSubtitle": "contributions this month",
+          "cta": "View reports"
+        },
+        "controls": {
+          "title": "Community controls",
+          "on": "On",
+          "off": "Off",
+          "publishing": "Enable publishing",
+          "publishingDescription": "Members can publish new articles and notes.",
+          "evaluation": "Enable evaluation",
+          "evaluationDescription": "Users can rate academic content.",
+          "comments": "Enable comments",
+          "commentsDescription": "Discussion under each post.",
+          "likes": "Enable likes",
+          "likesDescription": "Quick heart interaction on posts.",
+          "following": "Enable following",
+          "followingDescription": "Follow preferred authors."
+        },
+        "badges": {
+          "title": "Distinguished contributor badges",
+          "add": "Add new badge",
+          "manage": "Manage badges",
+          "table": {
+            "icon": "Icon",
+            "name": "Badge name",
+            "condition": "Eligibility",
+            "recipients": "Earners",
+            "actions": "Actions"
+          },
+          "rows": {
+            "star": {
+              "name": "Star contributor",
+              "condition": "More than 50 likes on a single post",
+              "recipients": "14 users",
+              "action": "Disable"
+            },
+            "factChecker": {
+              "name": "Fact checker",
+              "condition": "Corrected 10 academic reviews",
+              "recipients": "5 users",
+              "action": "Disable"
+            },
+            "researcher": {
+              "name": "Avid researcher (disabled)",
+              "condition": "Read 100 full articles",
+              "recipients": "None",
+              "action": "Enable"
+            }
+          }
+        }
+      },
+      "communityBadgeAdd": {
+        "page": {
+          "title": "Add new badge",
+          "description": "Define badge identity, eligibility, and preview how it appears to students.",
+          "breadcrumbs": {
+            "home": "Home",
+            "articleEditor": "Article editor",
+            "communitySettings": "Community settings",
+            "current": "Add badge"
+          }
+        },
+        "identity": {
+          "title": "Badge identity",
+          "nameLabel": "Badge name",
+          "namePlaceholder": "e.g. Knowledge champion",
+          "levelLabel": "Level",
+          "levels": {
+            "bronze": "Bronze",
+            "silver": "Silver",
+            "gold": "Gold"
+          },
+          "descriptionLabel": "Badge description",
+          "descriptionPlaceholder": "Short description that motivates students to earn this badge…",
+          "uploadTitle": "Drag an image here or browse files",
+          "uploadHint": "PNG or SVG, max 2MB — 512×512 recommended."
+        },
+        "eligibility": {
+          "title": "Eligibility conditions",
+          "activityLabel": "Activity type",
+          "activity": {
+            "posts": "Posts",
+            "comments": "Comments",
+            "likes": "Likes",
+            "lessons": "Completed lessons"
+          },
+          "minimumLabel": "Minimum to achieve",
+          "banner": "This badge will be awarded automatically when a student meets the threshold."
+        },
+        "preview": {
+          "title": "Live preview",
+          "imageAlt": "Badge form layout reference",
+          "caption": "Design reference — connect APIs to reflect real badge state.",
+          "nameFallback": "Badge name here",
+          "descriptionFallback": "Short motivating description for students…",
+          "levelRibbon": "Gold",
+          "progress": "{current} / {target}"
+        },
+        "tip": {
+          "title": "Admin tip",
+          "body": "Use high-contrast icons so badges stay clear in light and dark student themes."
+        },
+        "actions": {
+          "save": "Save",
+          "cancel": "Cancel",
+          "saving": "Saving…",
+          "saved": "Badge saved."
+        },
+        "validation": {
+          "nameRequired": "Please enter a badge name."
+        }
+      }
+    },
     "tabs": {
       "home": {
         "title": "Home",
@@ -639,9 +2089,17 @@
         "title": "Content management",
         "description": "Create, review, and publish learning content."
       },
+      "courseManagement": {
+        "title": "Course management",
+        "description": "Manage, review, and approve learning paths."
+      },
+      "articleEditor": {
+        "title": "Article editor",
+        "description": "Review, moderate, and manage article submissions."
+      },
       "journeyEditor": {
-        "title": "Journey of Excellence editor",
-        "description": "Configure the excellence journey experience."
+        "title": "Journey of Excellence Editor",
+        "description": "Organize lessons and educational stations to build a unique learning experience."
       },
       "liveBroadcast": {
         "title": "Live broadcast management",
@@ -651,14 +2109,1269 @@
         "title": "Interactive book management",
         "description": "Manage interactive books and assets."
       },
+      "chatGroups": {
+        "title": "Chat groups",
+        "description": "Manage chat groups and educational conversations."
+      },
       "helper": {
         "title": "Help",
         "description": "Guides and support for using the admin panel."
       }
     },
+    "journeyEditor": {
+      "breadcrumbs": {
+        "home": "Home",
+        "journeyEditor": "Journey of Excellence Editor",
+        "flashcardGroup": "Flashcard Group",
+        "addFlashcard": "Add Flashcard",
+        "liveBroadcastAdd": "Add Live Broadcast Station",
+        "liveBroadcastView": "View Live Broadcast Station",
+        "challengeEditor": "Challenge Editor",
+        "examEditor": "Exam Editor",
+        "examPreview": "Preview Exam Questions",
+        "examEditQuestions": "Edit Exam Questions"
+      },
+      "dashboard": {
+        "readyBadge": "{percent}% ready",
+        "points": "pts",
+        "hours": "{count} hrs",
+        "paths": "{count} paths",
+        "openEditor": "Open editor"
+      },
+      "editor": {
+        "title": "Journey of Excellence Editor",
+        "description": "Organize lessons and educational stations to build a unique learning experience.",
+        "actions": {
+          "saveChanges": "Save Changes",
+          "previewJourney": "Preview Journey"
+        },
+        "sidebar": {
+          "title": "Add a Station or New Path",
+          "subtitle": "Enter station details to add it to the path.",
+          "stationName": "Station Name",
+          "stationNamePlaceholder": "e.g. Memory Challenge",
+          "stationType": "Station Type",
+          "completionRule": "Completion Rule",
+          "path": "Path",
+          "subscribersOnly": "Subscribers Only",
+          "createStation": "Create Station",
+          "createPath": "Create New Path",
+          "newPathPlaceholder": "New path name...",
+          "stats": {
+            "title": "Journey Statistics",
+            "points": "Total Points",
+            "learningTime": "Learning Time",
+            "pathReadiness": "Path Readiness",
+            "hours": "hrs"
+          }
+        },
+        "stationTypes": {
+          "flashcard": "Flashcards",
+          "liveBroadcast": "Live Broadcast",
+          "challenge": "Challenge",
+          "exam": "Exam",
+          "helperFile": "Helper Files"
+        },
+        "completionRules": {
+          "viewAll": "Watch Completion (100%)",
+          "passScore": "Pass Score Rule",
+          "unlockOnSuccess": "Auto-unlock on Success",
+          "allTasks": "Complete All Tasks"
+        },
+        "path": {
+          "stationsCount": "{count} stations added",
+          "minutes": "min",
+          "addStation": "Add new station to this section"
+        },
+        "station": {
+          "dragHandleAria": "Drag to reorder stations",
+          "notHandledBadge": "No editor",
+          "openEditorHint": "Open editor",
+          "accessBadge": {
+            "open": "Open",
+            "locked": "Locked",
+            "subscribersOnly": "Subscribers"
+          },
+          "completionBadge": {
+            "passScore": "Completion Rule: {value}%",
+            "unlockOnSuccess": "Auto-unlock on Success",
+            "viewAll": "Watch Completion"
+          },
+          "typeLabels": {
+            "flashcard": "Flashcards",
+            "liveBroadcast": "Live Broadcast",
+            "challenge": "Challenge",
+            "exam": "Exams",
+            "helperFile": "Helper Files"
+          }
+        }
+      },
+      "addStationModal": {
+        "title": "Add New Station to Path",
+        "stationName": "Station Name",
+        "stationNamePlaceholder": "e.g. Introduction to General Relativity",
+        "stationType": "Station Type",
+        "iconPicker": "Choose Icon",
+        "completionRule": "Completion Rule",
+        "permissions": "Permissions",
+        "subscribersOnly": "Subscribers only",
+        "addStation": "Add Station",
+        "cancel": "Cancel"
+      },
+      "flashcardGroup": {
+        "title": "Preview Card Group: {title}",
+        "description": "Organize lessons and educational stations to build a unique learning experience.",
+        "actions": {
+          "publish": "Publish Group",
+          "addCard": "Add Card"
+        },
+        "stats": {
+          "totalCards": "Total Cards",
+          "avgDifficulty": "Avg. Difficulty",
+          "reviewTime": "Review Time",
+          "card": "card",
+          "minute": "min"
+        },
+        "cardList": "Card List",
+        "addNewCard": "Add New Card",
+        "cardActions": {
+          "viewAnswer": "View Answer",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        }
+      },
+      "flashcardAdd": {
+        "title": "Add New Flashcard",
+        "description": "Organize lessons and educational stations to build a unique learning experience.",
+        "actions": {
+          "saveAndAddAnother": "Save and Add Another",
+          "addToGroup": "Add to Group and Go Back"
+        },
+        "completionRate": "Station Completion Rate",
+        "completionRateLabel": "{value}% of correct answers",
+        "aiGenerate": "Generate Question with AI",
+        "fields": {
+          "front": "Question (Front Face)",
+          "frontPlaceholder": "Write the question here...",
+          "back": "Answer (Back Face)",
+          "backPlaceholder": "Write the model answer here...",
+          "difficulty": "Difficulty Level",
+          "reviewTime": "Review Time (seconds)",
+          "sources": "Upload Files and Sources (one file only)",
+          "image": "Add Image"
+        },
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "upload": {
+          "dragDrop": "Drag one educational file or click to browse",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "Max 197 MB per file",
+          "browse": "Browse Files",
+          "imageDragDrop": "Drag and drop image here",
+          "imageFormats": "PNG, JPG, SVG up to 1 GB",
+          "imageUploading": "Uploading image...",
+          "imageUploaded": "Image uploaded",
+          "imagePreviewAlt": "Uploaded image preview",
+          "removeImage": "Remove image"
+        },
+        "tip": {
+          "text": "Use a short, focused sentence for the question and focus on improving retrieval speed. The goal is to activate the student's mind."
+        },
+        "preview": {
+          "title": "Card Preview",
+          "frontFace": "Front Face",
+          "backFace": "Back Face",
+          "frontLabel": "Question title appears here centrally",
+          "backLabel": "Click/flip to see the answer on the other side",
+          "swipeHint": "Flip to see the answer"
+        }
+      },
+      "aiGenerateModal": {
+        "title": "AI Content Generation Settings",
+        "subtitle": "Set the required preferences for the AI to generate precise flashcards.",
+        "difficulty": "Difficulty Level",
+        "count": "Number of Cards",
+        "reviewTime": "Average Review Time",
+        "seconds": "sec",
+        "cards": "cards",
+        "startGeneration": "Start Generation Now",
+        "cancel": "Cancel"
+      },
+      "liveBroadcastAdd": {
+        "title": "Add Live Broadcast Station",
+        "description": "Create a new educational live broadcast station.",
+        "actions": {
+          "saveAndPublish": "Save and Publish Station",
+          "cancel": "Cancel",
+          "addLearningGoal": "Add Goal"
+        },
+        "steps": {
+          "basicInfo": "Basic Info",
+          "additionalDetails": "Additional Details",
+          "educationalContent": "Educational Content"
+        },
+        "sections": {
+          "basicInfo": "Basic Information",
+          "broadcastDetails": "Broadcast & Session Details",
+          "educationalContent": "Educational Content",
+          "preTasks": "Pre-Session Tasks"
+        },
+        "fields": {
+          "title": "Live Session Title",
+          "titlePlaceholder": "e.g. Introduction to Modern Chemical Principles",
+          "thumbnail": "Station Cover",
+          "description": "Station Description",
+          "descriptionPlaceholder": "Brief description of content and educational objectives",
+          "presenter": "Responsible Presenter",
+          "duration": "Session Duration",
+          "durationMinutes": "minutes",
+          "date": "Broadcast Date",
+          "time": "Start Time",
+          "broadcastLink": "Broadcast Link",
+          "broadcastLinkPlaceholder": "https://zoom.us/j/...",
+          "objectives": "Learning Objectives",
+          "objectivePlaceholder": "e.g. Master the principles of computer processing.",
+          "attachments": "Attachments",
+          "preTask": "Pre-Session Tasks",
+          "preTaskLabel": "Task description",
+          "preTaskSubtitle": "Additional instructions",
+          "addPreTask": "Add Task"
+        },
+        "upload": {
+          "drag": "Drag image file or drop here",
+          "formats": "JPG, PNG or WEBP up to 5 MB",
+          "attachmentDrag": "Drag file here or click to browse",
+          "attachmentFormats": "PDF, PPTX, XLSX"
+        },
+        "tip": "Make sure to test audio and video before the session starts, and verify the correct broadcast links are connected to ensure a smooth educational experience."
+      },
+      "liveBroadcastView": {
+        "title": "View Live Broadcast Station",
+        "description": "Create an interactive live broadcast station for your students.",
+        "actions": {
+          "joinRoom": "Join Room",
+          "registerNote": "Cancel session registration",
+          "waitNote": "Subscribers will be notified {minutes} minutes before the session starts."
+        },
+        "live": "LIVE",
+        "liveNow": "Interactive Live Session",
+        "registered": "{count} students registered",
+        "showProfile": "View Profile",
+        "countdown": {
+          "hours": "hrs",
+          "minutes": "min",
+          "seconds": "sec"
+        },
+        "sections": {
+          "overview": "Lesson Overview",
+          "presenter": "Teacher Note",
+          "educationalPath": "Educational Output",
+          "objectives": "Learning Objectives",
+          "attachments": "Attachments & Sources",
+          "related": "Related Sessions",
+          "preTasks": "Pre-Session Tasks",
+          "details": "Session Details"
+        },
+        "details": {
+          "date": "Date",
+          "time": "Time",
+          "duration": "Duration",
+          "minutes": "min"
+        }
+      },
+      "challengeEditor": {
+        "title": "Challenge Editor",
+        "description": "Create different challenge stations for your students.",
+        "actions": {
+          "saveChallenge": "Save Challenge",
+          "previewChallenge": "Preview Challenge",
+          "saveAndPublish": "Save and Publish Challenge"
+        },
+        "sidebar": {
+          "title": "Challenge Summary",
+          "type": "Challenge Type",
+          "questionsCount": "Questions Count",
+          "questions": "questions",
+          "time": "Allocated Time",
+          "minutes": "minutes",
+          "level": "Level",
+          "previewChallenge": "Preview Challenge",
+          "saveAndPublish": "Save and Publish Challenge",
+          "locked": "Locked",
+          "aiNote": "Questions will be generated automatically using AI based on the settings you define"
+        },
+        "sections": {
+          "type": "Choose Challenge Type",
+          "settings": "Challenge Settings",
+          "sources": "Upload Files and Sources"
+        },
+        "types": {
+          "timeChallenge": "Time Challenge",
+          "timeDescription": "Focus on answering before the time runs out",
+          "shortQuiz": "Short Quiz",
+          "shortQuizDescription": "Measure deep understanding of the subject",
+          "speedChallenge": "Speed Challenge",
+          "speedDescription": "Direct competition between students"
+        },
+        "settings": {
+          "questionsCount": "Questions Count",
+          "duration": "Challenge Duration (minutes)",
+          "difficulty": "Difficulty Level"
+        },
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "upload": {
+          "drag": "Drag educational files here or click to browse",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "Max 100 MB per file"
+        }
+      },
+      "examEditor": {
+        "title": "Exam Editor",
+        "description": "Create an interactive exam station for your students.",
+        "actions": {
+          "saveAndPublish": "Save and Create Exam",
+          "preview": "Preview Full Exam"
+        },
+        "sidebar": {
+          "title": "Exam Summary",
+          "questionsCount": "Questions Count",
+          "questions": "question",
+          "time": "Allocated Time",
+          "minutes": "min",
+          "difficulty": "Difficulty Level",
+          "passing": "Passing Grade",
+          "points": "pts",
+          "totalPoints": "Total Points",
+          "saveAndPublish": "Save and Create Exam",
+          "preview": "Preview Full Exam"
+        },
+        "sections": {
+          "settings": "Exam Settings",
+          "sources": "Upload Files and Sources",
+          "questions": "Question Management"
+        },
+        "settings": {
+          "examName": "Exam Name",
+          "examNamePlaceholder": "Enter the educational exam title...",
+          "duration": "Duration (minutes)",
+          "difficulty": "Difficulty Level",
+          "passingGrade": "Passing Grade",
+          "attempts": "Allowed Attempts",
+          "attemptsOptions": {
+            "one": "One attempt",
+            "two": "Two attempts",
+            "three": "Three attempts",
+            "unlimited": "Unlimited"
+          }
+        },
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "upload": {
+          "drag": "Drag educational files here or click to browse",
+          "formats": "PDF, PPTX, MP4",
+          "maxSize": "Max 100 MB per file"
+        },
+        "aiButton": "Fill Questions with AI",
+        "bankButton": "Fill from Question Bank",
+        "questionItem": {
+          "multipleChoice": "Multiple Choice",
+          "trueFalse": "True or False",
+          "correctAnswer": "Correct Answer"
+        }
+      },
+      "examPreview": {
+        "title": "Preview Exam Questions: {name}",
+        "description": "Create an interactive exam station for your students.",
+        "actions": {
+          "editQuestions": "Edit Questions",
+          "exportPdf": "Export PDF"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        },
+        "lastEdit": "Last edited:",
+        "today": "Today",
+        "stats": {
+          "totalQuestions": "Total",
+          "questions": "questions"
+        },
+        "info": {
+          "subject": "Subject",
+          "level": "Level",
+          "secondary": "Secondary"
+        },
+        "settings": {
+          "title": "Exam Settings",
+          "passing": "Passing Grade",
+          "duration": "Exam Duration",
+          "minutes": "min",
+          "randomOrder": "Random Order",
+          "randomOrderDesc": "Shuffle question order",
+          "enabled": "Enabled",
+          "totalPoints": "Total Points"
+        },
+        "readyBadge": "Ready to Publish",
+        "readyDesc": "All questions and correct answers have been verified."
+      },
+      "examEditQuestions": {
+        "title": "Edit Exam Questions: {name}",
+        "description": "Create an interactive exam station for your students.",
+        "actions": {
+          "saveChanges": "Save Changes",
+          "exportPdf": "Export PDF"
+        },
+        "stats": {
+          "totalQuestions": "Total Questions",
+          "questions": "questions",
+          "totalPoints": "Total Points",
+          "points": "pts",
+          "examName": "Exam Name"
+        },
+        "question": {
+          "title": "Edit Question {order}",
+          "level": "Level:",
+          "points": "Points:",
+          "multipleChoice": "Multiple Choice",
+          "trueFalse": "True or False",
+          "text": "Question Text:",
+          "editQuestion": "Edit Question",
+          "deleteQuestion": "Delete Question",
+          "saveChanges": "Save Changes",
+          "cancel": "Cancel"
+        },
+        "addQuestion": "Add New Question",
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        }
+      }
+    },
     "settingsPage": {
       "title": "Settings",
       "description": "Configure admin preferences and integrations."
+    },
+    "homeOverview": {
+      "title": "General monitoring dashboard",
+      "description": "Quick educational indicators and alerts.",
+      "actions": {
+        "openOverview": "General overview",
+        "sendNotification": "Send notification"
+      },
+      "stats": {
+        "totalTests": "Total tests",
+        "questionBank": "Question bank",
+        "activeStudents": "Active students",
+        "issuedCertificates": "Issued certificates"
+      },
+      "successRate": {
+        "title": "Overall success rate",
+        "subtitle": "Overall"
+      },
+      "latestTests": {
+        "title": "Latest added tests",
+        "columns": {
+          "testName": "Test name",
+          "subject": "Subject",
+          "status": "Status",
+          "participants": "Participants"
+        }
+      }
+    },
+    "overviewInsights": {
+      "title": "Overview",
+      "description": "Welcome back. Manage your indicators and data.",
+      "actions": {
+        "createStation": "Create smart manual test",
+        "createRandom": "Create smart random test"
+      },
+      "stats": {
+        "totalTests": "Total tests",
+        "questionBank": "Question bank",
+        "students": "Active students",
+        "certificates": "Issued certificates"
+      },
+      "stationTest": {
+        "title": "Create smart manual test",
+        "description": "Design a complete assessment journey for students.",
+        "formTitle": "Basic information",
+        "actions": {
+          "publish": "Publish test now"
+        }
+      },
+      "randomTest": {
+        "title": "Create smart random test",
+        "description": "Design a complete assessment journey using prepared questions.",
+        "actions": {
+          "generate": "Generate test now"
+        }
+      }
+    },
+    "sendNotification": {
+      "title": "Send notification",
+      "description": "Create and customize alerts for your academic community.",
+      "formTitle": "Target audience",
+      "sendNow": "Send notification now"
+    },
+    "questionBank": {
+      "title": "Question bank",
+      "description": "Manage and classify academic questions across all learning tracks.",
+      "actions": {
+        "openManage": "Preview question bank"
+      },
+      "filters": {
+        "questionType": {
+          "label": "Question type",
+          "all": "All types",
+          "mcq": "Multiple choice",
+          "tf": "True / False",
+          "shortAnswer": "Short answer"
+        },
+        "difficultyLevel": {
+          "label": "Difficulty level",
+          "all": "All levels",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "subject": {
+          "label": "Subject",
+          "all": "All subjects",
+          "arabic": "Arabic language",
+          "math": "Mathematics",
+          "science": "Science"
+        },
+        "search": {
+          "label": "Search by title",
+          "placeholder": "Question title..."
+        }
+      },
+      "stats": {
+        "total": "Total questions",
+        "approved": "Reviewed",
+        "pendingApproval": "Pending approval",
+        "draft": "Draft"
+      },
+      "table": {
+        "title": "Questions list",
+        "loading": "Loading questions...",
+        "empty": "No questions match the current filters.",
+        "loadError": "Could not load questions. Please try again.",
+        "columns": {
+          "question": "Question text",
+          "type": "Type",
+          "status": "Status",
+          "subject": "Subject",
+          "difficulty": "Difficulty",
+          "actions": "Actions"
+        },
+        "actions": {
+          "preview": "Preview",
+          "delete": "Delete",
+          "confirmDelete": "Are you sure you want to delete this question?",
+          "deleteSuccess": "Question deleted successfully."
+        }
+      }
+    },
+    "questionBankManage": {
+      "title": "Question bank preview",
+      "description": "Review and manage questions inside the bank.",
+      "listTitle": "Results list",
+      "stats": {
+        "total": "Total repository",
+        "mcq": "Multiple choice",
+        "tf": "True / False",
+        "level": "Difficulty levels"
+      },
+      "actions": {
+        "addQuestion": "Add question",
+        "deleteSample": "Delete sample"
+      },
+      "deleteModal": {
+        "title": "Delete question",
+        "description": "Are you sure you want to delete this question? This action cannot be undone.",
+        "item": "What is the result of solving the quadratic equation?",
+        "confirm": "Confirm delete",
+        "cancel": "Cancel"
+      }
+    },
+    "questionBankAdd": {
+      "title": "Add new question",
+      "description": "Fill in data to create and save a new question.",
+      "formTitle": "Question data",
+      "actions": {
+        "save": "Save question",
+        "saveAndAdd": "Save and add another",
+        "preview": "Preview question",
+        "cancel": "Cancel edits"
+      },
+      "fields": {
+        "questionType": "Question type",
+        "selectSubject": "Select a subject",
+        "subject": "Subject",
+        "questionText": "Question text",
+        "attachment": "Attachment",
+        "attachmentUrl": "Attachment URL",
+        "difficulty": "Difficulty level",
+        "reviewMode": "Publishing mode",
+        "explanation": "Answer explanation (optional)",
+        "hint": "Hint for students (optional)"
+      },
+      "placeholders": {
+        "questionText": "Example: If x + 5 = 12, what is the value of x?",
+        "attachmentUrl": "https://example.com/question-image.png",
+        "shortAnswer": "Type the expected short answer...",
+        "explanation": "Explain why this answer is correct...",
+        "hint": "A short clue to guide students...",
+        "choice": "Choice {index}"
+      },
+      "answers": {
+        "title": "Answers",
+        "trueOption": "True",
+        "falseOption": "False",
+        "shortAnswer": "Correct short answer",
+        "markAsCorrect": "Mark this choice as correct"
+      },
+      "review": {
+        "submitForReview": "Submit for review",
+        "saveDraft": "Save as draft"
+      },
+      "side": {
+        "attachmentTitle": "Attachment",
+        "chooseImage": "Choose image URL",
+        "imageFormats": "PNG, JPG, JPEG",
+        "questionSettingsTitle": "Question settings",
+        "generalQuestion": "General question",
+        "timerToggle": "Enable timer",
+        "studentPreviewTitle": "Student question preview",
+        "studentPreviewTag": "Live preview mode"
+      },
+      "messages": {
+        "createSuccess": "Question created successfully.",
+        "createError": "Could not create question. Please review your inputs and try again."
+      },
+      "validation": {
+        "questionTextRequired": "Question text is required.",
+        "enumsRequired": "Please select question type and difficulty.",
+        "shortAnswerRequired": "Please enter the short answer.",
+        "choiceTextRequired": "All choices must contain text.",
+        "correctChoiceRequired": "Please mark one correct choice."
+      }
+    },
+    "questionBankPreviewAll": {
+      "title": "Question bank overview",
+      "description": "Review and manage all questions stored in the question bank.",
+      "breadcrumbs": {
+        "addNewQuestion": "Add new question"
+      },
+      "actions": {
+        "saveQuestion": "Save question",
+        "addNewQuestion": "Add new question",
+        "filterResults": "Filter results",
+        "resetFilters": "Reset"
+      },
+      "stats": {
+        "difficulty": {
+          "label": "Difficulty levels",
+          "indicator": "Updated",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard",
+          "tooltip": "Distribution will be computed automatically when available from the backend."
+        },
+        "trueFalse": "True / False",
+        "mcq": "Multiple choice",
+        "total": "Total repository",
+        "comingSoonTooltip": "This metric will be available once the backend exposes it."
+      },
+      "card": {
+        "standardAnswer": "Standard answer",
+        "approved": "Approved",
+        "actions": {
+          "details": "Question details",
+          "edit": "Edit question",
+          "delete": "Delete question"
+        }
+      },
+      "list": {
+        "loading": "Loading questions...",
+        "empty": "No questions match the current filters.",
+        "loadError": "Could not load questions. Please try again."
+      }
+    },
+    "questionBankPreview": {
+      "title": "Question bank preview",
+      "description": "Check the question layout before publishing.",
+      "badge": "Quick actions",
+      "questionTypeBadge": "Multiple choice question",
+      "attachmentAlt": "Question attachment",
+      "emptyChoice": "No text",
+      "explanationTitle": "Answer explanation",
+      "meta": {
+        "title": "Question details"
+      },
+      "quickActions": {
+        "title": "Quick actions"
+      },
+      "stats": {
+        "totalChoices": "Choices count",
+        "correctChoices": "Correct choices",
+        "correctRatio": "Correct choices ratio"
+      },
+      "actions": {
+        "save": "Save question",
+        "edit": "Edit question",
+        "close": "Close preview"
+      },
+      "messages": {
+        "loading": "Loading question details...",
+        "loadError": "Could not load question details.",
+        "notFoundTitle": "Question not found",
+        "notFoundDescription": "This question may have been deleted or is unavailable."
+      }
+    },
+    "contentManagement": {
+      "page": {
+        "title": "Content files management",
+        "description": "Follow and organize all learning resources available on the platform.",
+        "addFile": "Add new file",
+        "loading": "Loading content files..."
+      },
+      "breadcrumbs": {
+        "home": "Home",
+        "content": "Manage helper files",
+        "add": "Add",
+        "edit": "Edit"
+      },
+      "stats": {
+        "revenue": {
+          "label": "Revenue",
+          "indicator": "SAR this month"
+        },
+        "activeStudents": {
+          "label": "Active now",
+          "indicator": "Students enrolled in courses"
+        },
+        "pendingApproval": {
+          "label": "Pending review",
+          "indicator": "Awaiting admin approval"
+        },
+        "totalFiles": {
+          "label": "Total",
+          "indicator": "Total registered files"
+        }
+      },
+      "filters": {
+        "subject": {
+          "label": "Subject",
+          "all": "All",
+          "physics": "Physics",
+          "math": "Mathematics"
+        },
+        "grade": {
+          "label": "Grade",
+          "all": "All",
+          "grade11": "Grade 11",
+          "grade12": "Grade 12"
+        },
+        "fileType": {
+          "label": "File type",
+          "all": "All",
+          "pdf": "PDF",
+          "video": "Video",
+          "zip": "Compressed"
+        },
+        "search": {
+          "label": "Quick search",
+          "placeholder": "Search by file name..."
+        }
+      },
+      "policy": {
+        "public": "Public",
+        "subscribersOnly": "Subscribers"
+      },
+      "table": {
+        "title": "Content files list",
+        "columns": {
+          "fileName": "File name",
+          "course": "Course",
+          "teacher": "Teacher",
+          "policy": "Policy",
+          "downloads": "Downloads",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "actions": {
+          "view": "View",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} files",
+          "previous": "Previous page",
+          "next": "Next page"
+        }
+      },
+      "activity": {
+        "title": "Latest file activities",
+        "items": {
+          "upload": {
+            "title": "Uploaded \"trial test 2024\"",
+            "detail": "By Sami Youssef • 15 minutes ago",
+            "action": "View"
+          },
+          "policy": {
+            "title": "Policy updated for \"Future Note\"",
+            "detail": "From public to subscribers • 2 hours ago",
+            "action": "View"
+          },
+          "delete": {
+            "title": "Deleted old file \"Lecture 2022\"",
+            "detail": "By admin action • yesterday",
+            "action": "View"
+          }
+        }
+      },
+      "form": {
+        "loading": "Loading file form...",
+        "addTitle": "Add new learning file",
+        "editTitle": "Edit learning file",
+        "pageDescription": "Upload and link supporting educational resources to active courses.",
+        "breadcrumbs": {
+          "home": "Home",
+          "content": "Manage helper files",
+          "add": "Add",
+          "edit": "Edit"
+        },
+        "defaults": {
+          "editDescription": "Update this file details based on the latest review notes."
+        },
+        "summary": {
+          "title": "Process summary",
+          "step1": "Link selected course",
+          "step2": "Upload educational files",
+          "step3": "Define access policy"
+        },
+        "sections": {
+          "linkCourse": "Link course",
+          "upload": "Upload files and resources",
+          "identity": "File identity",
+          "accessPolicy": "Access and privacy policy"
+        },
+        "fields": {
+          "courseLink": "Course link",
+          "fileName": "Learning file name",
+          "fileNamePlaceholder": "Example: Advanced algebra summary",
+          "description": "Short description",
+          "descriptionPlaceholder": "Write a short note describing the file content."
+        },
+        "upload": {
+          "title": "Drag files here",
+          "subtitle": "or select from your device"
+        },
+        "access": {
+          "public": {
+            "title": "Public",
+            "description": "Visible to all platform members."
+          },
+          "subscribers": {
+            "title": "Subscribers only",
+            "description": "Visible only for active subscribers."
+          }
+        },
+        "warning": "Publishing a new file updates availability instantly and notifies eligible users.",
+        "actions": {
+          "verifyLink": "Verify link",
+          "publish": "Confirm and publish",
+          "saving": "Saving...",
+          "cancel": "Cancel operation"
+        }
+      },
+      "details": {
+        "loading": "Loading file details...",
+        "description": "Manage educational resources linkage and visibility settings.",
+        "breadcrumbs": {
+          "home": "Home",
+          "content": "Content files management"
+        },
+        "actions": {
+          "edit": "Edit data",
+          "delete": "Delete file"
+        },
+        "notFound": {
+          "title": "File not found",
+          "description": "The requested content file could not be found.",
+          "back": "Back to files"
+        },
+        "status": {
+          "available": "Available now"
+        },
+        "hero": {
+          "uploadDate": "Upload date",
+          "teacher": "Teacher",
+          "downloads": "Downloads",
+          "version": "Version"
+        },
+        "chart": {
+          "title": "Activity statistics (last 30 days)"
+        },
+        "quickActions": {
+          "title": "Quick actions",
+          "edit": "Edit data",
+          "delete": "Delete file"
+        },
+        "policy": {
+          "title": "Access policy",
+          "visibility": {
+            "title": "Live view",
+            "subtitle": "Visible for all students",
+            "active": "Visible",
+            "inactive": "Hidden"
+          },
+          "download": {
+            "title": "Download file",
+            "subtitle": "Available to eligible users",
+            "active": "Download enabled",
+            "inactive": "Download disabled"
+          }
+        },
+        "side": {
+          "linkInfo": "Link info",
+          "course": "Linked course",
+          "teacher": "Responsible teacher",
+          "subject": "Subject",
+          "grade": "Grade",
+          "help": {
+            "title": "Need help?",
+            "body": "If you encounter an issue with file permissions or links, contact support.",
+            "button": "Talk to support"
+          }
+        },
+        "deleteModal": {
+          "title": "Delete file",
+          "description": "Are you sure you want to delete this file? This action cannot be undone.",
+          "confirm": "Confirm deletion",
+          "cancel": "Cancel"
+        }
+      }
+    },
+    "pricingManagement": {
+      "breadcrumbs": {
+        "home": "Home",
+        "list": "Pricing & plans",
+        "add": "Add plan",
+        "edit": "Edit plan"
+      },
+      "page": {
+        "title": "Pricing plans management",
+        "description": "Manage and update course and subscription pricing.",
+        "addPlan": "Add new plan",
+        "paymentGateways": "Payment gateway settings",
+        "loading": "Loading pricing plans..."
+      },
+      "overview": {
+        "title": "Billing overview",
+        "description": "Welcome back, here is a summary of your financial activity today.",
+        "managePlans": "Manage plans & pricing",
+        "manageSubscriptions": "Manage student subscriptions",
+        "manageTransactions": "Financial transactions log",
+        "pending": "Pending",
+        "cards": {
+          "totalRevenue": "Total revenue",
+          "activeSubscriptions": "Active subscriptions",
+          "failedPayments": "Failed payments",
+          "pendingTasks": "Pending tasks"
+        },
+        "revenueTitle": "Monthly revenue",
+        "transactionsTitle": "Latest transactions",
+        "table": {
+          "user": "Parent / user",
+          "student": "Student",
+          "amount": "Amount",
+          "status": "Status",
+          "date": "Date",
+          "success": "Successful",
+          "failed": "Failed"
+        }
+      },
+      "subscriptions": {
+        "page": {
+          "title": "Student subscriptions management",
+          "description": "Track and update parent and student subscriptions on the platform."
+        },
+        "stats": {
+          "total": "Total subscriptions",
+          "active": "Active subscriptions",
+          "review": "Expired subscriptions"
+        },
+        "table": {
+          "title": "Current subscriptions list",
+          "summary": "Showing 1 to 4 of 1,284 subscriptions",
+          "columns": {
+            "parent": "Parent name",
+            "student": "Student name",
+            "plan": "Plan type",
+            "startDate": "Start date",
+            "endDate": "End date",
+            "status": "Status",
+            "actions": "Actions"
+          },
+          "plan": {
+            "gold": "Gold plan",
+            "basic": "Basic plan"
+          },
+          "status": {
+            "active": "Active",
+            "inactive": "Expired"
+          },
+          "actions": {
+            "view": "View"
+          }
+        },
+        "cards": {
+          "supportTitle": "Instant direct support",
+          "supportBody": "Our team is available to help solve parent and student subscription tracking issues.",
+          "journeyTitle": "Improve user journey",
+          "journeyBody": "Track subscription indicators to improve communication with parents."
+        }
+      },
+      "subscriptionDetails": {
+        "loading": "Loading subscription details...",
+        "title": "Student subscription details",
+        "description": "Review subscription timeline and related payment history.",
+        "cards": {
+          "paid": "Total paid",
+          "parent": "Parent (payer)",
+          "student": "Student"
+        },
+        "timelineTitle": "Subscription timeline",
+        "packageTitle": "Package details",
+        "packageBody": "Annual package • Paid on 12 Jan 2023 • Mada payment method",
+        "paymentsTitle": "Payments history",
+        "table": {
+          "invoice": "Invoice no.",
+          "date": "Date",
+          "amount": "Amount",
+          "status": "Status"
+        }
+      },
+      "transactions": {
+        "title": "Financial transactions log",
+        "description": "Track all payments and analyze financial performance.",
+        "cards": {
+          "total": "Total revenue",
+          "success": "Successful operations",
+          "failed": "Failed operations",
+          "pending": "Pending processing"
+        },
+        "status": {
+          "success": "Successful",
+          "failed": "Failed",
+          "pending": "Pending",
+          "refunded": "Refunded"
+        },
+        "table": {
+          "title": "Transactions table",
+          "summary": "Showing 10 of 1,324 transactions",
+          "columns": {
+            "bankRef": "Reference",
+            "user": "Parent / user",
+            "student": "Student",
+            "type": "Type",
+            "amount": "Amount",
+            "status": "Status",
+            "date": "Date",
+            "actions": "Action"
+          }
+        }
+      },
+      "stats": {
+        "activePlans": {
+          "label": "Total active plans",
+          "indicator": "plans"
+        },
+        "averageSubscription": {
+          "label": "Average subscription",
+          "indicator": "Saudi Riyal"
+        },
+        "expectedRevenue": {
+          "label": "Expected revenue",
+          "indicator": "this month"
+        }
+      },
+      "table": {
+        "title": "Pricing plans list",
+        "columns": {
+          "planName": "Plan name",
+          "type": "Type",
+          "linkedContent": "Linked content",
+          "price": "Price",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "types": {
+          "oneTime": "One-time",
+          "yearly": "Yearly",
+          "monthly": "Monthly"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "actions": {
+          "edit": "Edit"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} plans",
+          "previous": "Previous",
+          "next": "Next"
+        }
+      },
+      "distribution": {
+        "title": "Plan types distribution",
+        "monthly": "Monthly subscriptions",
+        "oneTime": "One-time payment",
+        "yearly": "Yearly subscriptions"
+      },
+      "tip": {
+        "title": "Upcoming package pricing update",
+        "body": "You can schedule gold package price updates automatically on the first day of each month with user notifications.",
+        "button": "Schedule changes"
+      },
+      "form": {
+        "loading": "Loading plan details...",
+        "addTitle": "Add a new pricing plan",
+        "editTitle": "Edit pricing plan",
+        "description": "Configure plan type, pricing, and linked educational content.",
+        "warning": "Make sure the pricing type is correct. Switching from recurring to subscription after save may not be allowed.",
+        "sections": {
+          "planType": "Pricing type",
+          "pricing": "Pricing details",
+          "linkContent": "Link content"
+        },
+        "types": {
+          "oneTime": {
+            "title": "One-time payment",
+            "description": "Single payment for full access"
+          },
+          "yearly": {
+            "title": "Yearly subscription",
+            "description": "Renewed yearly access"
+          },
+          "monthly": {
+            "title": "Monthly subscription",
+            "description": "Recurring monthly payment"
+          }
+        },
+        "fields": {
+          "planName": {
+            "label": "Plan name",
+            "placeholder": "Example: Gold package"
+          },
+          "currency": {
+            "label": "Currency",
+            "sar": "Saudi Riyal (SAR)"
+          },
+          "basePrice": {
+            "label": "Base price"
+          },
+          "offerPrice": {
+            "label": "Offer price (optional)"
+          },
+          "linkedContent": {
+            "label": "Search for course or learning path...",
+            "placeholder": "Select linked content",
+            "options": {
+              "pythonBasics": "Python programming basics",
+              "scienceTracks": "All science tracks",
+              "teachersToolkit": "Teachers toolkit"
+            }
+          },
+          "status": {
+            "title": "Activate plan immediately",
+            "subtitle": "Plan becomes visible to users right after save",
+            "active": "Active",
+            "inactive": "Inactive"
+          }
+        },
+        "preview": {
+          "badge": "PREVIEW",
+          "planTitleFallback": "Plan name",
+          "subtitle": "Full course access package",
+          "cta": "Subscribe now"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "create": "Create plan",
+          "save": "Save changes"
+        }
+      }
+    },
+    "paymentGatewaySettings": {
+      "page": {
+        "title": "Payment gateway settings",
+        "description": "Configure and connect payment gateways for the financial operations platform."
+      },
+      "switch": {
+        "active": "Enabled",
+        "inactive": "Disabled"
+      },
+      "status": {
+        "connected": "Connected",
+        "connectedTrial": "Connected (trial)",
+        "notConnected": "Not connected"
+      },
+      "fields": {
+        "testMode": "Test mode",
+        "stripe": {
+          "publicKey": "Public Key",
+          "secretKey": "Secret Key"
+        },
+        "paymob": {
+          "apiKey": "API Key",
+          "iframeId": "IFRAME ID"
+        },
+        "paypal": {
+          "clientId": "Client ID",
+          "clientSecret": "Client Secret"
+        }
+      },
+      "actions": {
+        "saveChanges": "Save changes",
+        "linkAccount": "Link account",
+        "updateSettings": "Update settings"
+      },
+      "security": {
+        "title": "Financial transactions security",
+        "body": "Do not expose API keys before secure storage. Ensure secret keys are never shared with external parties. Use test mode to validate transactions without charging real amounts.",
+        "logs": "Transactions log",
+        "contactSupport": "Request support"
+      },
+      "footer": {
+        "unsavedChanges": "3 unsaved changes were made",
+        "cancel": "Cancel",
+        "saveAll": "Save all settings"
+      }
     }
   }
 }

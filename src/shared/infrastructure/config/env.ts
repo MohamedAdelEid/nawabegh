@@ -10,6 +10,10 @@ const schema = z.object({
     .string()
     .url()
     .default("https://nawabeghsystem.runasp.net"),
+  NEXT_PUBLIC_FILE_PUBLIC_BASE_URL: z
+    .string()
+    .url()
+    .default("https://nawabeghsystem.runasp.net"),
   NEXT_PUBLIC_API_TIMEOUT: z.string().default("15000"),
 });
 

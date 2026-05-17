@@ -1,10 +1,12 @@
 "use client";
 
 import type React from "react";
+import Link from "next/link";
 import { cn } from "@/shared/application/lib/cn";
 
 interface DashboardBreadcrumbItem {
   label: string;
+  href?: string;
 }
 
 interface DashboardPageHeaderProps {
@@ -25,7 +27,7 @@ export function DashboardPageHeader({
   return (
     <section
       className={cn(
-        "flex flex-col-reverse gap-4 md:flex-row md:items-start md:justify-between",
+        "flex flex-col-reverse gap-4 md:flex-row items-center md:justify-between",
         className,
       )}
     >
@@ -35,7 +37,16 @@ export function DashboardPageHeader({
             {breadcrumbs.map((item, index) => (
               <span key={`${item.label}-${index}`}>
                 {index > 0 ? <span className="mx-1.5 text-slate-300">/</span> : null}
-                <span>{item.label}</span>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    className="transition-colors hover:text-slate-600"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <span>{item.label}</span>
+                )}
               </span>
             ))}
           </p>

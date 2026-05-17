@@ -54,9 +54,10 @@ export default async function RootLayout({
 }) {
   const locale = await getLocale();
   const messages = await getMessages();
+  // suppressHydrationWarning: extensions (e.g. Grammarly) mutate <html>/<body> attrs before hydrate.
   return (
-    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
-      <body className={ibmPlexSansArabic.variable}>
+    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
+      <body className={ibmPlexSansArabic.variable} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <AppProviders>{children}</AppProviders>
         </NextIntlClientProvider>

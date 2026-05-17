@@ -1,14 +1,21 @@
 "use client";
 
-import { Search, UserRound, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Plus, Search, UserRound, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  addUserCountryOptions,
-  availableStudentOptions,
   defaultParentAccountValues,
 } from "@/modules/admin/domain/data/addUserFormData";
+import {
+  createParentUser,
+  getCountriesDropdown,
+  getParentStudentsPage,
+  searchStudentsForParent,
+  uploadUserImage,
+  type UserManagementDropdownOption,
+  type UserManagementParentStudentOption,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
 import {
   AddUserAnimatedSection,
   AddUserFormActions,
@@ -20,29 +27,71 @@ import {
   AddUserUploadField,
 } from "@/modules/admin/presentation/components/add-user";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { DashboardBadge } from "@/shared/presentation/components/dashboard";
 import { SaveIcon } from "../assets/icons/Save";
+
+type DropdownRow = { id: string; label: string };
+
+function getInitials(value: string) {
+  const parts = value.trim().split(/\s+/).filter(Boolean).slice(0, 2);
+  if (parts.length === 0) return "؟";
+  return parts.map((part) => part[0]).join("");
+}
+
+const avatarToneClasses = [
+  "bg-[#DBEEF6] text-[#255E8A]",
+  "bg-[#FEE2E2] text-[#B42318]",
+  "bg-[#FDEDD4] text-[#9A5B18]",
+  "bg-[#E7F5EE] text-[#1E7A4E]",
+] as const;
+
+function getAvatarClassName(seed: string) {
+  const sum = Array.from(seed).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return avatarToneClasses[sum % avatarToneClasses.length] ?? avatarToneClasses[0];
+}
+
+function mapStudentToLinkedEntity(student: UserManagementParentStudentOption) {
+  return {
+    id: student.studentUserId,
+    name: student.fullName,
+    secondaryLabel: student.phoneNumber || "—",
+    tertiaryLabel: student.gradeName || undefined,
+    avatarInitials: getInitials(student.fullName),
+    avatarClassName: getAvatarClassName(student.studentUserId || student.fullName),
+  };
+}
 
 export function AdminAddParentPage() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
   const [values, setValues] = useState(defaultParentAccountValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<{
+    message?: string;
+    validationErrors?: unknown;
+  } | null>(null);
+  const [countryRows, setCountryRows] = useState<UserManagementDropdownOption<number>[]>([]);
+  const [studentsCatalog, setStudentsCatalog] = useState<UserManagementParentStudentOption[]>([]);
+  const [studentSearchRows, setStudentSearchRows] = useState<UserManagementParentStudentOption[]>([]);
+  const [isSearchingStudents, setIsSearchingStudents] = useState(false);
 
-  const selectedStudents = availableStudentOptions.filter((student) =>
-    values.selectedStudentIds.includes(student.id),
+  const selectedStudents = useMemo(
+    () =>
+      studentsCatalog
+        .filter((student) => values.selectedStudentIds.includes(student.studentUserId))
+        .map(mapStudentToLinkedEntity),
+    [studentsCatalog, values.selectedStudentIds],
   );
 
   const searchResults = useMemo(
     () =>
-      availableStudentOptions.filter((student) => {
-        if (values.selectedStudentIds.includes(student.id)) return false;
-        return (
-          student.name.includes(values.studentSearch) ||
-          student.secondaryLabel.includes(values.studentSearch)
-        );
-      }),
-    [values.selectedStudentIds, values.studentSearch],
+      studentSearchRows
+        .filter((student) => !values.selectedStudentIds.includes(student.studentUserId))
+        .map(mapStudentToLinkedEntity),
+    [studentSearchRows, values.selectedStudentIds],
   );
 
   const setField = <K extends keyof typeof values>(
@@ -50,6 +99,121 @@ export function AdminAddParentPage() {
     value: (typeof values)[K],
   ) => {
     setValues((current) => ({ ...current, [key]: value }));
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const [countriesResult, studentsResult] = await Promise.all([
+        getCountriesDropdown(),
+        getParentStudentsPage(1, 5),
+      ]);
+      if (cancelled) return;
+
+      if (countriesResult.data) {
+        setCountryRows(countriesResult.data);
+      } else if (countriesResult.errorMessage) {
+        notify.error(countriesResult.errorMessage);
+      }
+
+      if (studentsResult.data) {
+        setStudentsCatalog(studentsResult.data);
+        setStudentSearchRows(studentsResult.data);
+      } else if (studentsResult.errorMessage) {
+        notify.error(studentsResult.errorMessage);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!values.studentSearch.trim()) {
+      setStudentSearchRows(studentsCatalog);
+    }
+  }, [studentsCatalog, values.studentSearch]);
+
+  useEffect(() => {
+    const keyword = values.studentSearch.trim();
+    if (!keyword) {
+      return;
+    }
+
+    setIsSearchingStudents(true);
+    const timeoutId = window.setTimeout(async () => {
+      const result = await searchStudentsForParent(keyword);
+
+      if (result.data) {
+        setStudentSearchRows(result.data);
+        setStudentsCatalog((current) => {
+          const map = new Map(current.map((student) => [student.studentUserId, student]));
+          for (const item of result.data ?? []) {
+            map.set(item.studentUserId, item);
+          }
+          return Array.from(map.values());
+        });
+      } else if (result.errorMessage) {
+        notify.error(result.errorMessage);
+      }
+      setIsSearchingStudents(false);
+    }, 350);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      setIsSearchingStudents(false);
+    };
+  }, [values.studentSearch]);
+
+  const countryOptions: DropdownRow[] = useMemo(
+    () => [
+      { id: "", label: t("userManagement.addUser.shared.placeholders.selectCountry") },
+      ...countryRows.map((row) => ({ id: String(row.id), label: row.name })),
+    ],
+    [countryRows, t],
+  );
+
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+
+    setSubmitError(null);
+    setIsSubmitting(true);
+    let avatarFilePath = values.avatarFilePath;
+
+    if (values.avatarFile) {
+      const uploadResult = await uploadUserImage(values.avatarFile);
+      if (!uploadResult.data?.filePath) {
+        setSubmitError({
+          message: uploadResult.errorMessage ?? "Failed to upload image.",
+          validationErrors: uploadResult.validationErrors,
+        });
+        notify.error(uploadResult.errorMessage ?? "Failed to upload image.");
+        setIsSubmitting(false);
+        return;
+      }
+      avatarFilePath = uploadResult.data.filePath;
+    }
+
+    const result = await createParentUser({
+      ...values,
+      avatarFilePath,
+    });
+
+    console.log(result);
+    if (result.data) {
+      notify.success(result.message ?? "Parent created successfully.");
+      router.push(`${ROUTES.ADMIN.HOME}?tab=userManagement&refresh=${Date.now()}`);
+      return;
+    }
+
+    setSubmitError({
+      message: result.errorMessage ?? "Failed to create parent.",
+      validationErrors: result.validationErrors,
+    });
+    notify.error(result.errorMessage ?? "Failed to create parent.");
+    setIsSubmitting(false);
   };
 
   return (
@@ -63,10 +227,16 @@ export function AdminAddParentPage() {
       ]}
       cancelLabel={t("userManagement.addUser.shared.actions.cancel")}
       submitLabel={t("userManagement.addUser.parent.page.submit")}
-      onSubmit={() => {
-        console.info("Create parent payload", values);
-      }}
+      onSubmit={handleSubmit}
     >
+      {submitError ? (
+        <ApiFailureAlert
+          message={submitError.message}
+          validationErrors={submitError.validationErrors}
+          className="mb-2"
+        />
+      ) : null}
+
       <AddUserAnimatedSection delay={0.05}>
         <AddUserFormSectionCard
           title={t("userManagement.addUser.shared.sections.basicInfo")}
@@ -88,6 +258,7 @@ export function AdminAddParentPage() {
               onChange={(next) => {
                 setField("avatarFile", next.file);
                 setField("avatarPreviewUrl", next.previewUrl);
+                setField("avatarFilePath", null);
               }}
             />
 
@@ -107,10 +278,7 @@ export function AdminAddParentPage() {
               <AddUserSelectField
                 label={t("userManagement.addUser.shared.fields.country")}
                 value={values.countryId}
-                options={addUserCountryOptions.map((option) => ({
-                  id: option.id,
-                  label: t(option.labelKey),
-                }))}
+                options={countryOptions}
                 onChange={(value) => setField("countryId", value)}
               />
               <AddUserInputField
@@ -175,6 +343,54 @@ export function AdminAddParentPage() {
               </div>
             </div>
 
+            {searchResults.length > 0 ? (
+              <div className="space-y-2">
+                {searchResults.map((student) => (
+                  <div
+                    key={student.id}
+                    className="flex items-center justify-between rounded-2xl border border-[var(--dashboard-border-soft)] bg-[#F8FAFC] p-4"
+                  >
+                    <div className="flex items-center gap-3 text-right">
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold ${student.avatarClassName}`}
+                      >
+                        {student.avatarInitials}
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-[var(--dashboard-primary)]">{student.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs text-slate-500">{student.secondaryLabel}</p>
+                          <span className="block h-1 w-1 rounded-full bg-slate-400" />
+                          {student.tertiaryLabel ? (
+                            <p className="text-xs text-slate-400">{student.tertiaryLabel}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+                      onClick={() => {
+                        setField("selectedStudentIds", [
+                          ...values.selectedStudentIds,
+                          student.id,
+                        ]);
+                      }}
+                      aria-label={t("userManagement.addUser.parent.studentsSection.addAction")}
+                    >
+                      <Plus className="h-4 w-4" aria-hidden />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : values.studentSearch.trim() && !isSearchingStudents ? (
+              <p className="text-sm text-slate-500">
+                {t("userManagement.table.empty")}
+              </p>
+            ) : null}
+
             <AddUserLinkedEntityList
               title={t("userManagement.addUser.parent.studentsSection.selectedLabel")}
               items={selectedStudents}
@@ -189,19 +405,17 @@ export function AdminAddParentPage() {
         </AddUserFormSectionCard>
       </AddUserAnimatedSection>
 
-      <AddUserAnimatedSection delay={0.15}>
+      {/* <AddUserAnimatedSection delay={0.15}>
         <div className="flex justify-start md:justify-end">
           <AddUserFormActions
             cancelLabel={t("userManagement.addUser.shared.actions.cancelChanges")}
             submitLabel={t("userManagement.addUser.parent.page.bottomSubmit")}
             submitIcon={SaveIcon}
             onCancel={() => router.push(`${ROUTES.ADMIN.HOME}?tab=userManagement`)}
-            onSubmit={() => {
-              console.info("Save parent payload", values);
-            }}
+            onSubmit={handleSubmit}
           />
         </div>
-      </AddUserAnimatedSection>
+      </AddUserAnimatedSection> */}
     </AddUserPageShell>
   );
 }

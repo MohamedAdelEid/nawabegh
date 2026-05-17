@@ -1,14 +1,35 @@
 "use client";
 
-import { Phone, Pencil, UserRound, EllipsisVertical } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Phone,
+  Pencil,
+  UserRound,
+  EllipsisVertical,
+  Loader2,
+  GraduationCap,
+  Users,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   getUserManagementDetail,
+  userManagementFallbackDetailId,
   userManagementParentIcon,
   userManagementProfileIcon,
   userManagementSubscriptionIcon,
 } from "@/modules/admin/domain/data/userManagementDetailsData";
+import {
+  getParentUserDetail,
+  getStudentUserDetail,
+  getTeacherUserDetail,
+  normalizeUserManagementRole,
+  type ParentUserDetail,
+  type StudentUserDetail,
+  type TeacherUserDetail,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
 import { cn } from "@/shared/application/lib/cn";
+import { notify } from "@/shared/application/lib/toast";
 import {
   DashboardBadge,
   DashboardPageHeader,
@@ -265,6 +286,124 @@ function LinkedParentCard({
   );
 }
 
+function TeacherAssignmentsCard({
+  title,
+  subjectsTitle,
+  gradesTitle,
+  subjects,
+  grades,
+}: {
+  title: string;
+  subjectsTitle: string;
+  gradesTitle: string;
+  subjects: string[];
+  grades: string[];
+}) {
+  return (
+    <Card
+      className="rounded-[2rem] border-white/80 bg-white"
+      style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}
+    >
+      <CardContent className="space-y-5 p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-right text-2xl font-bold text-slate-800">{title}</h2>
+          <DashboardBadge tone="warning">Teacher</DashboardBadge>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-3 rounded-[1.5rem] bg-[#F8FAFC] p-5">
+            <div className="flex items-center gap-3">
+              <div className="rounded-2xl bg-[#F8EFD5] p-3 text-[#8F6C0B]">
+                <GraduationCap className="h-5 w-5" aria-hidden />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">{subjectsTitle}</h3>
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              {subjects.length > 0 ? (
+                subjects.map((subject) => (
+                  <DashboardBadge key={subject} tone="gold">
+                    {subject}
+                  </DashboardBadge>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">—</p>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-3 rounded-[1.5rem] bg-[#F8FAFC] p-5">
+            <div className="flex items-center gap-3">
+              <div className="rounded-2xl bg-[#DCE6F5] p-3 text-[#243B5A]">
+                <Users className="h-5 w-5" aria-hidden />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800">{gradesTitle}</h3>
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              {grades.length > 0 ? (
+                grades.map((grade) => (
+                  <DashboardBadge key={grade} tone="primary">
+                    {grade}
+                  </DashboardBadge>
+                ))
+              ) : (
+                <p className="text-sm text-slate-400">—</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ParentChildrenCard({
+  title,
+  children,
+}: {
+  title: string;
+  children: Array<{
+    id: string;
+    fullName: string;
+    username: string;
+    gradeName: string;
+  }>;
+}) {
+  return (
+    <Card
+      className="rounded-[2rem] border-white/80 bg-white"
+      style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}
+    >
+      <CardContent className="space-y-5 p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-right text-2xl font-bold text-slate-800">{title}</h2>
+          <DashboardBadge tone="info">Parent</DashboardBadge>
+        </div>
+
+        <div className="space-y-3">
+          {children.length > 0 ? (
+            children.map((child) => (
+              <div
+                key={child.id}
+                className="rounded-[1.5rem] border border-slate-100 bg-[#F8FAFC] p-4 text-right"
+              >
+                <p className="font-semibold text-slate-800">{child.fullName}</p>
+                <p className="mt-1 text-sm text-slate-500">{child.gradeName || "—"}</p>
+                <p dir="ltr" className="mt-1 text-xs text-slate-400">
+                  {child.username || "—"}
+                </p>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-[1.5rem] border border-dashed border-slate-200 p-6 text-center text-sm text-slate-400">
+              —
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function ActivitiesCard({
   title,
   rows,
@@ -318,9 +457,79 @@ function ActivitiesCard({
   );
 }
 
+type RemoteDetailState =
+  | { kind: "student"; data: StudentUserDetail }
+  | { kind: "teacher"; data: TeacherUserDetail }
+  | { kind: "parent"; data: ParentUserDetail }
+  | null;
+
 export function AdminUserManagementDetailsPage({ userId }: { userId: string }) {
   const t = useTranslations("admin.dashboard");
-  const detail = getUserManagementDetail(userId);
+  const searchParams = useSearchParams();
+  const fallbackDetail =
+    getUserManagementDetail(userId) ??
+    getUserManagementDetail(userManagementFallbackDetailId);
+  const [remoteDetail, setRemoteDetail] = useState<RemoteDetailState>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchByRole = async (role: string) => {
+      const normalizedRole = normalizeUserManagementRole(role);
+      console.log(normalizedRole);
+      if (normalizedRole === "teacher") {
+        const result = await getTeacherUserDetail(userId);
+        return result.data ? ({ kind: "teacher", data: result.data } as const) : null;
+      }
+      if (normalizedRole === "parent") {
+        const result = await getParentUserDetail(userId);
+        return result.data ? ({ kind: "parent", data: result.data } as const) : null;
+      }
+
+      const result = await getStudentUserDetail(userId);
+      return result.data ? ({ kind: "student", data: result.data } as const) : null;
+    };
+
+    const loadDetail = async () => {
+      setIsLoading(true);
+
+      const preferredRole = searchParams.get("role");
+      console.log(preferredRole);
+      const roleCandidates = Array.from(
+        new Set([
+          preferredRole ? normalizeUserManagementRole(preferredRole) : null,
+          fallbackDetail?.roleId ?? null,
+          "student",
+          "teacher",
+          "parent",
+        ].filter(Boolean)),
+      ) as string[];
+      console.log(roleCandidates);
+      for (const role of roleCandidates) {
+        const result = await fetchByRole(role);
+        if (!mounted) return;
+        if (result) {
+          setRemoteDetail(result);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      if (mounted) {
+        notify.error("Unable to load user details.");
+        setIsLoading(false);
+      }
+    };
+
+    void loadDetail();
+
+    return () => {
+      mounted = false;
+    };
+  }, [fallbackDetail?.roleId, searchParams, userId]);
+
+  const detail = fallbackDetail;
 
   if (!detail) {
     return null;
@@ -331,30 +540,103 @@ export function AdminUserManagementDetailsPage({ userId }: { userId: string }) {
   const ShareIcon = detail.floatingActions.shareIcon;
   const PrintIcon = detail.floatingActions.printIcon;
 
+  const profileView = useMemo(() => {
+    if (!remoteDetail) {
+      return {
+        fullName: detail.fullName,
+        subtitle: `${t(`userManagement.roles.${detail.roleId}`)}${detail.gradeId ? ` - ${t(`userManagement.grades.${detail.gradeId}`)}` : ""}`,
+        schoolLabel: t(`userManagement.schools.${detail.schoolId}`),
+        statusLabel: t(`userManagement.status.${detail.statusId}`),
+        subscriptionLabel: t(`userManagement.subscriptions.${detail.subscriptionId}`),
+        codeValue: detail.studentCode,
+        linkedParentName: detail.linkedParentName,
+        linkedParentPhone: detail.linkedParentPhone,
+      };
+    }
+
+    if (remoteDetail.kind === "student") {
+      return {
+        fullName: remoteDetail.data.fullName,
+        subtitle: `${t("userManagement.roles.student")}${remoteDetail.data.gradeName ? ` - ${remoteDetail.data.gradeName}` : ""}`,
+        schoolLabel: remoteDetail.data.schoolName || t(`userManagement.schools.${detail.schoolId}`),
+        statusLabel: t(`userManagement.status.${remoteDetail.data.isActive ? "active" : "inactive"}`),
+        subscriptionLabel: t(`userManagement.subscriptions.${detail.subscriptionId}`),
+        codeValue: remoteDetail.data.username || detail.studentCode,
+        linkedParentName: remoteDetail.data.linkedParent?.fullName || "—",
+        linkedParentPhone: remoteDetail.data.linkedParent?.phoneNumber || "—",
+      };
+    }
+
+    if (remoteDetail.kind === "teacher") {
+      return {
+        fullName: remoteDetail.data.fullName,
+        subtitle: `${t("userManagement.roles.teacher")}${remoteDetail.data.jobTitle ? ` - ${remoteDetail.data.jobTitle}` : ""}`,
+        schoolLabel: remoteDetail.data.schoolName || t(`userManagement.schools.${detail.schoolId}`),
+        statusLabel: t(`userManagement.status.${remoteDetail.data.isActive ? "active" : "inactive"}`),
+        subscriptionLabel: t(`userManagement.subscriptions.${detail.subscriptionId}`),
+        codeValue: remoteDetail.data.userId,
+        linkedParentName: "—",
+        linkedParentPhone: "—",
+      };
+    }
+
+    return {
+      fullName: remoteDetail.data.fullName,
+      subtitle: `${t("userManagement.roles.parent")}${remoteDetail.data.countryName ? ` - ${remoteDetail.data.countryName}` : ""}`,
+      schoolLabel: remoteDetail.data.countryName || t(`userManagement.schools.${detail.schoolId}`),
+      statusLabel: t(`userManagement.status.${remoteDetail.data.isActive ? "active" : "inactive"}`),
+      subscriptionLabel: t(`userManagement.subscriptions.${detail.subscriptionId}`),
+      codeValue: remoteDetail.data.userId,
+      linkedParentName: "—",
+      linkedParentPhone: "—",
+    };
+  }, [detail, remoteDetail, t]);
+
+  const teacherGrades =
+    remoteDetail?.kind === "teacher"
+      ? remoteDetail.data.assignedGrades.map((grade) => grade.gradeName).filter(Boolean)
+      : [];
+
+  const parentChildren =
+    remoteDetail?.kind === "parent"
+      ? remoteDetail.data.children.map((child) => ({
+          id: child.studentUserId,
+          fullName: child.fullName,
+          username: child.username,
+          gradeName: child.gradeName,
+        }))
+      : [];
+
   return (
     <div className="space-y-8">
       <DashboardPageHeader
-        title={detail.fullName}
+        title={profileView.fullName}
         breadcrumbs={[
           { label: t("tabs.home.title") },
           { label: t("userManagement.page.title") },
-          { label: detail.fullName },
+          { label: profileView.fullName },
         ]}
         description={t("userManagement.details.page.description")}
       />
 
+      {isLoading ? (
+        <div className="flex min-h-[12rem] items-center justify-center rounded-[2rem] bg-white shadow-[0_8px_0px_0px_#0000000D]">
+          <Loader2 className="h-7 w-7 animate-spin text-[#243B5A]" />
+        </div>
+      ) : null}
+
       <section className="grid gap-6 xl:grid-cols-[22rem_minmax(0,1fr)]">
         <UserProfileCard
-          fullName={detail.fullName}
-          subtitle={`${t(`userManagement.roles.${detail.roleId}`)}${detail.gradeId ? ` - ${t(`userManagement.grades.${detail.gradeId}`)}` : ""}`}
+          fullName={profileView.fullName}
+          subtitle={profileView.subtitle}
           schoolLabelTitle={t("userManagement.details.profile.school")}
           statusLabelTitle={t("userManagement.details.profile.status")}
           subscriptionLabelTitle={t("userManagement.details.profile.subscription")}
-          schoolLabel={t(`userManagement.schools.${detail.schoolId}`)}
-          statusLabel={t(`userManagement.status.${detail.statusId}`)}
-          subscriptionLabel={t(`userManagement.subscriptions.${detail.subscriptionId}`)}
+          schoolLabel={profileView.schoolLabel}
+          statusLabel={profileView.statusLabel}
+          subscriptionLabel={profileView.subscriptionLabel}
           codeLabel={t("userManagement.details.profile.code")}
-          codeValue={detail.studentCode}
+          codeValue={profileView.codeValue}
           profileTag={detail.profileTag}
           editLabel={t("userManagement.details.profile.edit")}
         />
@@ -397,15 +679,30 @@ export function AdminUserManagementDetailsPage({ userId }: { userId: string }) {
           }))}
         />
 
-        <LinkedParentCard
-          title={t("userManagement.details.parent.badge")}
-          parentType={t("userManagement.details.parent.type")}
-          name={detail.linkedParentName}
-          phone={detail.linkedParentPhone}
-          changeLabel={t("userManagement.details.parent.change")}
-          unlinkLabel={t("userManagement.details.parent.unlink")}
-          note={t("userManagement.details.parent.note")}
-        />
+        {remoteDetail?.kind === "teacher" ? (
+          <TeacherAssignmentsCard
+            title={t("userManagement.addUser.teacher.academicSection.title")}
+            subjectsTitle={t("userManagement.addUser.teacher.academicSection.subjects")}
+            gradesTitle={t("userManagement.addUser.teacher.academicSection.gradeLevels")}
+            subjects={remoteDetail.data.subjects}
+            grades={teacherGrades}
+          />
+        ) : remoteDetail?.kind === "parent" ? (
+          <ParentChildrenCard
+            title={t("userManagement.addUser.parent.studentsSection.title")}
+            children={parentChildren}
+          />
+        ) : (
+          <LinkedParentCard
+            title={t("userManagement.details.parent.badge")}
+            parentType={t("userManagement.details.parent.type")}
+            name={profileView.linkedParentName}
+            phone={profileView.linkedParentPhone}
+            changeLabel={t("userManagement.details.parent.change")}
+            unlinkLabel={t("userManagement.details.parent.unlink")}
+            note={t("userManagement.details.parent.note")}
+          />
+        )}
       </section>
 
       <DashboardTableCard
