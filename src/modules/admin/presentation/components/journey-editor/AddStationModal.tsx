@@ -2,19 +2,19 @@
 
 import {
   BookOpen,
+  ClipboardList,
   FlaskConical,
   Languages,
   Music,
   Pencil,
   Plus,
-  Swords,
   Table2,
   Video,
   FileText,
   Zap,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type {
   AddStationDraft,
   JourneyPath,
@@ -29,11 +29,7 @@ import {
 } from "@/modules/admin/domain/data/journeyEditorData";
 import { cn } from "@/shared/application/lib/cn";
 import { Button } from "@/shared/presentation/components/ui/button";
-import {
-  ModalDescription,
-  ModalShell,
-  ModalTitle,
-} from "@/shared/presentation/components/ui/modal-shell";
+import { ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
 
 interface Props {
@@ -41,7 +37,7 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   paths: JourneyPath[];
   defaultPathId?: string;
-  onAdd: (draft: AddStationDraft) => void;
+  onAdd: (draft: AddStationDraft) => Promise<boolean> | boolean;
   loading?: boolean;
 }
 
@@ -49,12 +45,37 @@ const STATION_TYPE_OPTIONS: {
   id: JourneyStationTypeId;
   icon: React.ReactNode;
 }[] = [
-  { id: "helperFile", icon: <FileText className="h-5 w-5" /> },
   { id: "liveBroadcast", icon: <Video className="h-5 w-5" /> },
-  { id: "challenge", icon: <Zap className="h-5 w-5" /> },
-  { id: "exam", icon: <FlaskConical className="h-5 w-5" /> },
   { id: "flashcard", icon: <BookOpen className="h-5 w-5" /> },
+  { id: "shortQuiz", icon: <ClipboardList className="h-5 w-5" /> },
+  { id: "challenge", icon: <Zap className="h-5 w-5" /> },
+  { id: "helperFile", icon: <FileText className="h-5 w-5" /> },
 ];
+
+const THRESHOLD_STATION_TYPES = new Set<JourneyStationTypeId>([
+  "liveBroadcast",
+  "flashcard",
+]);
+
+function shouldUseCompletionThreshold(stationType: JourneyStationTypeId) {
+  return THRESHOLD_STATION_TYPES.has(stationType);
+}
+
+function getDefaultCompletionRule(
+  stationType: JourneyStationTypeId,
+): JourneyStationCompletionRuleId {
+  switch (stationType) {
+    case "liveBroadcast":
+    case "flashcard":
+      return "viewAll";
+    case "shortQuiz":
+      return "passScore";
+    case "challenge":
+    case "helperFile":
+    default:
+      return "allTasks";
+  }
+}
 
 const ICON_MAP: Record<JourneyStationIconId, React.ReactNode> = {
   plus: <Plus className="h-5 w-5" />,
@@ -82,13 +103,35 @@ export function AddStationModal({
     pathId: defaultPathId ?? defaultAddStationDraft.pathId,
   });
 
+  useEffect(() => {
+    if (!open) return;
+    setDraft((prev) => ({
+      ...prev,
+      pathId: defaultPathId ?? paths[0]?.id ?? prev.pathId,
+    }));
+  }, [defaultPathId, open, paths]);
+
   const update = <K extends keyof AddStationDraft>(key: K, value: AddStationDraft[K]) => {
     setDraft((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleAdd = () => {
-    onAdd(draft);
-    setDraft({ ...defaultAddStationDraft, pathId: defaultPathId ?? defaultAddStationDraft.pathId });
+  const updateType = (stationType: JourneyStationTypeId) => {
+    setDraft((prev) => ({
+      ...prev,
+      type: stationType,
+      completionRule: getDefaultCompletionRule(stationType),
+      completionThreshold: shouldUseCompletionThreshold(stationType) ? prev.completionThreshold : 0,
+    }));
+  };
+
+  const handleAdd = async () => {
+    const created = await onAdd(draft);
+    if (created) {
+      setDraft({
+        ...defaultAddStationDraft,
+        pathId: defaultPathId ?? paths[0]?.id ?? defaultAddStationDraft.pathId,
+      });
+    }
   };
 
   return (
@@ -120,7 +163,7 @@ export function AddStationModal({
               <button
                 key={opt.id}
                 type="button"
-                onClick={() => update("type", opt.id)}
+                onClick={() => updateType(opt.id)}
                 className={cn(
                   "flex flex-col items-center gap-1.5 rounded-2xl border-2 p-3 text-xs font-semibold transition-colors",
                   draft.type === opt.id
@@ -180,23 +223,66 @@ export function AddStationModal({
 
           <label className="block space-y-2 text-right">
             <span className="text-sm font-semibold text-slate-600">
+              {t("completionThreshold")}
+            </span>
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={draft.completionThreshold}
+              onChange={(e) => update("completionThreshold", Number(e.target.value))}
+              disabled={!shouldUseCompletionThreshold(draft.type)}
+              className={cn(
+                "h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors",
+                !shouldUseCompletionThreshold(draft.type) && "cursor-not-allowed opacity-60",
+              )}
+            />
+          </label>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <label className="block space-y-2 text-right">
+            <span className="text-sm font-semibold text-slate-600">
+              {t("pointReward")}
+            </span>
+            <input
+              type="number"
+              min={0}
+              value={draft.pointReward}
+              onChange={(e) => update("pointReward", Number(e.target.value))}
+              className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
+            />
+          </label>
+
+          <label className="block space-y-2 text-right">
+            <span className="text-sm font-semibold text-slate-600">
               {t("permissions")}
             </span>
-            <div className="flex h-12 items-center justify-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4">
-              <span className="text-sm text-slate-600">{t("subscribersOnly")}</span>
+            <div className="flex h-12 items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4">
               <ToggleSwitch
                 checked={draft.isSubscribersOnly}
                 onCheckedChange={(checked) => update("isSubscribersOnly", checked)}
                 ariaLabel={t("subscribersOnly")}
               />
+              <span className="text-sm text-slate-600">{t("subscribersOnly")}</span>
             </div>
           </label>
         </div>
+
+        <label className="flex h-12 items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4">
+          <ToggleSwitch
+            checked={draft.autoUnlockOnPreviousComplete}
+            onCheckedChange={(checked) => update("autoUnlockOnPreviousComplete", checked)}
+            ariaLabel={t("autoUnlock")}
+          />
+          <span className="text-sm font-semibold text-slate-600">{t("autoUnlock")}</span>
+        </label>
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row">
           <button
             type="button"
             onClick={() => onOpenChange(false)}
+            disabled={loading}
             className="flex-1 rounded-2xl py-3 text-sm font-semibold text-slate-500 hover:text-slate-700 transition-colors"
           >
             {t("cancel")}

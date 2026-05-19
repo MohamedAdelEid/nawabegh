@@ -2,18 +2,16 @@
 
 import {
   BookOpen,
-  FlaskConical,
+  ClipboardList,
   Languages,
   Music,
   Pencil,
   Plus,
   Sparkles,
-  Swords,
   Table2,
   Video,
   FileText,
   Zap,
-  Eye,
   Save,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -25,6 +23,7 @@ import type {
   JourneyPath,
   JourneyStation,
   JourneyStationCompletionRuleId,
+  JourneyStationIconId,
   JourneyStationTypeId,
 } from "@/modules/admin/domain/data/journeyEditorData";
 import {
@@ -32,16 +31,32 @@ import {
   STATION_ICON_OPTIONS,
   defaultAddStationDraft,
 } from "@/modules/admin/domain/data/journeyEditorData";
+import { getStationEditorHref } from "@/modules/admin/domain/utils/journeyEditorRoutes";
 import {
-  addJourneyPath,
-  addJourneyStation,
-  deleteJourneyStation,
   getJourneyEditor,
   saveJourneyChanges,
 } from "@/modules/admin/infrastructure/api/journeyEditorApi";
-import { AddStationModal, JourneyPathCard } from "@/modules/admin/presentation/components/journey-editor";
+import { getCourse } from "@/modules/admin/infrastructure/api/courseApi";
+import {
+  createLearningPath,
+  deleteLearningPath,
+  getCourseLearningPathsForEditor,
+  type CourseLearningPath,
+} from "@/modules/admin/infrastructure/api/learningPathsApi";
+import { createStation, deleteStation, type CreatedStation } from "@/modules/admin/infrastructure/api/stationsApi";
+import {
+  AddLearningPathModal,
+  AddStationModal,
+  JourneyPathCard,
+  type AddLearningPathDraft,
+} from "@/modules/admin/presentation/components/journey-editor";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
+import {
+  CompletionRuleType,
+  StationAccessPolicy,
+  StationType,
+} from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -56,11 +71,178 @@ const STATION_TYPE_GRID: {
   id: JourneyStationTypeId;
   icon: React.ReactNode;
 }[] = [
-  { id: "flashcard", icon: <BookOpen className="h-5 w-5" /> },
   { id: "liveBroadcast", icon: <Video className="h-5 w-5" /> },
+  { id: "flashcard", icon: <BookOpen className="h-5 w-5" /> },
+  { id: "shortQuiz", icon: <ClipboardList className="h-5 w-5" /> },
   { id: "challenge", icon: <Zap className="h-5 w-5" /> },
-  { id: "exam", icon: <FlaskConical className="h-5 w-5" /> },
+  { id: "helperFile", icon: <FileText className="h-5 w-5" /> },
 ];
+
+const THRESHOLD_STATION_TYPES = new Set<JourneyStationTypeId>([
+  "liveBroadcast",
+  "flashcard",
+]);
+
+function shouldSendCompletionThreshold(stationType: JourneyStationTypeId) {
+  return THRESHOLD_STATION_TYPES.has(stationType);
+}
+
+function clampPercentage(value: number) {
+  return Math.min(100, Math.max(0, Number(value) || 0));
+}
+
+function stationTypeToJourneyType(stationType: number): JourneyStationTypeId {
+  switch (stationType) {
+    case StationType.LiveStream:
+      return "liveBroadcast";
+    case StationType.Flashcards:
+      return "flashcard";
+    case StationType.ShortQuiz:
+      return "shortQuiz";
+    case StationType.Challenge:
+      return "challenge";
+    case StationType.HelperResource:
+      return "helperFile";
+    default:
+      return "exam";
+  }
+}
+
+function journeyStationTypeToApi(stationType: JourneyStationTypeId): StationType {
+  switch (stationType) {
+    case "liveBroadcast":
+      return StationType.LiveStream;
+    case "flashcard":
+      return StationType.Flashcards;
+    case "shortQuiz":
+    case "exam":
+      return StationType.ShortQuiz;
+    case "challenge":
+      return StationType.Challenge;
+    case "helperFile":
+      return StationType.HelperResource;
+    default:
+      return StationType.ShortQuiz;
+  }
+}
+
+function getDefaultCompletionRule(stationType: JourneyStationTypeId): JourneyStationCompletionRuleId {
+  switch (stationType) {
+    case "liveBroadcast":
+    case "flashcard":
+      return "viewAll";
+    case "shortQuiz":
+      return "passScore";
+    case "challenge":
+    case "helperFile":
+    default:
+      return "allTasks";
+  }
+}
+
+function getCreatedStationHref(journeyId: string, station: JourneyStation): string | null {
+  if (station.type === "flashcard") {
+    return ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, station.id);
+  }
+  return getStationEditorHref(journeyId, station);
+}
+
+function journeyCompletionRuleToApi(completionRule: JourneyStationCompletionRuleId): CompletionRuleType {
+  switch (completionRule) {
+    case "passScore":
+      return CompletionRuleType.PassQuiz;
+    case "viewAll":
+      return CompletionRuleType.WatchFullVideo;
+    case "unlockOnSuccess":
+    case "allTasks":
+    default:
+      return CompletionRuleType.CompleteAllTasks;
+  }
+}
+
+function completionRuleToJourneyRule(completionRule: number): JourneyStationCompletionRuleId {
+  switch (completionRule) {
+    case CompletionRuleType.PassQuiz:
+      return "passScore";
+    case CompletionRuleType.WatchFullVideo:
+      return "viewAll";
+    case CompletionRuleType.CompleteAllTasks:
+    default:
+      return "allTasks";
+  }
+}
+
+function iconKeyToJourneyIcon(iconKey: string): JourneyStationIconId {
+  return STATION_ICON_OPTIONS.includes(iconKey as JourneyStationIconId)
+    ? (iconKey as JourneyStationIconId)
+    : "book";
+}
+
+function mapCreatedStation(station: CreatedStation): JourneyStation {
+  const isSubscribersOnly = station.accessPolicy === StationAccessPolicy.Subscribers;
+
+  return {
+    id: station.id,
+    pathId: station.learningPathId,
+    name: station.name,
+    type: stationTypeToJourneyType(station.type),
+    completionRule: completionRuleToJourneyRule(station.completionRule),
+    completionValue: station.completionThreshold,
+    icon: iconKeyToJourneyIcon(station.iconKey),
+    access: isSubscribersOnly ? "subscribersOnly" : "open",
+    isSubscribersOnly,
+    order: station.order,
+    autoUnlockOnPreviousComplete: station.autoUnlockOnPreviousComplete,
+    completionThreshold: station.completionThreshold,
+    pointReward: station.pointReward,
+  };
+}
+
+function mapCourseLearningPaths(
+  courseId: string,
+  paths: CourseLearningPath[],
+  courseTitle = "",
+  courseDescription = "",
+): JourneyEditorData {
+  const orderedPaths = [...paths].sort((a, b) => a.order - b.order);
+  const mappedPaths = orderedPaths.map<JourneyPath>((path) => {
+    const stations = [...path.stations]
+      .sort((a, b) => a.order - b.order)
+      .map<JourneyStation>((station) => ({
+        id: station.id,
+        pathId: path.id,
+        name: station.name,
+        type: stationTypeToJourneyType(station.type),
+        completionRule: "viewAll",
+        icon: "book",
+        access: "open",
+        isSubscribersOnly: false,
+        order: station.order,
+      }));
+
+    return {
+      id: path.id,
+      title: path.title,
+      durationMinutes: 0,
+      stations,
+      isCollapsed: false,
+      order: path.order,
+    };
+  });
+  const stationCount = mappedPaths.reduce((total, path) => total + path.stations.length, 0);
+
+  return {
+    id: courseId,
+    title: courseTitle || mappedPaths[0]?.title || "Journey of Excellence",
+    description: courseDescription,
+    paths: mappedPaths,
+    stats: {
+      totalPoints: 0,
+      learningHours: 0,
+      pathReadinessPct: stationCount > 0 ? 100 : 0,
+    },
+  };
+}
 
 export function AdminJourneyEditorPage({ journeyId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
@@ -72,18 +254,36 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
   const [addingStation, setAddingStation] = useState(false);
 
   const [draft, setDraft] = useState<AddStationDraft>(defaultAddStationDraft);
-  const [newPathName, setNewPathName] = useState("");
   const [addingPath, setAddingPath] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPathId, setModalPathId] = useState<string | undefined>(undefined);
+  const [addPathModalOpen, setAddPathModalOpen] = useState(false);
 
   useEffect(() => {
     void (async () => {
-      const result = await getJourneyEditor(journeyId);
-      if (result.data) {
-        setData(result.data);
-        setDraft((prev) => ({ ...prev, pathId: result.data!.paths[0]?.id ?? prev.pathId }));
+      const [courseResult, learningPathsResult] = await Promise.all([
+        getCourse(journeyId),
+        getCourseLearningPathsForEditor(journeyId),
+      ]);
+
+      if (learningPathsResult.data) {
+        const mappedData = mapCourseLearningPaths(
+          journeyId,
+          learningPathsResult.data,
+          courseResult.data?.title,
+          courseResult.data?.description,
+        );
+        setData(mappedData);
+        setDraft((prev) => ({ ...prev, pathId: mappedData.paths[0]?.id ?? prev.pathId }));
+        setLoading(false);
+        return;
+      }
+
+      const mockResult = await getJourneyEditor(journeyId);
+      if (mockResult.data) {
+        setData(mockResult.data);
+        setDraft((prev) => ({ ...prev, pathId: mockResult.data!.paths[0]?.id ?? prev.pathId }));
       }
       setLoading(false);
     })();
@@ -94,60 +294,86 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     value: AddStationDraft[K],
   ) => setDraft((prev) => ({ ...prev, [key]: value }));
 
-  const handleCreateStation = async () => {
-    if (!draft.name.trim()) {
-      notify.error("Station name is required");
-      return;
+  const createStationFromDraft = async (
+    stationDraft: AddStationDraft,
+  ): Promise<JourneyStation | null> => {
+    if (!stationDraft.name.trim()) {
+      notify.error(t("messages.stationNameRequired"));
+      return null;
     }
+    if (!stationDraft.pathId) {
+      notify.error(t("messages.pathRequired"));
+      return null;
+    }
+
     setAddingStation(true);
-    const result = await addJourneyStation(journeyId, draft);
+    const result = await createStation({
+      learningPathId: stationDraft.pathId,
+      name: stationDraft.name.trim(),
+      iconKey: stationDraft.icon,
+      type: journeyStationTypeToApi(stationDraft.type),
+      autoUnlockOnPreviousComplete: stationDraft.autoUnlockOnPreviousComplete,
+      completionRule: journeyCompletionRuleToApi(stationDraft.completionRule),
+      completionThreshold: shouldSendCompletionThreshold(stationDraft.type)
+        ? clampPercentage(stationDraft.completionThreshold)
+        : null,
+      accessPolicy: stationDraft.isSubscribersOnly
+        ? StationAccessPolicy.Subscribers
+        : StationAccessPolicy.All,
+      pointReward: Math.max(0, Number(stationDraft.pointReward) || 0),
+    });
     setAddingStation(false);
     if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? "Failed to add station");
-      return;
+      notify.error(result.errorMessage ?? t("messages.stationCreateError"));
+      return null;
     }
+
+    const createdStation = mapCreatedStation(result.data);
     setData((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
         paths: prev.paths.map((p) =>
-          p.id === draft.pathId
-            ? { ...p, stations: [...p.stations, result.data!] }
+          p.id === createdStation.pathId
+            ? {
+                ...p,
+                stations: [...p.stations, createdStation].sort((a, b) => a.order - b.order),
+              }
             : p,
         ),
       };
     });
-    setDraft((prev) => ({ ...prev, name: "" }));
-    notify.success("Station added");
+    notify.success(t("messages.stationAdded"));
+    return createdStation;
+  };
+
+  const handleCreateStation = async () => {
+    const createdStation = await createStationFromDraft(draft);
+    if (createdStation) {
+      setDraft((prev) => ({ ...prev, name: "" }));
+      const editorHref = getCreatedStationHref(journeyId, createdStation);
+      if (editorHref) {
+        router.push(editorHref);
+      }
+    }
   };
 
   const handleModalAdd = async (modalDraft: AddStationDraft) => {
-    setAddingStation(true);
-    const result = await addJourneyStation(journeyId, modalDraft);
-    setAddingStation(false);
-    if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? "Failed to add station");
-      return;
-    }
-    setData((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        paths: prev.paths.map((p) =>
-          p.id === modalDraft.pathId
-            ? { ...p, stations: [...p.stations, result.data!] }
-            : p,
-        ),
-      };
-    });
+    const createdStation = await createStationFromDraft(modalDraft);
+    if (!createdStation) return false;
+
     setModalOpen(false);
-    notify.success("Station added");
+    const editorHref = getCreatedStationHref(journeyId, createdStation);
+    if (editorHref) {
+      router.push(editorHref);
+    }
+    return true;
   };
 
   const handleDeleteStation = async (stationId: string) => {
-    const result = await deleteJourneyStation(stationId);
-    if (result.errorMessage) {
-      notify.error(result.errorMessage);
+    const result = await deleteStation(stationId);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.stationDeleteError"));
       return;
     }
     setData((prev) => {
@@ -162,21 +388,57 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     });
   };
 
-  const handleCreatePath = async () => {
-    if (!newPathName.trim()) return;
+  const handleDeletePath = async (pathId: string) => {
+    const result = await deleteLearningPath(pathId);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.pathDeleteError"));
+      return;
+    }
+    const nextPaths = (data?.paths ?? []).filter((path) => path.id !== pathId);
+    setData((prev) => (prev ? { ...prev, paths: nextPaths } : prev));
+    setDraft((prev) =>
+      prev.pathId === pathId ? { ...prev, pathId: nextPaths[0]?.id ?? "" } : prev,
+    );
+  };
+
+  const handleCreatePath = async (pathDraft: AddLearningPathDraft) => {
     setAddingPath(true);
-    const result = await addJourneyPath(journeyId, newPathName);
+    const result = await createLearningPath({
+      courseId: journeyId,
+      title: pathDraft.title,
+      order: pathDraft.order,
+    });
     setAddingPath(false);
     if (result.errorMessage || !result.data) {
       notify.error(result.errorMessage ?? "Failed to add path");
-      return;
+      return false;
     }
+
+    const createdPath: JourneyPath = {
+      id: result.data.id,
+      title: result.data.title,
+      durationMinutes: 0,
+      stations: [],
+      isCollapsed: false,
+      order: result.data.order,
+    };
+    const shouldSelectCreatedPath =
+      !data?.paths.some((path) => path.id === draft.pathId);
+
     setData((prev) => {
       if (!prev) return prev;
-      return { ...prev, paths: [...prev.paths, result.data!] };
+      const nextPaths = [...prev.paths, createdPath].sort((a, b) => a.order - b.order);
+      return {
+        ...prev,
+        paths: nextPaths,
+      };
     });
-    setNewPathName("");
+    setDraft((prev) => ({
+      ...prev,
+      pathId: shouldSelectCreatedPath ? createdPath.id : prev.pathId,
+    }));
     notify.success("Path created");
+    return true;
   };
 
   const handleSave = async () => {
@@ -212,14 +474,14 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
         ]}
         action={
           <div className="flex gap-3">
-            <Button
+            {/* <Button
               variant="outline"
               className="h-12 px-6 border-2 border-[#2B415E] rounded-xl shadow-[0px_4px_0px_0px_#0000000D]"
               onClick={() => router.push(ROUTES.ADMIN.HOME + "?tab=journeyEditor")}
             >
               <Eye className="h-4 w-4" />
               {t("editor.actions.previewJourney")}
-            </Button>
+            </Button> */}
             <Button
               className="h-12 rounded-xl bg-[#C8AC59] px-8 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
               onClick={() => void handleSave()}
@@ -241,6 +503,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
               path={path}
               onAddStation={openAddStationModal}
               onDeleteStation={(stationId) => void handleDeleteStation(stationId)}
+              onDeletePath={(pathId) => void handleDeletePath(pathId)}
             />
           ))}
         </main>
@@ -277,7 +540,14 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                     <button
                       key={opt.id}
                       type="button"
-                      onClick={() => updateDraft("type", opt.id)}
+                      onClick={() => {
+                        updateDraft("type", opt.id);
+                        updateDraft("completionRule", getDefaultCompletionRule(opt.id));
+                        updateDraft(
+                          "completionThreshold",
+                          shouldSendCompletionThreshold(opt.id) ? draft.completionThreshold : 0,
+                        );
+                      }}
                       className={cn(
                         "flex flex-col items-center gap-1.5 rounded-2xl border-2 p-3 text-xs font-semibold transition-colors",
                         draft.type === opt.id
@@ -314,6 +584,39 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                 </select>
               </label>
 
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block space-y-1.5 text-right">
+                  <span className="text-sm font-semibold text-slate-600">
+                    {t("editor.sidebar.completionThreshold")}
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={draft.completionThreshold}
+                    onChange={(e) => updateDraft("completionThreshold", Number(e.target.value))}
+                    disabled={!shouldSendCompletionThreshold(draft.type)}
+                    className={cn(
+                      "h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors",
+                      !shouldSendCompletionThreshold(draft.type) && "cursor-not-allowed opacity-60",
+                    )}
+                  />
+                </label>
+
+                <label className="block space-y-1.5 text-right">
+                  <span className="text-sm font-semibold text-slate-600">
+                    {t("editor.sidebar.pointReward")}
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={draft.pointReward}
+                    onChange={(e) => updateDraft("pointReward", Number(e.target.value))}
+                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
+                  />
+                </label>
+              </div>
+
               <label className="block space-y-1.5 text-right">
                 <span className="text-sm font-semibold text-slate-600">
                   {t("editor.sidebar.path")}
@@ -342,6 +645,19 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                 />
               </label>
 
+              <label className="flex cursor-pointer items-center gap-2">
+                <span className="text-sm font-semibold text-slate-600">
+                  {t("editor.sidebar.autoUnlock")}
+                </span>
+                <ToggleSwitch
+                  checked={draft.autoUnlockOnPreviousComplete}
+                  onCheckedChange={(checked) =>
+                    updateDraft("autoUnlockOnPreviousComplete", checked)
+                  }
+                  ariaLabel={t("editor.sidebar.autoUnlock")}
+                />
+              </label>
+
               <Button
                 className="h-12 w-full rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
                 onClick={() => void handleCreateStation()}
@@ -351,16 +667,10 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
               </Button>
 
               <div className="space-y-2">
-                <input
-                  value={newPathName}
-                  onChange={(e) => setNewPathName(e.target.value)}
-                  placeholder={t("editor.sidebar.newPathPlaceholder")}
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
-                />
                 <Button
                   variant="outline"
                   className="h-12 w-full rounded-2xl border-[#2C4260] bg-[#2C4260] text-white hover:bg-[#1E3050] shadow-[0px_4px_0px_0px_#1E305080]"
-                  onClick={() => void handleCreatePath()}
+                  onClick={() => setAddPathModalOpen(true)}
                   disabled={addingPath}
                 >
                   {t("editor.sidebar.createPath")}
@@ -423,8 +733,15 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
         onOpenChange={setModalOpen}
         paths={data.paths}
         defaultPathId={modalPathId}
-        onAdd={(d) => void handleModalAdd(d)}
+        onAdd={handleModalAdd}
         loading={addingStation}
+      />
+      <AddLearningPathModal
+        open={addPathModalOpen}
+        onOpenChange={setAddPathModalOpen}
+        defaultOrder={Math.max(0, ...data.paths.map((path) => path.order)) + 1}
+        onAdd={handleCreatePath}
+        loading={addingPath}
       />
     </div>
   );

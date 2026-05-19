@@ -1,11 +1,14 @@
 import type {
   AuthSessionPayload,
   AuthSessionUser,
+  AuthTokenPayload,
   AuthTokenClaims,
   LoginApiData,
   LoginApiResponse,
   LoginCredentials,
+  RefreshTokenApiResponse,
 } from "@/modules/auth/domain/types/login.types";
+import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 const NAME_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
@@ -153,7 +156,24 @@ export function mapLoginResponseToSession(response: LoginApiResponse): AuthSessi
   return null;
 }
 
-export function getAuthErrorMessage(response: LoginApiResponse) {
+export function mapRefreshResponseToTokens(
+  response: RefreshTokenApiResponse,
+  fallbackRefreshToken?: string,
+): AuthTokenPayload | null {
+  if (isLoginEnvelopeFailed(response) || response.data == null) return null;
+
+  const data = response.data;
+  const accessToken = data.token ?? data.accessToken;
+  if (!accessToken) return null;
+
+  return {
+    accessToken,
+    refreshToken: data.refreshToken ?? fallbackRefreshToken,
+    accessTokenExpiresAt: data.expiresAt ?? data.accessTokenExpiresAt ?? "",
+  };
+}
+
+export function getAuthErrorMessage(response: BackendApiResponse<unknown> & { status?: string | number }) {
   if (response.error?.message) return response.error.message;
   if (response.message) return response.message;
   if (response.statusCode === "Unauthorized" || response.status === "Unauthorized") {

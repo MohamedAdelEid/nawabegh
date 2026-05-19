@@ -1,6 +1,9 @@
 "use client";
 
+import { useCallback, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { useLocale } from "next-intl";
+import { logoutFromBackend } from "@/modules/auth/infrastructure/loginApi";
 
 export type AuthUser = {
   name: string;
@@ -11,6 +14,23 @@ export type AuthUser = {
 
 export function useAuth() {
   const { data: session, status } = useSession();
+  const locale = useLocale() === "en" ? "en" : "ar";
+
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      void signOut({ callbackUrl: "/" });
+    }
+  }, [session?.error]);
+
+  const logout = useCallback(async () => {
+    try {
+      await logoutFromBackend(session?.accessToken, session?.refreshToken, locale);
+    } catch {
+      // The local session must still be cleared if the backend logout request fails.
+    } finally {
+      await signOut({ callbackUrl: "/" });
+    }
+  }, [locale, session?.accessToken, session?.refreshToken]);
 
   const user: AuthUser | null = session?.user
     ? {
@@ -25,6 +45,6 @@ export function useAuth() {
     user,
     isAuthenticated: Boolean(session),
     isLoading: status === "loading",
-    logout: () => signOut({ callbackUrl: "/" }),
+    logout,
   };
 }

@@ -42,6 +42,7 @@ export const ROUTES = {
     COURSE_MANAGEMENT: {
       LIST: "/admin/course-management",
       CREATE: "/admin/course-management/create",
+      EDIT: (courseId: string) => `/admin/course-management/${courseId}/edit`,
       REVIEW: (courseId: string) => `/admin/course-management/${courseId}`,
       REJECT: (courseId: string) => `/admin/course-management/${courseId}/reject`,
       REJECTION_DETAILS: (courseId: string) =>
@@ -92,10 +93,14 @@ export const ROUTES = {
     },
     JOURNEY_EDITOR: {
       EDITOR: (journeyId: string) => `/admin/journey-editor/${journeyId}`,
-      FLASHCARD_GROUP: (journeyId: string, stationId: string) =>
-        `/admin/journey-editor/${journeyId}/flashcard/${stationId}`,
-      FLASHCARD_ADD: (journeyId: string, stationId: string) =>
-        `/admin/journey-editor/${journeyId}/flashcard/${stationId}/add`,
+      FLASHCARD_GROUP: (journeyId: string, stationId: string, deckId?: string) => {
+        const base = `/admin/journey-editor/${journeyId}/flashcard/${stationId}`;
+        return deckId ? `${base}?deckId=${encodeURIComponent(deckId)}` : base;
+      },
+      FLASHCARD_ADD: (journeyId: string, stationId: string, deckId?: string) => {
+        const base = `/admin/journey-editor/${journeyId}/flashcard/${stationId}/add`;
+        return deckId ? `${base}?deckId=${encodeURIComponent(deckId)}` : base;
+      },
       LIVE_BROADCAST_ADD: (journeyId: string) =>
         `/admin/journey-editor/${journeyId}/live-broadcast/add`,
       LIVE_BROADCAST_VIEW: (journeyId: string, stationId: string) =>
@@ -108,13 +113,18 @@ export const ROUTES = {
         `/admin/journey-editor/${journeyId}/exam/${stationId}/preview`,
       EXAM_EDIT_QUESTIONS: (journeyId: string, stationId: string) =>
         `/admin/journey-editor/${journeyId}/exam/${stationId}/edit-questions`,
+      HELPER_RESOURCE_EDITOR: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/helper-resource/${stationId}`,
     },
     INTERACTIVE_BOOKS: {
       LIST: "/admin/interactive-books",
       ADD: "/admin/interactive-books/add",
       MANAGE: "/admin/interactive-books/manage",
-      MANAGE_EDIT: (bookId: string) =>
-        `/admin/interactive-books/manage/${encodeURIComponent(bookId)}/edit`,
+      MANAGE_BY_COURSE: (courseId: string) =>
+        `/admin/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
+      /** @deprecated Use MANAGE_BY_COURSE with courseId */
+      MANAGE_EDIT: (courseId: string) =>
+        `/admin/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
     },
     LIVE_BROADCAST: {
       CREATE: "/admin/live-broadcast/create",

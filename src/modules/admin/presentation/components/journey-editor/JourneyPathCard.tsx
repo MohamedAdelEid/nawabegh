@@ -17,7 +17,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ChevronDown, ChevronUp, Clock, GraduationCap, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, GraduationCap, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -31,6 +31,7 @@ interface Props {
   path: JourneyPath;
   onAddStation: (pathId: string) => void;
   onDeleteStation: (stationId: string) => void;
+  onDeletePath?: (pathId: string) => void;
 }
 
 export function JourneyPathCard({
@@ -38,6 +39,7 @@ export function JourneyPathCard({
   path,
   onAddStation,
   onDeleteStation,
+  onDeletePath,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.editor");
   const [collapsed, setCollapsed] = useState(path.isCollapsed);
@@ -99,6 +101,18 @@ export function JourneyPathCard({
             <ChevronUp className="h-5 w-5" />
           )}
         </button>
+
+        {onDeletePath ? (
+          <button
+            type="button"
+            onClick={() => onDeletePath(path.id)}
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors"
+            aria-label={t("path.deletePath")}
+            title={t("path.deletePath")}
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        ) : null}
       </div>
 
       {!collapsed ? (

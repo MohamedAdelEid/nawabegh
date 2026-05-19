@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nawabegh LMS — Station Flows Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161d;
+    --bg3: #1a1e27;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #555a6b;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Tajawal', sans-serif;
+
+    --quiz:    #3b82f6;
+    --live:    #ef4444;
+    --flash:   #a855f7;
+    --chal:    #f59e0b;
+    --helper:  #10b981;
+
+    --quiz-bg:    rgba(59,130,246,0.08);
+    --live-bg:    rgba(239,68,68,0.08);
+    --flash-bg:   rgba(168,85,247,0.08);
+    --chal-bg:    rgba(245,158,11,0.08);
+    --helper-bg:  rgba(16,185,129,0.08);
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(13,15,20,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--quiz);
+    box-shadow: 0 0 12px var(--quiz);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .logo-text { font-weight: 700; font-size: 17px; letter-spacing: 0.02em; }
+  .logo-sub { font-size: 12px; color: var(--text3); font-family: var(--mono); margin-top: 1px; }
+  .version-badge {
+    font-family: var(--mono); font-size: 11px; color: var(--text3);
+    border: 1px solid var(--border); padding: 4px 10px; border-radius: 6px;
+  }
+
+  /* ── Nav tabs ── */
+  nav {
+    display: flex; gap: 4px; padding: 16px 40px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent; color: var(--text2);
+    font-family: var(--sans); font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all .18s; white-space: nowrap;
+  }
+  .nav-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg2); }
+  .nav-btn.active { color: #fff; border-color: transparent; }
+  .nav-btn.active[data-type="quiz"]    { background: var(--quiz-bg);   border-color: rgba(59,130,246,0.3); color: #93c5fd; }
+  .nav-btn.active[data-type="live"]    { background: var(--live-bg);   border-color: rgba(239,68,68,0.3);  color: #fca5a5; }
+  .nav-btn.active[data-type="flash"]   { background: var(--flash-bg);  border-color: rgba(168,85,247,0.3); color: #d8b4fe; }
+  .nav-btn.active[data-type="chal"]    { background: var(--chal-bg);   border-color: rgba(245,158,11,0.3); color: #fcd34d; }
+  .nav-btn.active[data-type="helper"]  { background: var(--helper-bg); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+
+  .type-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Main ── */
+  main { padding: 36px 40px; max-width: 1280px; margin: 0 auto; }
+
+  .panel { display: none; animation: fadeIn .2s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  /* ── Section title ── */
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 28px;
+  }
+  .type-num {
+    font-family: var(--mono); font-size: 11px;
+    padding: 3px 9px; border-radius: 5px;
+    border: 1px solid; margin-top: 4px; flex-shrink: 0;
+  }
+  .section-title { font-size: 26px; font-weight: 700; }
+  .section-desc { color: var(--text2); font-size: 14px; margin-top: 4px; }
+
+  /* ── Flow steps ── */
+  .flow-block { margin-bottom: 28px; }
+  .flow-label {
+    font-family: var(--mono); font-size: 11px; color: var(--text3);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .step {
+    padding: 20px;
+    border-left: 1px solid var(--border);
+    position: relative;
+    transition: background .15s;
+  }
+  .step:first-child { border-left: none; }
+  html[dir="rtl"] .step { border-left: none; border-right: 1px solid var(--border); }
+  html[dir="rtl"] .step:first-child { border-right: none; }
+  .step:hover { background: var(--bg2); }
+  .step-n {
+    font-family: var(--mono); font-size: 10px; color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .step-title {
+    font-size: 14px; font-weight: 700; margin-bottom: 6px;
+  }
+  .step-body { font-size: 13px; color: var(--text2); line-height: 1.55; }
+  .step-api {
+    font-family: var(--mono); font-size: 11px;
+    margin-top: 10px; padding: 5px 8px; border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: #7dd3fc; word-break: break-all; line-height: 1.5;
+  }
+  .step-warn { font-size: 11px; color: #fbbf24; margin-top: 8px; }
+  .step-ok   { font-size: 11px; color: #34d399; margin-top: 8px; }
+  .step-info { font-size: 11px; color: #a78bfa; margin-top: 8px; }
+  .step-connector {
+    display: none;
+  }
+
+  /* ── Two-row flows (for live) ── */
+  .flow-block + .flow-block { margin-top: 20px; }
+
+  /* ── Notes & Rules ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .rule-card {
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+    background: var(--bg2);
+  }
+  .rule-card-title {
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text3); margin-bottom: 10px;
+  }
+  .rule-item {
+    font-size: 13px; color: var(--text2); line-height: 1.6;
+    padding-right: 14px; position: relative; margin-bottom: 6px;
+  }
+  .rule-item::before { content: "›"; position: absolute; right: 0; color: var(--text3); }
+  html[dir="rtl"] .rule-item { padding-right: 0; padding-left: 14px; }
+  html[dir="rtl"] .rule-item::before { right: auto; left: 0; }
+
+  /* ── Status chips ── */
+  .status-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+  }
+  .chip {
+    font-size: 12px; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid var(--border); color: var(--text2);
+  }
+  .chip.locked  { border-color: rgba(107,114,128,.4); color: #9ca3af; }
+  .chip.avail   { border-color: rgba(59,130,246,.4);  color: #93c5fd; }
+  .chip.inprog  { border-color: rgba(251,191,36,.4);  color: #fcd34d; }
+  .chip.incomp  { border-color: rgba(245,158,11,.4);  color: #fbbf24; }
+  .chip.missed  { border-color: rgba(239,68,68,.4);   color: #fca5a5; }
+  .chip.done    { border-color: rgba(16,185,129,.4);  color: #6ee7b7; }
+
+  /* ── Comparison table ── */
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    margin-top: 28px; font-size: 13px;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .compare-table th {
+    background: var(--bg2); color: var(--text2);
+    padding: 12px 16px; text-align: right;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.04em; border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    vertical-align: top; color: var(--text2);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: var(--bg2); }
+  .compare-table td:first-child { color: var(--text); font-weight: 500; }
+  .ct { font-family: var(--mono); font-size: 11px; color: #7dd3fc; }
+  .cnull { font-family: var(--mono); font-size: 11px; color: #f87171; }
+  .cok { color: #34d399; font-size: 11px; }
+
+  /* ── General flow (overview page) ── */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px; margin-bottom: 32px;
+  }
+  .ov-card {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; background: var(--bg2);
+    transition: border-color .15s;
+    cursor: pointer;
+  }
+  .ov-card:hover { border-color: var(--border-hover); }
+  .ov-card-icon { font-size: 22px; margin-bottom: 10px; }
+  .ov-card-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .ov-card-type { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+  .ov-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  .pre-steps {
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px; background: var(--bg2);
+    margin-bottom: 28px;
+  }
+  .pre-title { font-weight: 700; margin-bottom: 16px; font-size: 15px; }
+  .pre-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .pre-step:last-child { margin-bottom: 0; }
+  .pre-num {
+    font-family: var(--mono); font-size: 11px;
+    background: var(--bg3); border: 1px solid var(--border);
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; color: var(--text3);
+  }
+  .pre-content { flex: 1; }
+  .pre-label { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .pre-sub { font-size: 12px; color: var(--text3); margin-top: 4px; font-family: var(--mono); }
+
+  /* ── Challenge SignalR diagram ── */
+  .signalr-flow {
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius: 12px; padding: 20px;
+    background: rgba(245,158,11,.04);
+    margin-top: 16px;
+  }
+  .signalr-title {
+    font-size: 12px; color: #fbbf24; font-family: var(--mono);
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px;
+  }
+  .sr-row {
+    display: flex; align-items: center; gap: 0;
+    flex-wrap: wrap;
+  }
+  .sr-box {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 14px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+  }
+  .sr-box.client { border-color: rgba(245,158,11,.4); color: #fcd34d; }
+  .sr-box.server { border-color: rgba(59,130,246,.4); color: #93c5fd; }
+  .sr-box.hub    { border-color: rgba(168,85,247,.4); color: #d8b4fe; }
+  .sr-arrow { font-size: 18px; color: var(--text3); padding: 0 8px; }
+  .sr-label { font-size: 11px; color: var(--text3); text-align: center; margin-top: 4px; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 60px; padding: 24px 40px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text3); font-family: var(--mono);
+  }
+
+  @media(max-width: 640px) {
+    header, nav, main, footer { padding-left: 16px; padding-right: 16px; }
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none !important; border-left: none !important; border-top: 1px solid var(--border); }
+    .step:first-child { border-top: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="logo-text">Nawabegh LMS</div>
+      <div class="logo-sub">Station Flows Reference — v2.0</div>
+    </div>
+  </div>
+  <div class="version-badge">May 2026</div>
+</header>
+
+<nav>
+  <button class="nav-btn active" data-type="overview" onclick="show('overview', this)">
+    <span class="type-dot" style="background:#8b90a0"></span> Overview
+  </button>
+  <button class="nav-btn" data-type="quiz" onclick="show('quiz', this)">
+    <span class="type-dot" style="background:var(--quiz)"></span> ShortQuiz
+  </button>
+  <button class="nav-btn" data-type="live" onclick="show('live', this)">
+    <span class="type-dot" style="background:var(--live)"></span> LiveStream
+  </button>
+  <button class="nav-btn" data-type="flash" onclick="show('flash', this)">
+    <span class="type-dot" style="background:var(--flash)"></span> Flashcards
+  </button>
+  <button class="nav-btn" data-type="chal" onclick="show('chal', this)">
+    <span class="type-dot" style="background:var(--chal)"></span> Challenge
+  </button>
+  <button class="nav-btn" data-type="helper" onclick="show('helper', this)">
+    <span class="type-dot" style="background:var(--helper)"></span> HelperResource
+  </button>
+  <button class="nav-btn" data-type="compare" onclick="show('compare', this)">
+    <span class="type-dot" style="background:#8b90a0"></span> Comparison
+  </button>
+  <button class="nav-btn" data-type="qa" onclick="show('qa', this)">
+    <span class="type-dot" style="background:#06b6d4"></span> QA Guide 🧪
+  </button>
+</nav>
+
+<main>
+
+<!-- ══════════ OVERVIEW ══════════ -->
+<div id="panel-overview" class="panel active">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Station Types — Overview</div>
+      <div class="section-desc">Click any station type to see its full flow</div>
+    </div>
+  </div>
+
+  <div class="pre-steps">
+    <div class="pre-title">📋 Pre-flight — يتعمل مرة واحدة لكل course</div>
+    <div class="pre-step">
+      <div class="pre-num">1</div>
+      <div class="pre-content">
+        <div class="pre-label">Enroll</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:2px">دخّل الطالب في الـ course</div>
+        <div class="pre-sub">POST /api/v1/student/courses/{courseId}/enroll-free</div>
+      </div>
+    </div>
+    <div class="pre-step">
+      <div class="pre-num">2</div>
+      <div class="pre-content">
+        <div class="pre-label">Initialize Progress</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:2px">ابني الـ progress rows للطالب — مرة واحدة بس، 409 = خلاص اتعمل</div>
+        <div class="pre-sub">POST /api/v1/progress/courses/{courseId}/initialize</div>
+      </div>
+    </div>
+    <div class="pre-step">
+      <div class="pre-num">3</div>
+      <div class="pre-content">
+        <div class="pre-label">Get Stations Progress</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:2px">اجيب المحطات وأحوالها (Locked / Available / …)</div>
+        <div class="pre-sub">GET /api/v1/learning-paths/students/{pathId}/stations/progress</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="ov-card" onclick="showFromCard('quiz')">
+      <div class="ov-card-icon">📝</div>
+      <div class="ov-card-name">ShortQuiz</div>
+      <div class="ov-card-type">Type 2 · 4 خطوات</div>
+      <div class="ov-card-desc">تحميل → autosave إجابات → submit → اكتمال تلقائي لو النتيجة ≥ passScore</div>
+    </div>
+    <div class="ov-card" onclick="showFromCard('live')">
+      <div class="ov-card-icon">📡</div>
+      <div class="ov-card-name">LiveStream</div>
+      <div class="ov-card-type">Type 0 · حالتين</div>
+      <div class="ov-card-desc">بث مباشر (Zoom) + تسجيل على نفس المحطة — runtimeMode يحدد الـ UI</div>
+    </div>
+    <div class="ov-card" onclick="showFromCard('flash')">
+      <div class="ov-card-icon">🃏</div>
+      <div class="ov-card-name">Flashcards</div>
+      <div class="ov-card-type">Type 1 · 4 خطوات</div>
+      <div class="ov-card-desc">جيب الـ deck → مراجعة → ابعت percentageCompleted ≥ threshold</div>
+    </div>
+    <div class="ov-card" onclick="showFromCard('chal')">
+      <div class="ov-card-icon">⚔️</div>
+      <div class="ov-card-name">Challenge</div>
+      <div class="ov-card-type">Type 3 · SignalR + HTTP</div>
+      <div class="ov-card-desc">طابور → SignalR → جلسة → إجابات → finish. الاتنين لاعبين بيكملوا</div>
+    </div>
+    <div class="ov-card" onclick="showFromCard('helper')">
+      <div class="ov-card-icon">📎</div>
+      <div class="ov-card-name">HelperResource</div>
+      <div class="ov-card-type">Type 4 · 3 خطوات</div>
+      <div class="ov-card-desc">جيب المحتوى → الطالب يشوفه → complete بـ body فاضي</div>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>المحطة</th>
+        <th>مصدر الاكتمال</th>
+        <th>completionThreshold</th>
+        <th>endpoint الاكتمال</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>📝 ShortQuiz</td>
+        <td>نتيجة submit من السيرفر ≥ Quiz.passScore</td>
+        <td><span class="cnull">null (مطلوب)</span></td>
+        <td><span class="ct">POST /progress/quiz-stations/{id}/submit</span></td>
+      </tr>
+      <tr>
+        <td>📡 LiveStream</td>
+        <td>Zoom webhooks (live) أو percentageCompleted (recorded)</td>
+        <td><span class="ct">0-100 (مطلوب)</span></td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+      </tr>
+      <tr>
+        <td>🃏 Flashcards</td>
+        <td>percentageCompleted من الـ client ≥ threshold</td>
+        <td><span class="ct">0-100 (مطلوب)</span></td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+      </tr>
+      <tr>
+        <td>⚔️ Challenge</td>
+        <td>إنهاء الجلسة — النتيجة ما بتوقّفش الاكتمال</td>
+        <td><span class="cnull">null (مطلوب)</span></td>
+        <td><span class="ct">POST /student/challenges/sessions/{id}/finish</span></td>
+      </tr>
+      <tr>
+        <td>📎 HelperResource</td>
+        <td>مجرد استدعاء الـ endpoint</td>
+        <td><span class="cnull">null (مطلوب)</span></td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════ SHORT QUIZ ══════════ -->
+<div id="panel-quiz" class="panel">
+  <div class="section-header">
+    <div class="type-num" style="border-color:rgba(59,130,246,.4);color:#93c5fd;background:rgba(59,130,246,.08)">Type 2</div>
+    <div>
+      <div class="section-title" style="color:#93c5fd">📝 ShortQuiz</div>
+      <div class="section-desc">فلو بسيط — السيرفر هو اللي بيكمّل بعد submit ناجح</div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Student Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">تحميل المحاولة</div>
+        <div class="step-body">جيب الأسئلة والإجابات اللي اتحفظت قبل كده</div>
+        <div class="step-api">GET /api/v1/progress/quiz-stations/{stationId}/attempt</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">Autosave لكل إجابة</div>
+        <div class="step-body">كل ما الطالب يختار option → ابعت على طول</div>
+        <div class="step-api">POST /api/v1/progress/quiz-stations/{stationId}/answers</div>
+        <div class="step-body" style="margin-top:8px">body: { "questionId": "…", "selectedOptionId": "…" }</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">Submit Quiz</div>
+        <div class="step-body">الطالب يضغط "تسليم" — السيرفر يحسب النتيجة من الإجابات المحفوظة</div>
+        <div class="step-api">POST /api/v1/progress/quiz-stations/{stationId}/submit</div>
+        <div class="step-warn">⚠ body فاضي — ما تبعتش scoreAchieved</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">اكتمال تلقائي</div>
+        <div class="step-body">لو نتيجة% ≥ Quiz.passScore → السيرفر بيكمّل المحطة داخليًا بدون طلب منك</div>
+        <div class="step-ok">✓ لا تبعت /complete يدوي أبدًا</div>
+        <div class="step-ok">✓ بعدها refetch stations/progress</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card-title">🚫 ما تعملهوش</div>
+      <div class="rule-item">ما تبعتش scoreAchieved في أي body — السيرفر بيتجاهله</div>
+      <div class="rule-item">ما تبعتش POST /progress/stations/{id}/complete يدوي — مش محتاجه</div>
+      <div class="rule-item">ما تحتسبش النتيجة في الـ client — خليها للسيرفر</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">✅ سيناريوهات الـ Response</div>
+      <div class="rule-item">نتيجة ≥ passScore → 200 + station Completed + نقاط</div>
+      <div class="rule-item">نتيجة &lt; passScore → 400 + رسالة بالفرق (passScore vs achieved)</div>
+      <div class="rule-item">ما فيش attempt مسلّم → 400 "No submitted attempt"</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">⚙️ Admin Config</div>
+      <div class="rule-item">completionThreshold على المحطة = null دايمًا</div>
+      <div class="rule-item">العتبة بتتحدد في Quiz.passScore (نسبة %)</div>
+      <div class="rule-item">أسئلة Quiz = بيتبعوا QuizzesController</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LIVE STREAM ══════════ -->
+<div id="panel-live" class="panel">
+  <div class="section-header">
+    <div class="type-num" style="border-color:rgba(239,68,68,.4);color:#fca5a5;background:rgba(239,68,68,.08)">Type 0</div>
+    <div>
+      <div class="section-title" style="color:#fca5a5">📡 LiveStream</div>
+      <div class="section-desc">محطة واحدة بتشيل البث المباشر والتسجيل — branch على runtimeMode</div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Phase 1 — البث المباشر</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">فحص الحالة</div>
+        <div class="step-body">اقرأ runtimeMode وحالة الطالب الحالية</div>
+        <div class="step-api">GET /api/v1/live-stations/{stationId}/info</div>
+        <div class="step-info">runtimeMode: Upcoming | Live | Recorded | EndedWithoutRecording</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">انضمام للبث</div>
+        <div class="step-body">بس لو runtimeMode = Live وحالة الطالب ≠ Locked</div>
+        <div class="step-api">POST /api/v1/live-stations/{stationId}/join</div>
+        <div class="step-warn">⚠ ما تفتحش لو status = Locked حتى لو وقت البث جه</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">حضور Zoom (تلقائي)</div>
+        <div class="step-body">السيرفر بيحسب دقائق الحضور من Zoom Webhooks تلقائيًا — ما عندكش دخل فيه</div>
+        <div class="step-warn">⚠ لا تبعت attended: true في أي body — بيتتجاهل</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">بعد انتهاء البث</div>
+        <div class="step-body">السيرفر بيحدد الحالة تلقائيًا بعد ما البث ينتهي</div>
+        <div class="step-ok">حضر ≥ threshold دقائق → Completed</div>
+        <div class="step-warn">حضر &lt; threshold → Incomplete</div>
+        <div class="step-warn" style="color:#f87171">ما حضرش خالص → Missed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Phase 2 — إكمال بالتسجيل (Incomplete أو Missed)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">تحقق من runtimeMode</div>
+        <div class="step-body">لازم يكون "Recorded" عشان تعرض التسجيل — لو EndedWithoutRecording ما تعرضش</div>
+        <div class="step-api">GET /api/v1/live-stations/{stationId}/info</div>
+        <div class="step-info">راجع كمان recordingUrl وstudentProgressStatus</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">مشاهدة التسجيل</div>
+        <div class="step-body">الطالب يفتح recordingUrl — تتبع نسبة المشاهدة في الـ client</div>
+        <div class="step-info">UI: "أكمل بالتسجيل" (Incomplete) | "تابع بالتسجيل" (Missed)</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">إرسال نسبة المشاهدة</div>
+        <div class="step-body">لما تصل للـ threshold أو أكتر — ابعت الـ request</div>
+        <div class="step-api">POST /api/v1/progress/stations/{stationId}/complete</div>
+        <div class="step-body" style="margin-top:8px">{ "percentageCompleted": 80 }</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">Completed</div>
+        <div class="step-body">المحطة تنتقل Incomplete/Missed → Completed</div>
+        <div class="step-ok">✓ نقاط تُعطى مرة واحدة بس (idempotent)</div>
+        <div class="step-ok">✓ اللي بعدها بتفتح لو autoUnlock = true</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px">
+    <div class="flow-label">حالات التقدم — station progress statuses</div>
+    <div class="status-grid">
+      <div class="chip locked">🔒 Locked — المحطات السابقة ما كملتش</div>
+      <div class="chip avail">🔵 Available — متاحة للانضمام</div>
+      <div class="chip inprog">🟡 InProgress — انضم للبث</div>
+      <div class="chip incomp">⚠️ Incomplete — حضر بس ناقصه → أكمل بالتسجيل</div>
+      <div class="chip missed" style="border-color:rgba(239,68,68,.4);color:#fca5a5">❌ Missed — ما حضرش → تابع بالتسجيل</div>
+      <div class="chip done">✅ Completed — خلص</div>
+    </div>
+  </div>
+
+  <div class="rules-grid" style="margin-top:20px">
+    <div class="rule-card">
+      <div class="rule-card-title">🚫 ما تعملهوش</div>
+      <div class="rule-item">ما تبعتش attended: true — الـ server بيتجاهله</div>
+      <div class="rule-item">ما تعملش screen أو StationType منفصل للتسجيل — نفس المحطة</div>
+      <div class="rule-item">ما تفتحش محطة Locked حتى لو وقتها جه</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">⚙️ Admin Config</div>
+      <div class="rule-item">completionThreshold = نسبة الدقائق المطلوبة (0–100)</div>
+      <div class="rule-item">نفس الـ threshold بيُستخدم للـ live (دقائق Zoom) وللتسجيل (watch %)</div>
+      <div class="rule-item">الجلسة بتُنشأ بـ POST /live-sessions وتنتهي بـ POST /live-sessions/{id}/end</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">📺 runtimeMode Logic</div>
+      <div class="rule-item">Upcoming → عرض countdown، ما تبينش join</div>
+      <div class="rule-item">Live → بيّن join button</div>
+      <div class="rule-item">Recorded → بيّن تسجيل + complete flow</div>
+      <div class="rule-item">EndedWithoutRecording → بيّن رسالة اعتذار بس</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FLASHCARDS ══════════ -->
+<div id="panel-flash" class="panel">
+  <div class="section-header">
+    <div class="type-num" style="border-color:rgba(168,85,247,.4);color:#d8b4fe;background:rgba(168,85,247,.08)">Type 1</div>
+    <div>
+      <div class="section-title" style="color:#d8b4fe">🃏 Flashcards</div>
+      <div class="section-desc">الـ client بيحسب نسبة المراجعة وبيبعتها للسيرفر</div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Student Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">تحميل الـ Deck</div>
+        <div class="step-body">جيب الكروت كلها للمحطة دي</div>
+        <div class="step-api">GET /api/v1/progress/flashcard-stations/{stationId}/deck</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">مراجعة الكروت</div>
+        <div class="step-body">الطالب يمشي على الكروت في الـ UI — انت بتحسب كام % راجع</div>
+        <div class="step-info">track progress locally في الـ client</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">إرسال النسبة</div>
+        <div class="step-body">لما يوصل للـ threshold أو أكتر — ابعت complete</div>
+        <div class="step-api">POST /api/v1/progress/stations/{stationId}/complete</div>
+        <div class="step-body" style="margin-top:8px">{ "percentageCompleted": 100, "scoreAchieved": null }</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">اكتمال</div>
+        <div class="step-body">السيرفر يتحقق: percentageCompleted ≥ completionThreshold</div>
+        <div class="step-ok">✓ Completed + نقاط</div>
+        <div class="step-warn">أقل من الـ threshold → 400 Bad Request</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card-title">⚙️ Admin Config</div>
+      <div class="rule-item">completionThreshold = نسبة الكروت المطلوبة (0–100)</div>
+      <div class="rule-item">الـ deck بيتبنى بـ POST /flashcard-decks</div>
+      <div class="rule-item">الكروت بتتضاف بـ FlashcardDecksController</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">✅ Body الصح</div>
+      <div class="rule-item">percentageCompleted: رقم من 0 لـ 100</div>
+      <div class="rule-item">scoreAchieved: null (مش محتاجه)</div>
+      <div class="rule-item">attended: مبتبعتهوش</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHALLENGE ══════════ -->
+<div id="panel-chal" class="panel">
+  <div class="section-header">
+    <div class="type-num" style="border-color:rgba(245,158,11,.4);color:#fcd34d;background:rgba(245,158,11,.08)">Type 3</div>
+    <div>
+      <div class="section-title" style="color:#fcd34d">⚔️ Challenge</div>
+      <div class="section-desc">الأكثر تعقيدًا — بيجمع HTTP + SignalR في نفس الفلو</div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Student Flow — 6 خطوات</div>
+    <div class="steps" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">فحص التفاصيل</div>
+        <div class="step-body">اعرض معلومات التحدي — تحقق إن المحطة مش Completed قبل ما تعرض "العب"</div>
+        <div class="step-api">GET /api/v1/student/challenges/{challengeId}</div>
+        <div class="step-warn">⚠ لو Completed → اخفي زر "العب تاني"</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">وصّل SignalR Hub</div>
+        <div class="step-body">اتصل بالـ Hub بنفس JWT المستخدم في HTTP — جيب connectionId</div>
+        <div class="step-api">/hubs/challenge</div>
+        <div class="step-info">Auth: Bearer token (Student role)</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">دخول الطابور</div>
+        <div class="step-body">ابعت connectionId اللي جبته من الـ Hub للسيرفر للـ matchmaking</div>
+        <div class="step-api">POST /api/v1/student/challenges/{challengeId}/queue</div>
+        <div class="step-body" style="margin-top:8px">{ "signalRConnectionId": "…" }</div>
+        <div class="step-warn">⚠ 409 = المحطة Completed بالفعل</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">استنى المباراة</div>
+        <div class="step-body">السيرفر بيبعت sessionId عبر SignalR لما يلاقيلك خصم</div>
+        <div class="step-body" style="margin-top:8px">استدعي: RegisterSession(sessionId)</div>
+        <div class="step-info">بيضيف الـ connection لـ group "challenge-session:{id}"</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 05</div>
+        <div class="step-title">إجابة الأسئلة</div>
+        <div class="step-body">لكل سؤال ابعت إجابة — بتجي الأسئلة من GET session/questions</div>
+        <div class="step-api">GET /student/challenges/sessions/{sessionId}/questions</div>
+        <div class="step-api" style="margin-top:6px">POST /student/challenges/sessions/{sessionId}/answers</div>
+        <div class="step-body" style="margin-top:8px">{ "questionId": "…", "optionId": "…" }</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 06</div>
+        <div class="step-title">إنهاء الجلسة</div>
+        <div class="step-body">بعد الأسئلة كلها — ابعت finish بـ body فاضي</div>
+        <div class="step-api">POST /student/challenges/sessions/{sessionId}/finish</div>
+        <div class="step-body" style="margin-top:8px">body: {}</div>
+        <div class="step-ok">✓ الاتنين لاعبين بيكملوا المحطة تلقائيًا</div>
+        <div class="step-ok">✓ اللي بعدها بتفتح للاتنين</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="signalr-flow">
+    <div class="signalr-title">📡 SignalR Flow — تسلسل الأحداث</div>
+    <div class="sr-row">
+      <div class="sr-box client">Client</div>
+      <div class="sr-arrow">→</div>
+      <div class="sr-box hub">Connect /hubs/challenge</div>
+      <div class="sr-arrow">→</div>
+      <div class="sr-box client">جيب connectionId</div>
+      <div class="sr-arrow">→</div>
+      <div class="sr-box server">POST /queue + connectionId</div>
+      <div class="sr-arrow">→</div>
+      <div class="sr-box hub">Server push: sessionId</div>
+      <div class="sr-arrow">→</div>
+      <div class="sr-box client">RegisterSession(sessionId)</div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card-title">🏆 نظام النقاط</div>
+      <div class="rule-item">الفايز = 100% من station.pointsReward</div>
+      <div class="rule-item">الخسران = 50% من station.pointsReward</div>
+      <div class="rule-item">تعادل = 50% للاتنين</div>
+      <div class="rule-item">الفوز والخسارة ما بيوقفوش الاكتمال — الاتنين بيكملوا</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">⚙️ Admin Config</div>
+      <div class="rule-item">completionThreshold = null دايمًا</div>
+      <div class="rule-item">pointsReward على المحطة هو اللي بيتقسم</div>
+      <div class="rule-item">التحدي بيتبنى بـ POST /challenges مع scheduleDate وtimeZoneId</div>
+      <div class="rule-item">AI questions: POST /challenges/{id}/generate-questions</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">🚫 ما تعملهوش</div>
+      <div class="rule-item">ما تعرضش "العب تاني" لو station Completed — 409 هيجيلك</div>
+      <div class="rule-item">ما تفرقش في الـ UX بين فايز وخسران للـ station unlock</div>
+      <div class="rule-item">ما تنسى تبعت connectionId في الـ queue — matchmaking بيحتاجه</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HELPER RESOURCE ══════════ -->
+<div id="panel-helper" class="panel">
+  <div class="section-header">
+    <div class="type-num" style="border-color:rgba(16,185,129,.4);color:#6ee7b7;background:rgba(16,185,129,.08)">Type 4</div>
+    <div>
+      <div class="section-title" style="color:#6ee7b7">📎 HelperResource</div>
+      <div class="section-desc">أبسط محطة في النظام — جيب المحتوى واعرضه وكمّل</div>
+    </div>
+  </div>
+
+  <div class="flow-block">
+    <div class="flow-label">Student Flow</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">STEP 01</div>
+        <div class="step-title">تحميل المحطة</div>
+        <div class="step-body">جيب الـ payload — بيشمل الملفات والروابط المرتبطة بالمحطة</div>
+        <div class="step-api">GET /api/v1/Station/{stationId}</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 02</div>
+        <div class="step-title">الطالب يشوف المحتوى</div>
+        <div class="step-body">افتح الملفات أو الروابط للطالب — ما في tracking للمشاهدة</div>
+        <div class="step-info">attachments + links في الـ payload</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 03</div>
+        <div class="step-title">Complete يدوي</div>
+        <div class="step-body">بعت complete بـ body فاضي — مفيش threshold ولا score</div>
+        <div class="step-api">POST /api/v1/progress/stations/{stationId}/complete</div>
+        <div class="step-body" style="margin-top:8px">body: { }</div>
+        <div class="step-ok">✓ Completed فورًا</div>
+      </div>
+      <div class="step">
+        <div class="step-n">STEP 04</div>
+        <div class="step-title">فتح التالي</div>
+        <div class="step-body">لو autoUnlockOnPreviousComplete = true → المحطة التالية بتفتح</div>
+        <div class="step-info">refetch stations/progress لتحديث الـ UI</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card-title">⚙️ خصائص المحطة</div>
+      <div class="rule-item">completionThreshold = null دايمًا</div>
+      <div class="rule-item">مفيش score ولا percentage</div>
+      <div class="rule-item">المحطة دي مش بتأثر على path completion حساب عادةً</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">🎯 متى تبعت complete؟</div>
+      <div class="rule-item">الـ spec بيقول "auto on open" — لكن الـ backend بيكمّل بس لما تبعت الـ endpoint</div>
+      <div class="rule-item">يعني ابعته بعد ما الطالب يشوف المحتوى أو يضغط "تمام"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ COMPARISON ══════════ -->
+<div id="panel-compare" class="panel">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Full Comparison</div>
+      <div class="section-desc">مقارنة شاملة لكل المحطات</div>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>المحطة</th>
+        <th>Type</th>
+        <th>completionThreshold</th>
+        <th>مصدر الاكتمال</th>
+        <th>Endpoint الرئيسي</th>
+        <th>ملاحظات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>📝 ShortQuiz</td>
+        <td><span class="ct">2</span></td>
+        <td><span class="cnull">null (إلزامي)</span></td>
+        <td>نتيجة submit ≥ Quiz.passScore</td>
+        <td><span class="ct">POST /progress/quiz-stations/{id}/submit</span></td>
+        <td style="color:var(--text2);font-size:12px">ما تبعتش complete يدوي</td>
+      </tr>
+      <tr>
+        <td>📡 LiveStream (live)</td>
+        <td><span class="ct">0</span></td>
+        <td><span class="ct">0-100 (إلزامي)</span></td>
+        <td>Zoom webhooks — دقائق الحضور</td>
+        <td><span class="ct">POST /live-stations/{id}/join</span></td>
+        <td style="color:var(--text2);font-size:12px">ما تبعتش attended</td>
+      </tr>
+      <tr>
+        <td>📡 LiveStream (recorded)</td>
+        <td><span class="ct">0</span></td>
+        <td><span class="ct">نفس الـ threshold</span></td>
+        <td>percentageCompleted ≥ threshold</td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+        <td style="color:var(--text2);font-size:12px">Branch على runtimeMode</td>
+      </tr>
+      <tr>
+        <td>🃏 Flashcards</td>
+        <td><span class="ct">1</span></td>
+        <td><span class="ct">0-100 (إلزامي)</span></td>
+        <td>percentageCompleted من الـ client</td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+        <td style="color:var(--text2);font-size:12px">Client بيحسب النسبة</td>
+      </tr>
+      <tr>
+        <td>⚔️ Challenge</td>
+        <td><span class="ct">3</span></td>
+        <td><span class="cnull">null (إلزامي)</span></td>
+        <td>إنهاء الجلسة — النتيجة ما بتوقفش</td>
+        <td><span class="ct">POST /student/challenges/sessions/{id}/finish</span></td>
+        <td style="color:var(--text2);font-size:12px">SignalR + HTTP</td>
+      </tr>
+      <tr>
+        <td>📎 HelperResource</td>
+        <td><span class="ct">4</span></td>
+        <td><span class="cnull">null (إلزامي)</span></td>
+        <td>مجرد استدعاء الـ endpoint</td>
+        <td><span class="ct">POST /progress/stations/{id}/complete</span></td>
+        <td style="color:var(--text2);font-size:12px">Body فاضي</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="rules-grid" style="margin-top:28px">
+    <div class="rule-card">
+      <div class="rule-card-title">🔒 Sequential Unlock — قاعدة ذهبية</div>
+      <div class="rule-item">محطة Locked = ما تفتحهاش ولا تنضملها حتى لو وقتها جه</div>
+      <div class="rule-item">بعد اكتمال محطة + autoUnlock = true → التالية بتبقى Available</div>
+      <div class="rule-item">ما في "unlock next" API للطالب — بس refetch /stations/progress</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">🔁 Idempotency</div>
+      <div class="rule-item">re-complete محطة Completed → 200 بدون نقاط جديدة</div>
+      <div class="rule-item">initialize مرتين → 409 Conflict = طبيعي، تعامله كـ success</div>
+      <div class="rule-item">Challenge queue على Completed → 409 = اخفي "العب تاني"</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">🎯 Path Completion</div>
+      <div class="rule-item">لما كل المحطات non-helper بتكمل → pathCompleted: true</div>
+      <div class="rule-item">Path completion = 0 bonus points (مش في نقاط إضافية)</div>
+      <div class="rule-item">pathPointsEarned في الـ response بيبقى null</div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">🛡️ Admin Override</div>
+      <div class="rule-item">POST /admin/stations/{id}/complete-override (Admin only)</div>
+      <div class="rule-item">بيشيل Locked → Available → Completed تلقائيًا</div>
+      <div class="rule-item">reason مطلوب (max 500 chars) — بيتسجل في audit log</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ QA GUIDE ══════════ -->
+<div id="panel-qa" class="panel">
+  <div class="section-header">
+    <div>
+      <div class="section-title" style="color:#67e8f9">🧪 QA Guide — Course A & B</div>
+      <div class="section-desc">كل اللي Flutter محتاجه عشان يتيست الكورسين</div>
+    </div>
+  </div>
+
+  <!-- IDs Table -->
+  <div style="margin-bottom:28px">
+    <div class="flow-label">Test Entity IDs — hardcode في QA / Debug menu</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Entity</th>
+          <th>Course A (19 May)</th>
+          <th>Course B (20 May + recording)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Course</td>
+          <td><span class="ct">10000001-0001-4001-8001-000000000001</span></td>
+          <td><span class="ct">20000001-0001-4001-8001-000000000001</span></td>
+        </tr>
+        <tr>
+          <td>Path</td>
+          <td><span class="ct">10000001-0001-4001-8001-000000000011</span></td>
+          <td><span class="ct">20000001-0001-4001-8001-000000000011</span></td>
+        </tr>
+        <tr>
+          <td>📡 Live Station</td>
+          <td><span class="ct">10000001-0001-4001-8001-000000000021</span></td>
+          <td><span class="ct">20000001-0001-4001-8001-000000000021</span></td>
+        </tr>
+        <tr>
+          <td>🃏 Flashcards</td>
+          <td><span class="ct">…000000000022</span></td>
+          <td><span class="ct">…000000000022</span></td>
+        </tr>
+        <tr>
+          <td>📝 Quiz</td>
+          <td><span class="ct">…000000000023</span></td>
+          <td><span class="ct">…000000000023</span></td>
+        </tr>
+        <tr>
+          <td>⚔️ Challenge</td>
+          <td><span class="ct">…000000000024</span></td>
+          <td><span class="ct">…000000000024</span></td>
+        </tr>
+        <tr>
+          <td>📎 Helper</td>
+          <td><span class="ct">…000000000025</span></td>
+          <td><span class="ct">…000000000025</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="margin-top:10px;font-size:12px;color:var(--text3);font-family:var(--mono)">
+      Titles in explore: "LMS_TEST Course A" / "LMS_TEST Course B"
+    </div>
+  </div>
+
+  <!-- A vs B diff -->
+  <div style="margin-bottom:28px">
+    <div class="flow-label">الفرق بين Course A و Course B</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="rule-card" style="border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.04)">
+        <div class="rule-card-title" style="color:#fca5a5">📡 Course A — 19 May</div>
+        <div class="rule-item">Live date: 19 May 2026 — 16:00 Asia/Amman</div>
+        <div class="rule-item">مفيش recording — بتبقى EndedWithoutRecording بعد الجلسة</div>
+        <div class="rule-item">Challenge window: 19 May 16:00–20:00</div>
+        <div class="rule-item">لو عايز تتيست Recorded → استخدم Course B</div>
+      </div>
+      <div class="rule-card" style="border-color:rgba(6,182,212,.25);background:rgba(6,182,212,.04)">
+        <div class="rule-card-title" style="color:#67e8f9">📡 Course B — 20 May + Recording ✓</div>
+        <div class="rule-item">Live date: 20 May 2026 — 16:00 Asia/Amman</div>
+        <div class="rule-item">Pre-seeded recordingUrl → تقدر تتيست Recorded flow دلوقتي</div>
+        <div class="rule-item">Challenge window: 20 May 16:00–20:00</div>
+        <div class="rule-item">الأنسب لتيست الـ recording complete بدون Zoom</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full flow steps -->
+  <div style="margin-bottom:28px">
+    <div class="flow-label">الفلو الكامل — كرره لكل course</div>
+
+    <!-- Step 1: Login -->
+    <div class="rule-card" style="margin-bottom:10px">
+      <div class="rule-card-title">1 — Login</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">جيب الـ token واحتفظ بيه لكل الـ requests</div>
+      <div class="step-api" style="display:block;margin-bottom:0">POST /api/v1/Auth/login</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:8px;line-height:1.8">
+        body: { "email": "your-student@email.com", "password": "…" }<br>
+        → store: data.token → Authorization: Bearer {token}
+      </div>
+    </div>
+
+    <!-- Step 2: Enroll -->
+    <div class="rule-card" style="margin-bottom:10px">
+      <div class="rule-card-title">2 — Enroll (free)</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">سجّل الطالب في الـ course</div>
+      <div class="step-api" style="display:block">POST /api/v1/student/courses/{courseId}/enroll-free</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px">Course A: …000000000001 | Course B: 20000001-…000000000001</div>
+    </div>
+
+    <!-- Step 3: Initialize -->
+    <div class="rule-card" style="margin-bottom:10px">
+      <div class="rule-card-title">3 — Initialize Progress (مرة واحدة)</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">ابني الـ progress rows — 200 = أول مرة ✓ | 409 = خلاص اتعمل (safe)</div>
+      <div class="step-api" style="display:block">POST /api/v1/progress/courses/{courseId}/initialize</div>
+    </div>
+
+    <!-- Step 4: Path map -->
+    <div class="rule-card" style="margin-bottom:10px">
+      <div class="rule-card-title">4 — افتح الـ Path Map</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">جيب المحطات الـ 5 وأحوالها — الـ main screen للـ path في Flutter</div>
+      <div class="step-api" style="display:block">GET /api/v1/learning-paths/students/{pathId}/stations/progress</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.7;font-family:var(--mono)">
+        Station 1 (live) → status: 1 Available<br>
+        Stations 2-5 → status: 0 Locked (حتى السابق يكمل)
+      </div>
+      <div class="step-info" style="margin-top:6px">كل station بيشمل: type · pointsReward · order · status</div>
+    </div>
+
+    <!-- Step 5 stations -->
+    <div class="flow-label" style="margin-top:20px">5 — المحطات بالترتيب (1 → 5)</div>
+
+    <!-- Station 1: Live -->
+    <div class="rule-card" style="margin-bottom:10px;border-color:rgba(239,68,68,.2)">
+      <div class="rule-card-title" style="color:#fca5a5">📡 Station 1 — Live (type 0)</div>
+
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">أول حاجة: اقرأ runtimeMode وبني الـ UI عليه</div>
+      <div class="step-api" style="display:block;margin-bottom:12px">GET /api/v1/live-stations/{stationId}/info</div>
+
+      <table class="compare-table" style="margin-bottom:12px;font-size:12px">
+        <thead>
+          <tr><th>runtimeMode</th><th>متى</th><th>Flutter يعرض</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="ct">Upcoming</span></td><td style="color:var(--text2)">قبل 16:00</td><td style="color:var(--text2)">Countdown / "لسه ما بدأش"</td></tr>
+          <tr><td><span class="ct">Live</span></td><td style="color:var(--text2)">أثناء البث</td><td style="color:var(--text2)">زرار Join</td></tr>
+          <tr><td><span class="ct">Recorded</span></td><td style="color:var(--text2)">بعد البث + URL موجود</td><td style="color:var(--text2)">فيديو + % مشاهدة</td></tr>
+          <tr><td><span class="ct">EndedWithoutRecording</span></td><td style="color:var(--text2)">انتهى بدون تسجيل</td><td style="color:var(--text2)">رسالة اعتذار بس</td></tr>
+        </tbody>
+      </table>
+
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500">Join live (لما يكون Live + مش Locked):</div>
+      <div class="step-api" style="display:block;margin-bottom:10px">POST /api/v1/live-stations/{stationId}/join</div>
+
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500">Complete via recording (QA بدون Zoom — Course B جاهزة):</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">POST /api/v1/progress/stations/{stationId}/complete</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2)">body: { "percentageCompleted": 80 }</div>
+      <div class="step-warn" style="margin-top:8px">⚠ ده بيشتغل بس لما runtimeMode = Recorded وstatus = Incomplete أو Missed</div>
+      <div class="step-warn">⚠ الـ Live completion الحقيقية محتاجة Zoom attendance — مش موجود في الـ seed</div>
+      <div class="step-ok" style="margin-top:4px">✓ Course B عندها recordingUrl جاهز → تيست Recorded flow دلوقتي</div>
+    </div>
+
+    <!-- Station 2: Flashcards -->
+    <div class="rule-card" style="margin-bottom:10px;border-color:rgba(168,85,247,.2)">
+      <div class="rule-card-title" style="color:#d8b4fe">🃏 Station 2 — Flashcards (type 1)</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">GET /api/v1/progress/flashcard-stations/{stationId}/deck</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">POST /api/v1/progress/stations/{stationId}/complete</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2)">body: { "percentageCompleted": 100 }</div>
+    </div>
+
+    <!-- Station 3: Quiz -->
+    <div class="rule-card" style="margin-bottom:10px;border-color:rgba(59,130,246,.2)">
+      <div class="rule-card-title" style="color:#93c5fd">📝 Station 3 — Quiz (type 2)</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">GET /api/v1/progress/quiz-stations/{stationId}/attempt</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">POST /api/v1/progress/quiz-stations/{stationId}/answers — body: { questionId, selectedOptionId }</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">POST /api/v1/progress/quiz-stations/{stationId}/submit</div>
+      <div class="step-ok">✓ Pass threshold في الـ seed = 60% — اعمل كده في التيست</div>
+      <div class="step-ok">✓ الاكتمال تلقائي على submit لو pass — ما تبعتش /complete</div>
+    </div>
+
+    <!-- Station 4: Challenge -->
+    <div class="rule-card" style="margin-bottom:10px;border-color:rgba(245,158,11,.2)">
+      <div class="rule-card-title" style="color:#fcd34d">⚔️ Station 4 — Challenge (type 3)</div>
+      <div class="step-warn" style="margin-bottom:10px">⚠ Window: 16:00–20:00 بتوقيت Asia/Amman — برّاها Queue بيفشل</div>
+      <div class="step-api" style="display:block;margin-bottom:4px">GET /api/v1/Station/{stationId} → اقرأ nested challenge.id</div>
+      <div class="step-api" style="display:block;margin-bottom:4px">GET /api/v1/student/challenges/{challengeId}</div>
+      <div class="step-api" style="display:block;margin-bottom:4px">Connect SignalR hub → جيب connectionId</div>
+      <div class="step-api" style="display:block;margin-bottom:4px">POST /api/v1/student/challenges/{challengeId}/queue — body: { "signalRConnectionId": "…" }</div>
+      <div class="step-api" style="display:block;margin-bottom:4px">العب الجلسة عبر Hub (§10 في الـ guide)</div>
+      <div class="step-ok" style="margin-top:6px">✓ لما الجلسة تخلص → السيرفر بيكمّل للاتنين لاعبين (فوز مش شرط)</div>
+      <div class="step-warn" style="margin-top:4px">⚠ 409 على Queue لو Station Completed = ما تعرضش "العب تاني"</div>
+    </div>
+
+    <!-- Station 5: Helper -->
+    <div class="rule-card" style="margin-bottom:10px;border-color:rgba(16,185,129,.2)">
+      <div class="rule-card-title" style="color:#6ee7b7">📎 Station 5 — Helper (type 4)</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">GET /api/v1/Station/{stationId} → عرض PDF links</div>
+      <div class="step-api" style="display:block;margin-bottom:6px">POST /api/v1/progress/stations/{stationId}/complete — body: {}</div>
+      <div class="step-info" style="margin-top:4px">Helper ما بيدخلش في حساب Path Completion — مش blocking</div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="rule-card" style="margin-bottom:10px">
+      <div class="rule-card-title">6 — Refetch بعد كل اكتمال</div>
+      <div class="step-api" style="display:block">GET /api/v1/learning-paths/students/{pathId}/stations/progress</div>
+      <div class="step-ok" style="margin-top:8px">✓ التالية تنتقل Locked (0) → Available (1)</div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="rule-card">
+      <div class="rule-card-title">7 — Course Dashboard (optional)</div>
+      <div class="step-api" style="display:block">GET /api/v1/progress/courses/{courseId}/course-progress</div>
+    </div>
+  </div>
+
+  <!-- Common issues -->
+  <div style="margin-bottom:28px">
+    <div class="flow-label">Common Issues — مشاكل شايفاها في الـ QA</div>
+    <table class="compare-table">
+      <thead>
+        <tr><th>المشكلة</th><th>السبب</th><th>الحل</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:#fca5a5">403 على progress APIs</td>
+          <td style="color:var(--text2)">الـ user مش Student role</td>
+          <td style="color:#6ee7b7">استخدم student account مش admin/teacher</td>
+        </tr>
+        <tr>
+          <td style="color:#fca5a5">400 "not enrolled"</td>
+          <td style="color:var(--text2)">Skip خطوة Enroll</td>
+          <td style="color:#6ee7b7">Step 2 لازم يتعمل الأول</td>
+        </tr>
+        <tr>
+          <td style="color:#fca5a5">400 "no progress row"</td>
+          <td style="color:var(--text2)">Skip خطوة Initialize</td>
+          <td style="color:#6ee7b7">Step 3 لازم يتعمل بعد Enroll</td>
+        </tr>
+        <tr>
+          <td style="color:#fca5a5">Live station Locked</td>
+          <td style="color:var(--text2)">المحطة السابقة ما كملتش</td>
+          <td style="color:#6ee7b7">اكمّل المحطة اللي قبلها الأول</td>
+        </tr>
+        <tr>
+          <td style="color:#fca5a5">Challenge queue fails</td>
+          <td style="color:var(--text2)">برّا نافذة 16:00–20:00 Amman</td>
+          <td style="color:#6ee7b7">تيست في الوقت الصح أو اضبط system time</td>
+        </tr>
+        <tr>
+          <td style="color:#fca5a5">Live مش بيكتمل</td>
+          <td style="color:var(--text2)">Seed ما فيهاش Zoom IDs</td>
+          <td style="color:#6ee7b7">استخدم recording complete بـ percentageCompleted — Course B</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Checklist -->
+  <div>
+    <div class="flow-label">Checklist لكل Course</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="rule-card">
+        <div class="rule-card-title">✅ يتحقق منهم</div>
+        <div class="rule-item">Enroll + Initialize ✓</div>
+        <div class="rule-item">Path يعرض 5 محطات + sequential unlock</div>
+        <div class="rule-item">Live: runtimeMode UI branches صح (Course B: Recorded)</div>
+        <div class="rule-item">Flashcards → complete → Quiz → submit → Challenge (في الوقت)</div>
+        <div class="rule-item">النقاط بتيجي من pointsReward بس — مفيش path +500 bonus</div>
+        <div class="rule-item">Challenge replay بيرجع 409 بعد Completed</div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card-title">🛠️ Flutter Debug Setup</div>
+        <div class="rule-item">Debug screen بـ زرارين: "Open Course A" + "Open Course B" بالـ GUIDs</div>
+        <div class="rule-item">Skip explore في الـ dev — استخدم الـ GUIDs مباشرة</div>
+        <div class="rule-item">Integration test: GET /Course/explore → filter title contains "LMS_TEST"</div>
+        <div class="rule-item">Shared test student في dev flavor بس</div>
+        <div class="rule-item">409 على initialize = success — ما توقفش الفلو</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <span>Nawabegh LMS · Station Flows v2.0 · May 2026</span>
+  <span>Aligned with: LiveStream unified · Incomplete/Missed · per-station pointsReward</span>
+</footer>
+
+<script>
+  function show(type, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + type).classList.add('active');
+    if (btn) btn.classList.add('active');
+  }
+
+  function showFromCard(type) {
+    const btn = document.querySelector(`.nav-btn[data-type="${type}"]`);
+    show(type, btn);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

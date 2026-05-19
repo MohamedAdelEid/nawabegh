@@ -35,7 +35,7 @@
         "userManagement": "إدارة المستخدمين",
         "schoolManagement": "إدارة المدارس",
         "contentManagement": "إدارة المحتوى",
-        "courseManagement": "إدارة المسارات والاعتمادات",
+        "courseManagement": "إدارة الدورات التعليمية",
         "helperFileManagement": "إدارة الملفات المساندة",
         "pricingManagement": "إدارة الخطط والأسعار",
         "paymentGatewaySettings": "إعدادات بوابات الدفع",
@@ -668,14 +668,15 @@
     "courseManagement": {
       "breadcrumbs": {
         "home": "الرئيسية",
-        "courseManagement": "إدارة المسارات والاعتمادات",
+        "courseManagement": "إدارة الدورات التعليمية",
         "create": "إضافة دورة",
+        "edit": "تعديل الدورة",
         "reject": "رفض الدورة التدريبية",
         "rejectionDetails": "تفاصيل قرار الرفض"
       },
       "page": {
-        "title": "إدارة المسارات والاعتمادات",
-        "description": "راجع المساقات الجديدة بانتظار الموافقة وتحكم بحالة النشر.",
+        "title": "إدارة الدورات التعليمية",
+        "description": "راجع الدورات الجديدة بانتظار الموافقة وتحكم بحالة النشر.",
         "addCourse": "إضافة دورة جديدة",
         "export": "تصدير التقرير"
       },
@@ -698,31 +699,31 @@
           "indicator": "إجمالي الشهر"
         },
         "learningPathsTotal": {
-          "label": "إجمالي المسارات",
+          "label": "إجمالي الدورات",
           "indicator": "المراجعة"
         },
         "learningPathsPending": {
-          "label": "مسارات معلّقة",
+          "label": "دورات معلّقة",
           "indicator": "تحتاج مراجعة"
         },
         "learningPathsApproved": {
-          "label": "مسارات معتمدة",
+          "label": "دورات معتمدة",
           "indicator": "منشورة"
         },
         "learningPathsRejected": {
-          "label": "مسارات مرفوضة",
+          "label": "دورات مرفوضة",
           "indicator": "تتطلّب تصحيحاً"
         },
         "learningPathsDraft": {
-          "label": "مسارات مسوّدة",
+          "label": "دورات مسوّدة",
           "indicator": "غير منشورة"
         }
       },
       "filters": {
         "openAdvanced": "فتح الفلاتر المتقدمة",
         "stages": {
-          "label": "المرحلة",
-          "all": "جميع المراحل"
+          "label": "الصف",
+          "all": "جميع الصفوف"
         },
         "subjects": {
           "label": "المادة",
@@ -732,18 +733,39 @@
           "label": "الحالة",
           "all": "جميع الحالات"
         },
+        "terms": {
+          "label": "الفصل الدراسي",
+          "all": "جميع الفصول",
+          "first": "الفصل الدراسي الأول",
+          "second": "الفصل الدراسي الثاني",
+          "third": "الفصل الدراسي الثالث"
+        },
+        "teachers": {
+          "label": "المعلم",
+          "all": "جميع المعلمين"
+        },
+        "accessTypes": {
+          "label": "نوع الوصول",
+          "all": "جميع أنواع الوصول"
+        },
+        "publishing": {
+          "label": "حالة النشر",
+          "all": "الكل",
+          "published": "منشورة",
+          "unpublished": "غير منشورة"
+        },
         "search": {
           "label": "بحث سريع",
-          "placeholder": "البحث حسب عنوان المساق أو المعلم..."
+          "placeholder": "البحث حسب عنوان الدورة أو المعلم..."
         }
       },
       "table": {
-        "title": "قائمة المسارات",
-        "loading": "جارٍ تحميل المسارات...",
-        "empty": "لا توجد مسارات مطابقة.",
-        "loadError": "تعذر تحميل المسارات. حاول مرة أخرى.",
+        "title": "قائمة الدورات",
+        "loading": "جارٍ تحميل الدورات...",
+        "empty": "لا توجد دورات مطابقة.",
+        "loadError": "تعذر تحميل الدورات. حاول مرة أخرى.",
         "columns": {
-          "title": "عنوان المسار",
+          "title": "عنوان الدورة",
           "teacher": "المعلم",
           "subject": "المادة / المرحلة",
           "access": "نوع الوصول",
@@ -753,18 +775,17 @@
         "actions": {
           "approve": "اعتماد",
           "reject": "رفض",
-          "rejectionDetails": "تفاصيل الرفض",
-          "delete": "حذف المسار",
-          "edit": "تعديل المسار",
-          "view": "عرض المسار",
+          "archive": "أرشفة الدورة",
+          "edit": "تعديل الدورة",
+          "view": "عرض الدورة",
           "more": "إجراءات إضافية"
         },
         "pagination": {
-          "summary": "عرض {visible} من أصل {total} مساق",
+          "summary": "عرض {visible} من أصل {total} دورة",
           "previous": "الصفحة السابقة",
           "next": "الصفحة التالية"
         },
-        "confirmDelete": "حذف هذا المسار؟ هذا الإجراء لا يمكن التراجع عنه."
+        "confirmArchive": "أرشفة هذه الدورة؟ يمكن إخفاؤها من قوائم النشر."
       },
       "access": {
         "subscription": "اشتراك",
@@ -776,21 +797,23 @@
         "pending": "قيد الانتظار",
         "approved": "معتمد",
         "rejected": "مرفوض",
-        "draft": "مسودة"
+        "draft": "مسودة",
+        "archived": "مؤرشفة"
       },
       "messages": {
         "approved": "تم اعتماد الدورة بنجاح.",
         "rejected": "تم رفض الدورة وإرسال الملاحظات.",
-        "deleted": "تم حذف المسار التعليمي."
+        "rejectError": "تعذر رفض الدورة. حاول مرة أخرى.",
+        "archived": "تمت أرشفة الدورة بنجاح."
       },
       "review": {
         "loading": "جارٍ تحميل مراجعة الدورة...",
         "notFound": "تعذر العثور على الدورة المطلوبة.",
-        "title": "مراجعة المسار التعليمي",
+        "title": "مراجعة الدورة التعليمية",
         "description": "راجع المحتوى والمنهج قبل اعتماد النشر أو إرسال الرفض.",
         "teacherLabel": "مدرس الدورة",
         "actions": {
-          "viewPath": "عرض المرحلة التعليمية",
+          "viewPath": "عرض محتوى الدورة",
           "editCourse": "تعديل الدورة",
           "archive": "أرشفة"
         },
@@ -808,13 +831,13 @@
         },
         "metrics": {
           "subject": "المادة",
-          "stage": "المرحلة",
+          "stage": "الصف",
           "lessons": "إجمالي الدروس",
           "price": "السعر"
         },
         "curriculum": {
-          "title": "المسار التعليمي",
-          "empty": "تُدار محطّات المسار من محرّر الرحلات. لم يتوفر محتوى تفصيلي في شاشة الاعتماد هذه."
+          "title": "محتوى الدورة",
+          "empty": "لم يتوفر محتوى تفصيلي لهذه الدورة بعد."
         }
       },
       "create": {
@@ -822,7 +845,9 @@
         "description": "قم بتعبئة التفاصيل اللازمة لإطلاق رحلتك التعليمية القادمة.",
         "actions": {
           "saveDraft": "حفظ كمسودة",
+          "cancel": "إلغاء",
           "saveCourse": "حفظ الدورة التعليمية",
+          "updateCourse": "حفظ التعديلات",
           "saving": "جارٍ الحفظ..."
         },
         "sections": {
@@ -841,20 +866,17 @@
         },
         "placeholders": {
           "title": "مثال: الرياضيات المتقدمة للصف الثاني ثانوي",
-          "description": "اكتب وصفاً شاملاً للأهداف والمخرجات التعليمية..."
+          "description": "اكتب وصفاً شاملاً للأهداف والمخرجات التعليمية...",
+          "subject": "اختر المادة",
+          "grade": "اختر الصف",
+          "term": "اختر الفصل الدراسي",
+          "teacher": "اختر المعلم"
         },
         "options": {
-          "grade": {
-            "secondary2": "الثاني ثانوي"
-          },
           "term": {
-            "term2": "الفصل الدراسي الثاني"
-          },
-          "teacher": {
-            "teacher-ahmed": "د. أحمد الرافعي"
-          },
-          "subject": {
-            "mathematics": "الرياضيات"
+            "term1": "الفصل الدراسي الأول",
+            "term2": "الفصل الدراسي الثاني",
+            "term3": "الفصل الدراسي الثالث"
           }
         },
         "pricing": {
@@ -884,20 +906,30 @@
           "paid": "مدفوع"
         },
         "steps": {
-          "paths": "مسارات التعلم",
           "pricing": "التسعير والوصول",
           "basic": "المعلومات الأساسية"
         },
         "tip": "نصيحة الخبراء: إضافة صورة غلاف جذابة يزيد من معدل التسجيل والمشاركة.",
         "messages": {
-          "error": "تعذر إنشاء الدورة. حاول مرة أخرى."
+          "validation": "يرجى تعبئة عنوان الدورة ووصفها والمادة والصف والفصل والمعلم.",
+          "error": "تعذر إنشاء الدورة. حاول مرة أخرى.",
+          "updateSuccess": "تم تحديث الدورة بنجاح.",
+          "updateError": "تعذر تحديث الدورة. حاول مرة أخرى."
+        },
+        "edit": {
+          "title": "تعديل الدورة",
+          "description": "حدّث تفاصيل الدورة أدناه.",
+          "notFound": "تعذر تحميل بيانات الدورة."
         },
         "success": {
           "title": "تم إنشاء الكورس بنجاح!",
-          "description": "اكتمل إعداد المسار الآن في شكل مسودة. يمكنك إضافة محطات التعلم قبل النشر.",
-          "info": "يمكنك مشاهدته للمعاينة وإعادة ترتيب المحطات لضمان تجربة تعلم ناجحة.",
-          "later": "المتابعة لاحقاً",
-          "startPaths": "ابدأ إضافة المسارات"
+          "description": "تم إنشاء الدورة وإرسالها حسب إعدادات المراجعة.",
+          "info": "يمكنك العودة إلى قائمة الدورات لمتابعة حالة المراجعة.",
+          "later": "العودة إلى القائمة",
+          "startPaths": "الانتقال إلى محرر رحلة التفوق",
+          "creatingPath": "جارٍ إنشاء رحلة التفوق...",
+          "defaultPathTitle": "رحلة التفوق",
+          "pathError": "تعذر إنشاء رحلة التفوق. حاول مرة أخرى."
         }
       },
       "reject": {
@@ -1143,26 +1175,63 @@
           "editBook": "تعديل الكتاب"
         },
         "edit": {
+          "description": "تعديل «{title}» — إدارة ملف PDF ونقاط التفاعل.",
           "loadError": "تعذر تحميل هذا الكتاب. أعد المحاولة من القائمة.",
           "notFound": "لم يتم العثور على هذا الكتاب.",
           "courseContext": "{course} · {grade}"
         },
         "actions": {
-          "addBook": "إضافة كتاب جديد"
+          "addBook": "إضافة كتاب جديد",
+          "saveBook": "حفظ الكتاب"
         },
         "config": {
+          "sectionTitle": "إعدادات الكتاب",
+          "bookTitleLabel": "عنوان الكتاب",
+          "courseLabel": "المادة / الدورة",
           "subjectLabel": "اختر المادة الدراسية",
           "subjectOptions": {
             "chemistryGrade2": "أساسيات الكيمياء - الصف الثاني الثانوي"
           },
           "pdfLabel": "ملف الكتاب (PDF)",
-          "changeFile": "تغيير الملف"
+          "pdfPlaceholder": "لم يتم اختيار ملف",
+          "viewFile": "عرض PDF",
+          "changeFile": "تغيير الملف",
+          "uploadPdf": "رفع ملف PDF",
+          "subjectPlaceholder": "اختر المادة",
+          "subjectsLoading": "جاري تحميل المواد…",
+          "subjectsLoadError": "تعذر تحميل المواد",
+          "pdfUploading": "جاري رفع ملف PDF…",
+          "pdfInvalidType": "يرجى اختيار ملف PDF فقط.",
+          "pdfTooLarge": "يجب ألا يتجاوز حجم ملف PDF 50 ميجابايت.",
+          "coursePlaceholder": "اختر الدورة",
+          "coursesLoading": "جاري تحميل الدورات…",
+          "coursesLoadError": "تعذر تحميل الدورات",
+          "statusLabel": "حالة الكتاب",
+          "statusDraft": "مسودة",
+          "statusPublished": "منشور"
+        },
+        "create": {
+          "titleRequired": "عنوان الكتاب مطلوب.",
+          "subjectRequired": "يرجى اختيار المادة.",
+          "courseRequired": "يرجى اختيار الدورة.",
+          "pdfRequired": "يرجى رفع ملف PDF.",
+          "pdfStillUploading": "انتظر حتى يكتمل رفع ملف PDF.",
+          "success": "تم إنشاء الكتاب التفاعلي بنجاح.",
+          "error": "تعذر إنشاء الكتاب التفاعلي."
         },
         "viewer": {
           "pageOf": "الصفحة {current} من {total}",
           "zoomIn": "تكبير",
           "zoomOut": "تصغير",
           "addInteractionPoint": "إضافة نقطة تفاعل",
+          "cancelPlacement": "إلغاء التحديد",
+          "prevPage": "الصفحة السابقة",
+          "nextPage": "الصفحة التالية",
+          "noPdf": "ارفع ملف PDF لمعاينة الكتاب.",
+          "loading": "جاري تحميل PDF…",
+          "loadError": "تعذر تحميل ملف PDF.",
+          "placementHint": "انقر على الصفحة لوضع نقطة تفاعل.",
+          "saveBookFirst": "احفظ الكتاب التفاعلي قبل إضافة نقاط التفاعل.",
           "chapterTitle": "الفصل الثالث: الروابط الكيميائية",
           "overlayCaption": "رسم توضيحي لجزيء الميثان"
         },
@@ -1184,10 +1253,51 @@
           "hidden": "مخفي عن الطلاب",
           "deletePoint": "حذف النقطة",
           "editPoint": "تعديل النقطة",
-          "addNew": "إضافة نقطة جديدة"
+          "addNew": "إضافة نقطة جديدة",
+          "pageLabel": "صفحة {page}",
+          "empty": "لا توجد نقاط تفاعل على هذا الكتاب بعد.",
+          "activeLabel": "نشط",
+          "deleteSuccess": "تم حذف نقطة التفاعل.",
+          "deleteError": "تعذر حذف نقطة التفاعل.",
+          "toggleError": "تعذر تحديث حالة نقطة التفاعل.",
+          "toggleSuccess": "تم تحديث حالة نقطة التفاعل."
         },
         "tip": {
           "body": "أثبتت الدراسات أن إضافة فيديوهات لا تتجاوز 3 دقائق على نقاط التفاعل تزيد من استيعاب الطالب للمفاهيم الصعبة بنسبة 40%."
+        }
+      },
+      "hotspotModal": {
+        "title": "إضافة نقطة تفاعل",
+        "close": "إغلاق",
+        "positionHint": "صفحة {page} · الموضع {x}% ، {y}% · الحجم {size}%",
+        "fields": {
+          "title": {
+            "label": "عنوان النقطة",
+            "placeholder": "مثال: شرح الرابطة القطبية"
+          },
+          "videoUrl": {
+            "label": "رابط الفيديو",
+            "placeholder": "https://..."
+          },
+          "active": {
+            "label": "نشط",
+            "on": "نشط",
+            "off": "غير نشط"
+          },
+          "visibility": {
+            "label": "ظهور للطلاب",
+            "visible": "مرئي",
+            "hidden": "مخفي"
+          }
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "save": "حفظ النقطة",
+          "saving": "جاري الحفظ…"
+        },
+        "messages": {
+          "createSuccess": "تمت إضافة نقطة التفاعل.",
+          "createError": "تعذر إضافة نقطة التفاعل."
         }
       }
     },
@@ -2093,8 +2203,8 @@
         "description": "إنشاء المحتوى ومراجعته ونشره."
       },
       "courseManagement": {
-        "title": "إدارة المسارات والاعتمادات",
-        "description": "إدارة المسارات التعليمية ومراجعتها واعتمادها."
+        "title": "إدارة الدورات التعليمية",
+        "description": "إدارة الدورات التعليمية ومراجعتها واعتمادها."
       },
       "articleEditor": {
         "title": "محرر المقالات",
@@ -2132,7 +2242,8 @@
         "challengeEditor": "محرر التحديات",
         "examEditor": "محرر الاختبارات",
         "examPreview": "عرض أسئلة الاختبار",
-        "examEditQuestions": "تعديل أسئلة الاختبار"
+        "examEditQuestions": "تعديل أسئلة الاختبار",
+        "helperResourceEditor": "مصدر مساعد"
       },
       "dashboard": {
         "readyBadge": "{percent}% جاهز",
@@ -2155,8 +2266,11 @@
           "stationNamePlaceholder": "مثال: تحدي الذاكرة",
           "stationType": "نوع المحطة",
           "completionRule": "قاعدة الإكمال",
+          "completionThreshold": "الحد المطلوب",
+          "pointReward": "نقاط المكافأة",
           "path": "المسار",
           "subscribersOnly": "للمشتركين فقط",
+          "autoUnlock": "فتح تلقائي",
           "createStation": "إنشاء المحطة",
           "createPath": "إنشاء مسار جديد",
           "newPathPlaceholder": "اسم المسار الجديد...",
@@ -2171,6 +2285,7 @@
         "stationTypes": {
           "flashcard": "بطاقات استذكار",
           "liveBroadcast": "بث مباشر",
+          "shortQuiz": "اختبار قصير",
           "challenge": "تحدي",
           "exam": "اختبار",
           "helperFile": "ملفات مساعدة"
@@ -2184,7 +2299,8 @@
         "path": {
           "stationsCount": "تمت إضافة {count} محطات",
           "minutes": "دقيقة",
-          "addStation": "إضافة محطة جديدة لهذا القسم"
+          "addStation": "إضافة محطة جديدة لهذا القسم",
+          "deletePath": "حذف المسار التعليمي"
         },
         "station": {
           "dragHandleAria": "سحب لإعادة ترتيب المحطات",
@@ -2203,11 +2319,20 @@
           "typeLabels": {
             "flashcard": "بطاقات الاستذكار",
             "liveBroadcast": "بث مباشر",
+            "shortQuiz": "اختبار قصير",
             "challenge": "تحدي",
             "exam": "اختبارات",
             "helperFile": "ملفات مساعدة"
           }
         }
+      },
+      "messages": {
+        "stationNameRequired": "اسم المحطة مطلوب.",
+        "pathRequired": "المسار مطلوب.",
+        "stationCreateError": "تعذر إنشاء المحطة.",
+        "stationDeleteError": "تعذر حذف المحطة.",
+        "pathDeleteError": "تعذر حذف المسار التعليمي.",
+        "stationAdded": "تم إنشاء المحطة بنجاح."
       },
       "addStationModal": {
         "title": "إضافة محطة جديدة للمسار",
@@ -2216,13 +2341,28 @@
         "stationType": "نوع المحطة",
         "iconPicker": "اختيار الأيقونة",
         "completionRule": "قاعدة الإكمال",
+        "completionThreshold": "الحد المطلوب",
+        "pointReward": "نقاط المكافأة",
+        "autoUnlock": "فتح تلقائي عند إكمال السابق",
         "permissions": "الصلاحيات",
         "subscribersOnly": "للمشتركين فقط",
-        "addStation": "إضافة المحطة",
+        "addStation": "إنشاء المحطة",
+        "cancel": "إلغاء"
+      },
+      "addLearningPathModal": {
+        "title": "إنشاء مسار تعليمي جديد",
+        "description": "أضف مسارا تعليميا لهذا الكورس وحدد ترتيبه في العرض.",
+        "pathTitle": "عنوان المسار",
+        "pathTitlePlaceholder": "مثال: مقدمة في الفيزياء",
+        "order": "الترتيب",
+        "orderPlaceholder": "مثال: 2",
+        "create": "إنشاء المسار",
+        "creating": "جار الإنشاء...",
         "cancel": "إلغاء"
       },
       "flashcardGroup": {
         "title": "استعراض مجموعة البطاقات: {title}",
+        "emptyTitle": "مجموعة البطاقات",
         "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
         "actions": {
           "publish": "نشر المجموعة",
@@ -2246,19 +2386,43 @@
           "easy": "سهل",
           "medium": "متوسط",
           "hard": "صعب"
+        },
+        "createDeckModal": {
+          "title": "إنشاء مجموعة بطاقات",
+          "description": "أنشئ مجموعة لهذه المحطة قبل إضافة البطاقات. ستبقى النافذة مفتوحة حتى يتم إنشاء المجموعة.",
+          "deckTitle": "عنوان المجموعة",
+          "deckTitlePlaceholder": "اكتب عنوان مجموعة البطاقات هنا...",
+          "difficulty": "متوسط الصعوبة",
+          "create": "إنشاء المجموعة",
+          "titleRequired": "عنوان مجموعة البطاقات مطلوب.",
+          "createSuccess": "تم إنشاء مجموعة البطاقات بنجاح.",
+          "createError": "تعذر إنشاء مجموعة البطاقات."
         }
       },
       "flashcardAdd": {
-        "title": "إضافة بطاقة استذكار جديدة",
-        "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
+        "title": "إنشاء مجموعة بطاقات",
+        "description": "أنشئ مجموعة بطاقات لهذه المحطة ويمكنك توليد البطاقات الأولى بالذكاء الاصطناعي.",
         "actions": {
-          "saveAndAddAnother": "حفظ وإضافة أخرى",
-          "addToGroup": "إضافة للمجموعة والعودة"
+          "saveAndAddAnother": "حفظ البطاقة والمتابعة",
+          "addToGroup": "حفظ البطاقة والعودة"
         },
         "completionRate": "نسبة الاجتياز الخاصة بالمحطة",
         "completionRateLabel": "{value}% من الإجابات الصحيحة",
-        "aiGenerate": "توليد السؤال بالذكاء الاصطناعي",
+        "aiGenerate": "توليد مجموعة بالذكاء الاصطناعي",
+        "messages": {
+          "deckTitleRequired": "عنوان مجموعة البطاقات مطلوب.",
+          "deckIdRequired": "معرف مجموعة البطاقات غير موجود في الرابط.",
+          "titleRequired": "وجه البطاقة الأمامي مطلوب.",
+          "deckCreateSuccess": "تم إنشاء مجموعة البطاقات بنجاح.",
+          "cardCreateSuccess": "تم حفظ بطاقة الاستذكار بنجاح.",
+          "createError": "تعذر إنشاء مجموعة البطاقات.",
+          "cardCreateError": "تعذر حفظ بطاقة الاستذكار.",
+          "aiUnavailable": "يجب بدء التوليد بالذكاء الاصطناعي من إعداد مجموعة البطاقات."
+        },
         "fields": {
+          "deckTitle": "عنوان البطاقه",
+          "deckTitlePlaceholder": "اكتب عنوان مجموعة البطاقات هنا...",
+          "cardCount": "عدد البطاقات",
           "front": "السؤال (الوجه الأمامي)",
           "frontPlaceholder": "اكتب السؤال هنا...",
           "back": "الإجابة (الوجه الخلفي)",
@@ -2395,11 +2559,33 @@
         "description": "قم بإنشاء محطة تحدي مختلفة لطلابك.",
         "actions": {
           "saveChallenge": "حفظ التحدي",
+          "createChallenge": "إنشاء التحدي",
+          "generateQuestions": "إنشاء الأسئلة",
           "previewChallenge": "معاينة التحدي",
           "saveAndPublish": "حفظ ونشر التحدي"
         },
+        "emptyState": {
+          "title": "لا يوجد تحدي بعد",
+          "description": "اضبط الإعدادات أدناه، ثم أنشئ تحديًا لهذه المحطة."
+        },
+        "messages": {
+          "saveSuccess": "تم إنشاء التحدي بنجاح",
+          "saveError": "فشل إنشاء التحدي",
+          "stationNameRequired": "اسم المحطة مطلوب. أنشئ المحطة أو عدّل اسمها من محرر الرحلة أولاً.",
+          "scheduleRequired": "تاريخ البداية والنهاية مطلوبان",
+          "scheduleTimeRequired": "وقت البداية والنهاية مطلوبان",
+          "scheduleInvalid": "تاريخ أو وقت الجدولة غير صالح",
+          "scheduleEndBeforeStart": "يجب أن يكون وقت النهاية بعد وقت البداية",
+          "timezoneRequired": "يرجى اختيار المنطقة الزمنية",
+          "generateQuestionsSuccess": "بدأ إنشاء الأسئلة",
+          "generateQuestionsError": "فشل إنشاء الأسئلة",
+          "challengeRequiredForQuestions": "أنشئ التحدي أولاً قبل إنشاء الأسئلة"
+        },
         "sidebar": {
           "title": "ملخص التحدي",
+          "stationTitle": "المحطة",
+          "schedule": "الجدولة",
+          "scheduleValue": "{startDate} {startTime} → {endDate} {endTime} ({timezone})",
           "type": "نوع التحدي",
           "questionsCount": "عدد الأسئلة",
           "questions": "أسئلة",
@@ -2414,17 +2600,30 @@
         "sections": {
           "type": "اختر نوع التحدي",
           "settings": "إعدادات التحدي",
+          "schedule": "جدولة التحدي",
           "sources": "رفع الملفات والمصادر"
+        },
+        "schedule": {
+          "startDate": "تاريخ البداية",
+          "endDate": "تاريخ النهاية",
+          "startTime": "وقت البداية",
+          "endTime": "وقت النهاية",
+          "timezone": "المنطقة الزمنية",
+          "timezonePlaceholder": "اختر المنطقة الزمنية",
+          "datePlaceholder": "اختر التاريخ"
         },
         "types": {
           "timeChallenge": "تحدي الوقت",
+          "timeChallengeDescription": "التركيز على الإجابة قبل انتهاء المدة المحددة",
           "timeDescription": "التركيز على الإجابة قبل انتهاء المدة المحددة",
           "shortQuiz": "اختبار قصير",
           "shortQuizDescription": "قياس الفهم العميق للمادة الدراسية",
           "speedChallenge": "تحدي السرعة",
+          "speedChallengeDescription": "المنافسة المباشرة بين الطلاب",
           "speedDescription": "المنافسة المباشرة بين الطلاب"
         },
         "settings": {
+          "stationTitle": "عنوان المحطة",
           "questionsCount": "عدد الأسئلة",
           "duration": "مدة التحدي (دقائق)",
           "difficulty": "مستوى الصعوبة"
@@ -2437,15 +2636,35 @@
         "upload": {
           "drag": "اسحب الملفات التعليمية هنا أو انقر للتصفح",
           "formats": "PDF, PPTX, MP4",
-          "maxSize": "بحد أقصى 100 ميجابايت للملف"
+          "maxSize": "بحد أقصى 100 ميجابايت للملف",
+          "uploaded": "تم الرفع بنجاح",
+          "invalidFormat": "يُسمح فقط بملفات PDF و PPTX و MP4",
+          "maxSizeExceeded": "حجم الملف يتجاوز الحد الأقصى 100 ميجابايت"
         }
       },
       "examEditor": {
         "title": "محرر الاختبارات",
         "description": "قم بإنشاء محطة اختبار تفاعلية لطلابك.",
         "actions": {
+          "createExam": "إنشاء الاختبار",
+          "generateQuestions": "إنشاء الأسئلة",
           "saveAndPublish": "حفظ وإنشاء الاختبار",
-          "preview": "معاينة الاختبار بالكامل"
+          "preview": "معاينة الاختبار بالكامل",
+          "saveSettings": "حفظ الإعدادات"
+        },
+        "emptyState": {
+          "title": "لا يوجد اختبار بعد",
+          "description": "اضبط الإعدادات أدناه، ثم أنشئ اختبارًا لهذه المحطة."
+        },
+        "messages": {
+          "saveSuccess": "تم إنشاء الاختبار بنجاح",
+          "saveError": "فشل إنشاء الاختبار",
+          "settingsSaveSuccess": "تم حفظ إعدادات الاختبار بنجاح",
+          "settingsSaveError": "فشل حفظ إعدادات الاختبار",
+          "titleRequired": "اسم الاختبار مطلوب",
+          "generateQuestionsSuccess": "بدأ إنشاء الأسئلة",
+          "generateQuestionsError": "فشل إنشاء الأسئلة",
+          "quizRequiredForAi": "أنشئ الاختبار أولًا قبل إنشاء الأسئلة"
         },
         "sidebar": {
           "title": "ملخص الاختبار",
@@ -2487,7 +2706,10 @@
         "upload": {
           "drag": "اسحب الملفات التعليمية هنا أو انقر للتصفح",
           "formats": "PDF, PPTX, MP4",
-          "maxSize": "بحد أقصى 100 ميجابايت للملف"
+          "maxSize": "بحد أقصى 100 ميجابايت للملف",
+          "uploaded": "تم الرفع بنجاح",
+          "invalidFormat": "يُسمح فقط بملفات PDF و PPTX و MP4",
+          "maxSizeExceeded": "حجم الملف يتجاوز الحد الأقصى 100 ميجابايت"
         },
         "aiButton": "ملء الأسئلة بالذكاء الاصطناعي",
         "bankButton": "ملء باستخدام بنك الأسئلة",
@@ -2527,10 +2749,23 @@
           "randomOrder": "ترتيب عشوائي",
           "randomOrderDesc": "تبديل ترتيب الأسئلة",
           "enabled": "مفعّل",
+          "disabled": "معطّل",
           "totalPoints": "إجمالي النقاط"
         },
         "readyBadge": "جاهز للنشر",
-        "readyDesc": "تم التحقق من جميع الأسئلة والإجابات الصحيحة."
+        "readyDesc": "تم التحقق من جميع الأسئلة والإجابات الصحيحة.",
+        "messages": {
+          "loadError": "فشل تحميل الاختبار",
+          "settingsSaveSuccess": "تم حفظ الإعدادات",
+          "settingsSaveError": "فشل حفظ الإعدادات",
+          "noQuestionsForPdf": "أضف سؤالًا واحدًا على الأقل قبل تصدير PDF"
+        },
+        "pdf": {
+          "examTitle": "اختبار",
+          "questionLabel": "سؤال",
+          "correctAnswer": "الإجابة الصحيحة",
+          "points": "الدرجة"
+        }
       },
       "examEditQuestions": {
         "title": "تعديل أسئلة اختبار {name}",
@@ -2559,6 +2794,41 @@
           "cancel": "إلغاء"
         },
         "addQuestion": "إضافة سؤال جديد",
+        "messages": {
+          "loadError": "فشل تحميل أسئلة الاختبار",
+          "deleteSuccess": "تم حذف السؤال",
+          "deleteError": "فشل حذف السؤال",
+          "updateSuccess": "تم تحديث السؤال",
+          "updateError": "فشل تحديث السؤال",
+          "noQuestionsForPdf": "أضف سؤالًا واحدًا على الأقل قبل تصدير PDF"
+        },
+        "pdf": {
+          "examTitle": "اختبار",
+          "questionLabel": "سؤال",
+          "correctAnswer": "الإجابة الصحيحة",
+          "points": "الدرجة"
+        },
+        "addModal": {
+          "title": "إضافة سؤال جديد",
+          "questionType": "نوع السؤال",
+          "multipleChoice": "اختيار من متعدد",
+          "trueFalse": "صح أو خطأ",
+          "questionText": "نص السؤال",
+          "points": "الدرجة",
+          "difficulty": "الصعوبة",
+          "trueOption": "صح",
+          "falseOption": "خطأ",
+          "choicePlaceholder": "الخيار {index}",
+          "cancel": "إلغاء",
+          "submit": "إضافة السؤال",
+          "saveSuccess": "تمت إضافة السؤال",
+          "saveError": "فشل إضافة السؤال",
+          "validation": {
+            "textRequired": "نص السؤال مطلوب",
+            "choicesRequired": "يجب تعبئة جميع الخيارات",
+            "correctRequired": "حدد الإجابة الصحيحة"
+          }
+        },
         "difficulty": {
           "easy": "سهل",
           "medium": "متوسط",
@@ -2963,6 +3233,7 @@
         "breadcrumbs": {
           "home": "الرئيسية",
           "content": "إدارة الملفات المساندة",
+          "journeyEditor": "محرر الرحلة",
           "add": "إضافة",
           "edit": "تعديل"
         },
@@ -2974,6 +3245,15 @@
           "step1": "ربط الدورة المستهدفة",
           "step2": "رفع الملفات التعليمية",
           "step3": "تحديد سياسة الوصول"
+        },
+        "stationContext": {
+          "addTitle": "إضافة ملف مساعد للمحطة",
+          "pageDescription": "أنشئ ملفا مساعدا لمحطة الرحلة التعليمية.",
+          "title": "سياق المحطة",
+          "step1": "إنشاء أو رفع المصدر المساعد",
+          "step2": "تجهيز المصدر لربطه بالمحطة",
+          "step3": "العودة إلى محرر الرحلة",
+          "note": "يتم إنشاء الملف داخل إدارة الملفات المساندة. سيتم ربطه بالمحطة عند توفر عقد الواجهة الخلفية."
         },
         "sections": {
           "linkCourse": "ربط الدورة التدريبية",

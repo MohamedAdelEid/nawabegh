@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Archive, Eye, MoreVertical, Pencil } from "lucide-react";
 import type { CourseManagementRow } from "@/modules/admin/domain/data/courseManagementData";
 import { Button } from "@/shared/presentation/components/ui/button";
 
@@ -10,9 +10,8 @@ type CourseManagementRowActionLabels = {
   reject: string;
   view: string;
   edit: string;
-  delete: string;
+  archive: string;
   more: string;
-  rejectionDetails: string;
 };
 
 type CourseManagementRowActionsProps = {
@@ -21,9 +20,8 @@ type CourseManagementRowActionsProps = {
   onApprove: (courseId: string) => void | Promise<void>;
   onReject: (courseId: string) => void;
   onView: (courseId: string) => void;
-  onRejectionDetails: (courseId: string) => void;
   onEdit?: (courseId: string) => void;
-  onDelete?: (courseId: string) => void;
+  onArchive?: (courseId: string) => void;
 };
 
 export function CourseManagementRowActions({
@@ -32,11 +30,11 @@ export function CourseManagementRowActions({
   onApprove,
   onReject,
   onView,
-  onRejectionDetails,
   onEdit,
-  onDelete,
+  onArchive,
 }: CourseManagementRowActionsProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const actionCourseId = row.courseId ?? row.id;
 
   const runAction = (action: () => void | Promise<void>) => {
     setMenuOpen(false);
@@ -51,7 +49,7 @@ export function CourseManagementRowActions({
         className="h-8 rounded-lg bg-[#67C23A] px-3 text-xs font-semibold text-white shadow-[0px_2px_0px_0px_#46A302] hover:bg-[#46A302]"
         onClick={(event) => {
           event.stopPropagation();
-          void onApprove(row.id);
+          void onApprove(actionCourseId);
         }}
       >
         {labels.approve}
@@ -62,7 +60,7 @@ export function CourseManagementRowActions({
         className="h-8 rounded-lg bg-[#FF4B4B] px-3 text-xs font-semibold text-white shadow-[0px_2px_0px_0px_#D33131] hover:bg-[#D33131]"
         onClick={(event) => {
           event.stopPropagation();
-          onReject(row.id);
+          onReject(actionCourseId);
         }}
       >
         {labels.reject}
@@ -73,7 +71,7 @@ export function CourseManagementRowActions({
         aria-label={labels.view}
         onClick={(event) => {
           event.stopPropagation();
-          onView(row.id);
+          onView(actionCourseId);
         }}
       >
         <Eye className="h-4 w-4" aria-hidden />
@@ -87,10 +85,10 @@ export function CourseManagementRowActions({
       className="h-8 rounded-lg bg-slate-100 px-3 text-xs font-semibold text-slate-600 shadow-[0px_2px_0px_0px_#0000000D] hover:bg-slate-200"
       onClick={(event) => {
         event.stopPropagation();
-        onRejectionDetails(row.id);
+        onView(actionCourseId);
       }}
     >
-      {labels.rejectionDetails}
+      {labels.view}
     </Button>
   );
 
@@ -99,13 +97,13 @@ export function CourseManagementRowActions({
       <button
         type="button"
         className="dashboard-icon-btn"
-        aria-label={labels.delete}
+        aria-label={labels.archive}
         onClick={(event) => {
           event.stopPropagation();
-          onDelete?.(row.id);
+          onArchive?.(actionCourseId);
         }}
       >
-        <Trash2 className="h-4 w-4" aria-hidden />
+        <Archive className="h-4 w-4" aria-hidden />
       </button>
       <button
         type="button"
@@ -113,7 +111,7 @@ export function CourseManagementRowActions({
         aria-label={labels.edit}
         onClick={(event) => {
           event.stopPropagation();
-          onEdit?.(row.id);
+          onEdit?.(actionCourseId);
         }}
       >
         <Pencil className="h-4 w-4" aria-hidden />
@@ -124,7 +122,7 @@ export function CourseManagementRowActions({
         aria-label={labels.view}
         onClick={(event) => {
           event.stopPropagation();
-          onView(row.id);
+          onView(actionCourseId);
         }}
       >
         <Eye className="h-4 w-4" aria-hidden />
@@ -133,54 +131,54 @@ export function CourseManagementRowActions({
   );
 
   const desktopActions =
-    row.statusId === "pending"
+    row.statusId === "pending" || row.statusId === "draft"
       ? pendingActions
       : row.statusId === "rejected"
         ? rejectedActions
         : defaultActions;
 
   const menuItems =
-    row.statusId === "pending"
+    row.statusId === "pending" || row.statusId === "draft"
       ? [
           {
             label: labels.approve,
             className: "text-emerald-700 hover:bg-emerald-50",
-            onClick: () => onApprove(row.id),
+            onClick: () => onApprove(actionCourseId),
           },
           {
             label: labels.reject,
             className: "text-rose-600 hover:bg-rose-50",
-            onClick: () => onReject(row.id),
+            onClick: () => onReject(actionCourseId),
           },
           {
             label: labels.view,
             className: "text-slate-700 hover:bg-slate-50",
-            onClick: () => onView(row.id),
+            onClick: () => onView(actionCourseId),
           },
         ]
       : row.statusId === "rejected"
         ? [
             {
-              label: labels.rejectionDetails,
+              label: labels.view,
               className: "text-slate-700 hover:bg-slate-50",
-              onClick: () => onRejectionDetails(row.id),
+              onClick: () => onView(actionCourseId),
             },
           ]
         : [
             {
               label: labels.view,
               className: "text-slate-700 hover:bg-slate-50",
-              onClick: () => onView(row.id),
+              onClick: () => onView(actionCourseId),
             },
             {
               label: labels.edit,
               className: "text-slate-700 hover:bg-slate-50",
-              onClick: () => onEdit?.(row.id),
+              onClick: () => onEdit?.(actionCourseId),
             },
             {
-              label: labels.delete,
+              label: labels.archive,
               className: "text-rose-600 hover:bg-rose-50",
-              onClick: () => onDelete?.(row.id),
+              onClick: () => onArchive?.(actionCourseId),
             },
           ];
 

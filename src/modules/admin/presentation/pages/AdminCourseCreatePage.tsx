@@ -1,16 +1,26 @@
 "use client";
 
 import type React from "react";
-import { useRef, useState } from "react";
-import { BookOpen, CheckCircle2, Eye, FileUp, Lightbulb, PlayCircle, Route, Tag } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { BookOpen, CheckCircle2, Eye, FileUp, Lightbulb, Tag } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { courseManagementData, CoursePricingType, type CoursePricingTypeId } from "@/modules/admin/domain/data/courseManagementData";
-import { createCourseDraft } from "@/modules/admin/infrastructure/api/courseManagementApi";
+import { CoursePricingType, type CourseCreateDraft } from "@/modules/admin/domain/data/courseManagementData";
+import { createCourse, getCourseForEdit, updateCourse } from "@/modules/admin/infrastructure/api/courseApi";
+import { getSubjectsPage, type SubjectListItem } from "@/modules/admin/infrastructure/api/subjectApi";
+import {
+  getCountriesDropdown,
+  getEducationLevelsDropdown,
+  getUserManagementGradesDropdown,
+  getUserManagementUsers,
+  type UserManagementListRow,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
+import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { CourseSectionCard } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
+import { CourseAccessType, CourseTerm } from "@/shared/domain/enums/cms.enums";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -24,6 +34,8 @@ import { GiftIcon } from "../assets/icons/Gift";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const COURSE_COVER_UPLOAD_FOLDER = "courses";
+
 const pricingOptions: CoursePricingType[] = [
   {
     text: "free",
@@ -41,35 +53,295 @@ const pricingOptions: CoursePricingType[] = [
   },
 ]
 
-export function AdminCourseCreatePage() {
+const initialDraft: CourseCreateDraft = {
+  title: "",
+  description: "",
+  subject: "",
+  grade: "",
+  term: String(CourseTerm.FirstTerm),
+  teacher: "",
+  pricingType: "oneTime",
+  basePrice: "",
+  offerPrice: "",
+  // lessonCount/pathCount are intentionally kept out of the UI because `/api/v1/Course` does not accept them.
+  lessonCount: "",
+  pathCount: "",
+};
+
+type SelectOption = {
+  id: string;
+  label: string;
+};
+
+function toNumber(value: string): number | null {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function priceToNumber(value: string): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}
+
+function pricingTypeToAccessType(pricingType: CourseCreateDraft["pricingType"]): CourseAccessType {
+  if (pricingType === "free") return CourseAccessType.Free;
+  if (pricingType === "monthly") return CourseAccessType.Subscription;
+  return CourseAccessType.Paid;
+}
+
+function accessTypeToPricingType(accessType: CourseAccessType): CourseCreateDraft["pricingType"] {
+  if (accessType === CourseAccessType.Free) return "free";
+  if (accessType === CourseAccessType.Subscription) return "monthly";
+  return "oneTime";
+}
+
+interface Props {
+  courseId?: string;
+}
+
+export function AdminCourseCreatePage({ courseId }: Props = {}) {
+  const isEditMode = Boolean(courseId);
   const t = useTranslations("admin.dashboard.courseManagement");
   const router = useRouter();
   const coverInputRef = useRef<HTMLInputElement>(null);
-  const [activeStep, setActiveStep] = useState("basic");
-  const [draft, setDraft] = useState(courseManagementData.createDraft);
+  const activeStep = "basic";
+  const [draft, setDraft] = useState<CourseCreateDraft>(initialDraft);
   const [coverImage, setCoverImage] = useState<{ file: File | null; previewUrl: string | null }>({
     file: null,
     previewUrl: null,
   });
+  const [existingCoverImageUrl, setExistingCoverImageUrl] = useState("");
+  const [loadingCourse, setLoadingCourse] = useState(isEditMode);
+  const [courseLoadError, setCourseLoadError] = useState(false);
   const [coverUploadState, setCoverUploadState] = useState<"idle" | "loading" | "error">("idle");
   const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
   const [successOpen, setSuccessOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
+  const [subjects, setSubjects] = useState<SubjectListItem[]>([]);
+  const [gradeOptions, setGradeOptions] = useState<SelectOption[]>([]);
+  const [teacherOptions, setTeacherOptions] = useState<UserManagementListRow[]>([]);
 
   const update = (key: keyof typeof draft, value: string) => {
     setDraft((prev) => ({ ...prev, [key]: value }) as typeof prev);
   };
 
+  useEffect(() => {
+    if (!courseId) return;
+    let alive = true;
+    const load = async () => {
+      setLoadingCourse(true);
+      setCourseLoadError(false);
+      const result = await getCourseForEdit(courseId);
+      if (!alive) return;
+      if (result.errorMessage || !result.data) {
+        setCourseLoadError(true);
+        setLoadingCourse(false);
+        notify.error(result.errorMessage ?? t("create.edit.notFound"));
+        return;
+      }
+
+      const course = result.data;
+      setDraft({
+        title: course.title,
+        description: course.description,
+        subject: course.subjectId ? String(course.subjectId) : "",
+        grade: course.gradeId ? String(course.gradeId) : "",
+        term: String(course.term),
+        teacher: course.teacherId,
+        pricingType: accessTypeToPricingType(course.accessType),
+        basePrice: course.originalPrice ? String(course.originalPrice) : "",
+        offerPrice: course.discountedPrice ? String(course.discountedPrice) : "",
+        lessonCount: "",
+        pathCount: "",
+      });
+      setExistingCoverImageUrl(course.coverImageUrl);
+      if (course.coverImageUrl) {
+        setCoverImage({ file: null, previewUrl: course.coverImageUrl });
+      }
+      setLoadingCourse(false);
+    };
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, [courseId, t]);
+
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      const result = await getSubjectsPage({ pageNumber: 1, pageSize: 240 });
+      if (!alive) return;
+      if (!result.errorMessage && result.data) {
+        setSubjects(result.data.rows);
+      }
+    };
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      const teachers = await getUserManagementUsers({
+        roleId: "teacher",
+        pageNumber: 1,
+        pageSize: 240,
+      });
+      if (!alive) return;
+      if (!teachers.errorMessage && teachers.data) {
+        setTeacherOptions(teachers.data.rows);
+      }
+    };
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      const countries = await getCountriesDropdown();
+      if (!alive || countries.errorMessage || !countries.data?.length) return;
+      const country = countries.data[0];
+      if (!country) return;
+      const levelsRes = await getEducationLevelsDropdown(country.id);
+      if (!alive) return;
+      const levels = levelsRes.data ?? [];
+      const batches = await Promise.all(levels.map((level) => getUserManagementGradesDropdown(level.id)));
+      const byId = new Map<number, string>();
+      batches.forEach((batch, index) => {
+        const levelName = levels[index]?.name ?? "";
+        const prefix = levelName.trim() ? `${levelName.trim()} — ` : "";
+        (batch.data ?? []).forEach((grade) => {
+          const id = typeof grade.id === "number" ? grade.id : Number(grade.id);
+          if (!Number.isNaN(id) && !byId.has(id)) {
+            byId.set(id, `${prefix}${grade.name}`);
+          }
+        });
+      });
+      if (!alive) return;
+      setGradeOptions(Array.from(byId.entries()).map(([id, label]) => ({ id: String(id), label })));
+    };
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const subjectOptions = useMemo<SelectOption[]>(
+    () => subjects.map((subject) => ({ id: String(subject.id), label: subject.nameAr || subject.nameEn })),
+    [subjects],
+  );
+
+  const teacherSelectOptions = useMemo<SelectOption[]>(
+    () => teacherOptions.map((teacher) => ({ id: teacher.id, label: teacher.fullName })),
+    [teacherOptions],
+  );
+
+  const termOptions = useMemo<SelectOption[]>(
+    () => [
+      { id: String(CourseTerm.FirstTerm), label: t("create.options.term.term1") },
+      { id: String(CourseTerm.SecondTerm), label: t("create.options.term.term2") },
+      { id: String(CourseTerm.ThirdTerm), label: t("create.options.term.term3") },
+    ],
+    [t],
+  );
+
+  const selectedSubjectLabel = subjectOptions.find((option) => option.id === draft.subject)?.label ?? "—";
+  const selectedGradeLabel = gradeOptions.find((option) => option.id === draft.grade)?.label ?? "—";
+
   const submit = async () => {
     if (submitting) return;
+    const subjectId = toNumber(draft.subject);
+    const gradeId = toNumber(draft.grade);
+    const term = toNumber(draft.term);
+    if (!draft.title.trim() || !draft.description.trim() || subjectId === null || gradeId === null || term === null) {
+      notify.error(t("create.messages.validation"));
+      return;
+    }
+    if (!isEditMode && !draft.teacher) {
+      notify.error(t("create.messages.validation"));
+      return;
+    }
+
     setSubmitting(true);
-    const result = await createCourseDraft(draft);
+    let coverImageUrl = existingCoverImageUrl;
+    if (coverImage.file) {
+      setCoverUploadState("loading");
+      const upload = await uploadAdminFile(coverImage.file, COURSE_COVER_UPLOAD_FOLDER);
+      if (!upload.ok) {
+        setSubmitting(false);
+        setCoverUploadState("error");
+        setCoverUploadError(upload.errorMessage);
+        notify.error(upload.errorMessage);
+        return;
+      }
+      coverImageUrl = upload.filePath;
+      setCoverUploadState("idle");
+    }
+
+    const accessType = pricingTypeToAccessType(draft.pricingType);
+
+    if (isEditMode && courseId) {
+      const result = await updateCourse(courseId, {
+        id: courseId,
+        title: draft.title.trim(),
+        description: draft.description.trim(),
+        subjectId,
+        gradeId,
+        term: term as CourseTerm,
+        coverImageUrl,
+        accessType,
+        ...(accessType !== CourseAccessType.Free
+          ? {
+              originalPrice: priceToNumber(draft.basePrice),
+              discountedPrice: priceToNumber(draft.offerPrice),
+            }
+          : {}),
+      });
+      setSubmitting(false);
+      if (result.errorMessage || !result.data) {
+        notify.error(result.errorMessage ?? t("create.messages.updateError"));
+        return;
+      }
+      notify.success(t("create.messages.updateSuccess"));
+      router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId));
+      return;
+    }
+
+    const result = await createCourse({
+      title: draft.title.trim(),
+      description: draft.description.trim(),
+      subjectId,
+      gradeId,
+      term: term as CourseTerm,
+      teacherId: draft.teacher,
+      coverImageUrl,
+      accessType,
+      ...(accessType !== CourseAccessType.Free
+        ? {
+            originalPrice: priceToNumber(draft.basePrice),
+            discountedPrice: priceToNumber(draft.offerPrice),
+          }
+        : {}),
+      submitForReview: true,
+    });
     setSubmitting(false);
     if (result.errorMessage || !result.data) {
       notify.error(result.errorMessage ?? t("create.messages.error"));
       return;
     }
+    setCreatedCourseId(result.data.id);
     setSuccessOpen(true);
+  };
+
+  const handleStartLearningPath = () => {
+    if (!createdCourseId) return;
+    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(createdCourseId));
   };
 
   const handleCoverImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,31 +384,63 @@ export function AdminCourseCreatePage() {
     reader.readAsDataURL(file);
   };
 
+  if (loadingCourse) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
+      </div>
+    );
+  }
+
+  if (courseLoadError) {
+    return (
+      <div className="rounded-3xl border border-amber-100 bg-amber-50 p-8 text-center text-sm text-amber-900">
+        {t("create.edit.notFound")}
+      </div>
+    );
+  }
+
+  const cancelHref = isEditMode && courseId
+    ? ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId)
+    : ROUTES.ADMIN.COURSE_MANAGEMENT.LIST;
+
   return (
     <div className="space-y-7">
       <DashboardPageHeader
-        title={t("create.title")}
-        description={t("create.description")}
+        title={isEditMode ? t("create.edit.title") : t("create.title")}
+        description={isEditMode ? t("create.edit.description") : t("create.description")}
         breadcrumbs={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.courseManagement"), href: ROUTES.ADMIN.COURSE_MANAGEMENT.LIST },
-          { label: t("breadcrumbs.create") },
+          ...(isEditMode && courseId
+            ? [
+                {
+                  label: draft.title || t("create.preview.titleFallback"),
+                  href: ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId),
+                },
+                { label: t("breadcrumbs.edit") },
+              ]
+            : [{ label: t("breadcrumbs.create") }]),
         ]}
         action={
           <div className="flex gap-3">
             <Button
               variant="outline"
               className="h-12 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
-              onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.LIST)}
+              onClick={() => router.push(cancelHref)}
             >
-              {t("create.actions.saveDraft")}
+              {t("create.actions.cancel")}
             </Button>
             <Button
               className="h-12 rounded-xl bg-[#C8AC59] px-12 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
               onClick={() => void submit()}
               disabled={submitting}
             >
-              {submitting ? t("create.actions.saving") : t("create.actions.saveCourse")}
+              {submitting
+                ? t("create.actions.saving")
+                : isEditMode
+                  ? t("create.actions.updateCourse")
+                  : t("create.actions.saveCourse")}
             </Button>
           </div>
         }
@@ -149,9 +453,6 @@ export function AdminCourseCreatePage() {
           }, {
             text: "pricing",
             icon: <Tag />
-          }, {
-            text: "paths",
-            icon: <Route />
           }].map((step: { text: string, icon: React.ReactNode }, index: number) => (
             <div key={step.text} className={cn("flex items-center cursor-pointer justify-center", index > 0 ? "flex-1" : "")}>
               {index > 0 ? <div className="h-[2px] flex-1 bg-slate-200" /> : null}
@@ -182,7 +483,14 @@ export function AdminCourseCreatePage() {
               rows={4}
             />
             <div className="grid gap-4 md:grid-cols-2">
-              {(["grade", "term", "teacher", "subject"] as const).map((field) => (
+              {[
+                { field: "subject" as const, options: subjectOptions },
+                { field: "grade" as const, options: gradeOptions },
+                { field: "term" as const, options: termOptions },
+                ...(isEditMode
+                  ? []
+                  : [{ field: "teacher" as const, options: teacherSelectOptions }]),
+              ].map(({ field, options }) => (
                 <label key={field} className="space-y-2 text-right">
                   <span className="text-sm font-semibold text-slate-600">{t(`create.fields.${field}`)}</span>
                   <select
@@ -190,7 +498,12 @@ export function AdminCourseCreatePage() {
                     onChange={(event) => update(field, event.target.value)}
                     className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
                   >
-                    <option value={draft[field]}>{t(`create.options.${field}.${draft[field]}`)}</option>
+                    <option value="">{t(`create.placeholders.${field}`)}</option>
+                    {options.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </label>
               ))}
@@ -292,18 +605,17 @@ export function AdminCourseCreatePage() {
           </CourseSectionCard>
 
           <div className="flex justify-end gap-3">
-            <Button
-              variant="outline"
-              className="h-12 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
-              onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.LIST)}
-            >
-              {t("create.actions.saveDraft")}
-            </Button>
+            {/* Draft saving is not shown because `/api/v1/Course` currently creates with `submitForReview`. */}
             <Button
               className="h-12 rounded-xl bg-[#C8AC59] px-12 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
               onClick={() => void submit()}
+              disabled={submitting}
             >
-              {t("create.actions.saveCourse")}
+              {submitting
+                ? t("create.actions.saving")
+                : isEditMode
+                  ? t("create.actions.updateCourse")
+                  : t("create.actions.saveCourse")}
             </Button>
           </div>
         </main>
@@ -321,11 +633,11 @@ export function AdminCourseCreatePage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-white/10 p-3">
                   <p className="text-xs text-white/60">{t("create.preview.subject")}</p>
-                  <p className="font-semibold">{t(`create.options.subject.${draft.subject}`)}</p>
+                  <p className="font-semibold">{selectedSubjectLabel}</p>
                 </div>
                 <div className="rounded-xl bg-white/10 p-3">
                   <p className="text-xs text-white/60">{t("create.preview.grade")}</p>
-                  <p className="font-semibold">{t(`create.options.grade.${draft.grade}`)}</p>
+                  <p className="font-semibold">{selectedGradeLabel}</p>
                 </div>
               </div>
               <div className="rounded-xl bg-[#C8AC59] p-3 text-center font-bold flex gap-2 justify-between">
@@ -335,20 +647,7 @@ export function AdminCourseCreatePage() {
                 </p>
                 {draft.offerPrice}
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl bg-white/10 p-3 text-center">
-                  <p className="text-xl font-bold">{draft.lessonCount}</p>
-                  <p className="text-xs text-white/60">{t("create.preview.lessons")}</p>
-                </div>
-                <div className="rounded-xl bg-white/10 p-3 text-center">
-                  <p className="text-xl font-bold">{draft.pathCount}</p>
-                  <p className="text-xs text-white/60">{t("create.preview.paths")}</p>
-                </div>
-              </div>
-              <Button className="h-11 w-full rounded-2xl bg-white text-[#2C4260] hover:bg-white">
-                <BookOpen className="h-4 w-4" />
-                {t("create.preview.viewPath")}
-              </Button>
+              {/* Learning-path actions are hidden because the create-course API does not accept path data. */}
             </CardContent>
           </Card>
 
@@ -377,7 +676,7 @@ export function AdminCourseCreatePage() {
         <div className="mt-5 rounded-2xl bg-slate-50 p-3 text-sm text-slate-500">
           {t("create.success.info")}
         </div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <div className="mt-6 grid gap-3">
           <Button
             variant="outline"
             className="h-12 rounded-lg border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
@@ -385,8 +684,11 @@ export function AdminCourseCreatePage() {
           >
             {t("create.success.later")}
           </Button>
-          <Button className="h-12 rounded-lg bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]">
-            <PlayCircle className="h-4 w-4" />
+          <Button
+            className="h-12 rounded-lg bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
+            onClick={() => void handleStartLearningPath()}
+            disabled={!createdCourseId}
+          >
             {t("create.success.startPaths")}
           </Button>
         </div>

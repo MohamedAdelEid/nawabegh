@@ -7,20 +7,20 @@ import {
 import type { SidebarIcon } from "@/shared/domain/types/sidebar.types";
 import { IconTone } from "@/shared/domain/types/common.types";
 
-export type CourseStatusId = "pending" | "approved" | "rejected" | "draft";
-export type CourseAccessTypeId = "subscription" | "free" | "paid" | "unlisted";
+import type {
+  CourseAccessTypeId,
+  CourseReviewReasonId,
+  CourseStatusId,
+} from "@/shared/domain/enums/cms.mappers";
+
+export type { CourseAccessTypeId, CourseReviewReasonId, CourseStatusId };
+
 export type CoursePricingTypeId = "oneTime" | "monthly" | "free";
 export type CoursePricingType = {
   text: string;
   icon: React.ReactNode;
   iconTone: IconTone;
 };
-export type CourseReviewReasonId =
-  | "contentQuality"
-  | "incompleteMaterials"
-  | "technicalIssues"
-  | "policyConflict"
-  | "copyrightIssue";
 
 export interface CourseManagementStat {
   id: string;

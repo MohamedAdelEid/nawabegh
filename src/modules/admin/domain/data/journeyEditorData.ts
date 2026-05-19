@@ -3,6 +3,7 @@
 export type JourneyStationTypeId =
   | "flashcard"
   | "liveBroadcast"
+  | "shortQuiz"
   | "challenge"
   | "exam"
   | "helperFile";
@@ -32,11 +33,14 @@ export interface JourneyStation {
   name: string;
   type: JourneyStationTypeId;
   completionRule: JourneyStationCompletionRuleId;
-  completionValue?: number;
+  completionValue?: number | null;
   icon: JourneyStationIconId;
   access: JourneyStationAccessId;
   isSubscribersOnly: boolean;
   order: number;
+  autoUnlockOnPreviousComplete?: boolean;
+  completionThreshold?: number | null;
+  pointReward?: number;
 }
 
 // ─── Path ─────────────────────────────────────────────────────────────────────
@@ -77,6 +81,9 @@ export interface AddStationDraft {
   pathId: string;
   icon: JourneyStationIconId;
   isSubscribersOnly: boolean;
+  autoUnlockOnPreviousComplete: boolean;
+  completionThreshold: number;
+  pointReward: number;
 }
 
 // ─── Flashcard ────────────────────────────────────────────────────────────────
@@ -195,6 +202,7 @@ export interface ExamStation {
   passingGradePct: number;
   maxAttempts: "one" | "two" | "three" | "unlimited";
   randomOrder: boolean;
+  aiSourceFileUrl: string;
   totalPoints: number;
   questions: ExamQuestion[];
   sourceFiles: LiveBroadcastAttachment[];
@@ -323,6 +331,9 @@ export const defaultAddStationDraft: AddStationDraft = {
   pathId: "path-1",
   icon: "edit",
   isSubscribersOnly: false,
+  autoUnlockOnPreviousComplete: true,
+  completionThreshold: 100,
+  pointReward: 0,
 };
 
 // ─── Mock Flashcard Group ─────────────────────────────────────────────────────
@@ -449,6 +460,7 @@ export const mockExamStation: ExamStation = {
   passingGradePct: 75,
   maxAttempts: "one",
   randomOrder: true,
+  aiSourceFileUrl: "",
   totalPoints: 120,
   sourceFiles: [
     { id: "sf-1", name: "ملخص القوانين النهائية - الوحدة الأولى.pdf", type: "pdf", sizeLabel: "2.4 MB" },

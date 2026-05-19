@@ -18,12 +18,11 @@ import {
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { CourseReviewDetail } from "@/modules/admin/domain/data/courseManagementData";
-import { readLearningPathReviewSnapshot } from "@/modules/admin/domain/utils/learningPathModeration";
 import {
-  approveLearningPath,
-  getLearningPathById,
-  learningPathDetailToCourseReviewDetail,
-} from "@/modules/admin/infrastructure/api/learningPathsModerationApi";
+  approveCourse,
+  archiveCourse,
+  getCourseDetails,
+} from "@/modules/admin/infrastructure/api/courseApi";
 import {
   CourseMetricTile,
   CourseSectionCard,
@@ -37,8 +36,6 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
 export function AdminCourseReviewPage({ courseId }: { courseId: string }) {
-  /** Route segment is the learning-path id for moderation APIs. */
-  const learningPathId = courseId;
   const t = useTranslations("admin.dashboard.courseManagement");
   const router = useRouter();
   const [detail, setDetail] = useState<CourseReviewDetail | null>(null);
@@ -48,30 +45,40 @@ export function AdminCourseReviewPage({ courseId }: { courseId: string }) {
     let alive = true;
     const load = async () => {
       setLoadState("loading");
-      const snapshot = readLearningPathReviewSnapshot(learningPathId);
-      const result = await getLearningPathById(learningPathId);
+      const result = await getCourseDetails(courseId);
       if (!alive) return;
       if (result.errorMessage || !result.data) {
         setLoadState("notFound");
         return;
       }
-      const mapped = learningPathDetailToCourseReviewDetail(result.data, snapshot);
-      setDetail(mapped);
+      setDetail(result.data);
       setLoadState("success");
     };
     void load();
     return () => {
       alive = false;
     };
-  }, [learningPathId]);
+  }, [courseId]);
 
   const approve = async () => {
-    const result = await approveLearningPath(learningPathId);
+    const result = await approveCourse(courseId);
     if (result.errorMessage) {
       notify.error(result.errorMessage);
       return;
     }
     notify.success(t("messages.approved"));
+    router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.LIST);
+  };
+
+  const archive = async () => {
+    const ok = typeof window !== "undefined" ? window.confirm(t("table.confirmArchive")) : true;
+    if (!ok) return;
+    const result = await archiveCourse(courseId);
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      return;
+    }
+    notify.success(t("messages.archived"));
     router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.LIST);
   };
 
@@ -87,7 +94,7 @@ export function AdminCourseReviewPage({ courseId }: { courseId: string }) {
     );
   }
 
-  const canReview = detail.statusId === "pending";
+  const canReview = detail.statusId === "pending" || detail.statusId === "draft";
 
   return (
     <div className="space-y-7">
@@ -128,15 +135,26 @@ export function AdminCourseReviewPage({ courseId }: { courseId: string }) {
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button variant="outline" className="h-12 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]">
+            <Button
+              variant="outline"
+              className="h-12 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
+              onClick={() => void archive()}
+            >
               <Archive className="h-4 w-4" aria-hidden />
               {t("review.actions.archive")}
             </Button>
-            <Button variant="outline" className="h-12 rounded-xl border-[#2C4260] text-[#2C4260] shadow-[0px_4px_0px_0px_#1E2E42]">
+            <Button
+              variant="outline"
+              className="h-12 rounded-xl border-[#2C4260] text-[#2C4260] shadow-[0px_4px_0px_0px_#1E2E42]"
+              onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.EDIT(courseId))}
+            >
               <Pencil className="h-4 w-4" aria-hidden />
               {t("review.actions.editCourse")}
             </Button>
-            <Button className="h-12 rounded-xl bg-[#2C4260] px-5 text-white hover:bg-[#243751] shadow-[0px_4px_0px_0px_#1E2E42]">
+            <Button className="h-12 rounded-xl bg-[#2C4260] px-5 text-white hover:bg-[#243751] shadow-[0px_4px_0px_0px_#1E2E42]"
+              onClick={() => router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(courseId))}
+              >
+
               <BookOpen className="h-4 w-4" aria-hidden />
               {t("review.actions.viewPath")}
             </Button>

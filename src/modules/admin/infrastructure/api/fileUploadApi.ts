@@ -25,12 +25,23 @@ function readBoolean(record: UnknownRecord | null, keys: string[], fallback: boo
   return fallback;
 }
 
-/** Backend may return the payload at the root or under `data`. */
+function hasUploadPath(record: UnknownRecord | null): boolean {
+  return Boolean(readString(record, ["filePath", "fileUrl", "url", "path"], "").trim());
+}
+
+/** Backend may return the payload at the root, under `data`, or nested further. */
 function unwrapUploadRecord(data: unknown): UnknownRecord | null {
   const root = asRecord(data);
   if (!root) return null;
-  const nested = asRecord(root.data);
-  return nested ?? root;
+  if (hasUploadPath(root)) return root;
+
+  const level1 = asRecord(root.data);
+  if (level1 && hasUploadPath(level1)) return level1;
+
+  const level2 = level1 ? asRecord(level1.data) : null;
+  if (level2 && hasUploadPath(level2)) return level2;
+
+  return level1 ?? root;
 }
 
 export const QUESTION_BANK_UPLOAD_FOLDER = "questions";
@@ -59,12 +70,17 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       return { ok: false, errorMessage: "Invalid upload response" };
     }
 
-    const success = readBoolean(record, ["success"], false);
-    const filePath = readString(record, ["filePath"]);
+    const filePath = readString(record, ["filePath", "fileUrl", "url", "path"]);
     const message = readString(record, ["message"]);
+    const explicitSuccess = readBoolean(record, ["success"], false);
+    const hasPath = Boolean(filePath.trim());
 
-    if (!success || !filePath.trim()) {
+    // Some responses omit `success` but still return `filePath`.
+    if (!hasPath && !explicitSuccess) {
       return { ok: false, errorMessage: message.trim() || "Upload failed" };
+    }
+    if (!hasPath) {
+      return { ok: false, errorMessage: message.trim() || "Upload failed: missing file path" };
     }
 
     return { ok: true, filePath: filePath.trim(), message: message.trim() || undefined };

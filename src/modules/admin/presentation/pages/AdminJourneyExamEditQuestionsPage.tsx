@@ -6,18 +6,21 @@ import {
   GripVertical,
   Pencil,
   Plus,
-  Save,
   Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ExamQuestion, ExamStation, FlashcardDifficultyId } from "@/modules/admin/domain/data/journeyEditorData";
+import { exportExamQuestionsToPdf } from "@/modules/admin/domain/utils/exportExamQuestionsPdf";
+import { mapExamQuestionToUpdatePayload, mapQuizToExamStation } from "@/modules/admin/domain/utils/quizExamMappers";
 import {
-  deleteExamQuestion,
-  getExamStation,
-  saveExamStation,
-} from "@/modules/admin/infrastructure/api/journeyEditorApi";
+  deleteQuizQuestion,
+  getQuiz,
+  resolveQuizIdForStation,
+  updateQuizQuestion,
+} from "@/modules/admin/infrastructure/api/quizzesApi";
+import { AddExamQuestionModal } from "@/modules/admin/presentation/components/journey-editor/AddExamQuestionModal";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
@@ -43,24 +46,44 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
 
   const [exam, setExam] = useState<ExamStation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
-  useEffect(() => {
-    void (async () => {
-      const result = await getExamStation(stationId);
-      if (result.data) setExam(result.data);
+  const loadExam = useCallback(async () => {
+    setLoading(true);
+    const quizId = await resolveQuizIdForStation(stationId);
+    if (!quizId) {
+      setExam(null);
       setLoading(false);
-    })();
-  }, [stationId]);
-
-  const handleDelete = async (questionId: string) => {
-    const result = await deleteExamQuestion(questionId);
-    if (result.errorMessage) {
-      notify.error(result.errorMessage);
       return;
     }
+
+    const result = await getQuiz(quizId);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.loadError"));
+      setExam(null);
+      setLoading(false);
+      return;
+    }
+
+    setExam(mapQuizToExamStation(result.data, stationId));
+    setLoading(false);
+  }, [stationId, t]);
+
+  useEffect(() => {
+    void loadExam();
+  }, [loadExam]);
+
+  const handleDelete = async (questionId: string) => {
+    const result = await deleteQuizQuestion(questionId);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.deleteError"));
+      return;
+    }
+
+    notify.success(t("messages.deleteSuccess"));
     setExam((prev) =>
       prev ? { ...prev, questions: prev.questions.filter((q) => q.id !== questionId) } : prev,
     );
@@ -71,8 +94,24 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
     setEditText(question.text);
   };
 
-  const saveEdit = () => {
-    if (!editingId) return;
+  const saveEdit = async () => {
+    if (!exam || !editingId) return;
+
+    const question = exam.questions.find((item) => item.id === editingId);
+    if (!question) return;
+
+    setSavingEdit(true);
+    const result = await updateQuizQuestion(
+      question.id,
+      mapExamQuestionToUpdatePayload(question, { text: editText }),
+    );
+    setSavingEdit(false);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.updateError"));
+      return;
+    }
+
     setExam((prev) =>
       prev
         ? {
@@ -85,19 +124,18 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
     );
     setEditingId(null);
     setEditText("");
+    notify.success(t("messages.updateSuccess"));
   };
 
-  const handleSave = async () => {
+  const handleExportPdf = () => {
     if (!exam) return;
-    setSaving(true);
-    const result = await saveExamStation(stationId, exam);
-    setSaving(false);
-    if (result.errorMessage) {
-      notify.error(result.errorMessage);
-      return;
-    }
-    notify.success("Changes saved");
-    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_PREVIEW(journeyId, stationId));
+    exportExamQuestionsToPdf(exam, {
+      examTitle: t("pdf.examTitle"),
+      questionLabel: t("pdf.questionLabel"),
+      correctAnswer: t("pdf.correctAnswer"),
+      points: t("pdf.points"),
+      noQuestions: t("messages.noQuestionsForPdf"),
+    });
   };
 
   if (loading || !exam) {
@@ -132,23 +170,23 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
             <Button
               variant="outline"
               className="h-12 gap-2 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
+              onClick={handleExportPdf}
             >
               <Download className="h-4 w-4" />
               {t("actions.exportPdf")} PDF
             </Button>
             <Button
               className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
-              onClick={() => void handleSave()}
-              disabled={saving}
+              onClick={() =>
+                router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_PREVIEW(journeyId, stationId))
+              }
             >
-              <Save className="h-4 w-4" />
               {t("actions.saveChanges")}
             </Button>
           </div>
         }
       />
 
-      {/* Stats row */}
       <div className="grid gap-4 sm:grid-cols-3">
         {[
           {
@@ -178,14 +216,15 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
               <p className="text-xs text-slate-400">{label}</p>
               <p className={cn("mt-0.5 font-bold", className)}>
                 {value}
-                {suffix ? <span className="mr-1 text-xs font-normal text-slate-400">{suffix}</span> : null}
+                {suffix ? (
+                  <span className="mr-1 text-xs font-normal text-slate-400">{suffix}</span>
+                ) : null}
               </p>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Questions */}
       <div className="space-y-5">
         {exam.questions.map((question) => (
           <Card
@@ -193,7 +232,6 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
             className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]"
           >
             <CardContent className="space-y-4 p-5">
-              {/* Question header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <GripVertical className="h-4 w-4 text-slate-300" />
@@ -221,7 +259,6 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
                 </div>
               </div>
 
-              {/* Question text or edit mode */}
               {editingId === question.id ? (
                 <div className="space-y-3">
                   <p className="text-right text-sm font-semibold text-slate-600">
@@ -238,12 +275,14 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
                       type="button"
                       onClick={() => setEditingId(null)}
                       className="flex-1 rounded-xl border border-slate-200 py-2 text-sm text-slate-500 hover:bg-slate-50"
+                      disabled={savingEdit}
                     >
                       {t("question.cancel")}
                     </button>
                     <Button
                       className="flex-1 h-10 rounded-xl bg-[#C8AC59] text-sm text-white hover:bg-[#B79A46]"
-                      onClick={saveEdit}
+                      onClick={() => void saveEdit()}
+                      disabled={savingEdit}
                     >
                       {t("question.saveChanges")}
                     </Button>
@@ -253,7 +292,6 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
                 <p className="text-right font-semibold text-slate-800">{question.text}</p>
               )}
 
-              {/* Options */}
               {editingId !== question.id ? (
                 <div className="grid gap-2 sm:grid-cols-2">
                   {question.options.map((option) => {
@@ -285,7 +323,6 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
                 </div>
               ) : null}
 
-              {/* Actions */}
               {editingId !== question.id ? (
                 <div className="flex gap-2 border-t border-slate-100 pt-3">
                   <Button
@@ -309,9 +346,9 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
           </Card>
         ))}
 
-        {/* Add new question placeholder */}
         <button
           type="button"
+          onClick={() => setAddModalOpen(true)}
           className={cn(
             "flex w-full flex-col items-center justify-center gap-2 rounded-[1.75rem] border-2 border-dashed border-slate-200 py-8",
             "text-sm font-semibold text-slate-400 transition-colors hover:border-[#C8AC59]/70 hover:text-[#C8AC59]",
@@ -321,6 +358,13 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
           {t("addQuestion")}
         </button>
       </div>
+
+      <AddExamQuestionModal
+        open={addModalOpen}
+        quizId={exam.id}
+        onClose={() => setAddModalOpen(false)}
+        onAdded={() => void loadExam()}
+      />
     </div>
   );
 }

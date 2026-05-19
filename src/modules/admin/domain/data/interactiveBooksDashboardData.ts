@@ -29,7 +29,9 @@ export interface InteractiveBooksRow {
 export type InteractiveBookTableRow = {
   id: string;
   title: string;
+  courseId: string;
   courseTitle: string;
+  gradeId: number;
   gradeName: string;
   pageCount: number;
   hotspotCount: number;
@@ -38,6 +40,12 @@ export type InteractiveBookTableRow = {
   createdAt: string;
   /** Original PDF filename when the API returns it (optional). */
   pdfFileName?: string;
+};
+
+/** Full book payload from `GET /api/v1/InteractiveBook/course/{courseId}`. */
+export type InteractiveBookDetail = InteractiveBookTableRow & {
+  pdfUrl: string;
+  updatedAt: string;
 };
 
 export interface InteractiveBooksDashboardData {

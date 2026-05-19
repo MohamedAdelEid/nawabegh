@@ -670,6 +670,7 @@
         "home": "Home",
         "courseManagement": "Course management",
         "create": "Add course",
+        "edit": "Edit course",
         "reject": "Reject course",
         "rejectionDetails": "Rejection decision details"
       },
@@ -698,31 +699,31 @@
           "indicator": "This month"
         },
         "learningPathsTotal": {
-          "label": "Total learning paths",
+          "label": "Total courses",
           "indicator": "Moderation"
         },
         "learningPathsPending": {
-          "label": "Awaiting moderation",
+          "label": "Pending courses",
           "indicator": "Needs review"
         },
         "learningPathsApproved": {
-          "label": "Approved paths",
+          "label": "Approved courses",
           "indicator": "Published"
         },
         "learningPathsRejected": {
-          "label": "Rejected paths",
+          "label": "Rejected courses",
           "indicator": "Needs rework"
         },
         "learningPathsDraft": {
-          "label": "Draft paths",
+          "label": "Draft courses",
           "indicator": "Unpublished"
         }
       },
       "filters": {
         "openAdvanced": "Open advanced filters",
         "stages": {
-          "label": "Stage",
-          "all": "All stages"
+          "label": "Grade",
+          "all": "All grades"
         },
         "subjects": {
           "label": "Subject",
@@ -732,18 +733,39 @@
           "label": "Status",
           "all": "All statuses"
         },
+        "terms": {
+          "label": "Term",
+          "all": "All terms",
+          "first": "First term",
+          "second": "Second term",
+          "third": "Third term"
+        },
+        "teachers": {
+          "label": "Teacher",
+          "all": "All teachers"
+        },
+        "accessTypes": {
+          "label": "Access type",
+          "all": "All access types"
+        },
+        "publishing": {
+          "label": "Publishing status",
+          "all": "All",
+          "published": "Published",
+          "unpublished": "Unpublished"
+        },
         "search": {
           "label": "Quick search",
           "placeholder": "Search by course title or teacher..."
         }
       },
       "table": {
-        "title": "Learning paths list",
+        "title": "Courses list",
         "loading": "Loading courses...",
         "empty": "No matching courses.",
         "loadError": "Could not load courses. Please try again.",
         "columns": {
-          "title": "Path title",
+          "title": "Course title",
           "teacher": "Teacher",
           "subject": "Subject / stage",
           "access": "Access type",
@@ -753,8 +775,7 @@
         "actions": {
           "approve": "Approve",
           "reject": "Reject",
-          "rejectionDetails": "Rejection details",
-          "delete": "Delete course",
+          "archive": "Archive course",
           "edit": "Edit course",
           "view": "View course",
           "more": "More actions"
@@ -764,7 +785,7 @@
           "previous": "Previous page",
           "next": "Next page"
         },
-        "confirmDelete": "Delete this learning path? This cannot be undone."
+        "confirmArchive": "Archive this course? It can be hidden from publishing lists."
       },
       "access": {
         "subscription": "Subscription",
@@ -776,21 +797,23 @@
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected",
-        "draft": "Draft"
+        "draft": "Draft",
+        "archived": "Archived"
       },
       "messages": {
         "approved": "Course approved successfully.",
         "rejected": "Course rejected and notes sent.",
-        "deleted": "Learning path deleted."
+        "rejectError": "Could not reject the course. Please try again.",
+        "archived": "Course archived successfully."
       },
       "review": {
         "loading": "Loading course review...",
         "notFound": "The requested course could not be found.",
-        "title": "Review learning path",
+        "title": "Review course",
         "description": "Review content and curriculum before approving publication or rejecting it.",
         "teacherLabel": "Course teacher",
         "actions": {
-          "viewPath": "View learning path",
+          "viewPath": "View course content",
           "editCourse": "Edit course",
           "archive": "Archive"
         },
@@ -808,13 +831,13 @@
         },
         "metrics": {
           "subject": "Subject",
-          "stage": "Stage",
+          "stage": "Grade",
           "lessons": "Total lessons",
           "price": "Price"
         },
         "curriculum": {
-          "title": "Learning path",
-          "empty": "Detailed stations are managed in Journey editor. Curriculum preview is unavailable on this moderation view."
+          "title": "Course content",
+          "empty": "Detailed content is not available for this course yet."
         }
       },
       "create": {
@@ -822,7 +845,9 @@
         "description": "Fill in the required details to launch the next learning journey.",
         "actions": {
           "saveDraft": "Save as draft",
+          "cancel": "Cancel",
           "saveCourse": "Save course",
+          "updateCourse": "Save changes",
           "saving": "Saving..."
         },
         "sections": {
@@ -841,20 +866,17 @@
         },
         "placeholders": {
           "title": "Example: Advanced mathematics for grade 11",
-          "description": "Write a complete description of objectives and learning outcomes..."
+          "description": "Write a complete description of objectives and learning outcomes...",
+          "subject": "Select subject",
+          "grade": "Select grade",
+          "term": "Select term",
+          "teacher": "Select teacher"
         },
         "options": {
-          "grade": {
-            "secondary2": "Second secondary"
-          },
           "term": {
-            "term2": "Second term"
-          },
-          "teacher": {
-            "teacher-ahmed": "Dr. Ahmed Al-Rafei"
-          },
-          "subject": {
-            "mathematics": "Mathematics"
+            "term1": "First term",
+            "term2": "Second term",
+            "term3": "Third term"
           }
         },
         "pricing": {
@@ -884,20 +906,30 @@
           "paid": "Paid"
         },
         "steps": {
-          "paths": "Learning paths",
           "pricing": "Pricing and access",
           "basic": "Basic information"
         },
         "tip": "Expert tip: adding a strong cover image increases registration and engagement.",
         "messages": {
-          "error": "Could not create the course. Please try again."
+          "validation": "Please fill course title, description, subject, grade, term, and teacher.",
+          "error": "Could not create the course. Please try again.",
+          "updateSuccess": "Course updated successfully.",
+          "updateError": "Could not update the course. Please try again."
+        },
+        "edit": {
+          "title": "Edit course",
+          "description": "Update the course details below.",
+          "notFound": "Course could not be loaded."
         },
         "success": {
           "title": "Course created successfully!",
-          "description": "The course is now prepared as a draft. You can add learning stations before publishing.",
-          "info": "You can preview and reorder stations to ensure a successful learning experience.",
+          "description": "The course has been created and submitted according to the review settings.",
+          "info": "Return to the courses list to follow its review status.",
           "later": "Continue later",
-          "startPaths": "Start adding paths"
+          "startPaths": "Go to Journey of Excellence editor",
+          "creatingPath": "Creating Journey of Excellence...",
+          "defaultPathTitle": "Journey of Excellence",
+          "pathError": "Could not create the Journey of Excellence. Please try again."
         }
       },
       "reject": {
@@ -1143,26 +1175,63 @@
           "editBook": "Edit book"
         },
         "edit": {
+          "description": "Editing “{title}” — manage PDF and interaction points.",
           "loadError": "Could not load this book. Try again from the list.",
           "notFound": "This book was not found.",
           "courseContext": "{course} · {grade}"
         },
         "actions": {
-          "addBook": "Add new book"
+          "addBook": "Add new book",
+          "saveBook": "Save book"
         },
         "config": {
+          "sectionTitle": "Book settings",
+          "bookTitleLabel": "Book title",
+          "courseLabel": "Course",
           "subjectLabel": "Select subject",
           "subjectOptions": {
             "chemistryGrade2": "Chemistry basics — Second secondary grade"
           },
           "pdfLabel": "Book file (PDF)",
-          "changeFile": "Change file"
+          "pdfPlaceholder": "No file selected",
+          "viewFile": "View PDF",
+          "changeFile": "Change file",
+          "uploadPdf": "Upload PDF",
+          "subjectPlaceholder": "Select a subject",
+          "subjectsLoading": "Loading subjects…",
+          "subjectsLoadError": "Could not load subjects",
+          "pdfUploading": "Uploading PDF…",
+          "pdfInvalidType": "Please choose a PDF file only.",
+          "pdfTooLarge": "PDF must be 50 MB or smaller.",
+          "coursePlaceholder": "Select a course",
+          "coursesLoading": "Loading courses…",
+          "coursesLoadError": "Could not load courses",
+          "statusLabel": "Book status",
+          "statusDraft": "Draft",
+          "statusPublished": "Published"
+        },
+        "create": {
+          "titleRequired": "Book title is required.",
+          "subjectRequired": "Please select a subject.",
+          "courseRequired": "Please select a course.",
+          "pdfRequired": "Please upload a PDF file.",
+          "pdfStillUploading": "Wait for the PDF upload to finish.",
+          "success": "Interactive book created successfully.",
+          "error": "Could not create the interactive book."
         },
         "viewer": {
           "pageOf": "Page {current} of {total}",
           "zoomIn": "Zoom in",
           "zoomOut": "Zoom out",
           "addInteractionPoint": "Add interaction point",
+          "cancelPlacement": "Cancel placement",
+          "prevPage": "Previous page",
+          "nextPage": "Next page",
+          "noPdf": "Upload a PDF file to preview the book.",
+          "loading": "Loading PDF…",
+          "loadError": "Could not load the PDF file.",
+          "placementHint": "Click on the page to place an interaction point.",
+          "saveBookFirst": "Save the interactive book before adding hotspots.",
           "chapterTitle": "Chapter three: Chemical bonds",
           "overlayCaption": "Illustration of a methane molecule"
         },
@@ -1184,10 +1253,51 @@
           "hidden": "Hidden from students",
           "deletePoint": "Delete point",
           "editPoint": "Edit point",
-          "addNew": "Add new point"
+          "addNew": "Add new point",
+          "pageLabel": "Page {page}",
+          "empty": "No interaction points on this book yet.",
+          "activeLabel": "Active",
+          "deleteSuccess": "Interaction point deleted.",
+          "deleteError": "Could not delete interaction point.",
+          "toggleError": "Could not update interaction point status.",
+          "toggleSuccess": "Interaction point status updated."
         },
         "tip": {
           "body": "Studies show that adding videos of no more than 3 minutes to interaction points increases student comprehension of difficult concepts by 40%."
+        }
+      },
+      "hotspotModal": {
+        "title": "Add interaction point",
+        "close": "Close",
+        "positionHint": "Page {page} · position {x}%, {y}% · size {size}%",
+        "fields": {
+          "title": {
+            "label": "Point title",
+            "placeholder": "Example: Polar bond explanation"
+          },
+          "videoUrl": {
+            "label": "Video URL",
+            "placeholder": "https://..."
+          },
+          "active": {
+            "label": "Active",
+            "on": "Active",
+            "off": "Inactive"
+          },
+          "visibility": {
+            "label": "Student visibility",
+            "visible": "Visible",
+            "hidden": "Hidden"
+          }
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "save": "Save point",
+          "saving": "Saving…"
+        },
+        "messages": {
+          "createSuccess": "Interaction point added.",
+          "createError": "Could not add interaction point."
         }
       }
     },
@@ -2091,7 +2201,7 @@
       },
       "courseManagement": {
         "title": "Course management",
-        "description": "Manage, review, and approve learning paths."
+        "description": "Manage, review, and approve educational courses."
       },
       "articleEditor": {
         "title": "Article editor",
@@ -2129,7 +2239,8 @@
         "challengeEditor": "Challenge Editor",
         "examEditor": "Exam Editor",
         "examPreview": "Preview Exam Questions",
-        "examEditQuestions": "Edit Exam Questions"
+        "examEditQuestions": "Edit Exam Questions",
+        "helperResourceEditor": "Helper Resource"
       },
       "dashboard": {
         "readyBadge": "{percent}% ready",
@@ -2152,8 +2263,11 @@
           "stationNamePlaceholder": "e.g. Memory Challenge",
           "stationType": "Station Type",
           "completionRule": "Completion Rule",
+          "completionThreshold": "Threshold",
+          "pointReward": "Point Reward",
           "path": "Path",
           "subscribersOnly": "Subscribers Only",
+          "autoUnlock": "Auto Unlock",
           "createStation": "Create Station",
           "createPath": "Create New Path",
           "newPathPlaceholder": "New path name...",
@@ -2168,6 +2282,7 @@
         "stationTypes": {
           "flashcard": "Flashcards",
           "liveBroadcast": "Live Broadcast",
+          "shortQuiz": "Short Quiz",
           "challenge": "Challenge",
           "exam": "Exam",
           "helperFile": "Helper Files"
@@ -2181,7 +2296,8 @@
         "path": {
           "stationsCount": "{count} stations added",
           "minutes": "min",
-          "addStation": "Add new station to this section"
+          "addStation": "Add new station to this section",
+          "deletePath": "Delete learning path"
         },
         "station": {
           "dragHandleAria": "Drag to reorder stations",
@@ -2200,11 +2316,20 @@
           "typeLabels": {
             "flashcard": "Flashcards",
             "liveBroadcast": "Live Broadcast",
+            "shortQuiz": "Short Quiz",
             "challenge": "Challenge",
             "exam": "Exams",
             "helperFile": "Helper Files"
           }
         }
+      },
+      "messages": {
+        "stationNameRequired": "Station name is required.",
+        "pathRequired": "Path is required.",
+        "stationCreateError": "Failed to create station.",
+        "stationDeleteError": "Failed to delete station.",
+        "pathDeleteError": "Failed to delete learning path.",
+        "stationAdded": "Station created successfully."
       },
       "addStationModal": {
         "title": "Add New Station to Path",
@@ -2213,13 +2338,28 @@
         "stationType": "Station Type",
         "iconPicker": "Choose Icon",
         "completionRule": "Completion Rule",
+        "completionThreshold": "Threshold",
+        "pointReward": "Point Reward",
+        "autoUnlock": "Auto Unlock on Previous Complete",
         "permissions": "Permissions",
         "subscribersOnly": "Subscribers only",
-        "addStation": "Add Station",
+        "addStation": "Create Station",
+        "cancel": "Cancel"
+      },
+      "addLearningPathModal": {
+        "title": "Create New Learning Path",
+        "description": "Add a learning path to this course and set its display order.",
+        "pathTitle": "Path Title",
+        "pathTitlePlaceholder": "e.g. Introduction to Physics",
+        "order": "Order",
+        "orderPlaceholder": "e.g. 2",
+        "create": "Create Path",
+        "creating": "Creating...",
         "cancel": "Cancel"
       },
       "flashcardGroup": {
         "title": "Preview Card Group: {title}",
+        "emptyTitle": "Flashcard Deck",
         "description": "Organize lessons and educational stations to build a unique learning experience.",
         "actions": {
           "publish": "Publish Group",
@@ -2243,19 +2383,43 @@
           "easy": "Easy",
           "medium": "Medium",
           "hard": "Hard"
+        },
+        "createDeckModal": {
+          "title": "Create Flashcard Deck",
+          "description": "Create a deck for this station before adding cards. This window stays open until the deck is created.",
+          "deckTitle": "Deck Title",
+          "deckTitlePlaceholder": "Write the deck title here...",
+          "difficulty": "Average Difficulty",
+          "create": "Create Deck",
+          "titleRequired": "Deck title is required.",
+          "createSuccess": "Flashcard deck created successfully.",
+          "createError": "Failed to create flashcard deck."
         }
       },
       "flashcardAdd": {
-        "title": "Add New Flashcard",
-        "description": "Organize lessons and educational stations to build a unique learning experience.",
+        "title": "Create Flashcard Deck",
+        "description": "Create a flashcard deck for this station and optionally let AI generate the initial cards.",
         "actions": {
-          "saveAndAddAnother": "Save and Add Another",
-          "addToGroup": "Add to Group and Go Back"
+          "saveAndAddAnother": "Save Card and Continue",
+          "addToGroup": "Save Card and Go Back"
         },
         "completionRate": "Station Completion Rate",
         "completionRateLabel": "{value}% of correct answers",
-        "aiGenerate": "Generate Question with AI",
+        "aiGenerate": "Generate Deck with AI",
+        "messages": {
+          "deckTitleRequired": "Deck title is required.",
+          "deckIdRequired": "Deck id is missing from the URL.",
+          "titleRequired": "Card front is required.",
+          "deckCreateSuccess": "Flashcard deck created successfully.",
+          "cardCreateSuccess": "Flashcard card saved successfully.",
+          "createError": "Failed to create flashcard deck.",
+          "cardCreateError": "Failed to save flashcard card.",
+          "aiUnavailable": "AI generation should start from the flashcard deck setup."
+        },
         "fields": {
+          "deckTitle": "Flashcard Deck Title",
+          "deckTitlePlaceholder": "Write the deck title here...",
+          "cardCount": "Number of Cards",
           "front": "Question (Front Face)",
           "frontPlaceholder": "Write the question here...",
           "back": "Answer (Back Face)",
@@ -2392,11 +2556,33 @@
         "description": "Create different challenge stations for your students.",
         "actions": {
           "saveChallenge": "Save Challenge",
+          "createChallenge": "Create Challenge",
+          "generateQuestions": "Generate Questions",
           "previewChallenge": "Preview Challenge",
           "saveAndPublish": "Save and Publish Challenge"
         },
+        "emptyState": {
+          "title": "No challenge yet",
+          "description": "Configure the settings below, then create a challenge for this station."
+        },
+        "messages": {
+          "saveSuccess": "Challenge created successfully",
+          "saveError": "Failed to create challenge",
+          "stationNameRequired": "Station name is required. Create or rename the station in the journey editor first.",
+          "scheduleRequired": "Start and end dates are required",
+          "scheduleTimeRequired": "Start and end times are required",
+          "scheduleInvalid": "Invalid schedule date or time",
+          "scheduleEndBeforeStart": "End must be after the start date and time",
+          "timezoneRequired": "Please select a timezone",
+          "generateQuestionsSuccess": "Question generation started",
+          "generateQuestionsError": "Failed to generate questions",
+          "challengeRequiredForQuestions": "Create the challenge first before generating questions"
+        },
         "sidebar": {
           "title": "Challenge Summary",
+          "stationTitle": "Station",
+          "schedule": "Schedule",
+          "scheduleValue": "{startDate} {startTime} → {endDate} {endTime} ({timezone})",
           "type": "Challenge Type",
           "questionsCount": "Questions Count",
           "questions": "questions",
@@ -2411,17 +2597,30 @@
         "sections": {
           "type": "Choose Challenge Type",
           "settings": "Challenge Settings",
+          "schedule": "Challenge Schedule",
           "sources": "Upload Files and Sources"
+        },
+        "schedule": {
+          "startDate": "Start date",
+          "endDate": "End date",
+          "startTime": "Start time",
+          "endTime": "End time",
+          "timezone": "Timezone",
+          "timezonePlaceholder": "Select timezone",
+          "datePlaceholder": "Select date"
         },
         "types": {
           "timeChallenge": "Time Challenge",
+          "timeChallengeDescription": "Focus on answering before the time runs out",
           "timeDescription": "Focus on answering before the time runs out",
           "shortQuiz": "Short Quiz",
           "shortQuizDescription": "Measure deep understanding of the subject",
           "speedChallenge": "Speed Challenge",
+          "speedChallengeDescription": "Direct competition between students",
           "speedDescription": "Direct competition between students"
         },
         "settings": {
+          "stationTitle": "Station title",
           "questionsCount": "Questions Count",
           "duration": "Challenge Duration (minutes)",
           "difficulty": "Difficulty Level"
@@ -2434,15 +2633,35 @@
         "upload": {
           "drag": "Drag educational files here or click to browse",
           "formats": "PDF, PPTX, MP4",
-          "maxSize": "Max 100 MB per file"
+          "maxSize": "Max 100 MB per file",
+          "uploaded": "Uploaded successfully",
+          "invalidFormat": "Only PDF, PPTX, and MP4 files are allowed",
+          "maxSizeExceeded": "File exceeds the 100 MB limit"
         }
       },
       "examEditor": {
         "title": "Exam Editor",
         "description": "Create an interactive exam station for your students.",
         "actions": {
+          "createExam": "Create Exam",
+          "generateQuestions": "Generate Questions",
           "saveAndPublish": "Save and Create Exam",
-          "preview": "Preview Full Exam"
+          "preview": "Preview Full Exam",
+          "saveSettings": "Save Settings"
+        },
+        "emptyState": {
+          "title": "No exam yet",
+          "description": "Configure the settings below, then create an exam for this station."
+        },
+        "messages": {
+          "saveSuccess": "Exam created successfully",
+          "saveError": "Failed to create exam",
+          "settingsSaveSuccess": "Exam settings saved successfully",
+          "settingsSaveError": "Failed to save exam settings",
+          "titleRequired": "Exam name is required",
+          "generateQuestionsSuccess": "Question generation started",
+          "generateQuestionsError": "Failed to generate questions",
+          "quizRequiredForAi": "Create the exam first before generating questions"
         },
         "sidebar": {
           "title": "Exam Summary",
@@ -2484,7 +2703,10 @@
         "upload": {
           "drag": "Drag educational files here or click to browse",
           "formats": "PDF, PPTX, MP4",
-          "maxSize": "Max 100 MB per file"
+          "maxSize": "Max 100 MB per file",
+          "uploaded": "Uploaded successfully",
+          "invalidFormat": "Only PDF, PPTX, and MP4 files are allowed",
+          "maxSizeExceeded": "File exceeds the 100 MB limit"
         },
         "aiButton": "Fill Questions with AI",
         "bankButton": "Fill from Question Bank",
@@ -2524,10 +2746,23 @@
           "randomOrder": "Random Order",
           "randomOrderDesc": "Shuffle question order",
           "enabled": "Enabled",
+          "disabled": "Disabled",
           "totalPoints": "Total Points"
         },
         "readyBadge": "Ready to Publish",
-        "readyDesc": "All questions and correct answers have been verified."
+        "readyDesc": "All questions and correct answers have been verified.",
+        "messages": {
+          "loadError": "Failed to load exam",
+          "settingsSaveSuccess": "Settings saved",
+          "settingsSaveError": "Failed to save settings",
+          "noQuestionsForPdf": "Add at least one question before exporting PDF"
+        },
+        "pdf": {
+          "examTitle": "Exam",
+          "questionLabel": "Question",
+          "correctAnswer": "Correct answer",
+          "points": "Points"
+        }
       },
       "examEditQuestions": {
         "title": "Edit Exam Questions: {name}",
@@ -2556,6 +2791,41 @@
           "cancel": "Cancel"
         },
         "addQuestion": "Add New Question",
+        "messages": {
+          "loadError": "Failed to load exam questions",
+          "deleteSuccess": "Question deleted",
+          "deleteError": "Failed to delete question",
+          "updateSuccess": "Question updated",
+          "updateError": "Failed to update question",
+          "noQuestionsForPdf": "Add at least one question before exporting PDF"
+        },
+        "pdf": {
+          "examTitle": "Exam",
+          "questionLabel": "Question",
+          "correctAnswer": "Correct answer",
+          "points": "Points"
+        },
+        "addModal": {
+          "title": "Add New Question",
+          "questionType": "Question type",
+          "multipleChoice": "Multiple choice",
+          "trueFalse": "True or false",
+          "questionText": "Question text",
+          "points": "Points",
+          "difficulty": "Difficulty",
+          "trueOption": "True",
+          "falseOption": "False",
+          "choicePlaceholder": "Choice {index}",
+          "cancel": "Cancel",
+          "submit": "Add question",
+          "saveSuccess": "Question added",
+          "saveError": "Failed to add question",
+          "validation": {
+            "textRequired": "Question text is required",
+            "choicesRequired": "All choices must have text",
+            "correctRequired": "Select a correct answer"
+          }
+        },
         "difficulty": {
           "easy": "Easy",
           "medium": "Medium",
@@ -2960,6 +3230,7 @@
         "breadcrumbs": {
           "home": "Home",
           "content": "Manage helper files",
+          "journeyEditor": "Journey editor",
           "add": "Add",
           "edit": "Edit"
         },
@@ -2971,6 +3242,15 @@
           "step1": "Link selected course",
           "step2": "Upload educational files",
           "step3": "Define access policy"
+        },
+        "stationContext": {
+          "addTitle": "Add helper file to station",
+          "pageDescription": "Create a helper resource file for this journey station.",
+          "title": "Station context",
+          "step1": "Create or upload the helper resource",
+          "step2": "Keep the resource ready for station attachment",
+          "step3": "Return to the journey editor",
+          "note": "The file is created in helper file management. The station attach API will be wired when the backend contract is available."
         },
         "sections": {
           "linkCourse": "Link course",

@@ -1,4 +1,5 @@
-import { AdminCourseRejectionDetailsPage } from "@/modules/admin/presentation/pages/AdminCourseRejectionDetailsPage";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 type CourseRejectionDetailsRouteParams = {
   params: Promise<{ courseId: string }>;
@@ -8,5 +9,5 @@ export default async function CourseRejectionDetailsRoute({
   params,
 }: CourseRejectionDetailsRouteParams) {
   const { courseId } = await params;
-  return <AdminCourseRejectionDetailsPage courseId={courseId} />;
+  redirect(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId));
 }

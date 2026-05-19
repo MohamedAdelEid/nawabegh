@@ -7,17 +7,19 @@ import {
   Sparkles,
 } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { FlashCard, FlashcardDifficultyId } from "@/modules/admin/domain/data/journeyEditorData";
+import type { FlashcardDifficultyId } from "@/modules/admin/domain/data/journeyEditorData";
 import {
-  addFlashCard,
-  generateFlashCardsWithAi,
-} from "@/modules/admin/infrastructure/api/journeyEditorApi";
+  createFlashcardDeckCard,
+  type FlashcardDeckCardAttachmentPayload,
+} from "@/modules/admin/infrastructure/api/flashcardDecksApi";
+import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -30,7 +32,6 @@ import {
 interface Props {
   journeyId: string;
   stationId: string;
-  groupId?: string;
 }
 
 const DIFFICULTY_OPTIONS: FlashcardDifficultyId[] = ["easy", "medium", "hard"];
@@ -38,50 +39,127 @@ const CARD_COUNT_OPTIONS = [5, 10, 15, 20];
 const REVIEW_TIME_OPTIONS = [10, 15, 20, 30];
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"] as const;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const FLASHCARD_IMAGE_UPLOAD_FOLDER = "flashcard-cards/images";
+const FLASHCARD_ATTACHMENT_UPLOAD_FOLDER = "flashcard-cards/attachments";
+
+const DIFFICULTY_TO_API: Record<FlashcardDifficultyId, DifficultyLevel> = {
+  easy: DifficultyLevel.Easy,
+  medium: DifficultyLevel.Medium,
+  hard: DifficultyLevel.Hard,
+};
+
+type FlashcardDraft = {
+  front: string;
+  back: string;
+  difficulty: FlashcardDifficultyId;
+  reviewTime: number;
+  imageFile: File | null;
+  imagePreviewUrl: string | null;
+  imageMeta: { name: string; size: string } | null;
+  attachmentFile: File | null;
+  attachmentMeta: { name: string; size: string; extension: string; sizeBytes: number } | null;
+  savedCardId: string | null;
+};
+
+function createEmptyFlashcardDraft(): FlashcardDraft {
+  return {
+    front: "",
+    back: "",
+    difficulty: "medium",
+    reviewTime: 15,
+    imageFile: null,
+    imagePreviewUrl: null,
+    imageMeta: null,
+    attachmentFile: null,
+    attachmentMeta: null,
+    savedCardId: null,
+  };
+}
+
+function getFileExtension(fileName: string) {
+  const extension = fileName.split(".").pop();
+  return extension ? extension.toLowerCase() : "";
+}
 
 export function AdminJourneyFlashcardAddPage({
   journeyId,
   stationId,
-  groupId = "fcg-1",
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const deckIdFromUrl = searchParams.get("deckId")?.trim() || null;
 
-  const [front, setFront] = useState("");
-  const [back, setBack] = useState("");
-  const [difficulty, setDifficulty] = useState<FlashcardDifficultyId>("medium");
-  const [reviewTime, setReviewTime] = useState(15);
-  const [completionPct, setCompletionPct] = useState(70);
+  const [deckId, setDeckId] = useState<string | null>(deckIdFromUrl);
+  const [cardCount, setCardCount] = useState(1);
+  const [selectedCardIndex, setSelectedCardIndex] = useState(0);
+  const [cards, setCards] = useState<FlashcardDraft[]>(() =>
+    Array.from({ length: 10 }, () => createEmptyFlashcardDraft()),
+  );
   const [saving, setSaving] = useState(false);
 
   const [aiOpen, setAiOpen] = useState(false);
   const [aiDifficulty, setAiDifficulty] = useState<FlashcardDifficultyId>("easy");
   const [aiCount, setAiCount] = useState(10);
   const [aiTime, setAiTime] = useState(15);
-  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiGenerating] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
-
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
-  const [imageMeta, setImageMeta] = useState<{ name: string; size: string } | null>(null);
+  const cardsRef = useRef(cards);
   const [imageUploadState, setImageUploadState] = useState<"idle" | "loading" | "ready">("idle");
+
+  const currentCard = cards[selectedCardIndex] ?? createEmptyFlashcardDraft();
+
+  useEffect(() => {
+    setDeckId(deckIdFromUrl);
+  }, [deckIdFromUrl]);
 
   const revokePreviewUrl = useCallback((url: string | null) => {
     if (url) URL.revokeObjectURL(url);
   }, []);
 
   useEffect(() => {
-    return () => revokePreviewUrl(imagePreviewUrl);
-  }, [imagePreviewUrl, revokePreviewUrl]);
+    cardsRef.current = cards;
+  }, [cards]);
+
+  useEffect(() => {
+    return () => {
+      cardsRef.current.forEach((card) => revokePreviewUrl(card.imagePreviewUrl));
+    };
+  }, [revokePreviewUrl]);
+
+  useEffect(() => {
+    setImageUploadState(currentCard.imagePreviewUrl ? "ready" : "idle");
+  }, [currentCard.imagePreviewUrl, selectedCardIndex]);
+
+  const updateCurrentCard = (patch: Partial<FlashcardDraft>) => {
+    setCards((prev) =>
+      prev.map((card, index) =>
+        index === selectedCardIndex ? { ...card, ...patch, savedCardId: null } : card,
+      ),
+    );
+  };
+
+  const updateCardCount = (nextCount: number) => {
+    const safeCount = Math.max(1, nextCount);
+    setCards((prev) => {
+      if (safeCount < prev.length) {
+        prev.slice(safeCount).forEach((card) => revokePreviewUrl(card.imagePreviewUrl));
+      }
+      if (safeCount <= prev.length) return prev.slice(0, safeCount);
+      return [
+        ...prev,
+        ...Array.from({ length: safeCount - prev.length }, () => createEmptyFlashcardDraft()),
+      ];
+    });
+    setCardCount(safeCount);
+    setSelectedCardIndex((prev) => Math.min(prev, safeCount - 1));
+  };
 
   const clearImage = () => {
-    setImagePreviewUrl((prev) => {
-      revokePreviewUrl(prev);
-      return null;
-    });
-    setImageMeta(null);
+    revokePreviewUrl(currentCard.imagePreviewUrl);
+    updateCurrentCard({ imageFile: null, imagePreviewUrl: null, imageMeta: null });
     setImageUploadState("idle");
     if (imageInputRef.current) imageInputRef.current.value = "";
   };
@@ -105,15 +183,34 @@ export function AdminJourneyFlashcardAddPage({
     }
 
     setImageUploadState("loading");
-    setImageMeta({ name: file.name, size: formatFileSize(file.size) });
 
     window.setTimeout(() => {
-      setImagePreviewUrl((prev) => {
-        revokePreviewUrl(prev);
-        return URL.createObjectURL(file);
+      setCards((prev) => {
+        const current = prev[selectedCardIndex];
+        if (current?.imagePreviewUrl) revokePreviewUrl(current.imagePreviewUrl);
+        return prev.map((card, index) =>
+          index === selectedCardIndex
+            ? {
+                ...card,
+                imageFile: file,
+                imagePreviewUrl: URL.createObjectURL(file),
+                imageMeta: { name: file.name, size: formatFileSize(file.size) },
+                savedCardId: null,
+              }
+            : card,
+        );
       });
       setImageUploadState("ready");
     }, 350);
+  };
+
+  const uploadFileToPath = async (file: File, folder: string) => {
+    const uploadResult = await uploadAdminFile(file, folder);
+    if (!uploadResult.ok) {
+      notify.error(uploadResult.errorMessage);
+      return null;
+    }
+    return uploadResult.filePath;
   };
 
   const handleImageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,44 +220,93 @@ export function AdminJourneyFlashcardAddPage({
     processImageFile(file);
   };
 
+  const uploadCurrentCardImage = async () => {
+    if (!currentCard.imageFile) return "";
+    return uploadFileToPath(currentCard.imageFile, FLASHCARD_IMAGE_UPLOAD_FOLDER);
+  };
+
+  const uploadCurrentCardAttachment = async (): Promise<
+    FlashcardDeckCardAttachmentPayload[] | null
+  > => {
+    if (!currentCard.attachmentFile || !currentCard.attachmentMeta) return [];
+    const fileUrl = await uploadFileToPath(
+      currentCard.attachmentFile,
+      FLASHCARD_ATTACHMENT_UPLOAD_FOLDER,
+    );
+    if (fileUrl === null) return null;
+
+    return [
+      {
+        fileUrl,
+        fileName: currentCard.attachmentMeta.name,
+        fileExtension: currentCard.attachmentMeta.extension,
+        fileSizeBytes: currentCard.attachmentMeta.sizeBytes,
+      },
+    ];
+  };
+
+  const ensureDeck = async (): Promise<string | null> => {
+    const existingDeckId = deckId?.trim();
+    if (existingDeckId) return existingDeckId;
+    notify.error(t("flashcardAdd.messages.deckIdRequired"));
+    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId));
+    return null;
+  };
+
   const handleSave = async (andAddAnother = false) => {
-    if (!front.trim()) {
-      notify.error("Question (front) is required");
+    if (!currentCard.front.trim()) {
+      notify.error(t("flashcardAdd.messages.titleRequired"));
       return;
     }
     setSaving(true);
-    const result = await addFlashCard(groupId, { front, back, difficulty, reviewTimeSec: reviewTime });
-    setSaving(false);
-    if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? "Failed to save card");
+    const activeDeckId = await ensureDeck();
+    if (!activeDeckId) {
+      setSaving(false);
       return;
     }
-    notify.success("Card saved");
+
+    const imageUrl = await uploadCurrentCardImage();
+    if (imageUrl === null) {
+      setSaving(false);
+      return;
+    }
+    const attachments = await uploadCurrentCardAttachment();
+    if (attachments === null) {
+      setSaving(false);
+      return;
+    }
+    const result = await createFlashcardDeckCard(activeDeckId, {
+      deckId: activeDeckId,
+      front: currentCard.front.trim(),
+      back: currentCard.back.trim(),
+      imageUrl,
+      attachments,
+      reviewSeconds: Math.max(0, Number(currentCard.reviewTime) || 0),
+      difficulty: DIFFICULTY_TO_API[currentCard.difficulty],
+    });
+    setSaving(false);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("flashcardAdd.messages.cardCreateError"));
+      return;
+    }
+    setCards((prev) =>
+      prev.map((card, index) =>
+        index === selectedCardIndex ? { ...card, savedCardId: result.data } : card,
+      ),
+    );
+    notify.success(t("flashcardAdd.messages.cardCreateSuccess"));
     if (andAddAnother) {
-      setFront("");
-      setBack("");
-      clearImage();
+      setCards((prev) => [...prev, createEmptyFlashcardDraft()]);
+      setCardCount((prev) => prev + 1);
+      setSelectedCardIndex(cardCount);
     } else {
-      router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId));
+      router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId, activeDeckId));
     }
   };
 
   const handleAiGenerate = async () => {
-    setAiGenerating(true);
-    const result = await generateFlashCardsWithAi({
-      groupId,
-      difficulty: aiDifficulty,
-      count: aiCount,
-      reviewTimeSec: aiTime,
-    });
-    setAiGenerating(false);
-    if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? "AI generation failed");
-      return;
-    }
-    notify.success(`${result.data.length} cards generated`);
+    notify.error(t("flashcardAdd.messages.aiUnavailable"));
     setAiOpen(false);
-    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId));
   };
 
   return (
@@ -176,7 +322,11 @@ export function AdminJourneyFlashcardAddPage({
           },
           {
             label: t("breadcrumbs.flashcardGroup"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId),
+            href: ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(
+              journeyId,
+              stationId,
+              deckId ?? undefined,
+            ),
           },
           { label: t("breadcrumbs.addFlashcard") },
         ]}
@@ -194,33 +344,30 @@ export function AdminJourneyFlashcardAddPage({
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">
           <div className="flex flex-wrap items-center gap-2">
-            {Array.from({ length: 10 }, (_, i) => (
+            {Array.from({ length: cardCount }, (_, i) => (
               <button
                 key={i}
                 type="button"
+                onClick={() => setSelectedCardIndex(i)}
                 className={cn(
                   "flex h-10 w-12 items-center justify-center rounded-lg text-sm font-bold transition-colors cursor-pointer",
-                  i === 0
+                  i === selectedCardIndex
                     ? "bg-[#2C4260] text-white"
-                    : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-200",
+                    : cards[i]?.savedCardId
+                      ? "border border-emerald-200 bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
+                      : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-200",
                 )}
               >
                 {i + 1}
               </button>
             ))}
+            <button type="button" className={cn(
+              "flex h-10 w-12 items-center justify-center rounded-lg text-sm font-bold transition-colors cursor-pointer",
+                "bg-[#2C4260] text-white"
+                ,"bg-white border border-slate-200 text-slate-500 hover:bg-slate-200",
+            )} onClick={() => setCardCount(cardCount + 1)}>+</button>
           </div>
-          <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
-            <CardContent className="p-5 space-y-2">
-                <p className="text-md font-semibold text-slate-500">
-                  {t("flashcardAdd.completionRate")}
-                </p>
-              <div className="mb-4 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-right">
-                <p className="mt-0.5 text-sm font-bold text-slate-700">
-                  {t("flashcardAdd.completionRateLabel", { value: completionPct })}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          
           {/* Card number nav */}
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
             <CardContent className="p-5">
@@ -234,15 +381,14 @@ export function AdminJourneyFlashcardAddPage({
                 <Sparkles className="h-4 w-4" />
                 {t("flashcardAdd.aiGenerate")}
               </Button>
-
               {/* Front */}
-              <div className="space-y-4">
+              <div className="mt-4 space-y-4">
                 <label className="text-sm font-semibold text-slate-600">
                   {t("flashcardAdd.fields.front")}
                 </label>
                 <textarea
-                  value={front}
-                  onChange={(e) => setFront(e.target.value)}
+                  value={currentCard.front}
+                  onChange={(e) => updateCurrentCard({ front: e.target.value })}
                   placeholder={t("flashcardAdd.fields.frontPlaceholder")}
                   rows={3}
                   className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
@@ -255,8 +401,8 @@ export function AdminJourneyFlashcardAddPage({
                   {t("flashcardAdd.fields.back")}
                 </label>
                 <textarea
-                  value={back}
-                  onChange={(e) => setBack(e.target.value)}
+                  value={currentCard.back}
+                  onChange={(e) => updateCurrentCard({ back: e.target.value })}
                   placeholder={t("flashcardAdd.fields.backPlaceholder")}
                   rows={3}
                   className="w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
@@ -276,10 +422,10 @@ export function AdminJourneyFlashcardAddPage({
                     <button
                       key={d}
                       type="button"
-                      onClick={() => setDifficulty(d)}
+                      onClick={() => updateCurrentCard({ difficulty: d })}
                       className={cn(
                         "h-12 flex-1 rounded-xl py-2 font-semibold transition-colors",
-                        difficulty === d
+                        currentCard.difficulty === d
                           ? "bg-[#C8AC59] text-white"
                           : "bg-slate-100 text-slate-500 hover:bg-slate-200",
                       )}
@@ -299,8 +445,8 @@ export function AdminJourneyFlashcardAddPage({
                 <div className="flex justify-between w-full items-center gap-2">
                   <input
                     type="number"
-                    value={reviewTime}
-                    onChange={(e) => setReviewTime(Number(e.target.value))}
+                    value={currentCard.reviewTime}
+                    onChange={(e) => updateCurrentCard({ reviewTime: Number(e.target.value) })}
                     min={5}
                     max={300}
                     className="h-11 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 text-center text-sm outline-none focus:border-[#C8AC59]"
@@ -328,26 +474,33 @@ export function AdminJourneyFlashcardAddPage({
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    setUploadedFile({
-                      name: file.name,
-                      size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+                    updateCurrentCard({
+                      attachmentFile: file,
+                      attachmentMeta: {
+                        name: file.name,
+                        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+                        extension: getFileExtension(file.name),
+                        sizeBytes: file.size,
+                      },
                     });
                   }
                 }}
               />
 
-              {uploadedFile ? (
+              {currentCard.attachmentMeta ? (
                 <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                   <button
                     type="button"
-                    onClick={() => setUploadedFile(null)}
+                    onClick={() => updateCurrentCard({ attachmentFile: null, attachmentMeta: null })}
                     className="text-rose-400 hover:text-rose-600 text-lg leading-none"
                   >
                     ×
                   </button>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-slate-700">{uploadedFile.name}</p>
-                    <p className="text-xs text-slate-400">{uploadedFile.size}</p>
+                    <p className="text-sm font-semibold text-slate-700">
+                      {currentCard.attachmentMeta.name}
+                    </p>
+                    <p className="text-xs text-slate-400">{currentCard.attachmentMeta.size}</p>
                   </div>
                   <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-100 text-rose-500">
                     <FileUp className="h-4 w-4" />
@@ -392,15 +545,15 @@ export function AdminJourneyFlashcardAddPage({
                 <div className="flex min-h-48 w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 py-10 text-sm text-slate-500">
                   <span className="h-10 w-10 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
                   <p className="font-semibold">{t("flashcardAdd.upload.imageUploading")}</p>
-                  {imageMeta ? (
-                    <p className="text-xs text-slate-400">{imageMeta.name}</p>
+                  {currentCard.imageMeta ? (
+                    <p className="text-xs text-slate-400">{currentCard.imageMeta.name}</p>
                   ) : null}
                 </div>
-              ) : imagePreviewUrl ? (
+              ) : currentCard.imagePreviewUrl ? (
                 <div className="relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-slate-50">
                   <div className="relative mx-auto aspect-video max-h-56 w-full max-w-md">
                     <Image
-                      src={imagePreviewUrl}
+                      src={currentCard.imagePreviewUrl}
                       alt={t("flashcardAdd.upload.imagePreviewAlt")}
                       fill
                       unoptimized
@@ -420,9 +573,9 @@ export function AdminJourneyFlashcardAddPage({
                       <p className="text-xs font-semibold text-emerald-600">
                         {t("flashcardAdd.upload.imageUploaded")}
                       </p>
-                      {imageMeta ? (
+                      {currentCard.imageMeta ? (
                         <p className="text-xs text-slate-400">
-                          {imageMeta.name} · {imageMeta.size}
+                          {currentCard.imageMeta.name} · {currentCard.imageMeta.size}
                         </p>
                       ) : null}
                     </div>
@@ -474,10 +627,10 @@ export function AdminJourneyFlashcardAddPage({
 
               {/* Card front preview */}
               <div className="mb-3 flex min-h-36 flex-col items-center justify-center gap-2 rounded-2xl bg-slate-50 p-4 text-center">
-                {imagePreviewUrl ? (
+                {currentCard.imagePreviewUrl ? (
                   <div className="relative h-24 w-full max-w-[200px]">
                     <Image
-                      src={imagePreviewUrl}
+                      src={currentCard.imagePreviewUrl}
                       alt=""
                       fill
                       unoptimized
@@ -486,8 +639,8 @@ export function AdminJourneyFlashcardAddPage({
                     />
                   </div>
                 ) : null}
-                {front ? (
-                  <p className="font-semibold text-slate-700">{front}</p>
+                {currentCard.front ? (
+                  <p className="font-semibold text-slate-700">{currentCard.front}</p>
                 ) : (
                   <>
                     <p className="text-sm font-semibold text-slate-400">

@@ -14,29 +14,16 @@ export interface InteractiveBookManagePageData {
   points: InteractiveBookManagePoint[];
 }
 
-export const interactiveBookManagePageData: InteractiveBookManagePageData = {
-  subjectSelectValue: "chemistry-grade2",
-  pdfFileName: "chemistry_basics_v2.pdf",
-  currentPage: 42,
-  totalPages: 156,
-  points: [
-    {
-      id: "p1",
-      titleKey: "interactiveBooks.managePage.points.items.polarBond.title",
-      pageLabelKey: "interactiveBooks.managePage.points.items.polarBond.page",
-      typeKey: "interactiveBooks.managePage.points.type.video",
-      visible: true,
-    },
-    {
-      id: "p2",
-      titleKey: "interactiveBooks.managePage.points.items.polarBond.title",
-      pageLabelKey: "interactiveBooks.managePage.points.items.polarBond.page",
-      typeKey: "interactiveBooks.managePage.points.type.video",
-      visible: true,
-    },
-  ],
+/** Empty defaults for the manage page create flow (no mock book data). */
+export const emptyInteractiveBookManagePageData: InteractiveBookManagePageData = {
+  subjectSelectValue: "",
+  pdfFileName: "",
+  currentPage: 1,
+  totalPages: 1,
+  points: [],
 };
 
-export const interactiveBookManageSubjectOptions = [
-  { id: "chemistry-grade2", labelKey: "interactiveBooks.managePage.config.subjectOptions.chemistryGrade2" },
-] as const;
+/** @deprecated Use `emptyInteractiveBookManagePageData` for create; edit mode uses API data. */
+export const interactiveBookManagePageData: InteractiveBookManagePageData = {
+  ...emptyInteractiveBookManagePageData,
+};

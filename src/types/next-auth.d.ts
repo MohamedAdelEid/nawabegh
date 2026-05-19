@@ -7,6 +7,7 @@ declare module "next-auth" {
     accessToken?: string;
     refreshToken?: string;
     accessTokenExpiresAt?: string;
+    error?: "RefreshAccessTokenError";
     user?: DefaultSession["user"] & {
       id?: string;
       domainUid?: string | null;
@@ -33,5 +34,6 @@ declare module "next-auth/jwt" {
     domainUid?: string | null;
     role?: string;
     picture?: string | null;
+    error?: "RefreshAccessTokenError";
   }
 }

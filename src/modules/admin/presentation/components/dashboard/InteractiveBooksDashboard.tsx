@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Eye, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { interactiveBooksDashboardData } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
@@ -20,8 +20,6 @@ import {
   DashboardTableCard,
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
-import { HotStop } from "../../assets/icons/HotStop";
-
 function statusTone(statusId: "published" | "draft") {
   return statusId === "published" ? "success" : "warning";
 }
@@ -234,9 +232,13 @@ export function InteractiveBooksDashboard() {
                   type="button"
                   className="dashboard-icon-btn"
                   aria-label={t("interactiveBooks.table.actions.edit")}
-                  onClick={() => router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_EDIT(row.id))}
+                  onClick={() => {
+                    if (!row.courseId) return;
+                    router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_BY_COURSE(row.courseId));
+                  }}
+                  disabled={!row.courseId}
                 >
-                  <HotStop className="h-4 w-4" aria-hidden />
+                  <Pencil className="h-4 w-4" aria-hidden />
                 </button>
                 <button
                   type="button"

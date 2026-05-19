@@ -30,3 +30,20 @@ export function resolveFileUrl(pathOrUrl: string | null | undefined): string | n
   }
   return `${FILE_DOWNLOAD_URL}${encodeURIComponent(normalizedPath)}`;
 }
+
+/**
+ * Resolves a stored file path for authenticated download (FileUpload/download).
+ * Use for PDF viewers and other clients that must send the API bearer token.
+ *
+ * Example `pdfUrl` from InteractiveBook API:
+ * `uploads/interactive-books/file_9432894be1994f62b61846489ee35a8e.pdf`
+ */
+export function resolveProtectedFileUrl(pathOrUrl: string | null | undefined): string | null {
+  if (!pathOrUrl) return null;
+  const value = pathOrUrl.trim();
+  if (!value) return null;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+
+  const normalizedPath = value.replace(/^\/+/, "");
+  return `${FILE_DOWNLOAD_URL}${encodeURIComponent(normalizedPath)}`;
+}

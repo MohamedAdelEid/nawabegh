@@ -1,5 +1,6 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import type {
+  InteractiveBookDetail,
   InteractiveBookStatusId,
   InteractiveBookTableRow,
 } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
@@ -48,7 +49,7 @@ function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
   return [];
 }
 
-function buildErrorResult<T>(error: unknown, fallbackMessage: string): InteractiveBooksApiResult<T | null> {
+function buildErrorResult<T>(error: unknown, fallbackMessage: string): InteractiveBooksApiResult<T> {
   const axiosError = asRecord(error);
   const response = asRecord(axiosError?.response);
   const responseData = asRecord(response?.data);
@@ -67,11 +68,26 @@ function buildErrorResult<T>(error: unknown, fallbackMessage: string): Interacti
   };
 }
 
-export function mapInteractiveBookStatus(status: string | null | undefined): InteractiveBookStatusId {
+export function mapInteractiveBookStatus(status: string | number | null | undefined): InteractiveBookStatusId {
+  if (typeof status === "number") {
+    return status === 1 ? "published" : "draft";
+  }
   const s = (status ?? "").trim().toLowerCase();
-  if (s === "published") return "published";
+  if (s === "published" || s === "1") return "published";
   return "draft";
 }
+
+/** `POST /api/v1/InteractiveBook` request body. */
+export type CreateInteractiveBookPayload = {
+  title: string;
+  courseId: string;
+  gradeId: number;
+  pdfFileName: string;
+  pdfUrl: string;
+  pageCount: number;
+  /** `0` = draft, `1` = published (API convention). */
+  status: number;
+};
 
 function mapInteractiveBookRecord(record: UnknownRecord | null): InteractiveBookTableRow | null {
   if (!record) return null;
@@ -83,11 +99,14 @@ function mapInteractiveBookRecord(record: UnknownRecord | null): InteractiveBook
     ["pdfFileName", "fileName", "pdf", "documentFileName"],
     "",
   ).trim();
+  const courseId = readString(record, ["courseId"], "");
 
   return {
     id,
     title: readString(record, ["title"], "—"),
+    courseId,
     courseTitle: readString(record, ["courseTitle"], "—"),
+    gradeId: readNumber(record, ["gradeId"]) ?? 0,
     gradeName: readString(record, ["gradeName"], "—"),
     pageCount: readNumber(record, ["pageCount"]) ?? 0,
     hotspotCount: readNumber(record, ["hotspotCount"]) ?? 0,
@@ -96,6 +115,32 @@ function mapInteractiveBookRecord(record: UnknownRecord | null): InteractiveBook
     createdAt: readString(record, ["createdAt"], ""),
     ...(pdfFileName ? { pdfFileName } : {}),
   };
+}
+
+function mapInteractiveBookDetail(record: UnknownRecord | null): InteractiveBookDetail | null {
+  const base = mapInteractiveBookRecord(record);
+  if (!base || !record) return null;
+
+  const pdfUrl = readString(record, ["pdfUrl"], "").trim();
+  const updatedAt = readString(record, ["updatedAt"], "");
+
+  return {
+    ...base,
+    pdfUrl,
+    updatedAt,
+  };
+}
+
+function unwrapSingleRecord(payload: unknown): UnknownRecord | null {
+  const root = asRecord(payload);
+  if (!root) return null;
+  if (readString(root, ["id"], "")) return root;
+
+  // `{ isSuccess: true, data: { id, pdfUrl, ... } }` (InteractiveBook/course)
+  const nested = asRecord(root.data);
+  if (nested && readString(nested, ["id"], "")) return nested;
+
+  return null;
 }
 
 /**
@@ -129,5 +174,83 @@ export async function getInteractiveBooks(): Promise<InteractiveBooksApiResult<I
   } catch (error) {
     const failed = buildErrorResult<InteractiveBookTableRow[]>(error, "Failed to load interactive books");
     return { ...failed, data: failed.data ?? [] };
+  }
+}
+
+/**
+ * Loads the interactive book for a course (`GET /api/v1/InteractiveBook/course/{courseId}`).
+ * Response envelope: `{ data: InteractiveBookDto }`.
+ */
+export async function getInteractiveBookByCourseId(
+  courseId: string,
+): Promise<InteractiveBooksApiResult<InteractiveBookDetail>> {
+  const trimmed = courseId.trim();
+  if (!trimmed) {
+    return {
+      status: "Error",
+      errorMessage: "Course id is required",
+      data: null,
+    };
+  }
+
+  try {
+    const response = await httpClient.get<unknown>({
+      url: `/api/v1/InteractiveBook/course/${encodeURIComponent(trimmed)}`,
+    });
+    const record = unwrapSingleRecord(response.data);
+    const book = mapInteractiveBookDetail(record);
+
+    if (!book) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: response.error?.message ?? "Interactive book not found",
+        data: null,
+      };
+    }
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: book,
+    };
+  } catch (error) {
+    return buildErrorResult<InteractiveBookDetail>(error, "Failed to load interactive book");
+  }
+}
+
+/**
+ * Creates an interactive book (`POST /api/v1/InteractiveBook`).
+ * Response envelope: `{ data: InteractiveBookDto }`.
+ */
+export async function createInteractiveBook(
+  payload: CreateInteractiveBookPayload,
+): Promise<InteractiveBooksApiResult<InteractiveBookDetail>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: "/api/v1/InteractiveBook",
+      data: payload,
+    });
+    const record = unwrapSingleRecord(response.data);
+    const book = mapInteractiveBookDetail(record);
+
+    if (!book) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: response.error?.message ?? "Failed to create interactive book",
+        data: null,
+      };
+    }
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: book,
+    };
+  } catch (error) {
+    return buildErrorResult<InteractiveBookDetail>(error, "Failed to create interactive book");
   }
 }

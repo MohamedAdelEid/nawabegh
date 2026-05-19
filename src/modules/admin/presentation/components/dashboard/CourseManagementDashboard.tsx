@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BookOpen,
   ClipboardClock,
@@ -17,25 +17,19 @@ import type {
   CourseStatusId,
 } from "@/modules/admin/domain/data/courseManagementData";
 import {
-  persistLearningPathReviewSnapshot,
-  moderationStatusCodeToCourseStatus,
-  courseStatusFilterToModerationQuery,
-  mapLearningPathCourseAccessType,
-} from "@/modules/admin/domain/utils/learningPathModeration";
-import {
-  deleteLearningPath,
-  approveLearningPath,
-  getLearningPathsModerationPage,
-  getLearningPathsModerationStats,
-  type LearningPathModerationStats,
-  type LearningPathModerationListItemDto,
-} from "@/modules/admin/infrastructure/api/learningPathsModerationApi";
+  approveCourse,
+  archiveCourse,
+  getCoursesPage,
+  type CourseListItemDto,
+} from "@/modules/admin/infrastructure/api/courseApi";
 import { getSubjectsPage } from "@/modules/admin/infrastructure/api/subjectApi";
 import type { SubjectListItem } from "@/modules/admin/infrastructure/api/subjectApi";
 import {
   getCountriesDropdown,
   getEducationLevelsDropdown,
   getUserManagementGradesDropdown,
+  getUserManagementUsers,
+  type UserManagementListRow,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import {
   CourseAccessBadge,
@@ -45,6 +39,15 @@ import {
 } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
+import {
+  CourseAccessType,
+  CourseTerm,
+} from "@/shared/domain/enums/cms.enums";
+import {
+  courseAccessTypeFromApi,
+  courseStatusFromApi,
+  courseStatusIdToApi,
+} from "@/shared/domain/enums/cms.mappers";
 import {
   DashboardDataTable,
   DashboardFilterSelect,
@@ -69,58 +72,43 @@ function formatAbbrevInt(value: number) {
   }).format(value);
 }
 
-function moderationDtoToDashboardRow(row: LearningPathModerationListItemDto): CourseManagementRow {
+function courseDtoToDashboardRow(row: CourseListItemDto, gradeLabel: string): CourseManagementRow {
   return {
-    id: row.learningPathId,
+    id: row.id,
     title: row.title,
     subject: row.subjectNameAr,
-    grade: row.gradeNameAr,
-    teacherName: row.teacherName,
-    teacherAvatarUrl: row.teacherProfileImageUrl ?? undefined,
-    accessType: mapLearningPathCourseAccessType(row.courseAccessType),
-    statusId: moderationStatusCodeToCourseStatus(row.status),
+    grade: gradeLabel,
+    teacherName: row.teacherFullName,
+    teacherAvatarUrl: row.teacherAvatarUrl ?? undefined,
+    accessType: courseAccessTypeFromApi(row.accessType),
+    statusId: courseStatusFromApi(row.status),
     coverTone: "blue",
-    coverLabel:
-      row.stationCount > 0
-        ? `×${formatAbbrevInt(row.stationCount)}`
-        : "LP",
-    coverImageUrl: row.courseCoverImageUrl,
-    courseId: row.courseId,
-    revenue: "—",
-    lessonCount: row.stationCount,
+    coverLabel: "CRS",
+    coverImageUrl: row.coverImageUrl,
+    revenue: row.discountedPrice || row.originalPrice ? formatAbbrevInt(row.discountedPrice || row.originalPrice) : "—",
+    lessonCount: 0,
     studentCount: 0,
-    createdAt: row.createdAt,
+    createdAt: "",
   };
-}
-
-function persistModerationReviewSnapshot(dto: LearningPathModerationListItemDto) {
-  persistLearningPathReviewSnapshot(dto.learningPathId, {
-    teacherName: dto.teacherName,
-    teacherProfileImageUrl: dto.teacherProfileImageUrl,
-    subjectNameAr: dto.subjectNameAr,
-    gradeNameAr: dto.gradeNameAr,
-    courseTitle: dto.courseTitle,
-    courseCoverImageUrl: dto.courseCoverImageUrl,
-    courseId: dto.courseId,
-    courseAccessType: dto.courseAccessType,
-  });
 }
 
 type CourseFilterState = {
   stageId: string;
   subjectId: string;
   statusId: "all" | CourseStatusId;
+  termId: "all" | "1" | "2" | "3";
+  teacherId: string;
+  accessType: "all" | "0" | "1" | "2";
+  isPublished: "all" | "true" | "false";
   query: string;
 };
 
 export function CourseManagementDashboard() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
-  const moderationRowsRef = useRef<LearningPathModerationListItemDto[]>([]);
 
-  const [stats, setStats] = useState<LearningPathModerationStats | null>(null);
-  const [moderationRows, setModerationRows] = useState<LearningPathModerationListItemDto[]>([]);
-  const [moderationPaging, setModerationPaging] = useState({
+  const [courseRows, setCourseRows] = useState<CourseListItemDto[]>([]);
+  const [coursePaging, setCoursePaging] = useState({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
@@ -132,6 +120,10 @@ export function CourseManagementDashboard() {
     stageId: "all",
     subjectId: "all",
     statusId: "all",
+    termId: "all",
+    teacherId: "all",
+    accessType: "all",
+    isPublished: "all",
     query: "",
   });
   const [debouncedKeyword, setDebouncedKeyword] = useState("");
@@ -141,8 +133,7 @@ export function CourseManagementDashboard() {
   const [flattenedGradeOptions, setFlattenedGradeOptions] = useState<
     DashboardFilterOption<string>[]
   >([]);
-
-  moderationRowsRef.current = moderationRows;
+  const [teacherOptionsRecords, setTeacherOptionsRecords] = useState<UserManagementListRow[]>([]);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -153,7 +144,16 @@ export function CourseManagementDashboard() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [filters.statusId, filters.subjectId, filters.stageId, debouncedKeyword]);
+  }, [
+    filters.statusId,
+    filters.subjectId,
+    filters.stageId,
+    filters.termId,
+    filters.teacherId,
+    filters.accessType,
+    filters.isPublished,
+    debouncedKeyword,
+  ]);
 
   useEffect(() => {
     let alive = true;
@@ -163,6 +163,23 @@ export function CourseManagementDashboard() {
       if (!result.errorMessage && result.data) setSubjectOptionsRecords(result.data.rows);
     };
     void loadSubjects();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let alive = true;
+    const loadTeachers = async () => {
+      const result = await getUserManagementUsers({
+        roleId: "teacher",
+        pageNumber: 1,
+        pageSize: 240,
+      });
+      if (!alive) return;
+      if (!result.errorMessage && result.data) setTeacherOptionsRecords(result.data.rows);
+    };
+    void loadTeachers();
     return () => {
       alive = false;
     };
@@ -222,32 +239,39 @@ export function CourseManagementDashboard() {
 
   useEffect(() => {
     setCurrentPage((page) =>
-      moderationPaging.totalPages > 0 && page > moderationPaging.totalPages ? moderationPaging.totalPages : page,
+      coursePaging.totalPages > 0 && page > coursePaging.totalPages ? coursePaging.totalPages : page,
     );
-  }, [moderationPaging.totalPages]);
+  }, [coursePaging.totalPages]);
 
-  const loadModeration = useCallback(async () => {
+  const loadCourses = useCallback(async () => {
     setLoadState("loading");
-    const statusParam = courseStatusFilterToModerationQuery(filters.statusId);
+    const statusParam = courseStatusIdToApi(filters.statusId);
     const subjectIdParam =
       filters.subjectId !== "all" ? Number(filters.subjectId) : undefined;
     const gradeIdParam = filters.stageId !== "all" ? Number(filters.stageId) : undefined;
+    const termParam = filters.termId !== "all" ? Number(filters.termId) : undefined;
+    const accessTypeParam = filters.accessType !== "all" ? Number(filters.accessType) : undefined;
+    const isPublishedParam =
+      filters.isPublished === "all" ? undefined : filters.isPublished === "true";
 
-    const [statsResult, listResult] = await Promise.all([
-      getLearningPathsModerationStats(),
-      getLearningPathsModerationPage({
-        ...(typeof statusParam === "number" ? { status: statusParam } : {}),
-        ...(typeof subjectIdParam === "number" && !Number.isNaN(subjectIdParam)
-          ? { subjectId: subjectIdParam }
-          : {}),
-        ...(typeof gradeIdParam === "number" && !Number.isNaN(gradeIdParam)
-          ? { gradeId: gradeIdParam }
-          : {}),
-        ...(debouncedKeyword ? { keyword: debouncedKeyword } : {}),
-        pageNumber: currentPage,
-        pageSize: PAGE_SIZE,
-      }),
-    ]);
+    const listResult = await getCoursesPage({
+      ...(typeof statusParam === "number" ? { status: statusParam } : {}),
+      ...(typeof subjectIdParam === "number" && !Number.isNaN(subjectIdParam)
+        ? { subjectId: subjectIdParam }
+        : {}),
+      ...(typeof gradeIdParam === "number" && !Number.isNaN(gradeIdParam)
+        ? { gradeId: gradeIdParam }
+        : {}),
+      ...(typeof termParam === "number" && !Number.isNaN(termParam) ? { term: termParam } : {}),
+      ...(filters.teacherId !== "all" ? { teacherId: filters.teacherId } : {}),
+      ...(typeof accessTypeParam === "number" && !Number.isNaN(accessTypeParam)
+        ? { accessType: accessTypeParam }
+        : {}),
+      ...(typeof isPublishedParam === "boolean" ? { isPublished: isPublishedParam } : {}),
+      ...(debouncedKeyword ? { keyword: debouncedKeyword } : {}),
+      pageNumber: currentPage,
+      pageSize: PAGE_SIZE,
+    });
 
     if (!listResult.data) {
       setLoadState("error");
@@ -255,18 +279,10 @@ export function CourseManagementDashboard() {
       return;
     }
 
-    if (!statsResult.data) {
-      if (statsResult.errorMessage) notify.error(statsResult.errorMessage);
-      else notify.error(t("courseManagement.stats.loadWarning"));
-      setStats(null);
-    } else {
-      setStats(statsResult.data);
-    }
-
     const pageOut = listResult.data;
-    setModerationRows(pageOut.rows);
+    setCourseRows(pageOut.rows);
     const totalPages = Math.max(1, pageOut.totalPages);
-    setModerationPaging({
+    setCoursePaging({
       currentPage: pageOut.currentPage,
       totalPages,
       totalItems: pageOut.totalItems,
@@ -274,40 +290,57 @@ export function CourseManagementDashboard() {
     });
 
     setLoadState("success");
-  }, [filters.statusId, filters.subjectId, filters.stageId, debouncedKeyword, currentPage, t]);
+  }, [
+    filters.statusId,
+    filters.subjectId,
+    filters.stageId,
+    filters.termId,
+    filters.teacherId,
+    filters.accessType,
+    filters.isPublished,
+    debouncedKeyword,
+    currentPage,
+    t,
+  ]);
 
   useEffect(() => {
     let alive = true;
     const run = async () => {
-      await loadModeration();
+      await loadCourses();
       if (!alive) return;
     };
     void run();
     return () => {
       alive = false;
     };
-  }, [loadModeration]);
+  }, [loadCourses]);
 
   const dashboardRows = useMemo(
-    () => moderationRows.map(moderationDtoToDashboardRow),
-    [moderationRows],
+    () =>
+      courseRows.map((row) => {
+        const gradeLabel =
+          flattenedGradeOptions.find((option) => option.id === String(row.gradeId))?.label ??
+          String(row.gradeId || "—");
+        return courseDtoToDashboardRow(row, gradeLabel);
+      }),
+    [courseRows, flattenedGradeOptions],
   );
 
   const statCards = useMemo<CourseManagementStat[]>(() => {
-    const zeroStats: LearningPathModerationStats = {
-      totalLearningPaths: 0,
-      pendingCount: 0,
-      approvedCount: 0,
-      rejectedCount: 0,
-      draftCount: 0,
-    };
-    const s = stats ?? zeroStats;
+    const pageCounts = courseRows.reduce(
+      (acc, row) => {
+        const status = courseStatusFromApi(row.status);
+        acc[status] += 1;
+        return acc;
+      },
+      { draft: 0, pending: 0, approved: 0, rejected: 0, archived: 0 },
+    );
 
     return [
       {
         id: "learningPathsTotal",
         labelKey: "courseManagement.stats.learningPathsTotal.label",
-        value: formatAbbrevInt(s.totalLearningPaths),
+        value: formatAbbrevInt(coursePaging.totalItems),
         indicatorKey: "courseManagement.stats.learningPathsTotal.indicator",
         indicatorToneClassName: "text-emerald-500",
         icon: BookOpen,
@@ -316,7 +349,7 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsPending",
         labelKey: "courseManagement.stats.learningPathsPending.label",
-        value: formatAbbrevInt(s.pendingCount),
+        value: formatAbbrevInt(pageCounts.pending),
         indicatorKey: "courseManagement.stats.learningPathsPending.indicator",
         indicatorToneClassName: "text-amber-600",
         icon: ClipboardClock,
@@ -325,7 +358,7 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsApproved",
         labelKey: "courseManagement.stats.learningPathsApproved.label",
-        value: formatAbbrevInt(s.approvedCount),
+        value: formatAbbrevInt(pageCounts.approved),
         indicatorKey: "courseManagement.stats.learningPathsApproved.indicator",
         indicatorToneClassName: "text-emerald-500",
         icon: CheckCircle2,
@@ -334,7 +367,7 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsRejected",
         labelKey: "courseManagement.stats.learningPathsRejected.label",
-        value: formatAbbrevInt(s.rejectedCount),
+        value: formatAbbrevInt(pageCounts.rejected),
         indicatorKey: "courseManagement.stats.learningPathsRejected.indicator",
         indicatorToneClassName: "text-red-600",
         icon: XCircle,
@@ -343,14 +376,14 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsDraft",
         labelKey: "courseManagement.stats.learningPathsDraft.label",
-        value: formatAbbrevInt(s.draftCount),
+        value: formatAbbrevInt(pageCounts.draft),
         indicatorKey: "courseManagement.stats.learningPathsDraft.indicator",
         indicatorToneClassName: "text-slate-500",
         icon: FilePenLine,
         iconTone: "info",
       },
     ];
-  }, [stats]);
+  }, [courseRows, coursePaging.totalItems]);
 
   const stageOptions = useMemo<Array<DashboardFilterOption<string>>>(
     () =>
@@ -374,47 +407,89 @@ export function CourseManagementDashboard() {
   const statusOptions = useMemo<Array<DashboardFilterOption<CourseFilterState["statusId"]>>>(
     () => [
       { id: "all", label: t("courseManagement.filters.statuses.all") },
+      { id: "draft", label: t("courseManagement.status.draft") },
       { id: "pending", label: t("courseManagement.status.pending") },
       { id: "approved", label: t("courseManagement.status.approved") },
       { id: "rejected", label: t("courseManagement.status.rejected") },
-      { id: "draft", label: t("courseManagement.status.draft") },
+      { id: "archived", label: t("courseManagement.status.archived") },
+    ],
+    [t],
+  );
+
+  const termOptions = useMemo<Array<DashboardFilterOption<CourseFilterState["termId"]>>>(
+    () => [
+      { id: "all", label: t("courseManagement.filters.terms.all") },
+      { id: String(CourseTerm.FirstTerm) as "1", label: t("courseManagement.filters.terms.first") },
+      { id: String(CourseTerm.SecondTerm) as "2", label: t("courseManagement.filters.terms.second") },
+      { id: String(CourseTerm.ThirdTerm) as "3", label: t("courseManagement.filters.terms.third") },
+    ],
+    [t],
+  );
+
+  const teacherOptions = useMemo<Array<DashboardFilterOption<string>>>(
+    () => [
+      { id: "all", label: t("courseManagement.filters.teachers.all") },
+      ...teacherOptionsRecords.map((teacher) => ({
+        id: teacher.id,
+        label: teacher.fullName,
+      })),
+    ],
+    [teacherOptionsRecords, t],
+  );
+
+  const accessTypeOptions = useMemo<Array<DashboardFilterOption<CourseFilterState["accessType"]>>>(
+    () => [
+      { id: "all", label: t("courseManagement.filters.accessTypes.all") },
+      { id: String(CourseAccessType.Free) as "0", label: t("courseManagement.access.free") },
+      { id: String(CourseAccessType.Paid) as "1", label: t("courseManagement.access.paid") },
+      {
+        id: String(CourseAccessType.Subscription) as "2",
+        label: t("courseManagement.access.subscription"),
+      },
+    ],
+    [t],
+  );
+
+  const publishingOptions = useMemo<Array<DashboardFilterOption<CourseFilterState["isPublished"]>>>(
+    () => [
+      { id: "all", label: t("courseManagement.filters.publishing.all") },
+      { id: "true", label: t("courseManagement.filters.publishing.published") },
+      { id: "false", label: t("courseManagement.filters.publishing.unpublished") },
     ],
     [t],
   );
 
   const pages = useMemo(
     () =>
-      Array.from({ length: Math.max(moderationPaging.totalPages, 1) }, (_, index) => index + 1),
-    [moderationPaging.totalPages],
+      Array.from({ length: Math.max(coursePaging.totalPages, 1) }, (_, index) => index + 1),
+    [coursePaging.totalPages],
   );
 
-  const approveLearningPathRow = async (learningPathId: string) => {
-    const result = await approveLearningPath(learningPathId);
+  const approveCourseRow = async (courseId: string) => {
+    const result = await approveCourse(courseId);
     if (result.errorMessage) {
       notify.error(result.errorMessage);
       return;
     }
     notify.success(t("courseManagement.messages.approved"));
-    await loadModeration();
+    await loadCourses();
   };
 
-  const confirmAndDeleteLearningPath = async (learningPathId: string) => {
-    const ok = typeof window !== "undefined" ? window.confirm(t("courseManagement.table.confirmDelete")) : true;
+  const confirmAndArchiveCourse = async (courseId: string) => {
+    const ok = typeof window !== "undefined" ? window.confirm(t("courseManagement.table.confirmArchive")) : true;
     if (!ok) return;
-    const result = await deleteLearningPath(learningPathId);
+    const result = await archiveCourse(courseId);
     if (result.errorMessage) {
       notify.error(result.errorMessage);
       return;
     }
-    notify.success(t("courseManagement.messages.deleted"));
-    await loadModeration();
+    notify.success(t("courseManagement.messages.archived"));
+    await loadCourses();
   };
 
   const openReviewRoute = useCallback(
-    (learningPathId: string) => {
-      const dto = moderationRowsRef.current.find((r) => r.learningPathId === learningPathId);
-      if (dto) persistModerationReviewSnapshot(dto);
-      router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(learningPathId));
+    (courseId: string) => {
+      router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId));
     },
     [router],
   );
@@ -526,7 +601,7 @@ export function CourseManagementDashboard() {
         ))}
       </section>
 
-      <DashboardFiltersPanel isLoading={loadState === "loading"}>
+      <DashboardFiltersPanel isLoading={loadState === "loading"} className="flex flex-wrap gap-4">
         <DashboardFilterSelect
           label={t("courseManagement.filters.stages.label")}
           value={filters.stageId}
@@ -552,6 +627,38 @@ export function CourseManagementDashboard() {
             setFilters((current) => ({ ...current, statusId: value }))
           }
         />
+        <DashboardFilterSelect
+          label={t("courseManagement.filters.terms.label")}
+          value={filters.termId}
+          options={termOptions}
+          onChange={(value) =>
+            setFilters((current) => ({ ...current, termId: value }))
+          }
+        />
+        <DashboardFilterSelect
+          label={t("courseManagement.filters.teachers.label")}
+          value={filters.teacherId}
+          options={teacherOptions}
+          onChange={(value) =>
+            setFilters((current) => ({ ...current, teacherId: value }))
+          }
+        />
+        <DashboardFilterSelect
+          label={t("courseManagement.filters.accessTypes.label")}
+          value={filters.accessType}
+          options={accessTypeOptions}
+          onChange={(value) =>
+            setFilters((current) => ({ ...current, accessType: value }))
+          }
+        />
+        <DashboardFilterSelect
+          label={t("courseManagement.filters.publishing.label")}
+          value={filters.isPublished}
+          options={publishingOptions}
+          onChange={(value) =>
+            setFilters((current) => ({ ...current, isPublished: value }))
+          }
+        />
         <DashboardSearchFilter
           label={t("courseManagement.filters.search.label")}
           placeholder={t("courseManagement.filters.search.placeholder")}
@@ -569,10 +676,10 @@ export function CourseManagementDashboard() {
             <p className="text-right text-sm text-slate-400">
               {t("courseManagement.table.pagination.summary", {
                 visible:
-                  moderationPaging.totalItems > 0
-                    ? moderationPaging.visibleItems || dashboardRows.length
+                  coursePaging.totalItems > 0
+                    ? coursePaging.visibleItems || dashboardRows.length
                     : 0,
-                total: moderationPaging.totalItems || dashboardRows.length,
+                total: coursePaging.totalItems || dashboardRows.length,
               })}
             </p>
             <DashboardPagination
@@ -604,19 +711,15 @@ export function CourseManagementDashboard() {
                   reject: t("courseManagement.table.actions.reject"),
                   view: t("courseManagement.table.actions.view"),
                   edit: t("courseManagement.table.actions.edit"),
-                  delete: t("courseManagement.table.actions.delete"),
+                  archive: t("courseManagement.table.actions.archive"),
                   more: t("courseManagement.table.actions.more"),
-                  rejectionDetails: t("courseManagement.table.actions.rejectionDetails"),
                 }}
-                onApprove={approveLearningPathRow}
-                onReject={(learningPathId) =>
-                  router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REJECT(learningPathId))
+                onApprove={approveCourseRow}
+                onReject={(courseId) =>
+                  router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REJECT(courseId))
                 }
                 onView={openReviewRoute}
-                onDelete={confirmAndDeleteLearningPath}
-                onRejectionDetails={(learningPathId) =>
-                  router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REJECTION_DETAILS(learningPathId))
-                }
+                onArchive={confirmAndArchiveCourse}
               />
             )}
           />

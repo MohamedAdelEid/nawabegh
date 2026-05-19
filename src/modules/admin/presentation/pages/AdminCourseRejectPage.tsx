@@ -6,15 +6,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { CourseReviewDetail, CourseReviewReasonId } from "@/modules/admin/domain/data/courseManagementData";
 import { courseManagementData } from "@/modules/admin/domain/data/courseManagementData";
-import {
-  readLearningPathReviewSnapshot,
-  rejectionReasonIdsToBitmask,
-} from "@/modules/admin/domain/utils/learningPathModeration";
-import {
-  getLearningPathById,
-  learningPathDetailToCourseReviewDetail,
-  rejectLearningPath,
-} from "@/modules/admin/infrastructure/api/learningPathsModerationApi";
+import { rejectionReasonIdsToBitmask } from "@/modules/admin/domain/utils/learningPathModeration";
+import { getCourseDetails, rejectCourse } from "@/modules/admin/infrastructure/api/courseApi";
 import { CourseCoverPreview, CourseSectionCard } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
@@ -23,7 +16,6 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
-  const learningPathId = courseId;
   const t = useTranslations("admin.dashboard.courseManagement");
   const router = useRouter();
   const [detail, setDetail] = useState<CourseReviewDetail | null>(null);
@@ -35,22 +27,21 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
   useEffect(() => {
     let alive = true;
     const load = async () => {
-      const snapshot = readLearningPathReviewSnapshot(learningPathId);
-      const result = await getLearningPathById(learningPathId);
+      const result = await getCourseDetails(courseId);
       if (!alive) return;
       if (result.errorMessage || !result.data) {
         setDetail(null);
         setAsideCoverUrl(null);
         return;
       }
-      setAsideCoverUrl(snapshot?.courseCoverImageUrl ?? null);
-      setDetail(learningPathDetailToCourseReviewDetail(result.data, snapshot));
+      setAsideCoverUrl(result.data.coverImageUrl ?? null);
+      setDetail(result.data);
     };
     void load();
     return () => {
       alive = false;
     };
-  }, [learningPathId]);
+  }, [courseId]);
 
   const toggleReason = (reason: CourseReviewReasonId) => {
     setSelectedReasons((prev) =>
@@ -59,22 +50,23 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
   };
 
   const submit = async () => {
+    console.log("submit", submitting, selectedReasons.length, notes.trim().length);
     if (submitting || selectedReasons.length === 0 || notes.trim().length < 10) {
       notify.error(t("reject.validation"));
       return;
     }
     setSubmitting(true);
-    const result = await rejectLearningPath(learningPathId, {
+    const result = await rejectCourse(courseId, {
       rejectionNotes: notes.trim(),
       rejectionReasons: rejectionReasonIdsToBitmask(selectedReasons),
     });
     setSubmitting(false);
-    if (result.errorMessage) {
-      notify.error(result.errorMessage);
+    if (result.errorMessage || result.data === null) {
+      notify.error(result.errorMessage ?? t("messages.rejectError"));
       return;
     }
     notify.success(t("messages.rejected"));
-    router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REJECTION_DETAILS(learningPathId));
+    router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.LIST);
   };
 
   if (!detail) {
@@ -144,7 +136,7 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
               <Button
                 variant="outline"
                 className="h-14 rounded-2xl border-slate-200 px-10 shadow-[0px_4px_0px_0px_#0000000D]"
-                onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(learningPathId))}
+                onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId))}
               >
                 {t("reject.actions.cancel")}
               </Button>

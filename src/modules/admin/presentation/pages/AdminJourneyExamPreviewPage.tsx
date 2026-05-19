@@ -6,46 +6,103 @@ import {
   Pencil,
   Shuffle,
   Star,
-  Timer,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ExamStation } from "@/modules/admin/domain/data/journeyEditorData";
-import { getExamStation } from "@/modules/admin/infrastructure/api/journeyEditorApi";
+import { exportExamQuestionsToPdf } from "@/modules/admin/domain/utils/exportExamQuestionsPdf";
+import {
+  mapExamStationToUpdateSettingsPayload,
+  mapQuizToExamStation,
+} from "@/modules/admin/domain/utils/quizExamMappers";
+import {
+  getQuiz,
+  resolveQuizIdForStation,
+  updateQuizSettings,
+} from "@/modules/admin/infrastructure/api/quizzesApi";
+import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
 
 interface Props {
   journeyId: string;
   stationId: string;
 }
 
-const DIFFICULTY_TONE: Record<string, string> = {
-  easy: "bg-emerald-50 text-emerald-600",
-  medium: "bg-amber-50 text-amber-600",
-  hard: "bg-rose-50 text-rose-600",
-};
-
 export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.examPreview");
+  const tQuestion = useTranslations("admin.dashboard.journeyEditor.examEditQuestions.question");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
 
   const [exam, setExam] = useState<ExamStation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  const loadExam = useCallback(async () => {
+    setLoading(true);
+    const quizId = await resolveQuizIdForStation(stationId);
+    if (!quizId) {
+      setExam(null);
+      setLoading(false);
+      return;
+    }
+
+    const result = await getQuiz(quizId);
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.loadError"));
+      setExam(null);
+      setLoading(false);
+      return;
+    }
+
+    setExam(mapQuizToExamStation(result.data, stationId));
+    setLoading(false);
+  }, [stationId, t]);
 
   useEffect(() => {
-    void (async () => {
-      const result = await getExamStation(stationId);
-      if (result.data) setExam(result.data);
-      setLoading(false);
-    })();
-  }, [stationId]);
+    void loadExam();
+  }, [loadExam]);
+
+  const handleRandomOrderChange = async (checked: boolean) => {
+    if (!exam) return;
+
+    const previous = exam;
+    const nextExam = { ...exam, randomOrder: checked };
+    setExam(nextExam);
+    setSavingSettings(true);
+
+    const result = await updateQuizSettings(
+      exam.id,
+      mapExamStationToUpdateSettingsPayload(nextExam),
+    );
+    setSavingSettings(false);
+
+    if (result.errorMessage || !result.data) {
+      setExam(previous);
+      notify.error(result.errorMessage ?? t("messages.settingsSaveError"));
+      return;
+    }
+
+    notify.success(t("messages.settingsSaveSuccess"));
+  };
+
+  const handleExportPdf = () => {
+    if (!exam) return;
+    exportExamQuestionsToPdf(exam, {
+      examTitle: t("pdf.examTitle"),
+      questionLabel: t("pdf.questionLabel"),
+      correctAnswer: t("pdf.correctAnswer"),
+      points: t("pdf.points"),
+      noQuestions: t("messages.noQuestionsForPdf"),
+    });
+  };
 
   if (loading || !exam) {
     return (
@@ -79,6 +136,7 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
             <Button
               variant="outline"
               className="h-12 gap-2 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
+              onClick={handleExportPdf}
             >
               <Download className="h-4 w-4" />
               {t("actions.exportPdf")} PDF
@@ -98,48 +156,27 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        {/* Questions */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">
-          {/* Exam header */}
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <span
-                    className={cn(
-                      "rounded-full px-2.5 py-0.5 text-xs font-bold",
-                      "bg-emerald-50 text-emerald-600",
-                    )}
-                  >
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-600">
                     {t("status.published")}
                   </span>
-                  <p className="mt-1 text-xs text-slate-400">
-                    {t("lastEdit")} {t("today")}، 10:30 صباحاً
-                  </p>
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-1.5">
-                  <span className="text-sm font-bold text-slate-700">
-                    {exam.questions.length}
-                  </span>
+                  <span className="text-sm font-bold text-slate-700">{exam.questions.length}</span>
                   <span className="text-xs text-slate-400">
                     {t("stats.totalQuestions")} {t("stats.questions")}
                   </span>
                 </div>
               </div>
               <h2 className="mt-3 text-2xl font-bold text-slate-800">{exam.name}</h2>
-              <div className="mt-2 flex items-center gap-3 text-sm text-slate-500">
-                <span className="flex items-center gap-1">
-                  <Star className="h-3.5 w-3.5 text-[#C8AC59]" />
-                  {t("info.subject")}: {t("info.secondary")}
-                </span>
-                <span>·</span>
-                <span>{t("info.level")}: {t("info.secondary")}</span>
-              </div>
             </CardContent>
           </Card>
 
-          {/* Questions list */}
           <div className="space-y-5">
             {exam.questions.map((question, index) => (
               <Card
@@ -147,31 +184,15 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
                 className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]"
               >
                 <CardContent className="space-y-4 p-5">
-                  <div className="flex items-center justify-between">
-                    <button
-                      type="button"
-                      className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                    <div className="flex items-center gap-2 text-right">
-                      <span
-                        className={cn(
-                          "rounded-full px-2.5 py-0.5 text-xs font-semibold",
-                          "bg-slate-100 text-slate-500",
-                        )}
-                      >
-                        {question.type === "multipleChoice"
-                          ? "خيارات متعددة"
-                          : "صح أو خطأ"}
-                      </span>
-                      <span className="font-bold text-slate-500">{index + 1}</span>
-                    </div>
+                  <div className="flex items-center justify-end gap-2 text-right">
+                    <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                      {question.type === "multipleChoice"
+                        ? tQuestion("multipleChoice")
+                        : tQuestion("trueFalse")}
+                    </span>
+                    <span className="font-bold text-slate-500">{index + 1}</span>
                   </div>
-
-                  <p className="text-right text-base font-bold text-slate-800">
-                    {question.text}
-                  </p>
+                  <p className="text-right text-base font-bold text-slate-800">{question.text}</p>
 
                   {question.imageUrl ? (
                     <div className="relative h-40 overflow-hidden rounded-2xl bg-slate-100">
@@ -219,7 +240,6 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
           </div>
         </main>
 
-        {/* Right: exam settings */}
         <aside className="space-y-4">
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-5">
@@ -246,25 +266,35 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
                 },
               ].map(({ label, value, className }) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className={className}>{value}</span>
                   <span className="text-sm text-slate-500">{label}</span>
+                  <span className={className}>{value}</span>
                 </div>
               ))}
 
-              <div className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <div className="h-5 w-9 rounded-full bg-[#C8AC59]" />
-                  <span className="text-xs font-semibold text-slate-500">
-                    {t("settings.enabled")}
+              <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3 py-2.5">
+                <ToggleSwitch
+                  checked={exam.randomOrder}
+                  onCheckedChange={(checked) => void handleRandomOrderChange(checked)}
+                  disabled={savingSettings}
+                  ariaLabel={t("settings.randomOrder")}
+                />
+                <div className="space-y-0.5 text-right">
+                  <div className="flex items-center justify-end gap-1.5 text-sm text-slate-600">
+                    <Shuffle className="h-4 w-4" />
+                    <span className="font-semibold">{t("settings.randomOrder")}</span>
+                  </div>
+                  <p className="text-xs text-slate-400">{t("settings.randomOrderDesc")}</p>
+                  <span
+                    className={cn(
+                      "text-xs font-semibold",
+                      exam.randomOrder ? "text-[#C8AC59]" : "text-slate-400",
+                    )}
+                  >
+                    {exam.randomOrder ? t("settings.enabled") : t("settings.disabled")}
                   </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-sm text-slate-600">
-                  <Shuffle className="h-4 w-4" />
-                  <span>{t("settings.randomOrder")}</span>
                 </div>
               </div>
 
-              {/* Ready badge */}
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-center">
                 <div className="mb-2 flex justify-center">
                   <CheckCircle2 className="h-6 w-6 text-emerald-500" />

@@ -13,10 +13,11 @@ export function getStationEditorHref(
       return ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_VIEW(journeyId, station.id);
     case "challenge":
       return ROUTES.ADMIN.JOURNEY_EDITOR.CHALLENGE_EDITOR(journeyId, station.id);
+    case "shortQuiz":
     case "exam":
       return ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDITOR(journeyId, station.id);
     case "helperFile":
-      return null;
+      return ROUTES.ADMIN.JOURNEY_EDITOR.HELPER_RESOURCE_EDITOR(journeyId, station.id);
     default:
       return null;
   }

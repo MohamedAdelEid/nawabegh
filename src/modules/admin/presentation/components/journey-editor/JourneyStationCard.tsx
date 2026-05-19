@@ -41,6 +41,7 @@ const ICON_COMPONENTS: Record<string, React.ReactNode> = {
 const TYPE_BG: Record<string, string> = {
   flashcard: "bg-amber-50 text-amber-600",
   liveBroadcast: "bg-blue-50 text-blue-600",
+  shortQuiz: "bg-rose-50 text-rose-600",
   challenge: "bg-purple-50 text-purple-600",
   exam: "bg-rose-50 text-rose-600",
   helperFile: "bg-slate-50 text-slate-600",
@@ -49,6 +50,7 @@ const TYPE_BG: Record<string, string> = {
 const ICON_BG: Record<string, string> = {
   flashcard: "bg-amber-100",
   liveBroadcast: "bg-blue-100",
+  shortQuiz: "bg-rose-100",
   challenge: "bg-purple-100",
   exam: "bg-rose-100",
   helperFile: "bg-slate-100",
@@ -74,7 +76,7 @@ export function JourneyStationCard({
   const isOpen = station.access === "open";
 
   const completionLabel = (() => {
-    if (station.completionRule === "passScore" && station.completionValue !== undefined) {
+    if (station.completionRule === "passScore" && typeof station.completionValue === "number") {
       return t("station.completionBadge.passScore", { value: station.completionValue });
     }
     if (station.completionRule === "unlockOnSuccess") {

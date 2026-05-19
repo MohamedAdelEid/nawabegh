@@ -35,6 +35,25 @@ export type LoginApiResponse = BackendApiResponse<LoginApiData> & {
   status?: string | number;
 };
 
+export type RefreshTokenApiData = {
+  token?: string;
+  accessToken?: string;
+  expiresAt?: string;
+  accessTokenExpiresAt?: string;
+  refreshToken?: string | null;
+};
+
+export type RefreshTokenApiResponse = BackendApiResponse<RefreshTokenApiData> & {
+  isSuccess?: boolean;
+  status?: string | number;
+};
+
+export type AuthTokenPayload = {
+  accessToken: string;
+  refreshToken?: string;
+  accessTokenExpiresAt: string;
+};
+
 export type AuthSessionUser = {
   id: string;
   domainUid?: string | null;
@@ -48,6 +67,7 @@ export type AuthTokenClaims = {
   sub?: string;
   email?: string;
   uid?: string;
+  exp?: number;
   domain_uid?: string;
   name?: string;
   role?: string;

@@ -24,12 +24,18 @@ interface AdminContentManagementAddPageProps {
     LIST: string;
     VIEW: (fileId: string) => string;
   };
+  stationContext?: {
+    journeyId: string;
+    stationId: string;
+    returnHref: string;
+  };
 }
 
 export function AdminContentManagementAddPage({
   mode = "create",
   fileId,
   routeConfig = ROUTES.ADMIN.CONTENT_MANAGEMENT,
+  stationContext,
 }: AdminContentManagementAddPageProps) {
   const t = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
@@ -73,7 +79,7 @@ export function AdminContentManagementAddPage({
         router.push(routeConfig.VIEW(fileId));
       } else {
         const created = await submitContentFile(payload);
-        router.push(routeConfig.VIEW(created.id));
+        router.push(stationContext?.returnHref ?? routeConfig.VIEW(created.id));
       }
     } finally {
       setSubmitting(false);
@@ -91,11 +97,26 @@ export function AdminContentManagementAddPage({
   return (
     <div className="space-y-6">
       <DashboardPageHeader
-        title={mode === "edit" ? t("form.editTitle") : t("form.addTitle")}
-        description={t("form.pageDescription")}
+        title={
+          stationContext
+            ? t("form.stationContext.addTitle")
+            : mode === "edit"
+              ? t("form.editTitle")
+              : t("form.addTitle")
+        }
+        description={
+          stationContext ? t("form.stationContext.pageDescription") : t("form.pageDescription")
+        }
         breadcrumbs={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
-          { label: t("breadcrumbs.content"), href: routeConfig.LIST },
+          ...(stationContext
+            ? [
+                {
+                  label: t("form.breadcrumbs.journeyEditor"),
+                  href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(stationContext.journeyId),
+                },
+              ]
+            : [{ label: t("breadcrumbs.content"), href: routeConfig.LIST }]),
           { label: mode === "edit" ? t("breadcrumbs.edit") : t("breadcrumbs.add") },
         ]}
       />
@@ -106,10 +127,19 @@ export function AdminContentManagementAddPage({
             <CardContent className="space-y-4 p-5 text-right">
               <h3 className="font-bold text-[#1E3A66]">{t("form.summary.title")}</h3>
               <div className="space-y-2 text-sm text-slate-500">
-                <p>{t("form.summary.step1")}</p>
-                <p>{t("form.summary.step2")}</p>
-                <p>{t("form.summary.step3")}</p>
+                <p>{t(stationContext ? "form.stationContext.step1" : "form.summary.step1")}</p>
+                <p>{t(stationContext ? "form.stationContext.step2" : "form.summary.step2")}</p>
+                <p>{t(stationContext ? "form.stationContext.step3" : "form.summary.step3")}</p>
               </div>
+              {stationContext ? (
+                <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
+                  <p className="font-semibold text-[#1E3A66]">
+                    {t("form.stationContext.title")}
+                  </p>
+                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
+                  <p className="mt-2 leading-5">{t("form.stationContext.note")}</p>
+                </div>
+              ) : null}
               <Button
                 type="button"
                 className="h-12 w-full rounded-xl bg-[#2B415E] text-white hover:bg-[#243B5A]"

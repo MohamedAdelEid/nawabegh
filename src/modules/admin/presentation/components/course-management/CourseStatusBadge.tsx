@@ -10,6 +10,7 @@ export function courseStatusTone(status: CourseStatusId) {
   if (status === "approved") return "success" as const;
   if (status === "pending") return "warning" as const;
   if (status === "rejected") return "danger" as const;
+  if (status === "archived") return "neutral" as const;
   return "neutral" as const;
 }
 
