@@ -13,7 +13,12 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
-import { getLiveBroadcastStation } from "@/modules/admin/infrastructure/api/journeyEditorApi";
+import { mapLiveSessionToStation } from "@/modules/admin/domain/utils/liveSessionMappers";
+import {
+  getLiveSession,
+  getLiveSessionIdForStation,
+} from "@/modules/admin/infrastructure/api/liveSessionsApi";
+import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -23,6 +28,21 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 interface Props {
   journeyId: string;
   stationId: string;
+}
+
+const STATION_SESSION_STORAGE_KEY_PREFIX = "admin.liveSession.station.";
+
+function getStoredSessionId(stationId: string) {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`);
+}
+
+function storeSessionId(stationId: string, sessionId: string) {
+  window.localStorage.setItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`, sessionId);
+}
+
+function clearStoredSessionId(stationId: string) {
+  window.localStorage.removeItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`);
 }
 
 export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Props) {
@@ -35,11 +55,38 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
   useEffect(() => {
     void (async () => {
-      const result = await getLiveBroadcastStation(stationId);
-      if (result.data) setStation(result.data);
+      setLoading(true);
+      let sessionId = getStoredSessionId(stationId);
+      if (!sessionId) {
+        const stationSessionResult = await getLiveSessionIdForStation(stationId);
+        sessionId = stationSessionResult.data;
+      }
+
+      if (!sessionId) {
+        router.replace(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, stationId));
+        return;
+      }
+
+      const result = await getLiveSession(sessionId);
+      if (result.data) {
+        storeSessionId(stationId, result.data.id);
+        setStation(mapLiveSessionToStation(result.data));
+        setLoading(false);
+        return;
+      }
+
+      clearStoredSessionId(stationId);
+      if (result.status === "NotFound") {
+        router.replace(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, stationId));
+        return;
+      }
+
+      if (result.errorMessage) {
+        notify.error(result.errorMessage);
+      }
       setLoading(false);
     })();
-  }, [stationId]);
+  }, [journeyId, router, stationId]);
 
   if (loading) {
     return (
@@ -50,6 +97,8 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   }
 
   if (!station) return null;
+
+  const presenterInitial = station.presenter.trim().charAt(0) || "?";
 
   return (
     <div className="space-y-7">
@@ -116,7 +165,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               <div className="border-t border-slate-100 p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2C4260] text-white font-bold text-lg">
-                    {station.presenter[0]}
+                    {presenterInitial}
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-slate-800">{station.presenter}</p>

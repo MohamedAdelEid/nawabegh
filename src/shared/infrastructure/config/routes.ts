@@ -101,8 +101,8 @@ export const ROUTES = {
         const base = `/admin/journey-editor/${journeyId}/flashcard/${stationId}/add`;
         return deckId ? `${base}?deckId=${encodeURIComponent(deckId)}` : base;
       },
-      LIVE_BROADCAST_ADD: (journeyId: string) =>
-        `/admin/journey-editor/${journeyId}/live-broadcast/add`,
+      LIVE_BROADCAST_ADD: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/live-broadcast/${stationId}/add`,
       LIVE_BROADCAST_VIEW: (journeyId: string, stationId: string) =>
         `/admin/journey-editor/${journeyId}/live-broadcast/${stationId}`,
       CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>

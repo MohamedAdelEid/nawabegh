@@ -10,14 +10,15 @@ import {
   MapPin,
   Plus,
   Save,
-  User,
   Video,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
-import type { LiveBroadcastAttachment, LiveBroadcastObjective, LiveBroadcastPreTask } from "@/modules/admin/domain/data/journeyEditorData";
-import { saveLiveBroadcastStation } from "@/modules/admin/infrastructure/api/journeyEditorApi";
+import { useEffect, useRef, useState } from "react";
+import type { LiveBroadcastObjective, LiveBroadcastPreTask } from "@/modules/admin/domain/data/journeyEditorData";
+import { getCourseForEdit } from "@/modules/admin/infrastructure/api/courseApi";
+import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
+import { createLiveSession } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
@@ -27,22 +28,41 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 interface Props {
   journeyId: string;
+  stationId: string;
 }
+
+type PendingAttachment = {
+  id: string;
+  name: string;
+  type: string;
+  sizeLabel: string;
+  file: File;
+};
 
 const STEPS = ["basicInfo", "additionalDetails", "educationalContent"] as const;
 type StepId = (typeof STEPS)[number];
 
-export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
+const LIVE_SESSION_COVER_UPLOAD_FOLDER = "live-sessions/covers";
+const LIVE_SESSION_ATTACHMENT_UPLOAD_FOLDER = "live-sessions/attachments";
+const STATION_SESSION_STORAGE_KEY_PREFIX = "admin.liveSession.station.";
+
+function storeSessionId(stationId: string, sessionId: string) {
+  window.localStorage.setItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`, sessionId);
+}
+
+export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.liveBroadcastAdd");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
 
   const [activeStep, setActiveStep] = useState<StepId>("basicInfo");
   const [saving, setSaving] = useState(false);
+  const [responsibleTeacherId, setResponsibleTeacherId] = useState("");
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [presenter, setPresenter] = useState("د. أحمد السالم");
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreviewUrl, setCoverImagePreviewUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(60);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -50,15 +70,32 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
   const [objectives, setObjectives] = useState<LiveBroadcastObjective[]>([
     { id: "obj-1", text: "" },
   ]);
-  const [attachments, setAttachments] = useState<LiveBroadcastAttachment[]>([]);
+  const [attachments, setAttachments] = useState<PendingAttachment[]>([]);
   const [preTasks, setPreTasks] = useState<LiveBroadcastPreTask[]>([
-    { id: "pt-1", label: "مراجعة جدول التكافؤات الأساسي", subtitle: "", completed: false },
-    { id: "pt-2", label: "تحميل ملخص الأساسيات (PDF)", subtitle: "قبل موعد الحصة بساعة على الأقل", completed: false },
-    { id: "pt-3", label: "تجهيز الأدوات الهندسية", subtitle: "أوراق ورسم وأدوات هندسية", completed: false },
+    { id: "pt-1", label: "", subtitle: "", completed: false },
   ]);
 
   const thumbRef = useRef<HTMLInputElement>(null);
   const attachRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    void (async () => {
+      const courseResult = await getCourseForEdit(journeyId);
+      if (courseResult.data?.teacherId) {
+        setResponsibleTeacherId(courseResult.data.teacherId);
+      }
+    })();
+  }, [journeyId]);
+
+  useEffect(() => {
+    if (!coverImageFile) {
+      setCoverImagePreviewUrl(null);
+      return;
+    }
+    const previewUrl = URL.createObjectURL(coverImageFile);
+    setCoverImagePreviewUrl(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [coverImageFile]);
 
   const addObjective = () => {
     setObjectives((prev) => [
@@ -78,11 +115,17 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
     ]);
   };
 
+  const handleThumbChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverImageFile(file);
+  };
+
   const handleAttachChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "other";
-    const type = (["pdf", "pptx", "mp4"].includes(ext) ? ext : "other") as LiveBroadcastAttachment["type"];
+    const type = ["pdf", "pptx", "mp4", "xlsx"].includes(ext) ? ext : "other";
     setAttachments((prev) => [
       ...prev,
       {
@@ -90,35 +133,104 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
         name: file.name,
         type,
         sizeLabel: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+        file,
       },
     ]);
+    e.target.value = "";
+  };
+
+  const updatePreTask = (id: string, field: "label" | "subtitle", value: string) => {
+    setPreTasks((prev) => prev.map((task) => (task.id === id ? { ...task, [field]: value } : task)));
   };
 
   const handleSave = async () => {
     if (!title.trim()) {
-      notify.error("Title is required");
+      notify.error(t("messages.titleRequired"));
       return;
     }
+    if (!responsibleTeacherId.trim()) {
+      notify.error(t("messages.teacherRequired"));
+      return;
+    }
+    if (!date.trim() || !time.trim()) {
+      notify.error(t("messages.scheduleRequired"));
+      return;
+    }
+
     setSaving(true);
-    const result = await saveLiveBroadcastStation("new", {
-      title,
-      description,
-      presenter,
-      durationMin: duration,
-      date,
-      time,
-      broadcastLink,
-      objectives,
-      attachments,
-      preTasks,
+
+    let coverImageUrl = "";
+    if (coverImageFile) {
+      const coverUpload = await uploadAdminFile(coverImageFile, LIVE_SESSION_COVER_UPLOAD_FOLDER);
+      if (!coverUpload.ok) {
+        setSaving(false);
+        notify.error(coverUpload.errorMessage);
+        return;
+      }
+      coverImageUrl = coverUpload.filePath;
+    }
+
+    const uploadedAttachments: {
+      fileName: string;
+      fileUrl: string;
+      fileType: string;
+      order: number;
+    }[] = [];
+
+    for (const [index, attachment] of attachments.entries()) {
+      const uploadResult = await uploadAdminFile(attachment.file, LIVE_SESSION_ATTACHMENT_UPLOAD_FOLDER);
+      if (!uploadResult.ok) {
+        setSaving(false);
+        notify.error(uploadResult.errorMessage);
+        return;
+      }
+      uploadedAttachments.push({
+        fileName: attachment.name,
+        fileUrl: uploadResult.filePath,
+        fileType: attachment.type,
+        order: index,
+      });
+    }
+
+    const goals = objectives
+      .map((objective, index) => ({
+        text: objective.text.trim(),
+        order: index,
+      }))
+      .filter((goal) => goal.text.length > 0);
+
+    const preSessionTasks = preTasks
+      .map((task, index) => ({
+        title: task.label.trim(),
+        description: task.subtitle.trim(),
+        order: index,
+      }))
+      .filter((task) => task.title.length > 0);
+
+    const result = await createLiveSession({
+      stationId,
+      title: title.trim(),
+      coverImageUrl,
+      description: description.trim(),
+      responsibleTeacherId: responsibleTeacherId.trim(),
+      scheduledDate: date,
+      scheduledTime: time,
+      durationMinutes: duration,
+      roomUrl: broadcastLink.trim(),
+      goals,
+      preSessionTasks,
+      attachments: uploadedAttachments,
     });
+
     setSaving(false);
     if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? "Failed to save");
+      notify.error(result.errorMessage ?? t("messages.saveError"));
       return;
     }
-    notify.success("Station saved");
-    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId));
+
+    storeSessionId(stationId, result.data.id);
+    notify.success(t("messages.saveSuccess"));
+    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_VIEW(journeyId, stationId));
   };
 
   const stepIndex = STEPS.indexOf(activeStep);
@@ -228,13 +340,28 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
               {/* Thumbnail */}
               <div className="space-y-1.5 text-right">
                 <label className="text-sm font-semibold text-slate-600">{t("fields.thumbnail")}</label>
-                <input ref={thumbRef} type="file" accept="image/*" className="hidden" />
+                <input
+                  ref={thumbRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleThumbChange}
+                />
                 <button
                   type="button"
                   onClick={() => thumbRef.current?.click()}
                   className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 py-8 text-sm text-slate-400 transition-colors hover:border-[#C8AC59]/70 hover:text-[#C8AC59]"
                 >
-                  <ImagePlus className="h-8 w-8" />
+                  {coverImagePreviewUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={coverImagePreviewUrl}
+                      alt={title || t("fields.thumbnail")}
+                      className="mb-2 h-28 w-full max-w-xs rounded-xl object-cover"
+                    />
+                  ) : (
+                    <ImagePlus className="h-8 w-8" />
+                  )}
                   <p className="font-semibold">{t("upload.drag")}</p>
                   <p className="text-xs">{t("upload.formats")}</p>
                 </button>
@@ -263,16 +390,13 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
               </h2>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5 text-right">
+                <div className="space-y-1.5 text-right sm:col-span-2">
                   <label className="text-sm font-semibold text-slate-600">{t("fields.presenter")}</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
-                    <input
-                      value={presenter}
-                      onChange={(e) => setPresenter(e.target.value)}
-                      className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
-                    />
-                  </div>
+                  <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-right text-sm text-slate-500">
+                    {responsibleTeacherId
+                      ? t("fields.presenterFromCourse")
+                      : t("fields.presenterMissing")}
+                  </p>
                 </div>
 
                 <div className="space-y-1.5 text-right">
@@ -432,16 +556,22 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId }: Props) {
               </div>
 
               {preTasks.map((task, i) => (
-                <div key={task.id} className="flex items-start gap-3 rounded-2xl border border-slate-100 p-3">
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-slate-300 text-slate-400 text-xs">
-                    {i + 1}
+                <div key={task.id} className="space-y-2 rounded-2xl border border-slate-100 p-3">
+                  <div className="flex items-center justify-between text-xs text-slate-400">
+                    <span>{i + 1}</span>
                   </div>
-                  <div className="flex-1 text-right">
-                    <p className="text-sm font-semibold text-slate-700">{task.label}</p>
-                    {task.subtitle ? (
-                      <p className="mt-0.5 text-xs text-slate-400">{task.subtitle}</p>
-                    ) : null}
-                  </div>
+                  <input
+                    value={task.label}
+                    onChange={(e) => updatePreTask(task.id, "label", e.target.value)}
+                    placeholder={t("fields.preTaskLabel")}
+                    className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
+                  />
+                  <input
+                    value={task.subtitle}
+                    onChange={(e) => updatePreTask(task.id, "subtitle", e.target.value)}
+                    placeholder={t("fields.preTaskSubtitle")}
+                    className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
+                  />
                 </div>
               ))}
 

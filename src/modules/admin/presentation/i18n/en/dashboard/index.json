@@ -2495,6 +2495,8 @@
           "description": "Station Description",
           "descriptionPlaceholder": "Brief description of content and educational objectives",
           "presenter": "Responsible Presenter",
+          "presenterFromCourse": "The course teacher will be assigned as the session presenter.",
+          "presenterMissing": "No teacher is linked to this course. Assign a teacher before creating the session.",
           "duration": "Session Duration",
           "durationMinutes": "minutes",
           "date": "Broadcast Date",
@@ -2515,7 +2517,14 @@
           "attachmentDrag": "Drag file here or click to browse",
           "attachmentFormats": "PDF, PPTX, XLSX"
         },
-        "tip": "Make sure to test audio and video before the session starts, and verify the correct broadcast links are connected to ensure a smooth educational experience."
+        "tip": "Make sure to test audio and video before the session starts, and verify the correct broadcast links are connected to ensure a smooth educational experience.",
+        "messages": {
+          "titleRequired": "Session title is required.",
+          "teacherRequired": "A responsible teacher is required for this course.",
+          "scheduleRequired": "Broadcast date and start time are required.",
+          "saveSuccess": "Live session created successfully.",
+          "saveError": "Failed to create live session."
+        }
       },
       "liveBroadcastView": {
         "title": "View Live Broadcast Station",

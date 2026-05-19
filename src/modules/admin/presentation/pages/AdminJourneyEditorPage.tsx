@@ -144,6 +144,9 @@ function getCreatedStationHref(journeyId: string, station: JourneyStation): stri
   if (station.type === "flashcard") {
     return ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, station.id);
   }
+  if (station.type === "liveBroadcast") {
+    return ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, station.id);
+  }
   return getStationEditorHref(journeyId, station);
 }
 
