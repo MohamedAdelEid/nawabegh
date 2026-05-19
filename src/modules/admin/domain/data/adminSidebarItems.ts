@@ -3,7 +3,6 @@ import {
   SidebarChatGroupIcon,
   SidebarFolderIcon,
   SidebarHomeIcon,
-  SidebarMapIcon,
   SidebarMessageIcon,
 } from "@/shared/presentation/icons/sidebar";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
@@ -68,12 +67,6 @@ export const adminSidebarItems: SidebarItems = {
       href: `${base}?tab=articleEditor`,
       activePathPrefixes: [ROUTES.ADMIN.ARTICLE_EDITOR.LIST],
       icon: SidebarFolderIcon,
-    },
-    {
-      id: "journeyEditor",
-      labelKey: "sidebar.nav.journeyEditor",
-      href: `${base}?tab=journeyEditor`,
-      icon: SidebarMapIcon,
     },
     {
       id: "liveBroadcast",
