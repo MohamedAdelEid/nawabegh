@@ -132,11 +132,16 @@ export interface LiveBroadcastAttachment {
   name: string;
   type: "pdf" | "pptx" | "mp4" | "other";
   sizeLabel: string;
+  fileUrl?: string;
 }
 
 export interface LiveBroadcastStation {
   id: string;
   stationId: string;
+  stationName?: string;
+  courseTitle?: string;
+  learningPathTitle?: string;
+  status?: string;
   title: string;
   thumbnailUrl?: string;
   description: string;

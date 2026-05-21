@@ -57,6 +57,7 @@ export type ChatGroupFilterOption<T extends string> = {
 
 export type ChatGroupRow = {
   id: string;
+  courseId: string;
   groupName: string;
   courseSubtitle: string;
   colorIndicator: string;
@@ -65,6 +66,8 @@ export type ChatGroupRow = {
   attachments: ChatGroupAttachment[];
   statusId: ChatGroupStatusId;
   lastActivityKey: string;
+  /** Pre-formatted last activity when loaded from API. */
+  lastActivityDisplay?: string;
 };
 
 export type ChatGroupPagination = {
@@ -101,7 +104,11 @@ export type ChatGroupLinkedCourse = {
 };
 
 export type ChatGroupFormValues = {
+  chatGroupId: string;
+  courseId: string;
   groupName: string;
+  subjectDisplayName: string;
+  gradeDisplayName: string;
   subjectId: ChatGroupSubjectId | "";
   gradeId: ChatGroupGradeId | "";
   description: string;
@@ -109,6 +116,7 @@ export type ChatGroupFormValues = {
   chatModeId: ChatGroupChatModeId;
   mediaPermissions: ChatGroupMediaPermissions;
   blockAttachments: boolean;
+  isLocked: boolean;
   /** Current URL typed before verify / add to list. */
   linkedCourseDraftUrl: string;
   /** Verified linked courses (books) shown in the list. */

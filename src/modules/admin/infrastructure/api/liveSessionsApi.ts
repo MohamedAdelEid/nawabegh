@@ -46,7 +46,7 @@ export type CreateLiveSessionPayload = {
 export type LiveSessionResponsibleTeacher = {
   userId: string;
   fullName: string;
-  profileImageUrl: string;
+  profileImageUrl: string | null;
   jobTitle: string;
 };
 
@@ -75,6 +75,7 @@ export type LiveSession = {
   id: string;
   stationId: string;
   stationName: string;
+  stationType: number;
   courseId: string;
   courseTitle: string;
   learningPathId: string;
@@ -87,9 +88,13 @@ export type LiveSession = {
   scheduledAt: string;
   durationMinutes: number;
   roomUrl: string;
+  zoomMeetingId: string;
+  zoomJoinUrl: string;
+  zoomStartUrl: string;
+  zoomPassword: string;
   status: string;
-  recordingUrl: string;
-  recordingLinkedAt: string;
+  recordingUrl: string | null;
+  recordingLinkedAt: string | null;
   activeEnrollmentCount: number;
   responsibleTeacher: LiveSessionResponsibleTeacher | null;
   goals: LiveSessionGoal[];
@@ -101,6 +106,14 @@ export type CreatedLiveSession = {
   id: string;
   stationId: string;
   title: string;
+  scheduledDate: string;
+  scheduledTime: string;
+  scheduledAt: string;
+  durationMinutes: number;
+  zoomMeetingId: string;
+  zoomJoinUrl: string;
+  zoomStartUrl: string;
+  zoomPassword: string;
 };
 
 function asRecord(value: unknown): UnknownRecord | null {
@@ -126,6 +139,19 @@ function readNumber(record: UnknownRecord | null, keys: string[], fallback = 0):
     }
   }
   return fallback;
+}
+
+function readNullableString(record: UnknownRecord | null, keys: string[]): string | null {
+  if (!record) return null;
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      return trimmed || null;
+    }
+    if (value === null) return null;
+  }
+  return null;
 }
 
 function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
@@ -185,7 +211,7 @@ function mapResponsibleTeacher(data: unknown): LiveSessionResponsibleTeacher | n
   return {
     userId,
     fullName: readString(record, ["fullName", "name"], ""),
-    profileImageUrl: readString(record, ["profileImageUrl", "avatarUrl"], ""),
+    profileImageUrl: readNullableString(record, ["profileImageUrl", "avatarUrl"]),
     jobTitle: readString(record, ["jobTitle", "title"], ""),
   };
 }
@@ -241,6 +267,7 @@ function mapLiveSession(data: unknown): LiveSession | null {
     id,
     stationId: readString(record, ["stationId"], ""),
     stationName: readString(record, ["stationName"], ""),
+    stationType: readNumber(record, ["stationType"]),
     courseId: readString(record, ["courseId"], ""),
     courseTitle: readString(record, ["courseTitle"], ""),
     learningPathId: readString(record, ["learningPathId"], ""),
@@ -253,9 +280,13 @@ function mapLiveSession(data: unknown): LiveSession | null {
     scheduledAt: readString(record, ["scheduledAt"], ""),
     durationMinutes: readNumber(record, ["durationMinutes", "durationMin"]),
     roomUrl: readString(record, ["roomUrl", "broadcastLink"], ""),
+    zoomMeetingId: readString(record, ["zoomMeetingId"], ""),
+    zoomJoinUrl: readString(record, ["zoomJoinUrl"], ""),
+    zoomStartUrl: readString(record, ["zoomStartUrl"], ""),
+    zoomPassword: readString(record, ["zoomPassword"], ""),
     status: readString(record, ["status"], ""),
-    recordingUrl: readString(record, ["recordingUrl"], ""),
-    recordingLinkedAt: readString(record, ["recordingLinkedAt"], ""),
+    recordingUrl: readNullableString(record, ["recordingUrl"]),
+    recordingLinkedAt: readNullableString(record, ["recordingLinkedAt"]),
     activeEnrollmentCount: readNumber(record, ["activeEnrollmentCount", "registeredCount"]),
     responsibleTeacher: mapResponsibleTeacher(record.responsibleTeacher),
     goals: readArray(record, ["goals", "objectives"])
@@ -279,6 +310,14 @@ function mapCreatedLiveSession(data: unknown): CreatedLiveSession | null {
     id,
     stationId: readString(record, ["stationId"], ""),
     title: readString(record, ["title"], ""),
+    scheduledDate: readString(record, ["scheduledDate"], ""),
+    scheduledTime: readString(record, ["scheduledTime"], ""),
+    scheduledAt: readString(record, ["scheduledAt"], ""),
+    durationMinutes: readNumber(record, ["durationMinutes", "durationMin"]),
+    zoomMeetingId: readString(record, ["zoomMeetingId"], ""),
+    zoomJoinUrl: readString(record, ["zoomJoinUrl"], ""),
+    zoomStartUrl: readString(record, ["zoomStartUrl"], ""),
+    zoomPassword: readString(record, ["zoomPassword"], ""),
   };
 }
 

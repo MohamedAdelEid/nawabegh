@@ -1574,6 +1574,10 @@
           "prev": "Previous",
           "next": "Next",
           "page": "{current} of {total}"
+        },
+        "states": {
+          "empty": "No chat groups match your filters.",
+          "error": "Failed to load chat groups. Please try again."
         }
       },
       "chatModes": {
@@ -1754,7 +1758,17 @@
           "parentMode": {
             "label": "Parent mode",
             "description": "Allow parents to view only (read-only)"
+          },
+          "lockGroup": {
+            "label": "Lock group",
+            "description": "Pause the group and prevent new messages"
           }
+        },
+        "states": {
+          "loadError": "Failed to load chat group details.",
+          "saveError": "Failed to save changes. Please try again.",
+          "saveSuccess": "Chat group updated successfully.",
+          "nameRequired": "Group name is required."
         },
         "subjects": {
           "arabic": "Arabic",
@@ -2475,7 +2489,13 @@
         "actions": {
           "saveAndPublish": "Save and Publish Station",
           "cancel": "Cancel",
-          "addLearningGoal": "Add Goal"
+          "addLearningGoal": "Add Goal",
+          "removeItem": "Remove",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "summary": {
+          "title": "Summary"
         },
         "steps": {
           "basicInfo": "Basic Info",
@@ -2501,9 +2521,8 @@
           "durationMinutes": "minutes",
           "date": "Broadcast Date",
           "time": "Start Time",
-          "broadcastLink": "Broadcast Link",
-          "broadcastLinkPlaceholder": "https://zoom.us/j/...",
           "objectives": "Learning Objectives",
+          "preTaskNumber": "Task {number}",
           "objectivePlaceholder": "e.g. Master the principles of computer processing.",
           "attachments": "Attachments",
           "preTask": "Pre-Session Tasks",
@@ -2531,10 +2550,21 @@
         "description": "Create an interactive live broadcast station for your students.",
         "actions": {
           "joinRoom": "Join Room",
+          "joinRoomHint": "Opens the Zoom meeting in a new tab.",
+          "joinRoomUnavailable": "The meeting link will be available after the session is scheduled.",
           "registerNote": "Cancel session registration",
           "waitNote": "Subscribers will be notified {minutes} minutes before the session starts."
         },
+        "messages": {
+          "loading": "Loading live session…",
+          "noDescription": "No description was added for this session."
+        },
         "live": "LIVE",
+        "status": {
+          "live": "LIVE",
+          "scheduled": "Scheduled",
+          "upcoming": "Upcoming"
+        },
         "liveNow": "Interactive Live Session",
         "registered": "{count} students registered",
         "showProfile": "View Profile",

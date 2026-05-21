@@ -5,6 +5,6 @@ type EditChatGroupRouteParams = {
 };
 
 export default async function EditChatGroupRoute({ params }: EditChatGroupRouteParams) {
-  const { groupId } = await params;
-  return <AdminEditChatGroupPage groupId={groupId} />;
+  const { groupId: courseId } = await params;
+  return <AdminEditChatGroupPage courseId={courseId} />;
 }

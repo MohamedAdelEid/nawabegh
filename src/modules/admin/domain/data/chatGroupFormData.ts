@@ -57,7 +57,11 @@ export const chatGroupGradeOptions: ChatGroupGradeOption[] = [
 ];
 
 export const defaultChatGroupFormValues: ChatGroupFormValues = {
+  chatGroupId: "",
+  courseId: "",
   groupName: "",
+  subjectDisplayName: "",
+  gradeDisplayName: "",
   subjectId: "",
   gradeId: "",
   description: "",
@@ -70,6 +74,7 @@ export const defaultChatGroupFormValues: ChatGroupFormValues = {
     allowWebLinks: false,
   },
   blockAttachments: false,
+  isLocked: false,
   linkedCourseDraftUrl: "",
   linkedCourses: [],
   parentViewOnly: false,
@@ -79,7 +84,11 @@ export const defaultChatGroupFormValues: ChatGroupFormValues = {
 
 export const sampleChatGroupEditData: ChatGroupEditData = {
   id: "chem-12",
+  chatGroupId: "chem-12",
+  courseId: "chem-12",
   groupName: "كيمياء - الصف الثاني عشر (أ)",
+  subjectDisplayName: "الكيمياء",
+  gradeDisplayName: "الصف الثاني عشر",
   subjectId: "chemistry",
   gradeId: "grade12",
   description:
@@ -102,6 +111,7 @@ export const sampleChatGroupEditData: ChatGroupEditData = {
     },
   ],
   parentViewOnly: true,
+  isLocked: false,
   groupImageFile: null,
   groupImagePreviewUrl: "",
 };

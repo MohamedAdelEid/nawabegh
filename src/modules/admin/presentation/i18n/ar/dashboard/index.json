@@ -1574,6 +1574,10 @@
           "prev": "السابق",
           "next": "التالي",
           "page": "{current} من {total}"
+        },
+        "states": {
+          "empty": "لا توجد مجموعات دردشة تطابق عوامل التصفية.",
+          "error": "تعذّر تحميل مجموعات الدردشة. يرجى المحاولة مرة أخرى."
         }
       },
       "chatModes": {
@@ -1754,7 +1758,17 @@
           "parentMode": {
             "label": "وضع أولياء الأمور",
             "description": "السماح للأولياء بالمشاهدة فقط (للقراءة)"
+          },
+          "lockGroup": {
+            "label": "قفل المجموعة",
+            "description": "إيقاف المجموعة مؤقتاً ومنع الرسائل الجديدة"
           }
+        },
+        "states": {
+          "loadError": "تعذّر تحميل بيانات المجموعة.",
+          "saveError": "تعذّر حفظ التعديلات. يرجى المحاولة مرة أخرى.",
+          "saveSuccess": "تم تحديث مجموعة الدردشة بنجاح.",
+          "nameRequired": "اسم المجموعة مطلوب."
         },
         "subjects": {
           "arabic": "اللغة العربية",
@@ -2478,7 +2492,13 @@
         "actions": {
           "saveAndPublish": "حفظ ونشر المحطة",
           "cancel": "إلغاء",
-          "addLearningGoal": "إضافة هدف"
+          "addLearningGoal": "إضافة هدف",
+          "removeItem": "إزالة",
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "summary": {
+          "title": "ملخص"
         },
         "steps": {
           "basicInfo": "المعلومات الأساسية",
@@ -2504,9 +2524,8 @@
           "durationMinutes": "دقيقة",
           "date": "تاريخ البث",
           "time": "وقت البدء",
-          "broadcastLink": "رابط البث",
-          "broadcastLinkPlaceholder": "https://zoom.us/j/...",
           "objectives": "أهداف التعلم",
+          "preTaskNumber": "المهمة {number}",
           "objectivePlaceholder": "مثال: أتقن مبادئ معالجة الكمبيوتر التعليمية.",
           "attachments": "المنشآت والمرافقات",
           "preTask": "مهام ما قبل الحصة",
@@ -2534,10 +2553,21 @@
         "description": "قم بإنشاء محطة بث مباشر تفاعلية لطلابك.",
         "actions": {
           "joinRoom": "الانضمام للقاعة",
+          "joinRoomHint": "يفتح اجتماع Zoom في تبويب جديد.",
+          "joinRoomUnavailable": "سيظهر رابط الاجتماع بعد جدولة الحصة.",
           "registerNote": "إلغاء التسجيل في الحصة",
           "waitNote": "سيتم الإبلاغ المشتركين قبل بدء الحصة بـ {minutes} دقيقة."
         },
+        "messages": {
+          "loading": "جاري تحميل الحصة المباشرة…",
+          "noDescription": "لم تتم إضافة وصف لهذه الحصة."
+        },
         "live": "مباشر",
+        "status": {
+          "live": "مباشر",
+          "scheduled": "مجدولة",
+          "upcoming": "قادمة"
+        },
         "liveNow": "جلسة تفاعلية مباشرة",
         "registered": "{count} طالب مسجل",
         "showProfile": "عرض الملف التعريفي",

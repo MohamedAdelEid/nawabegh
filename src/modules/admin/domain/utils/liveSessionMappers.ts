@@ -1,6 +1,17 @@
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
 import type { LiveSession } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 
+function formatDisplayTime(time: string) {
+  if (!time.trim()) return "";
+  const match = /^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(time.trim());
+  if (!match) return time;
+  const hour = Number(match[1]);
+  const minute = match[2];
+  const period = hour >= 12 ? "م" : "ص";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${minute} ${period}`;
+}
+
 function formatDisplayDate(isoDate: string) {
   if (!isoDate.trim()) return "";
   const parsed = new Date(isoDate);
@@ -32,16 +43,20 @@ export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStat
   return {
     id: session.id,
     stationId: session.stationId,
+    stationName: session.stationName || undefined,
+    courseTitle: session.courseTitle || undefined,
+    learningPathTitle: session.learningPathTitle || undefined,
+    status: session.status || undefined,
     title: session.title,
     thumbnailUrl: session.coverImageUrl || undefined,
     description: session.description,
     presenter: teacher?.fullName || "—",
-    presenterAvatarUrl: teacher?.profileImageUrl || undefined,
+    presenterAvatarUrl: teacher?.profileImageUrl ?? undefined,
     presenterTitle: teacher?.jobTitle || undefined,
     durationMin: session.durationMinutes,
     date: formatDisplayDate(session.scheduledDate || scheduledAt),
-    time: session.scheduledTime,
-    broadcastLink: session.roomUrl,
+    time: formatDisplayTime(session.scheduledTime),
+    broadcastLink: session.roomUrl || session.zoomJoinUrl,
     registeredCount: session.activeEnrollmentCount,
     isLive: session.status.toLowerCase() === "live",
     countdown: computeCountdown(scheduledAt),
@@ -52,6 +67,7 @@ export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStat
     attachments: session.attachments.map((attachment) => ({
       id: String(attachment.id || attachment.order),
       name: attachment.fileName,
+      fileUrl: attachment.fileUrl || undefined,
       type: (["pdf", "pptx", "mp4"].includes(attachment.fileType.toLowerCase())
         ? attachment.fileType.toLowerCase()
         : "other") as LiveBroadcastStation["attachments"][number]["type"],

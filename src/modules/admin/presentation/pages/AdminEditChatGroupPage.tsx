@@ -1,16 +1,15 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
-import { Users, BookOpen, Shield, Save, X, Loader2, LockIcon } from "lucide-react";
+import { Save, Loader2, LockIcon } from "lucide-react";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { notify } from "@/shared/application/lib/toast";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
-import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
-import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import Relational from "../assets/icons/relational.svg";
 
@@ -18,27 +17,23 @@ import {
   ChatGroupFormSectionCard,
   ChatGroupSendPermissionSelector,
   ChatGroupMediaToggles,
-  ChatGroupLinkedCourseSection,
-  ChatGroupIdentityUpload,
 } from "@/modules/admin/presentation/components/chat-groups";
 import {
-  sampleChatGroupEditData,
-  chatGroupSubjectOptions,
-  chatGroupGradeOptions,
-} from "@/modules/admin/domain/data/chatGroupFormData";
-import { chatGroupsDashboardData } from "@/modules/admin/domain/data/chatGroupsDashboardData";
+  getChatGroupByCourseId,
+  updateChatGroupByCourseId,
+} from "@/modules/admin/infrastructure/api/chatGroupsApi";
+import {
+  mapChatGroupDetailToFormValues,
+  mapChatGroupFormToUpdatePayload,
+} from "@/modules/admin/domain/utils/chatGroupMappers";
 import type {
   ChatGroupFormValues,
   ChatGroupChatModeId,
   ChatGroupMediaPermissions,
-  ChatGroupGradeId,
-  ChatGroupSubjectId,
 } from "@/modules/admin/domain/types/chatGroups.types";
-import PhotoFram from "../assets/icons/PhotoFram";
 import { EditList } from "../assets/icons/EditList";
 import { SettingStar } from "../assets/icons/SettingStar";
 import { IconComp } from "../assets/icons/IconComp";
-import { Network } from "../assets/icons/Network";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -46,110 +41,94 @@ const fadeInUp = {
 };
 
 interface AdminEditChatGroupPageProps {
-  groupId: string;
+  /** Route segment value — API path uses `courseId`. */
+  courseId: string;
 }
 
-export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps) {
+export function AdminEditChatGroupPage({ courseId }: AdminEditChatGroupPageProps) {
   const t = useTranslations("admin.dashboard.chatGroups.editPage");
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
+  const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState<ChatGroupFormValues | null>(null);
-  const [enableLinkedCourse, setEnableLinkedCourse] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const row = chatGroupsDashboardData.rows.find((r) => r.id === groupId);
-      const data = {
-        ...sampleChatGroupEditData,
-        id: groupId,
-        groupName: row?.groupName ?? sampleChatGroupEditData.groupName,
-      };
-      setForm(data);
-      setEnableLinkedCourse(
-        Boolean(data.linkedCourses?.length || data.linkedCourseDraftUrl),
-      );
-      setIsLoading(false);
+    let alive = true;
+
+    const load = async () => {
+      setLoadState("loading");
+      const result = await getChatGroupByCourseId(courseId);
+      if (!alive) return;
+
+      if (!result.data) {
+        setLoadState("error");
+        notify.error(result.errorMessage ?? t("states.loadError"));
+        return;
+      }
+
+      setForm(mapChatGroupDetailToFormValues(result.data));
+      setLoadState("ready");
     };
-    fetchData();
-  }, [groupId]);
 
-  const subjectSelectOptions = useMemo(
-    () => [
-      { value: "", label: t("fields.subject.placeholder") },
-      ...chatGroupSubjectOptions.map((opt) => ({
-        value: opt.id,
-        label: t(`subjects.${opt.id}`),
-      })),
-    ],
-    [t],
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, [courseId, t]);
+
+  const handleFieldChange = useCallback(
+    <K extends keyof ChatGroupFormValues>(field: K, value: ChatGroupFormValues[K]) => {
+      setForm((prev) => (prev ? { ...prev, [field]: value } : prev));
+    },
+    [],
   );
-
-  const gradeSelectOptions = useMemo(
-    () => [
-      { value: "", label: t("fields.grade.placeholder") },
-      ...chatGroupGradeOptions.map((opt) => ({
-        value: opt.id,
-        label: t(`grades.${opt.id}`),
-      })),
-    ],
-    [t],
-  );
-
-  if (isLoading || !form) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#243B5A]" />
-      </div>
-    );
-  }
-
-  const handleFieldChange = <K extends keyof ChatGroupFormValues>(
-    field: K,
-    value: ChatGroupFormValues[K],
-  ) => {
-    setForm((prev) => (prev ? { ...prev, [field]: value } : prev));
-  };
-
-  const handleImageChange = (file: File | null, previewUrl: string) => {
-    setForm((prev) =>
-      prev
-        ? { ...prev, groupImageFile: file, groupImagePreviewUrl: previewUrl }
-        : prev,
-    );
-  };
-
-  const handleAddVerifiedCourse = (url: string) => {
-    const name = displayNameFromLinkedCourseUrl(url);
-    setForm((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        linkedCourses: [
-          ...prev.linkedCourses,
-          { id: globalThis.crypto.randomUUID(), url, name },
-        ],
-        linkedCourseDraftUrl: "",
-      };
-    });
-  };
-
-  const handleRemoveLinkedCourse = (id: string) => {
-    setForm((prev) =>
-      prev
-        ? { ...prev, linkedCourses: prev.linkedCourses.filter((c) => c.id !== id) }
-        : null,
-    );
-  };
 
   const handleCancel = () => {
     router.push(`${ROUTES.ADMIN.HOME}?tab=chatGroups`);
   };
 
-  const handleSave = () => {
-    console.log("Saving chat group:", groupId, form);
-    router.push(`${ROUTES.ADMIN.HOME}?tab=chatGroups`);
+  const handleSave = async () => {
+    if (!form) return;
+
+    const displayName = form.groupName.trim();
+    if (!displayName) {
+      notify.error(t("states.nameRequired"));
+      return;
+    }
+
+    setIsSaving(true);
+    const result = await updateChatGroupByCourseId(
+      courseId,
+      mapChatGroupFormToUpdatePayload({ ...form, groupName: displayName }),
+    );
+    setIsSaving(false);
+
+    console.log("result", result);
+    if (!result.data) {
+      notify.error(result.errorMessage ?? t("states.saveError"));
+      return;
+    }
+
+    notify.success(result.message ?? t("states.saveSuccess"));
+    // router.push(`${ROUTES.ADMIN.HOME}?tab=chatGroups`);
   };
+
+  if (loadState === "loading" || !form) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
+        {loadState === "error" ? (
+          <>
+            <p className="text-sm text-slate-500">{t("states.loadError")}</p>
+            <Button type="button" variant="outline" onClick={handleCancel}>
+              {t("buttons.cancel")}
+            </Button>
+          </>
+        ) : (
+          <Loader2 className="h-8 w-8 animate-spin text-[#243B5A]" />
+        )}
+      </div>
+    );
+  }
 
   return (
     <section className="space-y-8">
@@ -162,33 +141,39 @@ export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps)
         ]}
         action={
           <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="flex items-center justify-start gap-4"
-        >
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            className="h-14 gap-2 rounded-2xl border-2 border-[#243B5A] px-8 text-base font-semibold text-[#243B5A] transition-colors hover:bg-slate-50"
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            className="flex items-center justify-start gap-4"
           >
-            {t("buttons.cancel")}
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSave}
-            className="h-14 gap-2 rounded-2xl bg-[#243B5A] px-8 text-base font-semibold text-white shadow-[0_4px_0_0_#1a2d45] hover:bg-[#243B5A]"
-          >
-            <Save className="h-5 w-5" />
-            {t("buttons.save")}
-          </Button>
-        </motion.div>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="h-14 gap-2 rounded-2xl border-2 border-[#243B5A] px-8 text-base font-semibold text-[#243B5A] transition-colors hover:bg-slate-50"
+            >
+              {t("buttons.cancel")}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => void handleSave()}
+              disabled={isSaving}
+              className="h-14 gap-2 rounded-2xl bg-[#243B5A] px-8 text-base font-semibold text-white shadow-[0_4px_0_0_#1a2d45] hover:bg-[#243B5A]"
+            >
+              {isSaving ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Save className="h-5 w-5" />
+              )}
+              {t("buttons.save")}
+            </Button>
+          </motion.div>
         }
       />
 
       <div className="space-y-10">
-        <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,1fr)_25rem]">
+        <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,1fr)]">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -203,7 +188,7 @@ export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps)
               accentColor="#67C23A"
             >
               <div className="space-y-5">
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-5 grid-cols-1">
                   <LabeledInput
                     className="sm:col-span-2"
                     label={t("fields.groupName.label")}
@@ -211,59 +196,27 @@ export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps)
                     placeholder={t("fields.groupName.placeholder")}
                     onChange={(value) => handleFieldChange("groupName", value)}
                   />
-                  <LabeledSelect
+                  <LabeledInput
                     label={t("fields.subject.label")}
-                    options={subjectSelectOptions}
-                    value={form.subjectId}
-                    onChange={(value) =>
-                      handleFieldChange("subjectId", value as ChatGroupSubjectId)
-                    }
+                    value={form.subjectDisplayName}
+                    placeholder="—"
+                    readOnly
+                    onChange={() => undefined}
                   />
-                  <LabeledSelect
+                  <LabeledInput
                     label={t("fields.grade.label")}
-                    options={gradeSelectOptions}
-                    value={form.gradeId}
-                    onChange={(value) =>
-                      handleFieldChange("gradeId", value as ChatGroupGradeId)
-                    }
+                    value={form.gradeDisplayName}
+                    placeholder="—"
+                    readOnly
+                    onChange={() => undefined}
                   />
                 </div>
-                <LabeledTextarea
-                  label={t("fields.description.label")}
-                  value={form.description}
-                  placeholder={t("fields.description.placeholder")}
-                  onChange={(value) => handleFieldChange("description", value)}
-                />
-              </div>
-            </ChatGroupFormSectionCard>
-          </motion.div>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            className="flex min-h-0 h-full flex-col"
-          >
-            <ChatGroupFormSectionCard
-              fillHeight
-              title={t("sections.identity.title")}
-              subtitle={t("sections.identity.subtitle")}
-              icon={PhotoFram}
-              accentColor="#B89B53"
-            >
-              <div className="flex flex-1 items-center justify-center">
-                <ChatGroupIdentityUpload
-                  previewUrl={form.groupImagePreviewUrl}
-                  onFileChange={handleImageChange}
-                  uploadLabel={t("fields.image.upload")}
-                  changeLabel={t("fields.image.change")}
-                  hint={t("fields.image.hint")}
-                />
               </div>
             </ChatGroupFormSectionCard>
           </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-10">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -314,13 +267,15 @@ export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps)
                 <div className="border-t border-slate-200 pt-6">
                   <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5">
                     <div className="flex items-center gap-3">
-                    <IconComp src={Relational} width={20} height={20} aria-hidden />
-                    <div className="space-y-0.5 text-right">
-                      <span className="text-sm font-medium text-slate-700">
-                        {t("fields.parentMode.label")}
-                      </span>
-                      <p className="text-xs text-slate-400">{t("fields.parentMode.description")}</p>
-                    </div>
+                      <IconComp src={Relational} width={20} height={20} aria-hidden />
+                      <div className="space-y-0.5 text-right">
+                        <span className="text-sm font-medium text-slate-700">
+                          {t("fields.parentMode.label")}
+                        </span>
+                        <p className="text-xs text-slate-400">
+                          {t("fields.parentMode.description")}
+                        </p>
+                      </div>
                     </div>
                     <StatusSwitch
                       checked={form.parentViewOnly}
@@ -332,62 +287,33 @@ export function AdminEditChatGroupPage({ groupId }: AdminEditChatGroupPageProps)
                     />
                   </label>
                 </div>
-              </div>
-            </ChatGroupFormSectionCard>
-          </motion.div>
 
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            transition={{ delay: 0.1 }}
-          >
-            <ChatGroupFormSectionCard
-              title={t("sections.linkedCourse.title")}
-              subtitle={t("sections.linkedCourse.subtitle")}
-              icon={Network}
-              accentColor=" #2B415E"
-            >
-              <ChatGroupLinkedCourseSection
-                intro={t("fields.linkedCourse.intro")}
-                draftUrl={form.linkedCourseDraftUrl}
-                onDraftUrlChange={(url) => handleFieldChange("linkedCourseDraftUrl", url)}
-                linkedCourses={form.linkedCourses}
-                onAddVerifiedCourse={handleAddVerifiedCourse}
-                onRemoveCourse={handleRemoveLinkedCourse}
-                enableToggle={enableLinkedCourse}
-                onEnableToggleChange={setEnableLinkedCourse}
-                toggleLabel={t("fields.linkedCourse.toggle")}
-                toggleDescription={t("fields.linkedCourse.toggleDesc")}
-                urlLabel={t("fields.linkedCourse.urlLabel")}
-                urlPlaceholder={t("fields.linkedCourse.urlPlaceholder")}
-                verifyLabel={t("fields.linkedCourse.verify")}
-                verifyingLabel={t("fields.linkedCourse.verifying")}
-                verifiedMessage={t("fields.linkedCourse.verifiedMessage")}
-                linkedCourseLabel={t("fields.linkedCourse.linkedCourseLabel")}
-                linkedListTitle={t("fields.linkedCourse.linkedListTitle")}
-                removeCourseLabel={t("fields.linkedCourse.removeCourse")}
-                duplicateInListMessage={t("fields.linkedCourse.duplicateInList")}
-              />
+                <div className="border-t border-slate-200 pt-6">
+                  <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-[#F8FAFC] p-5">
+                    <div className="flex items-center gap-3">
+                      <LockIcon className="h-5 w-5 text-slate-500" aria-hidden />
+                      <div className="space-y-0.5 text-right">
+                        <span className="text-sm font-medium text-slate-700">
+                          {t("fields.lockGroup.label")}
+                        </span>
+                        <p className="text-xs text-slate-400">{t("fields.lockGroup.description")}</p>
+                      </div>
+                    </div>
+                    <StatusSwitch
+                      checked={form.isLocked}
+                      onChange={(checked) => handleFieldChange("isLocked", checked)}
+                      activeLabel={t("fields.lockGroup.label")}
+                      inactiveLabel={t("fields.lockGroup.label")}
+                      activeClassName="bg-red-500"
+                      inactiveClassName="bg-slate-300"
+                    />
+                  </label>
+                </div>
+              </div>
             </ChatGroupFormSectionCard>
           </motion.div>
         </div>
       </div>
     </section>
   );
-}
-
-function displayNameFromLinkedCourseUrl(urlString: string): string {
-  const withProtocol = urlString.includes("://") ? urlString : `https://${urlString}`;
-  try {
-    const u = new URL(withProtocol);
-    const parts = u.pathname.split("/").filter(Boolean);
-    const last = parts[parts.length - 1];
-    if (last) {
-      return decodeURIComponent(last.replace(/\+/g, " ")).replace(/-/g, " ");
-    }
-    return u.hostname || urlString;
-  } catch {
-    return urlString.length > 64 ? `${urlString.slice(0, 64)}…` : urlString;
-  }
 }

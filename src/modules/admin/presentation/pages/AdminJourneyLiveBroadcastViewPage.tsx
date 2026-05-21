@@ -21,6 +21,7 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -90,8 +91,9 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
+      <div className="flex h-64 flex-col items-center justify-center gap-3">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
+        <p className="text-sm text-slate-500">{t("messages.loading")}</p>
       </div>
     );
   }
@@ -99,12 +101,23 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   if (!station) return null;
 
   const presenterInitial = station.presenter.trim().charAt(0) || "?";
+  const joinUrl = station.broadcastLink.trim();
+  const coverImageSrc = resolveFileUrl(station.thumbnailUrl);
+  const presenterAvatarSrc = resolveFileUrl(station.presenterAvatarUrl);
+  const statusKey = station.isLive
+    ? "live"
+    : station.status?.toLowerCase() === "scheduled"
+      ? "scheduled"
+      : "upcoming";
+  const contextLine = [station.courseTitle, station.stationName, station.learningPathTitle]
+    .filter(Boolean)
+    .join(" · ");
 
   return (
     <div className="space-y-7">
       <DashboardPageHeader
-        title={t("title")}
-        description={t("description")}
+        title={station.title}
+        description={contextLine || t("description")}
         breadcrumbs={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
@@ -123,17 +136,40 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               {/* Join room header */}
               <div className="bg-[#2C4260] p-5 text-white">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 rounded-full bg-rose-500 px-2.5 py-1 text-xs font-bold">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                    {t("live")}
+                  <span
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold",
+                      station.isLive
+                        ? "bg-rose-500"
+                        : "bg-[#C8AC59]/90 text-[#2C4260]",
+                    )}
+                  >
+                    {station.isLive ? (
+                      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                    ) : null}
+                    {t(`status.${statusKey}`)}
                   </span>
                   <Users className="h-4 w-4 text-white/60" />
                 </div>
-                <Button className="w-full rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]">
-                  {t("actions.joinRoom")}
-                </Button>
+                {joinUrl ? (
+                  <Button
+                    asChild
+                    className="w-full rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
+                  >
+                    <a href={joinUrl} target="_blank" rel="noopener noreferrer">
+                      {t("actions.joinRoom")}
+                    </a>
+                  </Button>
+                ) : (
+                  <Button
+                    disabled
+                    className="w-full rounded-2xl bg-[#C8AC59]/60 text-white shadow-[0px_4px_0px_0px_#8F6C0B]"
+                  >
+                    {t("actions.joinRoom")}
+                  </Button>
+                )}
                 <p className="mt-2 text-center text-xs text-white/60">
-                  {t("actions.registerNote")}
+                  {joinUrl ? t("actions.joinRoomHint") : t("actions.joinRoomUnavailable")}
                 </p>
               </div>
 
@@ -164,9 +200,18 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               {/* Presenter */}
               <div className="border-t border-slate-100 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2C4260] text-white font-bold text-lg">
-                    {presenterInitial}
-                  </div>
+                  {presenterAvatarSrc ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- resolved via FileUpload/download API
+                    <img
+                      src={presenterAvatarSrc}
+                      alt={station.presenter}
+                      className="h-12 w-12 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2C4260] text-lg font-bold text-white">
+                      {presenterInitial}
+                    </div>
+                  )}
                   <div className="text-right">
                     <p className="font-bold text-slate-800">{station.presenter}</p>
                     {station.presenterTitle ? (
@@ -212,20 +257,39 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
             <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
               <CardContent className="space-y-2 p-4">
                 <h3 className="text-sm font-bold text-slate-700">{t("sections.attachments")}</h3>
-                {station.attachments.map((att) => (
-                  <div
-                    key={att.id}
-                    className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2"
-                  >
-                    <span className="text-xs text-slate-500">{att.sizeLabel}</span>
-                    <div className="flex items-center gap-2 text-right">
-                      <span className="text-sm font-semibold text-slate-700">{att.name}</span>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-100 text-rose-500">
-                        <FileText className="h-4 w-4" />
+                {station.attachments.map((att) => {
+                  const attachmentUrl = resolveFileUrl(att.fileUrl);
+                  const row = (
+                    <>
+                      <span className="text-xs text-slate-500">{att.sizeLabel}</span>
+                      <div className="flex items-center gap-2 text-right">
+                        <span className="text-sm font-semibold text-slate-700">{att.name}</span>
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-100 text-rose-500">
+                          <FileText className="h-4 w-4" />
+                        </div>
                       </div>
+                    </>
+                  );
+
+                  return attachmentUrl ? (
+                    <a
+                      key={att.id}
+                      href={attachmentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 transition-colors hover:border-[#C8AC59]/40 hover:bg-amber-50/50"
+                    >
+                      {row}
+                    </a>
+                  ) : (
+                    <div
+                      key={att.id}
+                      className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2"
+                    >
+                      {row}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </CardContent>
             </Card>
           ) : null}
@@ -233,13 +297,37 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
         {/* Main content */}
         <main className="space-y-6">
-          {/* Hero thumbnail */}
-          <div className="flex min-h-52 items-end rounded-[1.75rem] bg-gradient-to-br from-[#2C4260] to-[#1a2a3a] p-6">
-            <div>
+          <div
+            className={cn(
+              "relative flex min-h-52 items-end overflow-hidden rounded-[1.75rem] p-6",
+              coverImageSrc
+                ? "bg-[#2C4260]"
+                : "bg-gradient-to-br from-[#2C4260] to-[#1a2a3a]",
+            )}
+          >
+            {coverImageSrc ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- resolved via FileUpload/download API */}
+                <img
+                  src={coverImageSrc}
+                  alt={station.title}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a2a3a]/90 via-[#2C4260]/40 to-transparent" />
+              </>
+            ) : null}
+            <div className="relative z-10">
               <div className="mb-2 flex items-center gap-2">
-                <span className="flex items-center gap-1.5 rounded-full bg-rose-500 px-2.5 py-1 text-xs font-bold text-white">
-                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                  {t("live")}
+                <span
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold text-white",
+                    station.isLive ? "bg-rose-500" : "bg-[#C8AC59] text-[#2C4260]",
+                  )}
+                >
+                  {station.isLive ? (
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
+                  ) : null}
+                  {t(`status.${statusKey}`)}
                 </span>
               </div>
               <h2 className="text-2xl font-bold text-white">{station.title}</h2>
@@ -257,7 +345,9 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
                 <span className="h-1 w-4 rounded-full bg-[#C8AC59]" />
                 {t("sections.overview")}
               </h3>
-              <p className="text-sm leading-7 text-slate-600">{station.description}</p>
+              <p className="text-sm leading-7 text-slate-600">
+                {station.description.trim() || t("messages.noDescription")}
+              </p>
 
               {station.presenterTitle ? (
                 <div className="flex items-center gap-2 rounded-2xl bg-slate-50 p-3 text-sm">
@@ -271,7 +361,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
             </CardContent>
           </Card>
 
-          {/* Objectives */}
+          {station.objectives.length > 0 ? (
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-5">
               <h3 className="flex items-center gap-2 font-bold text-slate-800">
@@ -290,18 +380,19 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               </div>
             </CardContent>
           </Card>
+          ) : null}
 
-          {/* Pre-tasks */}
+          {station.preTasks.length > 0 ? (
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-5">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400">
-                  {station.preTasks.filter((t) => t.completed).length}/{station.preTasks.length}
-                </span>
                 <h3 className="flex items-center gap-2 font-bold text-slate-800">
                   <span className="h-1 w-4 rounded-full bg-[#C8AC59]" />
                   {t("sections.preTasks")}
                 </h3>
+                <span className="text-xs text-slate-400">
+                  {station.preTasks.filter((t) => t.completed).length}/{station.preTasks.length}
+                </span>
               </div>
               <div className="space-y-3">
                 {station.preTasks.map((task) => (
@@ -330,6 +421,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               </div>
             </CardContent>
           </Card>
+          ) : null}
         </main>
       </div>
     </div>

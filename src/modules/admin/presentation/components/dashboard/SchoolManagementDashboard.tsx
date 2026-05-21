@@ -197,12 +197,6 @@ export function SchoolManagementDashboard() {
   );
 
   useEffect(() => {
-    if (responseStatus === "Unauthorized") {
-      router.replace(ROUTES.AUTH.LOGIN);
-    }
-  }, [responseStatus, router]);
-
-  useEffect(() => {
     void getSchoolKpis().then((result) => {
       if (result.data) {
         setKpis(result.data);

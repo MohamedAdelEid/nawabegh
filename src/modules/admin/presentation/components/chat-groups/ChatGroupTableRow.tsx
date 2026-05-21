@@ -133,7 +133,7 @@ export function ChatGroupTableRow({
         </span>
       </td>
       <td className="px-4 py-5 text-center text-sm text-slate-500">
-        {lastActivityLabel(row.lastActivityKey)}
+        {row.lastActivityDisplay ?? lastActivityLabel(row.lastActivityKey)}
       </td>
       <td className="px-4 py-5">
         <div className="flex items-center justify-center gap-1">

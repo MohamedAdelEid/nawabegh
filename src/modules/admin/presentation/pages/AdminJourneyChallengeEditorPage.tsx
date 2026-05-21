@@ -509,7 +509,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">
-          {!hasChallenge ? (
+          {/* {!hasChallenge ? (
             <Card className="rounded-[1.75rem] border-dashed border-[#C8AC59]/40 bg-[#FFFBF0] shadow-none">
               <CardContent className="flex flex-col items-center gap-4 p-8 text-center">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#C8AC59]/15 text-[#C8AC59]">
@@ -529,7 +529,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
                 </Button>
               </CardContent>
             </Card>
-          ) : null}
+          ) : null} */}
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
             <CardContent className="space-y-5 p-5">
               <h2 className="text-right font-bold text-slate-800">{t("sections.type")}</h2>

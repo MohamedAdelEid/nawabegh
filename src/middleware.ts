@@ -47,14 +47,6 @@ export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const token = await readAuthToken(request);
 
-  if (token === undefined) {
-    const loginUrl = new URL(ROUTES.AUTH.LOGIN, request.url);
-    if (isProtectedPath(pathname)) {
-      loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
-    }
-    return clearAuthCookies(NextResponse.redirect(loginUrl));
-  }
-
   if (pathname === ROUTES.AUTH.LOGIN && token) {
     return NextResponse.redirect(new URL(getRoleHome(token.role), request.url));
   }
@@ -62,7 +54,12 @@ export async function middleware(request: NextRequest) {
   if (isProtectedPath(pathname) && !token) {
     const loginUrl = new URL(ROUTES.AUTH.LOGIN, request.url);
     loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+    return token === undefined ? clearAuthCookies(response) : response;
+  }
+
+  if (token === undefined) {
+    return clearAuthCookies(NextResponse.next());
   }
 
   return NextResponse.next();
