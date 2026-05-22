@@ -161,7 +161,7 @@ export function AdminContentManagementAddPage({
         </aside>
 
         <div className="space-y-6">
-          <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
+          {/* <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">
               <h3 className="font-bold text-[#1E3A66]">{t("form.sections.linkCourse")}</h3>
               <div className="flex gap-3">
@@ -184,7 +184,7 @@ export function AdminContentManagementAddPage({
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">

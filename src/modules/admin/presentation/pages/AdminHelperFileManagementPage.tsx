@@ -1,8 +1,7 @@
 "use client";
 
-import { ContentManagementDashboard } from "@/modules/admin/presentation/components/dashboard/ContentManagementDashboard";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { HelperFileManagementDashboard } from "@/modules/admin/presentation/components/helper-file-management/HelperFileManagementDashboard";
 
 export function AdminHelperFileManagementPage() {
-  return <ContentManagementDashboard routeConfig={ROUTES.ADMIN.HELPER_FILE_MANAGEMENT} />;
+  return <HelperFileManagementDashboard />;
 }

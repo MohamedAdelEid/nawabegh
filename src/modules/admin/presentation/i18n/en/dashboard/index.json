@@ -3160,7 +3160,8 @@
         "title": "Content files management",
         "description": "Follow and organize all learning resources available on the platform.",
         "addFile": "Add new file",
-        "loading": "Loading content files..."
+        "loading": "Loading content files...",
+        "loadError": "Failed to load helper resource files"
       },
       "breadcrumbs": {
         "home": "Home",
@@ -3209,6 +3210,20 @@
         "search": {
           "label": "Quick search",
           "placeholder": "Search by file name..."
+        },
+        "station": {
+          "label": "Station",
+          "all": "All stations"
+        },
+        "course": {
+          "label": "Course",
+          "all": "All courses"
+        },
+        "resourceFileType": {
+          "label": "Resource type",
+          "all": "All",
+          "station": "For station",
+          "course": "For course"
         }
       },
       "policy": {
@@ -3220,12 +3235,17 @@
         "columns": {
           "fileName": "File name",
           "course": "Course",
+          "station": "Station",
           "teacher": "Teacher",
           "policy": "Policy",
           "downloads": "Downloads",
           "status": "Status",
+          "resourceFileType": "Resource type",
+          "createdAt": "Created at",
           "actions": "Actions"
         },
+        "empty": "No helper resource files found",
+        "deleteSuccess": "File deleted successfully",
         "status": {
           "active": "Active",
           "inactive": "Inactive"
@@ -3240,6 +3260,12 @@
           "previous": "Previous page",
           "next": "Next page"
         }
+      },
+      "deleteModal": {
+        "title": "Delete helper file",
+        "description": "Are you sure you want to delete \"{fileName}\"? This cannot be undone.",
+        "confirm": "Confirm delete",
+        "cancel": "Cancel"
       },
       "activity": {
         "title": "Latest file activities",
@@ -3299,14 +3325,32 @@
         },
         "fields": {
           "courseLink": "Course link",
+          "station": "Station",
+          "stationPlaceholder": "Select station",
+          "course": "Course",
+          "coursePlaceholder": "Select course",
+          "resourceFileType": "Resource type",
           "fileName": "Learning file name",
           "fileNamePlaceholder": "Example: Advanced algebra summary",
+          "fileType": "File type",
+          "fileTypePlaceholder": "Example: PDF",
           "description": "Short description",
           "descriptionPlaceholder": "Write a short note describing the file content."
         },
+        "validation": {
+          "stationRequired": "Please select a station",
+          "courseRequired": "Please select a course",
+          "fileNameRequired": "Please enter a file name",
+          "fileRequired": "Please upload a file first"
+        },
+        "messages": {
+          "createSuccess": "Helper resource created successfully",
+          "createError": "Failed to create helper resource"
+        },
         "upload": {
           "title": "Drag files here",
-          "subtitle": "or select from your device"
+          "subtitle": "or select from your device",
+          "uploading": "Uploading file..."
         },
         "access": {
           "public": {
@@ -3328,10 +3372,22 @@
       },
       "details": {
         "loading": "Loading file details...",
-        "description": "Manage educational resources linkage and visibility settings.",
+        "description": "View helper resource file details (read-only).",
+        "readOnlyBadge": "View only",
+        "openFile": "Open file",
+        "deleteSuccess": "File deleted successfully",
         "breadcrumbs": {
           "home": "Home",
           "content": "Content files management"
+        },
+        "fields": {
+          "station": "Station",
+          "course": "Course",
+          "accessPolicy": "Access policy",
+          "resourceFileType": "Resource type",
+          "createdAt": "Created at",
+          "updatedAt": "Updated at",
+          "fileUrl": "File URL"
         },
         "actions": {
           "edit": "Edit data",

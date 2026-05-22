@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminContentManagementAddPage } from "./AdminContentManagementAddPage";
+import { AdminHelperFileManagementAddPage } from "./AdminHelperFileManagementAddPage";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 interface AdminJourneyHelperResourceEditorPageProps {
@@ -13,8 +13,7 @@ export function AdminJourneyHelperResourceEditorPage({
   stationId,
 }: AdminJourneyHelperResourceEditorPageProps) {
   return (
-    <AdminContentManagementAddPage
-      routeConfig={ROUTES.ADMIN.HELPER_FILE_MANAGEMENT}
+    <AdminHelperFileManagementAddPage
       stationContext={{
         journeyId,
         stationId,

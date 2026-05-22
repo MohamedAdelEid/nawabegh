@@ -34,13 +34,6 @@ export const adminSidebarItems: SidebarItems = {
       icon: SidebarBookIcon,
     },
     {
-      id: "contentManagement",
-      labelKey: "sidebar.nav.contentManagement",
-      href: `${base}?tab=contentManagement`,
-      activePathPrefixes: [ROUTES.ADMIN.CONTENT_MANAGEMENT.LIST],
-      icon: SidebarFolderIcon,
-    },
-    {
       id: "courseManagement",
       labelKey: "sidebar.nav.courseManagement",
       href: `${base}?tab=courseManagement`,

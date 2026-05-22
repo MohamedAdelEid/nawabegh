@@ -36,7 +36,7 @@
         "schoolManagement": "إدارة المدارس",
         "contentManagement": "إدارة المحتوى",
         "courseManagement": "إدارة الدورات التعليمية",
-        "helperFileManagement": "إدارة الملفات المساندة",
+        "helperFileManagement": "إدارة الملفات المساعده",
         "pricingManagement": "إدارة الخطط والأسعار",
         "paymentGatewaySettings": "إعدادات بوابات الدفع",
         "articleEditor": "محرر المقالات",
@@ -3160,14 +3160,15 @@
     },
     "contentManagement": {
       "page": {
-        "title": "إدارة الملفات المساندة",
+        "title": "إدارة الملفات المساعده",
         "description": "تتبع وتنظيم جميع الموارد التعليمية المتاحة على المنصة.",
         "addFile": "إضافة ملف جديد",
-        "loading": "جاري تحميل ملفات المحتوى..."
+        "loading": "جاري تحميل ملفات المحتوى...",
+        "loadError": "تعذر تحميل الملفات المساعدة"
       },
       "breadcrumbs": {
         "home": "الرئيسية",
-        "content": "إدارة الملفات المساندة",
+        "content": "إدارة الملفات المساعده",
         "add": "إضافة",
         "edit": "تعديل"
       },
@@ -3212,6 +3213,20 @@
         "search": {
           "label": "بحث سريع",
           "placeholder": "ابحث باسم ملف معين..."
+        },
+        "station": {
+          "label": "المحطة",
+          "all": "كل المحطات"
+        },
+        "course": {
+          "label": "الدورة",
+          "all": "كل الدورات"
+        },
+        "resourceFileType": {
+          "label": "نوع المورد",
+          "all": "الكل",
+          "station": "للمحطة",
+          "course": "للدورة"
         }
       },
       "policy": {
@@ -3223,12 +3238,17 @@
         "columns": {
           "fileName": "اسم الملف",
           "course": "الدورة التدريبية",
+          "station": "المحطة",
           "teacher": "المعلم",
           "policy": "السياسة",
           "downloads": "التحميلات",
           "status": "الحالة",
+          "resourceFileType": "نوع المورد",
+          "createdAt": "تاريخ الإنشاء",
           "actions": "الإجراءات"
         },
+        "empty": "لا توجد ملفات مساعدة",
+        "deleteSuccess": "تم حذف الملف بنجاح",
         "status": {
           "active": "نشط",
           "inactive": "غير نشط"
@@ -3243,6 +3263,12 @@
           "previous": "الصفحة السابقة",
           "next": "الصفحة التالية"
         }
+      },
+      "deleteModal": {
+        "title": "حذف الملف المساعد",
+        "description": "هل أنت متأكد من حذف «{fileName}»؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "تأكيد الحذف",
+        "cancel": "إلغاء"
       },
       "activity": {
         "title": "آخر النشاطات على الملفات",
@@ -3268,10 +3294,10 @@
         "loading": "جاري تحميل نموذج الملف...",
         "addTitle": "إضافة ملف تعليمي جديد",
         "editTitle": "تعديل ملف تعليمي",
-        "pageDescription": "ارفع واربط المصادر التعليمية المساندة للدورات النشطة.",
+        "pageDescription": "ارفع واربط المصادر التعليمية المساعده للدورات النشطة.",
         "breadcrumbs": {
           "home": "الرئيسية",
-          "content": "إدارة الملفات المساندة",
+          "content": "إدارة الملفات المساعده",
           "journeyEditor": "محرر الرحلة",
           "add": "إضافة",
           "edit": "تعديل"
@@ -3292,7 +3318,7 @@
           "step1": "إنشاء أو رفع المصدر المساعد",
           "step2": "تجهيز المصدر لربطه بالمحطة",
           "step3": "العودة إلى محرر الرحلة",
-          "note": "يتم إنشاء الملف داخل إدارة الملفات المساندة. سيتم ربطه بالمحطة عند توفر عقد الواجهة الخلفية."
+          "note": "يتم إنشاء الملف داخل إدارة الملفات المساعده. سيتم ربطه بالمحطة عند توفر عقد الواجهة الخلفية."
         },
         "sections": {
           "linkCourse": "ربط الدورة التدريبية",
@@ -3302,14 +3328,32 @@
         },
         "fields": {
           "courseLink": "رابط الدورة",
+          "station": "المحطة",
+          "stationPlaceholder": "اختر المحطة",
+          "course": "الدورة التدريبية",
+          "coursePlaceholder": "اختر الدورة",
+          "resourceFileType": "نوع المورد",
           "fileName": "اسم الملف التعليمي",
           "fileNamePlaceholder": "مثال: ملخص الجبر المتقدم",
+          "fileType": "نوع الملف",
+          "fileTypePlaceholder": "مثال: PDF",
           "description": "وصف مختصر",
           "descriptionPlaceholder": "اكتب نبذة مختصرة عن محتوى هذا الملف."
         },
+        "validation": {
+          "stationRequired": "يرجى اختيار المحطة",
+          "courseRequired": "يرجى اختيار الدورة",
+          "fileNameRequired": "يرجى إدخال اسم الملف",
+          "fileRequired": "يرجى رفع الملف أولاً"
+        },
+        "messages": {
+          "createSuccess": "تم إنشاء الملف المساعد بنجاح",
+          "createError": "تعذر إنشاء الملف المساعد"
+        },
         "upload": {
           "title": "اسحب الملفات التعليمية هنا",
-          "subtitle": "أو اختر ملفات من جهازك"
+          "subtitle": "أو اختر ملفات من جهازك",
+          "uploading": "جاري رفع الملف..."
         },
         "access": {
           "public": {
@@ -3331,10 +3375,22 @@
       },
       "details": {
         "loading": "جاري تحميل تفاصيل الملف...",
-        "description": "إدارة وربط المصادر التعليمية للدورات التدريبية النشطة.",
+        "description": "عرض تفاصيل الملف المساعد (للقراءة فقط).",
+        "readOnlyBadge": "عرض فقط",
+        "openFile": "فتح الملف",
+        "deleteSuccess": "تم حذف الملف بنجاح",
         "breadcrumbs": {
           "home": "الرئيسية",
-          "content": "إدارة الملفات المساندة"
+          "content": "إدارة الملفات المساعده"
+        },
+        "fields": {
+          "station": "المحطة",
+          "course": "الدورة",
+          "accessPolicy": "سياسة الوصول",
+          "resourceFileType": "نوع المورد",
+          "createdAt": "تاريخ الإنشاء",
+          "updatedAt": "تاريخ التحديث",
+          "fileUrl": "رابط الملف"
         },
         "actions": {
           "edit": "تعديل البيانات",
