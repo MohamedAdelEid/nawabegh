@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { LoginPage } from "@/modules/auth/presentation/pages/LoginPage";
+import { LoginPage } from "@/modules/auth/presentation/pages/login/LoginPage";
 import { auth } from "@/shared/infrastructure/auth/nextAuth";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
 
@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function LoginRoute() {
+export default async function AuthLoginRoute() {
   const session = await auth();
 
   if (session?.user) {

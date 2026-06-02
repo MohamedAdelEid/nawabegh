@@ -3,13 +3,13 @@ import type { AxiosInstance } from "axios";
 export function applyRequestInterceptor(
   client: AxiosInstance,
   getToken: () => Promise<string | null> | string | null,
-  getLanguage?: () => string,
+  getLanguage?: () => string | Promise<string>,
 ) {
   client.interceptors.request.use(async (config) => {
     const token = await getToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
     if (!config.headers["Accept-Language"] && getLanguage) {
-      config.headers["Accept-Language"] = getLanguage();
+      config.headers["Accept-Language"] = await getLanguage();
     }
     return config;
   });

@@ -8,6 +8,7 @@ import { User } from "lucide-react";
 import { useAuth } from "@/shared/application/hooks/useAuth";
 import { useDropdown } from "../../dashboard/Header/hooks/useDropdown";
 import { dropdownVariants } from "../../dashboard/Header/constants/animations";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { cn } from "@/shared/application/lib/cn";
@@ -52,7 +53,7 @@ export function PublicHeaderUserMenu({ onNavigate, className }: PublicHeaderUser
   if (!isAuthenticated || !user) {
     return (
       <Link
-        href={ROUTES.AUTH.LOGIN}
+        href={AUTH_ROUTES.LOGIN}
         onClick={onNavigate}
         onMouseEnter={() => setLoginHovered(true)}
         onMouseLeave={() => setLoginHovered(false)}

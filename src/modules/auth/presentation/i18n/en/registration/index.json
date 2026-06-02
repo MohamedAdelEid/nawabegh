@@ -1,0 +1,158 @@
+{
+  "auth": {
+    "registration": {
+      "meta": {
+        "title": "Student registration | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "pageTitle": "Student registration",
+      "pageSubtitle": "Join the Nawabegh community and start your learning journey",
+      "stepper": {
+        "ariaLabel": "Registration steps",
+        "current": "Current step: {step}"
+      },
+      "steps": {
+        "account": "Account",
+        "study": "Study",
+        "contact": "Contact"
+      },
+      "account": {
+        "cardTitle": "Welcome to Nawabegh",
+        "cardSubtitle": "Let's start by creating your learning account"
+      },
+      "study": {
+        "cardTitle": "Study & login details",
+        "cardSubtitle": "Complete your school and account information",
+        "fields": {
+          "fullName": {
+            "label": "Student name",
+            "placeholder": "Example: Mahmoud Yasser"
+          },
+          "school": {
+            "label": "School",
+            "placeholder": "Select school",
+            "searchPlaceholder": "Search schools...",
+            "empty": "No matching schools",
+            "loadError": "Could not load schools"
+          },
+          "email": {
+            "label": "Email",
+            "placeholder": "student@example.com"
+          },
+          "phone": {
+            "label": "Phone number",
+            "placeholder": "5xxxxxxxx",
+            "countrySearchPlaceholder": "Search countries...",
+            "countryEmpty": "No matching countries"
+          },
+          "address": {
+            "label": "Detailed address",
+            "placeholder": "City, district, street"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "••••••••",
+            "hint": "Must be at least 8 characters and include numbers and symbols."
+          }
+        }
+      },
+      "contact": {
+        "cardTitle": "Contact information",
+        "cardSubtitle": "Add ways to reach you and finish creating your account",
+        "fields": {
+          "whatsApp": {
+            "label": "WhatsApp number",
+            "placeholder": "5xxxxxxxx"
+          },
+          "alternativePhone": {
+            "label": "Alternative phone (optional)",
+            "placeholder": "5xxxxxxxx"
+          },
+          "parentPhone": {
+            "label": "Parent phone number",
+            "placeholder": "5xxxxxxxx"
+          },
+          "username": {
+            "label": "Username",
+            "placeholder": "student_username"
+          }
+        },
+        "errors": {
+          "incompleteSteps": "Please complete the previous registration steps first.",
+          "submitFailed": "Registration could not be completed. Please try again."
+        }
+      },
+      "otp": {
+        "brandAlt": "Nawabegh Academy",
+        "title": "Verify your email",
+        "phoneTitle": "Verify your phone",
+        "emailHint": "Enter the 6-digit code sent to {email}",
+        "phoneHint": "Enter the 4-digit code sent to your phone",
+        "otpLabel": "Verification code",
+        "confirm": "Confirm code",
+        "resend": "Resend code",
+        "resending": "Sending...",
+        "resendCountdown": "Resend available in {seconds}s",
+        "resendSuccess": "A new code has been sent to your email.",
+        "resendSuccessPhone": "A new code has been sent to your phone.",
+        "loginLink": "Sign in",
+        "validation": {
+          "incomplete": "Enter the full {length}-digit code"
+        },
+        "errors": {
+          "confirmFailed": "Invalid or expired code. Please try again.",
+          "resendFailed": "Could not resend the code. Please try again.",
+          "sessionFailed": "Verification succeeded but sign-in failed. Please sign in manually."
+        }
+      },
+      "success": {
+        "brandAlt": "Nawabegh Academy",
+        "title": "Account created successfully",
+        "subtitle": "Welcome to Nawabegh. Your learning journey starts now.",
+        "countdown": "Redirecting in {seconds} seconds...",
+        "goToPlatform": "Go to platform"
+      },
+      "fields": {
+        "country": {
+          "label": "Select country",
+          "placeholder": "Select country",
+          "searchPlaceholder": "Search countries...",
+          "empty": "No matching countries",
+          "loadError": "Could not load countries"
+        },
+        "educationLevel": {
+          "label": "Education level",
+          "empty": "No education levels for this country"
+        },
+        "grade": {
+          "label": "Grade",
+          "empty": "No grades for this level"
+        },
+        "school": {
+          "selectCountryFirst": "Select a country first to load schools"
+        }
+      },
+      "validation": {
+        "required": "This field is required",
+        "invalidEmail": "Enter a valid email address",
+        "invalidPhone": "Enter a valid phone number",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordNumber": "Password must include a number",
+        "passwordSymbol": "Password must include a symbol",
+        "usernameMin": "Username must be at least 3 characters",
+        "usernameMax": "Username must be at most 30 characters",
+        "usernamePattern": "Use letters, numbers, dots, underscores, or hyphens only (no spaces)"
+      },
+      "actions": {
+        "back": "Go back",
+        "nextStep": "Next step",
+        "previousStep": "Previous",
+        "backToAccount": "Back to account",
+        "backToStudy": "Back to study",
+        "submit": "Complete registration"
+      },
+      "loginPrompt": "Already have an account?",
+      "loginAction": "Sign in"
+    }
+  }
+}

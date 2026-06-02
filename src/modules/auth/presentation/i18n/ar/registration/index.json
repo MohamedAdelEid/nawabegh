@@ -1,0 +1,158 @@
+{
+  "auth": {
+    "registration": {
+      "meta": {
+        "title": "تسجيل الطالب | نوابغ"
+      },
+      "brandAlt": "أكاديمية نوابغ",
+      "pageTitle": "تسجيل الطالب",
+      "pageSubtitle": "انضم إلى مجتمع نوابغ وابدأ رحلتك التعليمية المتميزة",
+      "stepper": {
+        "ariaLabel": "خطوات التسجيل",
+        "current": "الخطوة الحالية: {step}"
+      },
+      "steps": {
+        "account": "الحساب",
+        "study": "الدراسة",
+        "contact": "التواصل"
+      },
+      "account": {
+        "cardTitle": "مرحباً بك في نوابغ",
+        "cardSubtitle": "لنبدأ بإنشاء حسابك التعليمي المتميز"
+      },
+      "study": {
+        "cardTitle": "بيانات الدخول",
+        "cardSubtitle": "أكمل بياناتك الدراسية ومعلومات حسابك",
+        "fields": {
+          "fullName": {
+            "label": "اسم الطالب",
+            "placeholder": "مثال: محمد عادل"
+          },
+          "school": {
+            "label": "المدرسة",
+            "placeholder": "اختر المدرسة",
+            "searchPlaceholder": "ابحث عن مدرسة...",
+            "empty": "لا توجد مدارس مطابقة",
+            "loadError": "تعذر تحميل قائمة المدارس"
+          },
+          "email": {
+            "label": "البريد الإلكتروني",
+            "placeholder": "student@example.com"
+          },
+          "phone": {
+            "label": "رقم الهاتف",
+            "placeholder": "5xxxxxxxx",
+            "countrySearchPlaceholder": "ابحث عن الدولة...",
+            "countryEmpty": "لا توجد دول مطابقة"
+          },
+          "address": {
+            "label": "العنوان بالتفصيل",
+            "placeholder": "المدينة، الحي، الشارع"
+          },
+          "password": {
+            "label": "كلمة المرور",
+            "placeholder": "••••••••",
+            "hint": "يجب أن تحتوي على 8 أحرف على الأقل، تشمل أرقام ورموز."
+          }
+        }
+      },
+      "contact": {
+        "cardTitle": "معلومات التواصل",
+        "cardSubtitle": "أضف وسائل التواصل وأكمل إنشاء حسابك",
+        "fields": {
+          "whatsApp": {
+            "label": "رقم الواتساب",
+            "placeholder": "5xxxxxxxx"
+          },
+          "alternativePhone": {
+            "label": "رقم هاتف بديل (اختياري)",
+            "placeholder": "5xxxxxxxx"
+          },
+          "parentPhone": {
+            "label": "رقم هاتف ولي الأمر",
+            "placeholder": "5xxxxxxxx"
+          },
+          "username": {
+            "label": "اسم المستخدم",
+            "placeholder": "student_username"
+          }
+        },
+        "errors": {
+          "incompleteSteps": "يرجى إكمال خطوات التسجيل السابقة أولاً.",
+          "submitFailed": "تعذر إتمام التسجيل. حاول مرة أخرى."
+        }
+      },
+      "otp": {
+        "brandAlt": "أكاديمية نوابغ",
+        "title": "تأكيد البريد الإلكتروني",
+        "phoneTitle": "تأكيد رقم الهاتف",
+        "emailHint": "أدخل الرمز المكوّن من 6 أرقام المرسل إلى {email}",
+        "phoneHint": "أدخل الرمز المكوّن من 4 أرقام المرسل إلى هاتفك",
+        "otpLabel": "رمز التحقق",
+        "confirm": "تأكيد الرمز",
+        "resend": "إعادة إرسال الرمز",
+        "resending": "جاري الإرسال...",
+        "resendCountdown": "إعادة الإرسال خلال {seconds} ثانية",
+        "resendSuccess": "تم إرسال رمز جديد إلى بريدك الإلكتروني.",
+        "resendSuccessPhone": "تم إرسال رمز جديد إلى هاتفك.",
+        "loginLink": "تسجيل الدخول",
+        "validation": {
+          "incomplete": "أدخل الرمز كاملاً ({length} أرقام)"
+        },
+        "errors": {
+          "confirmFailed": "الرمز غير صحيح أو منتهي. حاول مرة أخرى.",
+          "resendFailed": "تعذر إعادة إرسال الرمز. حاول مرة أخرى.",
+          "sessionFailed": "تم التحقق لكن تعذر تسجيل الدخول. سجّل الدخول يدوياً."
+        }
+      },
+      "success": {
+        "brandAlt": "أكاديمية نوابغ",
+        "title": "تم إنشاء الحساب بنجاح",
+        "subtitle": "مرحباً بك في نوابغ. رحلتك التعليمية تبدأ الآن.",
+        "countdown": "سيتم تحويلك خلال {seconds} ثوانٍ...",
+        "goToPlatform": "الانتقال للمنصة"
+      },
+      "fields": {
+        "country": {
+          "label": "اختر الدولة",
+          "placeholder": "اختر الدولة",
+          "searchPlaceholder": "ابحث عن دولة...",
+          "empty": "لا توجد دول مطابقة",
+          "loadError": "تعذر تحميل قائمة الدول"
+        },
+        "educationLevel": {
+          "label": "المرحلة الدراسية",
+          "empty": "لا توجد مراحل دراسية لهذه الدولة"
+        },
+        "grade": {
+          "label": "الصف الدراسي",
+          "empty": "لا توجد صفوف لهذه المرحلة"
+        },
+        "school": {
+          "selectCountryFirst": "اختر الدولة أولاً لعرض المدارس"
+        }
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب",
+        "invalidEmail": "أدخل بريداً إلكترونياً صالحاً",
+        "invalidPhone": "أدخل رقم هاتف صالحاً",
+        "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+        "passwordNumber": "كلمة المرور يجب أن تحتوي على رقم",
+        "passwordSymbol": "كلمة المرور يجب أن تحتوي على رمز",
+        "usernameMin": "اسم المستخدم يجب أن يكون 3 أحرف على الأقل",
+        "usernameMax": "اسم المستخدم يجب ألا يتجاوز 30 حرفاً",
+        "usernamePattern": "استخدم حروفاً وأرقاماً ونقطة أو شرطة سفلية أو واصلة فقط (بدون مسافات)"
+      },
+      "actions": {
+        "back": "رجوع",
+        "nextStep": "الخطوة التالية",
+        "previousStep": "السابق",
+        "backToAccount": "العودة لمعلومات الحساب",
+        "backToStudy": "العودة لمعلومات الدراسة",
+        "submit": "إتمام التسجيل"
+      },
+      "loginPrompt": "لديك حساب بالفعل؟",
+      "loginAction": "تسجيل الدخول"
+    }
+  }
+}

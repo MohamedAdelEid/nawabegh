@@ -1,9 +1,6 @@
 /** Central route strings for links in layouts and navigation. */
 export const ROUTES = {
   HOME: "/",
-  AUTH: {
-    LOGIN: "/login",
-  },
   ADMIN: {
     HOME: "/admin/dashboard",
     SETTINGS: "/admin/settings",

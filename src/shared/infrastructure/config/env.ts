@@ -10,6 +10,7 @@ const schema = z.object({
     .string()
     .url()
     .default("https://nawabeghsystem.runasp.net"),
+  NEXT_PUBLIC_API_VERSION_PREFIX: z.string().default("/api/v1"),
   NEXT_PUBLIC_FILE_PUBLIC_BASE_URL: z
     .string()
     .url()

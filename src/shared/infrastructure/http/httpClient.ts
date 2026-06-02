@@ -59,30 +59,39 @@ applyRequestInterceptor(axiosClient, () => {
 
 applyResponseInterceptor(axiosClient, () => _onUnauthorized?.());
 
+async function unwrap<T>(
+  request: Promise<{ data: BackendApiResponse<T> }>,
+): Promise<BackendApiResponse<T>> {
+  const { data } = await request;
+  return data;
+}
+
 async function get<T>(
   options: Omit<RequestOptions, "data" | "isFormData">,
 ): Promise<BackendApiResponse<T>> {
-  return axiosClient.get(options.url, buildConfig(options)) as Promise<BackendApiResponse<T>>;
+  return unwrap(axiosClient.get(options.url, buildConfig(options)));
 }
 
 async function post<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return axiosClient.post(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
+  return unwrap(axiosClient.post(options.url, options.data, buildConfig(options)));
 }
 
 async function put<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return axiosClient.put(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
+  return unwrap(axiosClient.put(options.url, options.data, buildConfig(options)));
 }
 
 async function patch<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return axiosClient.patch(options.url, options.data, buildConfig(options)) as Promise<BackendApiResponse<T>>;
+  return unwrap(axiosClient.patch(options.url, options.data, buildConfig(options)));
 }
 
 async function del<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
   const { url, data, ...rest } = options;
-  return axiosClient.delete(url, {
-    ...buildConfig(rest),
-    ...(data !== undefined ? { data } : {}),
-  }) as Promise<BackendApiResponse<T>>;
+  return unwrap(
+    axiosClient.delete(url, {
+      ...buildConfig(rest),
+      ...(data !== undefined ? { data } : {}),
+    }),
+  );
 }
 
 export const httpClient = { get, post, put, patch, delete: del };

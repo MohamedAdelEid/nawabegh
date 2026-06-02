@@ -19,9 +19,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { cn } from "@/shared/application/lib/cn";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
-import { LoginInput } from "../components";
+import { LoginInput } from "../../components";
 
 type LoginFormState = {
   email: string;
@@ -119,29 +120,27 @@ export function LoginPage() {
   }
 
   return (
-    <main dir={direction} className="min-h-screen bg-[var(--auth-background)] px-6 py-8">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-7xl flex-col">
-        <div className="flex items-start justify-between gap-4">
-          <Link
-            href={ROUTES.HOME}
-            aria-label={t("actions.backHome")}
-            className="inline-flex h-12 w-12 items-center justify-center rounded-full text-[var(--dashboard-primary)] transition-colors hover:bg-slate-100"
-          >
-            <BackIcon className="h-7 w-7" />
-          </Link>
+    <main dir={direction} className="min-h-screen bg-[var(--auth-background)]">
+      <header className="flex w-full items-center justify-between px-8 py-9 lg:px-10">
+        <Image
+          src="/images/logos/main-logo.png"
+          alt={t("brandAlt")}
+          width={176}
+          height={56}
+          priority
+          className="h-auto w-[132px] object-contain sm:w-[176px]"
+        />
 
-          <div className="flex items-center">
-            <Image
-              src="/images/Logo.svg"
-              alt={t("brandAlt")}
-              width={176}
-              height={56}
-              priority
-              className="h-auto w-[132px] object-contain sm:w-[176px]"
-            />
-          </div>
-        </div>
+        <Link
+          href={ROUTES.HOME}
+          aria-label={t("actions.backHome")}
+          className="inline-flex size-12 shrink-0 items-center justify-center rounded-full text-[var(--dashboard-primary)] transition-colors hover:bg-slate-100"
+        >
+          <BackIcon className="h-7 w-7" />
+        </Link>
+      </header>
 
+      <div className="mx-auto flex min-h-[calc(100vh-8rem)] w-full max-w-7xl flex-col px-4 pb-12 sm:px-6">
         <div className="flex flex-1 items-center justify-center py-8 sm:py-12">
           <motion.section
             initial={{ opacity: 0, y: 18 }}
@@ -198,7 +197,7 @@ export function LoginPage() {
                     }
                   />
 
-                  <div className={cn("flex", isArabic ? "justify-start" : "justify-end")}>
+                  <div className="flex justify-end">
                     <button
                       type="button"
                       className="text-xs font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-[var(--dashboard-primary)]"
@@ -226,12 +225,12 @@ export function LoginPage() {
 
                 <div className="pt-2 text-center text-sm text-slate-500">
                   <span>{t("form.signupPrompt")} </span>
-                  <button
-                    type="button"
+                  <Link
+                    href={AUTH_ROUTES.REGISTER}
                     className="font-semibold text-[var(--dashboard-primary)] transition-opacity hover:opacity-80"
                   >
                     {t("form.signupAction")}
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="flex items-center gap-4 pt-1 text-xs text-slate-400">
