@@ -5,6 +5,7 @@ import type {
   InteractiveBookTableRow,
 } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
 
 export type InteractiveBooksApiResult<T> = {
   status: BackendStatus | string;
@@ -14,6 +15,24 @@ export type InteractiveBooksApiResult<T> = {
 };
 
 type UnknownRecord = Record<string, unknown>;
+type InteractiveBooksSummaryValue = number | null;
+type InteractiveBooksSummary = Record<string, InteractiveBooksSummaryValue>;
+
+export type InteractiveBooksListData = {
+  rows: InteractiveBookTableRow[];
+  summary: InteractiveBooksSummary;
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  totalItems: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+};
+
+export type GetInteractiveBooksParams = {
+  pageNumber: number;
+  pageSize: number;
+};
 
 function asRecord(value: unknown): UnknownRecord | null {
   return value !== null && typeof value === "object" ? (value as UnknownRecord) : null;
@@ -47,6 +66,32 @@ function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
     if (Array.isArray(value)) return value;
   }
   return [];
+}
+
+function readSummary(record: UnknownRecord | null, keys: string[]): InteractiveBooksSummary {
+  if (!record) return {};
+  for (const key of keys) {
+    const value = asRecord(record[key]);
+    if (!value) continue;
+
+    const entries = Object.entries(value).reduce<InteractiveBooksSummary>((acc, [entryKey, entryValue]) => {
+      if (typeof entryValue === "number" && Number.isFinite(entryValue)) {
+        acc[entryKey] = entryValue;
+        return acc;
+      }
+      if (typeof entryValue === "string" && entryValue.trim() !== "" && !Number.isNaN(Number(entryValue))) {
+        acc[entryKey] = Number(entryValue);
+        return acc;
+      }
+      if (entryValue === null) {
+        acc[entryKey] = null;
+      }
+      return acc;
+    }, {});
+
+    if (Object.keys(entries).length > 0) return entries;
+  }
+  return {};
 }
 
 function buildErrorResult<T>(error: unknown, fallbackMessage: string): InteractiveBooksApiResult<T> {
@@ -147,33 +192,62 @@ function unwrapSingleRecord(payload: unknown): UnknownRecord | null {
  * Lists interactive books (`GET /api/v1/InteractiveBook`).
  * Response envelope: `{ data: InteractiveBookDto[] }` (array may be at root `data` or nested).
  */
-export async function getInteractiveBooks(): Promise<InteractiveBooksApiResult<InteractiveBookTableRow[]>> {
+export async function getInteractiveBooks(
+  params: GetInteractiveBooksParams,
+): Promise<InteractiveBooksApiResult<InteractiveBooksListData>> {
   try {
     const response = await httpClient.get<unknown>({
       url: "/api/v1/InteractiveBook",
+      params: {
+        pageNumber: params.pageNumber,
+        pageSize: params.pageSize,
+      },
     });
     const root = asRecord(response.data);
+    const nested = asRecord(root?.data);
     let rowsRaw: unknown[] = [];
     if (Array.isArray(root?.data)) {
       rowsRaw = root.data as unknown[];
     } else {
-      const inner = asRecord(root?.data);
-      rowsRaw = readArray(inner ?? root, ["items", "books", "results"]);
+      rowsRaw = readArray(nested ?? root, ["items", "books", "results"]);
     }
 
     const rows = rowsRaw
       .map((item) => mapInteractiveBookRecord(asRecord(item)))
       .filter((row): row is InteractiveBookTableRow => row !== null);
+    const summaryFromRoot = readSummary(root, ["summary"]);
+    const summaryFromNested = readSummary(nested, ["summary"]);
+    const summary = { ...summaryFromNested, ...summaryFromRoot };
+    const headerMeta = parseXPaginationHeader(response.headers);
+    const totalItems = headerMeta?.totalCount ?? rows.length;
+    const pageSize = headerMeta?.pageSize ?? Math.max(1, params.pageSize);
+    const currentPage = headerMeta?.currentPage ?? Math.max(1, params.pageNumber);
+    const totalPages =
+      headerMeta?.totalPages ?? Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
+    const hasPrevious = headerMeta?.hasPrevious ?? currentPage > 1;
+    const hasNext = headerMeta?.hasNext ?? currentPage < totalPages;
 
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
-      data: rows,
+      data: { rows, summary, currentPage, totalPages, pageSize, totalItems, hasPrevious, hasNext },
     };
   } catch (error) {
-    const failed = buildErrorResult<InteractiveBookTableRow[]>(error, "Failed to load interactive books");
-    return { ...failed, data: failed.data ?? [] };
+    const failed = buildErrorResult<InteractiveBooksListData>(error, "Failed to load interactive books");
+    return {
+      ...failed,
+      data: failed.data ?? {
+        rows: [],
+        summary: {},
+        currentPage: Math.max(1, params.pageNumber),
+        totalPages: 1,
+        pageSize: Math.max(1, params.pageSize),
+        totalItems: 0,
+        hasPrevious: false,
+        hasNext: false,
+      },
+    };
   }
 }
 

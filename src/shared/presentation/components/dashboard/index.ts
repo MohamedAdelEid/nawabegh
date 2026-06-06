@@ -15,6 +15,7 @@ export type { DashboardDataTableColumn } from "./DashboardDataTable";
 export { DashboardStatCard } from "./DashboardStatCard";
 export { DashboardTabPage } from "./DashboardTabPage";
 export { DashboardTabPlaceholder } from "./DashboardTabPlaceholder";
+export { DashboardNotImplementedState } from "./DashboardNotImplementedState";
 export { DashboardTableCard } from "./DashboardTableCard";
 export {
   DashboardSegmentedControl,

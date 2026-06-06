@@ -1,8 +1,8 @@
 "use client";
 
-import { Plus, Search, UserRound, Users } from "lucide-react";
+import { Loader2, Plus, Search, UserRound, Users } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   defaultParentAccountValues,
@@ -12,10 +12,16 @@ import {
   getCountriesDropdown,
   getParentStudentsPage,
   searchStudentsForParent,
+  updateParentUser,
   uploadUserImage,
+  type ParentUserUpdateContext,
   type UserManagementDropdownOption,
   type UserManagementParentStudentOption,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
+import {
+  getUserManagementDetailsReturnPath,
+  loadParentEditForm,
+} from "@/modules/admin/presentation/lib/userManagementEditForm";
 import {
   AddUserAnimatedSection,
   AddUserFormActions,
@@ -67,7 +73,13 @@ function mapStudentToLinkedEntity(student: UserManagementParentStudentOption) {
 export function AdminAddParentPage() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editUserId = searchParams.get("userId")?.trim() ?? "";
+  const isEditMode = Boolean(editUserId);
   const [values, setValues] = useState(defaultParentAccountValues);
+  const [updateContext, setUpdateContext] = useState<ParentUserUpdateContext>({});
+  const [isLoadingEdit, setIsLoadingEdit] = useState(isEditMode);
+  const [editLoadFailed, setEditLoadFailed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message?: string;
@@ -102,6 +114,8 @@ export function AdminAddParentPage() {
   };
 
   useEffect(() => {
+    if (isEditMode) return;
+
     let cancelled = false;
 
     void (async () => {
@@ -128,7 +142,45 @@ export function AdminAddParentPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isEditMode]);
+
+  useEffect(() => {
+    if (!isEditMode || !editUserId) return;
+
+    let cancelled = false;
+
+    void (async () => {
+      setIsLoadingEdit(true);
+      setEditLoadFailed(false);
+
+      const loaded = await loadParentEditForm(editUserId);
+      if (cancelled) return;
+
+      if (!loaded) {
+        setEditLoadFailed(true);
+        notify.error(t("userManagement.addUser.shared.messages.editLoadError"));
+        setIsLoadingEdit(false);
+        return;
+      }
+
+      setValues(loaded.formValues);
+      setUpdateContext(loaded.updateContext);
+      setCountryRows(loaded.countryRows);
+      setStudentsCatalog((current) => {
+        const map = new Map(current.map((student) => [student.studentUserId, student]));
+        for (const student of loaded.linkedStudents) {
+          map.set(student.studentUserId, student);
+        }
+        return Array.from(map.values());
+      });
+      setStudentSearchRows(loaded.linkedStudents);
+      setIsLoadingEdit(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [editUserId, isEditMode, t]);
 
   useEffect(() => {
     if (!values.studentSearch.trim()) {
@@ -196,37 +248,86 @@ export function AdminAddParentPage() {
       avatarFilePath = uploadResult.data.filePath;
     }
 
-    const result = await createParentUser({
-      ...values,
-      avatarFilePath,
-    });
+    const result = isEditMode
+      ? await updateParentUser(
+          editUserId,
+          {
+            ...values,
+            avatarFilePath,
+          },
+          updateContext,
+        )
+      : await createParentUser({
+          ...values,
+          avatarFilePath,
+        });
 
-    console.log(result);
     if (result.data) {
-      notify.success(result.message ?? "Parent created successfully.");
-      router.push(`${ROUTES.ADMIN.HOME}?tab=userManagement&refresh=${Date.now()}`);
+      notify.success(
+        result.message ??
+          (isEditMode ? "Parent updated successfully." : "Parent created successfully."),
+      );
+      router.push(
+        isEditMode
+          ? getUserManagementDetailsReturnPath(editUserId, "parent")
+          : `${ROUTES.ADMIN.HOME}?tab=userManagement&refresh=${Date.now()}`,
+      );
       return;
     }
 
     setSubmitError({
-      message: result.errorMessage ?? "Failed to create parent.",
+      message:
+        result.errorMessage ??
+        (isEditMode ? "Failed to update parent." : "Failed to create parent."),
       validationErrors: result.validationErrors,
     });
-    notify.error(result.errorMessage ?? "Failed to create parent.");
+    notify.error(
+      result.errorMessage ??
+        (isEditMode ? "Failed to update parent." : "Failed to create parent."),
+    );
     setIsSubmitting(false);
   };
 
+  const pageTitle = isEditMode
+    ? t("userManagement.addUser.parent.page.editTitle")
+    : t("userManagement.addUser.parent.page.title");
+  const pageDescription = isEditMode
+    ? t("userManagement.addUser.parent.page.editDescription")
+    : t("userManagement.addUser.parent.page.description");
+  const submitLabel = isEditMode
+    ? t("userManagement.addUser.parent.page.editSubmit")
+    : t("userManagement.addUser.parent.page.submit");
+
+  if (isLoadingEdit) {
+    return (
+      <div className="flex min-h-[16rem] items-center justify-center">
+        <div className="flex flex-col items-center gap-3 text-slate-500">
+          <Loader2 className="h-8 w-8 animate-spin text-[#243B5A]" />
+          <p>{t("userManagement.addUser.shared.messages.editLoading")}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (editLoadFailed) {
+    return (
+      <div className="rounded-[2rem] border border-dashed border-slate-200 bg-white p-10 text-center text-slate-500">
+        {t("userManagement.addUser.shared.messages.editLoadError")}
+      </div>
+    );
+  }
+
   return (
     <AddUserPageShell
-      title={t("userManagement.addUser.parent.page.title")}
-      description={t("userManagement.addUser.parent.page.description")}
+      title={pageTitle}
+      description={pageDescription}
       breadcrumbs={[
         { label: t("tabs.home.title") },
         { label: t("userManagement.page.title") },
-        { label: t("userManagement.addUser.parent.page.title") },
+        { label: pageTitle },
       ]}
       cancelLabel={t("userManagement.addUser.shared.actions.cancel")}
-      submitLabel={t("userManagement.addUser.parent.page.submit")}
+      submitLabel={submitLabel}
       onSubmit={handleSubmit}
     >
       {submitError ? (
@@ -293,13 +394,15 @@ export function AdminAddParentPage() {
                 value={values.email}
                 onChange={(event) => setField("email", event.target.value)}
               />
-              <AddUserInputField
-                label={t("userManagement.addUser.shared.fields.password")}
-                placeholder={t("userManagement.addUser.shared.placeholders.password")}
-                type="password"
-                value={values.password}
-                onChange={(event) => setField("password", event.target.value)}
-              />
+              {!isEditMode ? (
+                <AddUserInputField
+                  label={t("userManagement.addUser.shared.fields.password")}
+                  placeholder={t("userManagement.addUser.shared.placeholders.password")}
+                  type="password"
+                  value={values.password}
+                  onChange={(event) => setField("password", event.target.value)}
+                />
+              ) : null}
             </div>
           </div>
         </AddUserFormSectionCard>

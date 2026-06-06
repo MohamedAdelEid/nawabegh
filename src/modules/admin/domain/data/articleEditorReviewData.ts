@@ -192,6 +192,7 @@ export async function getArticleReviewDetailById(
   }
 
   const comments = commentsRes.data ?? [];
+  console.log("comments", commentsRes);
   return mapArticleToReviewDetail(articleRes.data, comments, localeHint);
 }
 

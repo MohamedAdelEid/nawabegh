@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, EllipsisVertical, SlidersHorizontal } from "lucide-react";
+import { Download, EllipsisVertical } from "lucide-react";
 import AddSchoolIcon from "@/modules/admin/presentation/assets/icons/AddSchool.svg";
 import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
   DashboardBadge,
@@ -20,7 +20,14 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { useSchoolsTable } from "@/modules/admin/application/hooks/useSchoolsTable";
 import { schoolManagementDashboardData } from "@/modules/admin/domain/data/schoolManagementDashboardData";
-import { getSchoolKpis, type SchoolKpis } from "@/modules/admin/infrastructure/api/schoolApi";
+import {
+  deleteSchool,
+  getSchoolKpis,
+  type SchoolKpis,
+  type SchoolTableRow,
+} from "@/modules/admin/infrastructure/api/schoolApi";
+import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
+import { SchoolManagementFilterBar } from "@/modules/admin/presentation/components/school-management";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
@@ -91,11 +98,16 @@ export function SchoolManagementDashboard() {
   const t = useTranslations("admin.dashboard");
   const locale = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const refreshKey = searchParams.get("refresh");
   const data = schoolManagementDashboardData;
   const schoolsTable = useSchoolsTable();
   const responseStatus = schoolsTable.data?.status ?? "Success";
   const page = schoolsTable.page;
   const [kpis, setKpis] = useState<SchoolKpis | null>(null);
+  const [menuOpenSchoolId, setMenuOpenSchoolId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SchoolTableRow | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const schoolTableColumns = useMemo<Array<DashboardDataTableColumn<any>>>(
     () => [
       {
@@ -196,15 +208,57 @@ export function SchoolManagementDashboard() {
     [data.stats, formatKpiValue],
   );
 
-  useEffect(() => {
-    void getSchoolKpis().then((result) => {
-      if (result.data) {
-        setKpis(result.data);
-      } else if (result.errorMessage) {
-        notify.error(result.errorMessage);
-      }
-    });
+  const loadKpis = useCallback(async () => {
+    const result = await getSchoolKpis();
+    if (result.data) {
+      setKpis(result.data);
+    } else if (result.errorMessage) {
+      notify.error(result.errorMessage);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadKpis();
+  }, [loadKpis, refreshKey]);
+
+  useEffect(() => {
+    if (!refreshKey) return;
+    schoolsTable.setPageNumber(1);
+    void schoolsTable.refetch();
+  }, [refreshKey, schoolsTable.refetch, schoolsTable.setPageNumber]);
+
+  useEffect(() => {
+    if (!menuOpenSchoolId) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("[data-school-row-menu]")) return;
+      setMenuOpenSchoolId(null);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, [menuOpenSchoolId]);
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    const schoolId = deleteTarget.id;
+    setDeleteTarget(null);
+    setPendingDeleteId(schoolId);
+
+    const result = await deleteSchool(schoolId);
+    setPendingDeleteId(null);
+
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      return;
+    }
+
+    notify.success(result.message ?? t("schoolManagement.deleteModal.success"));
+    setMenuOpenSchoolId(null);
+    await Promise.all([schoolsTable.refetch(), loadKpis()]);
+  };
 
   return (
     <div className="space-y-8">
@@ -243,28 +297,13 @@ export function SchoolManagementDashboard() {
         ))}
       </section>
 
+      <SchoolManagementFilterBar
+        value={schoolsTable.filters}
+        onChange={schoolsTable.setFilters}
+      />
+
       <DashboardTableCard
         title={t("schoolManagement.table.title")}
-        actions={
-          <>
-            <Button
-              type="button"
-              variant="outline"
-              className="rounded-2xl border-slate-200 px-5 text-slate-700"
-            >
-              <SlidersHorizontal className="h-4 w-4" aria-hidden />
-              {t("schoolManagement.table.actions.filter")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="rounded-2xl border-slate-200 px-5 text-slate-700"
-            >
-              <Download className="h-4 w-4" aria-hidden />
-              {t("schoolManagement.table.actions.export")}
-            </Button>
-          </>
-        }
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
@@ -329,18 +368,65 @@ export function SchoolManagementDashboard() {
             emptyMessage="—"
             rowClassName="hover:bg-slate-50/80"
             actionsHeader={t("schoolManagement.table.columns.actions")}
-            renderActions={() => (
-              <button
-                type="button"
-                className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                aria-label={t("schoolManagement.table.actions.more")}
-              >
-                <EllipsisVertical className="h-5 w-5" aria-hidden />
-              </button>
+            renderActions={(row) => (
+              <div className="relative" data-school-row-menu>
+                <button
+                  type="button"
+                  className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                  aria-label={t("schoolManagement.table.actions.more")}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setMenuOpenSchoolId((current) => (current === row.id ? null : row.id));
+                  }}
+                >
+                  <EllipsisVertical className="h-5 w-5" aria-hidden />
+                </button>
+                {menuOpenSchoolId === row.id ? (
+                  <div
+                    className="absolute z-[9999] left-0 top-2 min-w-[9rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                      onClick={() => {
+                        setMenuOpenSchoolId(null);
+                        router.push(ROUTES.ADMIN.SCHOOL_MANAGEMENT.EDIT(row.id));
+                      }}
+                    >
+                      {t("schoolManagement.table.actions.edit")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pendingDeleteId === row.id}
+                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                      onClick={() => {
+                        setMenuOpenSchoolId(null);
+                        setDeleteTarget(row);
+                      }}
+                    >
+                      {t("schoolManagement.table.actions.delete")}
+                    </button>
+                  </div>
+                ) : null}
+              </div>
             )}
           />
         )}
       </DashboardTableCard>
+
+      <ChatGroupDeleteModal
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+        groupName={deleteTarget?.schoolName}
+        title={t("schoolManagement.deleteModal.title")}
+        description={t("schoolManagement.deleteModal.description")}
+        confirmLabel={t("schoolManagement.deleteModal.confirm")}
+        cancelLabel={t("schoolManagement.deleteModal.cancel")}
+        onConfirm={() => void handleConfirmDelete()}
+      />
 
       <section className="grid gap-6 xl:grid-cols-2">
         <DashboardInsightCard

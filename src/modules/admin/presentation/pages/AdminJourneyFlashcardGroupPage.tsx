@@ -27,6 +27,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -217,11 +218,7 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
-      </div>
-    );
+    return <JourneyEditorStationPageSkeleton />;
   }
 
   const activeGroup: FlashCardGroup = group ?? {

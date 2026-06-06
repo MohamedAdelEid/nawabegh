@@ -1,0 +1,349 @@
+{
+  "adManagement": {
+    "breadcrumbs": { "home": "Home" },
+    "page": {
+      "title": "Ads management",
+      "description": "Create and track communication campaigns with students and teachers.",
+      "createAd": "Create new ad"
+    },
+    "stats": {
+      "activeAds": {
+        "label": "Active ads",
+        "indicatorStatic": "—",
+        "indicatorTrend": "+{value}%"
+      },
+      "scheduledAds": {
+        "label": "Scheduled",
+        "indicatorStatic": "Stable"
+      },
+      "totalViews": {
+        "label": "Total views",
+        "indicatorStatic": "—",
+        "indicatorTrend": "+{value}%"
+      },
+      "engagementRate": {
+        "label": "Engagement rate (CTR)",
+        "indicatorStatic": "—",
+        "indicatorTrend": "{value}%"
+      }
+    },
+    "filters": {
+      "search": { "label": "Search", "placeholder": "Search by title..." },
+      "type": {
+        "label": "Ad type",
+        "all": "All types",
+        "banner": "Banner",
+        "popup": "Popup",
+        "card": "Card"
+      },
+      "audience": {
+        "label": "Audience",
+        "all": "All audiences",
+        "students": "Students",
+        "teachers": "Teachers",
+        "parents": "Parents"
+      },
+      "placement": {
+        "label": "Placement",
+        "all": "All placements",
+        "banner": "Banner",
+        "popup": "Popup",
+        "card": "Card"
+      },
+      "status": {
+        "label": "Status",
+        "all": "All statuses",
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "expired": "Expired",
+        "draft": "Draft",
+        "paused": "Paused"
+      },
+      "apply": "Filter"
+    },
+    "types": {
+      "banner": "Banner",
+      "popup": "Popup",
+      "card": "In-app card"
+    },
+    "audiences": {
+      "all": "Everyone",
+      "students": "Students",
+      "teachers": "Teachers",
+      "parents": "Parents"
+    },
+    "statuses": {
+      "active": "Active",
+      "scheduled": "Scheduled",
+      "expired": "Expired",
+      "draft": "Draft",
+      "paused": "Paused"
+    },
+    "table": {
+      "title": "Ads list",
+      "columns": {
+        "ad": "Ad",
+        "type": "Type",
+        "audience": "Target audience",
+        "status": "Status",
+        "date": "Date",
+        "performance": "Performance",
+        "actions": "Actions"
+      },
+      "performance": { "views": "Views", "clicks": "Clicks" },
+      "pagination": {
+        "summary": "Showing {from}-{to} of {total} ads",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "actions": { "view": "View", "edit": "Edit", "delete": "Delete" },
+      "states": {
+        "empty": {
+          "title": "No ads yet",
+          "description": "Create your first ad to reach your educational community."
+        },
+        "error": { "title": "Could not load ads", "retry": "Retry" }
+      }
+    },
+    "deleteModal": {
+      "title": "Confirm permanent deletion",
+      "description": "Are you sure you want to delete this ad? You will not be able to recover it.",
+      "confirm": "Confirm delete",
+      "cancel": "Cancel",
+      "success": "Ad deleted successfully.",
+      "audienceLabel": "Target audience",
+      "createdLabel": "Created"
+    },
+    "create": {
+      "title": "Create new ad",
+      "description": "Fill in the details below to publish a new ad for your educational community.",
+      "smartDraftBadge": "Smart draft mode",
+      "breadcrumbs": { "home": "Home", "list": "Ads management" },
+      "steps": {
+        "content": "Content",
+        "type": "Ad type",
+        "targeting": "Targeting",
+        "scheduling": "Scheduling",
+        "preview": "Preview"
+      },
+      "actions": {
+        "cancel": "Cancel process",
+        "saveDraft": "Save as draft",
+        "back": "Back",
+        "next": "Next step: {step}",
+        "finish": "Publish ad"
+      },
+      "content": {
+        "title": { "label": "Ad title", "placeholder": "Enter a catchy, brief title..." },
+        "description": {
+          "label": "Ad description",
+          "placeholder": "Write the ad details clearly..."
+        },
+        "media": {
+          "label": "Upload image / video",
+          "hint": "Drag files here or click to upload",
+          "formats": "Supports JPG, PNG, MP4 (max 50 MB)"
+        },
+        "cta": { "label": "CTA button text", "placeholder": "e.g. Register now, discover more..." },
+        "ctaUrl": { "label": "Destination URL", "placeholder": "https://" }
+      },
+      "type": {
+        "selected": "Selected",
+        "livePreview": "Live preview",
+        "options": {
+          "banner": {
+            "title": "Top banner",
+            "description": "Appears at the top of the page for all users. Ideal for urgent alerts."
+          },
+          "popup": {
+            "title": "Popup",
+            "description": "Appears in the center of the screen and requires immediate interaction."
+          },
+          "card": {
+            "title": "In-app card",
+            "description": "Appears as part of page content or in the dashboard."
+          }
+        },
+        "placement": {
+          "label": "Screen placement",
+          "options": {
+            "home_top": "Home — top strip",
+            "home_inline": "Home — inline feed",
+            "dashboard_sidebar": "Dashboard sidebar",
+            "lesson_bottom": "Below lesson content",
+            "app_open": "App open",
+            "after_login": "After login",
+            "after_lesson": "After lesson completion",
+            "timed_popup": "Timed popup"
+          }
+        }
+      },
+      "targeting": {
+        "searchPlaceholder": "Search categories or users...",
+        "audience": {
+          "all": "Everyone",
+          "students": "Students",
+          "parents": "Parents",
+          "teachers": "Teachers"
+        },
+        "school": { "label": "School", "all": "All schools" },
+        "grade": { "label": "Grade level", "all": "All levels" },
+        "subjects": { "label": "Subjects", "none": "None selected" },
+        "summary": {
+          "title": "Targeting summary",
+          "estimatedAudience": "Estimated audience",
+          "category": "Category",
+          "schools": "Schools",
+          "subjects": "Subjects",
+          "tip": "Targeting Math and Physics students can increase engagement by 25% for academic ads."
+        }
+      },
+      "scheduling": {
+        "startDate": "Start date",
+        "startTime": "Start time",
+        "endDate": "End date",
+        "endTime": "End time",
+        "mode": {
+          "now": {
+            "title": "Send now",
+            "description": "The ad will be published immediately after setup."
+          },
+          "schedule": {
+            "title": "Schedule",
+            "description": "Set a specific start and end date and time."
+          }
+        },
+        "tip": {
+          "title": "Guidance tip",
+          "body": "The best time to publish ads is 9 AM – 11 AM for maximum engagement.",
+          "timezone": "Timezone: Mecca (GMT+3)"
+        }
+      },
+      "preview": {
+        "fallbackTitle": "Final exams schedule update",
+        "fallbackDescription": "Exam dates have been updated. View them in your profile.",
+        "fallbackCta": "View schedule",
+        "bannerBadge": "Important",
+        "popupBadge": "Important alert",
+        "close": "Close",
+        "browserUrl": "student.scholarsystem.edu/dashboard"
+      },
+      "previewStep": {
+        "summaryTitle": "Ad summary",
+        "sections": { "content": "Content", "type": "Ad type", "placement": "Placement", "targeting": "Targeting" },
+        "publishNow": "Publish ad now",
+        "saveDraft": "Save as draft",
+        "viewport": { "desktop": "Desktop view", "mobile": "Mobile view" }
+      },
+      "validation": {
+        "titleRequired": "Ad title is required.",
+        "placementRequired": "Please select a screen placement.",
+        "scheduleDatesRequired": "Start and end dates are required for scheduled ads.",
+        "mediaUploadFailed": "Could not upload media."
+      },
+      "toast": {
+        "published": "Ad published successfully.",
+        "savedDraft": "Draft saved successfully.",
+        "error": "Could not save the ad.",
+        "publishError": "Ad was created but could not be published."
+      }
+    },
+    "detail": {
+      "loadingTitle": "Ad details",
+      "meta": "Created on {date} · {author} · {id}",
+      "statuses": {
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "expired": "Expired",
+        "draft": "Draft",
+        "paused": "Paused"
+      },
+      "actions": { "edit": "Edit ad", "pause": "Pause", "delete": "Delete" },
+      "metrics": {
+        "timeRemaining": "Time remaining",
+        "days": "{count} days",
+        "ctr": "CTR",
+        "perfect": "Perfect",
+        "noData": "No data yet",
+        "clicks": "Total clicks",
+        "views": "Total views",
+        "impressions": "Impressions",
+        "uniqueUsers": "Unique users"
+      },
+      "sections": {
+        "content": "Ad content",
+        "targeting": "Target audience",
+        "scheduling": "Scheduling",
+        "analytics": "Performance analytics"
+      },
+      "analytics": {
+        "empty": "No daily analytics recorded yet.",
+        "columns": {
+          "day": "Day",
+          "impressions": "Impressions",
+          "clicks": "Clicks",
+          "uniqueUsers": "Unique users"
+        }
+      },
+      "fields": {
+        "cta": "CTA text",
+        "link": "Link",
+        "schools": "Schools",
+        "grades": "Grades",
+        "subjects": "Subjects",
+        "start": "Start date",
+        "end": "End date"
+      },
+      "preview": {
+        "title": "User experience preview",
+        "desktop": "Desktop",
+        "mobile": "Mobile"
+      },
+      "toast": { "deleted": "Ad deleted.", "paused": "Ad paused." },
+      "states": { "error": "Could not load ad details." },
+      "backToList": "Back to ads list"
+    },
+    "edit": {
+      "title": "Edit ad",
+      "description": "Update ad data and visibility settings for users.",
+      "breadcrumbs": { "home": "Home", "list": "Ads management" },
+      "sidebar": {
+        "displayType": "Display type",
+        "scheduling": "Scheduling",
+        "scheduleHint": "The ad will start automatically on the selected date and end when the period ends.",
+        "preview": "Show preview"
+      },
+      "types": {
+        "popup": {
+          "title": "Popup",
+          "description": "Popup window on login"
+        },
+        "banner": {
+          "title": "Banner",
+          "description": "Advertising bar on the home page"
+        }
+      },
+      "fields": {
+        "title": "Ad title",
+        "titlePlaceholder": "Enter ad title",
+        "description": "Ad description",
+        "descriptionPlaceholder": "Enter description",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "school": "School",
+        "allSchools": "All schools",
+        "grade": "Grade",
+        "allGrades": "All grades"
+      },
+      "cover": {
+        "hint": "Click to change image",
+        "formats": "PNG, JPG — max 5 MB"
+      },
+      "sections": { "targeting": "Targeting settings" },
+      "actions": { "cancel": "Cancel", "save": "Save changes" },
+      "validation": { "mediaUploadFailed": "Could not upload cover image." },
+      "toast": { "saved": "Changes saved.", "error": "Could not save changes." },
+      "states": { "error": "Could not load ad for editing." }
+    }
+  }
+}

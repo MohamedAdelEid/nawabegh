@@ -9,6 +9,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ModalShell, ModalDescription, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
 import { BookOpen, ListChecks, Shuffle, FileQuestion } from "lucide-react";
+import { QuestionBankAnimatedSection } from "@/modules/admin/presentation/components/question-bank";
 
 export function AdminQuestionBankManagePage() {
   const t = useTranslations("admin.dashboard");
@@ -25,13 +26,30 @@ export function AdminQuestionBankManagePage() {
         ]}
         action={<Button onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.ADD)}>{t("questionBankManage.actions.addQuestion")}</Button>}
       />
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <DashboardStatCard label={t("questionBankManage.stats.total")} value="1,284" indicator="" icon={BookOpen} iconTone="info" />
-        <DashboardStatCard label={t("questionBankManage.stats.mcq")} value="842" indicator="" icon={ListChecks} iconTone="success" />
-        <DashboardStatCard label={t("questionBankManage.stats.tf")} value="442" indicator="" icon={Shuffle} iconTone="warning" />
-        <DashboardStatCard label={t("questionBankManage.stats.level")} value="40%" indicator="" icon={FileQuestion} iconTone="danger" />
-      </section>
-      <Card><CardContent className="space-y-4 p-6 text-right"><div className="flex items-center justify-between"><h3 className="text-2xl font-bold text-[#1E3A66]">{t("questionBankManage.listTitle")}</h3><Button variant="outline" onClick={() => setDeleteOpen(true)}>{t("questionBankManage.actions.deleteSample")}</Button></div><div className="rounded-xl border border-slate-100 p-4"><p className="font-semibold">ما هو ناتج حل المعادلة التربيعية 0 = 6 + 5x - x^2؟</p><DashboardBadge tone="success">صحيح</DashboardBadge></div></CardContent></Card>
+      <QuestionBankAnimatedSection delay={0.02}>
+        <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <DashboardStatCard label={t("questionBankManage.stats.total")} value="1,284" indicator="" icon={BookOpen} iconTone="info" />
+          <DashboardStatCard label={t("questionBankManage.stats.mcq")} value="842" indicator="" icon={ListChecks} iconTone="success" />
+          <DashboardStatCard label={t("questionBankManage.stats.tf")} value="442" indicator="" icon={Shuffle} iconTone="warning" />
+          <DashboardStatCard label={t("questionBankManage.stats.level")} value="40%" indicator="" icon={FileQuestion} iconTone="danger" />
+        </section>
+      </QuestionBankAnimatedSection>
+      <QuestionBankAnimatedSection delay={0.08}>
+        <Card>
+          <CardContent className="space-y-4 p-6 text-right">
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-[#1E3A66]">{t("questionBankManage.listTitle")}</h3>
+              <Button variant="outline" onClick={() => setDeleteOpen(true)}>
+                {t("questionBankManage.actions.deleteSample")}
+              </Button>
+            </div>
+            <div className="rounded-xl border border-slate-100 p-4">
+              <p className="font-semibold">ما هو ناتج حل المعادلة التربيعية 0 = 6 + 5x - x^2؟</p>
+              <DashboardBadge tone="success">صحيح</DashboardBadge>
+            </div>
+          </CardContent>
+        </Card>
+      </QuestionBankAnimatedSection>
 
       <ModalShell open={deleteOpen} onOpenChange={setDeleteOpen}>
         <div className="space-y-4 text-right">

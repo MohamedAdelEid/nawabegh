@@ -1,6 +1,10 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import {
+  parseXPaginationHeader,
+  type XPaginationMeta,
+} from "@/shared/infrastructure/http/xPagination";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -369,6 +373,32 @@ export async function getQuestionBankEnums(): Promise<QuestionBankApiResult<Ques
   }
 }
 
+function mapQuestionBankListPage(
+  data: unknown,
+  params: QuestionBankPageParams,
+  headerMeta: XPaginationMeta | null,
+): QuestionBankListPage | null {
+  const rows = extractListRows(data)
+    .map(mapListRow)
+    .filter((item): item is QuestionBankListRow => item !== null);
+
+  if (headerMeta) {
+    return {
+      rows,
+      currentPage: headerMeta.currentPage,
+      pageSize: headerMeta.pageSize,
+      totalItems: headerMeta.totalCount,
+      totalPages: headerMeta.totalPages,
+    };
+  }
+
+  const meta = extractPageMeta(data, params, rows.length);
+  return {
+    rows,
+    ...meta,
+  };
+}
+
 export async function getQuestionBankPage(
   params: QuestionBankPageParams,
 ): Promise<QuestionBankApiResult<QuestionBankListPage>> {
@@ -385,19 +415,14 @@ export async function getQuestionBankPage(
       },
     });
 
-    const rows = extractListRows(response.data)
-      .map(mapListRow)
-      .filter((item): item is QuestionBankListRow => item !== null);
-    const meta = extractPageMeta(response.data, params, rows.length);
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const page = mapQuestionBankListPage(response.data, params, headerMeta);
 
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
-      data: {
-        rows,
-        ...meta,
-      },
+      data: page,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load questions");

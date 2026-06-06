@@ -1,17 +1,21 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, Eye, Plus, Search, Trash2 } from "lucide-react";
+import { Eye, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   deleteResourceFile,
-  getResourceFileCoursesDropdown,
   getResourceFiles,
-  getStationsList,
   type ResourceFileListItem,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { ContentFileDeleteModal } from "@/modules/admin/presentation/components/content-management/ContentFileDeleteModal";
+import { HelperFileManagementAnimatedSection } from "./HelperFileManagementAnimatedSection";
+import { HelperFileManagementDashboardSkeleton } from "./HelperFileManagementDashboardSkeleton";
+import {
+  HelperFileManagementFilterBar,
+  type HelperFileManagementFilterState,
+} from "./HelperFileManagementFilterBar";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { ResourceFileType } from "@/shared/domain/enums/cms.enums";
@@ -24,71 +28,39 @@ import {
   DashboardTableCard,
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 const PAGE_SIZE = 10;
 const routeConfig = ROUTES.ADMIN.HELPER_FILE_MANAGEMENT;
+
+const DEFAULT_FILTERS: HelperFileManagementFilterState = {
+  stationId: "all",
+  courseId: "all",
+  resourceFileType: "all",
+  keyword: "",
+};
 
 export function HelperFileManagementDashboard() {
   const t = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
   const [rows, setRows] = useState<ResourceFileListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [keyword, setKeyword] = useState("");
-  const [stationId, setStationId] = useState("all");
-  const [courseId, setCourseId] = useState("all");
-  const [resourceFileType, setResourceFileType] = useState("all");
+  const [filters, setFilters] = useState<HelperFileManagementFilterState>(DEFAULT_FILTERS);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [stationOptions, setStationOptions] = useState<Array<{ value: string; label: string }>>([]);
-  const [courseOptions, setCourseOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [deleteTarget, setDeleteTarget] = useState<ResourceFileListItem | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    const loadFilters = async () => {
-      const [stationsResult, coursesResult] = await Promise.all([
-        getStationsList(),
-        getResourceFileCoursesDropdown(),
-      ]);
-      if (!alive) return;
-
-      if (stationsResult.data) {
-        setStationOptions(
-          stationsResult.data.map((station) => ({
-            value: station.id,
-            label: station.learningPathTitle
-              ? `${station.name} — ${station.learningPathTitle}`
-              : station.name,
-          })),
-        );
-      }
-      if (coursesResult.data) {
-        setCourseOptions(
-          coursesResult.data.map((course) => ({
-            value: course.id,
-            label: course.teacherName
-              ? `${course.courseName} — ${course.teacherName}`
-              : course.courseName,
-          })),
-        );
-      }
-    };
-    void loadFilters();
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const loadRows = useCallback(async () => {
     setLoading(true);
     const result = await getResourceFiles({
-      ...(stationId !== "all" ? { stationId } : {}),
-      ...(courseId !== "all" ? { courseId } : {}),
-      ...(resourceFileType !== "all"
-        ? { resourceFileType: Number(resourceFileType) as ResourceFileType }
+      ...(filters.stationId !== "all" ? { stationId: filters.stationId } : {}),
+      ...(filters.courseId !== "all" ? { courseId: filters.courseId } : {}),
+      ...(filters.resourceFileType !== "all"
+        ? { resourceFileType: Number(filters.resourceFileType) as ResourceFileType }
         : {}),
-      ...(keyword.trim() ? { keyword: keyword.trim() } : {}),
+      ...(filters.keyword.trim() ? { keyword: filters.keyword.trim() } : {}),
       pageNumber: page,
       pageSize: PAGE_SIZE,
     });
@@ -104,7 +76,8 @@ export function HelperFileManagementDashboard() {
       setTotalPages(result.data.totalPages);
     }
     setLoading(false);
-  }, [stationId, courseId, resourceFileType, keyword, page, t]);
+    setHasLoadedOnce(true);
+  }, [filters, page, t]);
 
   useEffect(() => {
     void loadRows();
@@ -112,10 +85,17 @@ export function HelperFileManagementDashboard() {
 
   useEffect(() => {
     setPage(1);
-  }, [stationId, courseId, resourceFileType, keyword]);
+  }, [filters.stationId, filters.courseId, filters.resourceFileType, filters.keyword]);
 
   const pageCount = Math.max(1, totalPages);
   const currentPage = Math.min(page, pageCount);
+
+  useEffect(() => {
+    if (page > pageCount) {
+      setPage(pageCount);
+    }
+  }, [page, pageCount]);
+  const isInitialLoading = loading && !hasLoadedOnce;
 
   const resolveAccessPolicyLabel = (value: string) => {
     const normalized = value.trim().toLowerCase();
@@ -214,135 +194,102 @@ export function HelperFileManagementDashboard() {
     void loadRows();
   };
 
-  if (loading && rows.length === 0 && totalItems === 0) {
+  const header = (
+    <DashboardPageHeader
+      title={t("page.title")}
+      description={t("page.description")}
+      breadcrumbs={[
+        { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+        { label: t("breadcrumbs.content") },
+      ]}
+      action={
+        <Button
+          type="button"
+          className="dashboard-raised-button h-14 rounded-2xl bg-[var(--dashboard-primary)] px-6 text-base font-semibold text-white hover:bg-[var(--dashboard-primary)]"
+          style={{ boxShadow: "var(--dashboard-shadow-button)" }}
+          onClick={() => router.push(routeConfig.ADD)}
+        >
+          <Plus className="h-5 w-5" aria-hidden />
+          {t("page.addFile")}
+        </Button>
+      }
+    />
+  );
+
+  if (isInitialLoading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-slate-500">
-        {t("page.loading")}
-      </div>
+      <section className="space-y-8">
+        {header}
+        <HelperFileManagementDashboardSkeleton />
+      </section>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("page.title")}
-        description={t("page.description")}
-        breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
-          { label: t("breadcrumbs.content") },
-        ]}
-        action={
-          <Button
-            type="button"
-            className="dashboard-raised-button h-14 rounded-2xl bg-[var(--dashboard-primary)] px-6 text-base font-semibold text-white hover:bg-[var(--dashboard-primary)]"
-            style={{ boxShadow: "var(--dashboard-shadow-button)" }}
-            onClick={() => router.push(routeConfig.ADD)}
-          >
-            <Plus className="h-5 w-5" aria-hidden />
-            {t("page.addFile")}
-          </Button>
-        }
-      />
+    <section className="space-y-8">
+      {header}
 
-      <DashboardTableCard
-        title={t("table.title")}
-        actions={
-          <div className="grid w-full gap-3 md:grid-cols-4">
-            <FilterSelect
-              label={t("filters.station.label")}
-              value={stationId}
-              onChange={setStationId}
-              options={[
-                { value: "all", label: t("filters.station.all") },
-                ...stationOptions,
-              ]}
-            />
-            <FilterSelect
-              label={t("filters.course.label")}
-              value={courseId}
-              onChange={setCourseId}
-              options={[
-                { value: "all", label: t("filters.course.all") },
-                ...courseOptions,
-              ]}
-            />
-            <FilterSelect
-              label={t("filters.resourceFileType.label")}
-              value={resourceFileType}
-              onChange={setResourceFileType}
-              options={[
-                { value: "all", label: t("filters.resourceFileType.all") },
-                {
-                  value: String(ResourceFileType.ForStation),
-                  label: t("filters.resourceFileType.station"),
-                },
-                {
-                  value: String(ResourceFileType.ForCourse),
-                  label: t("filters.resourceFileType.course"),
-                },
-              ]}
-            />
-            <label className="space-y-2 text-right">
-              <span className="text-xs font-medium text-slate-500">
-                {t("filters.search.label")}
-              </span>
-              <div className="relative">
-                <input
-                  value={keyword}
-                  onChange={(event) => setKeyword(event.target.value)}
-                  placeholder={t("filters.search.placeholder")}
-                  className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-10 text-right text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[var(--dashboard-gold)]/25"
-                />
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              </div>
-            </label>
-          </div>
-        }
-        footer={
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <p className="text-right text-sm text-slate-400">
-              {t("table.pagination.summary", {
-                visible: rows.length,
-                total: totalItems,
-              })}
-            </p>
-            <DashboardPagination
-              pages={Array.from({ length: pageCount }, (_, i) => i + 1)}
-              currentPage={currentPage}
-              previousLabel={t("table.pagination.previous")}
-              nextLabel={t("table.pagination.next")}
-              onPageChange={setPage}
-            />
-          </div>
-        }
-      >
-        <DashboardDataTable
-          rows={rows}
-          columns={tableColumns}
-          getRowKey={(row) => row.id}
-          emptyMessage={t("table.empty")}
-          onRowClick={(row) => router.push(routeConfig.VIEW(row.id))}
-          rowClassName="hover:bg-slate-50/80"
-          actionsHeader={t("table.columns.actions")}
-          renderActions={(row) => (
-            <div className="flex items-center gap-2">
-              <IconActionButton
-                label={t("table.actions.view")}
-                onClick={() => router.push(routeConfig.VIEW(row.id))}
-              >
-                <Eye className="h-4 w-4" />
-              </IconActionButton>
-              <IconActionButton
-                label={t("table.actions.delete")}
-                danger
-                onClick={() => setDeleteTarget(row)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </IconActionButton>
+      <HelperFileManagementAnimatedSection delay={0.06}>
+        <HelperFileManagementFilterBar value={filters} onChange={setFilters} />
+      </HelperFileManagementAnimatedSection>
+
+      <HelperFileManagementAnimatedSection delay={0.14}>
+        <DashboardTableCard
+          title={t("table.title")}
+          footer={
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <p className="text-right text-sm text-slate-400">
+                {t("table.pagination.summary", {
+                  visible: rows.length,
+                  total: totalItems,
+                })}
+              </p>
+              <DashboardPagination
+                pages={Array.from({ length: pageCount }, (_, i) => i + 1)}
+                currentPage={currentPage}
+                previousLabel={t("table.pagination.previous")}
+                nextLabel={t("table.pagination.next")}
+                onPageChange={setPage}
+              />
             </div>
+          }
+        >
+          {loading ? (
+            <div className="space-y-3 px-4 py-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={`helper-file-table-row-${index}`} className="h-14 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : (
+            <DashboardDataTable
+              rows={rows}
+              columns={tableColumns}
+              getRowKey={(row) => row.id}
+              emptyMessage={t("table.empty")}
+              // onRowClick={(row) => router.push(routeConfig.VIEW(row.id))}
+              rowClassName="hover:bg-slate-50/80"
+              actionsHeader={t("table.columns.actions")}
+              renderActions={(row) => (
+                <div className="flex items-center gap-2">
+                  <IconActionButton
+                    label={t("table.actions.view")}
+                    onClick={() => router.push(routeConfig.VIEW(row.id))}
+                  >
+                    <Eye className="h-4 w-4" />
+                  </IconActionButton>
+                  <IconActionButton
+                    label={t("table.actions.delete")}
+                    danger
+                    onClick={() => setDeleteTarget(row)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </IconActionButton>
+                </div>
+              )}
+            />
           )}
-        />
-      </DashboardTableCard>
+        </DashboardTableCard>
+      </HelperFileManagementAnimatedSection>
 
       <ContentFileDeleteModal
         open={Boolean(deleteTarget)}
@@ -355,36 +302,7 @@ export function HelperFileManagementDashboard() {
         cancelLabel={t("deleteModal.cancel")}
         onConfirm={handleDelete}
       />
-    </div>
-  );
-}
-
-interface FilterSelectProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}
-
-function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
-  return (
-    <label className="space-y-2 text-right">
-      <span className="text-xs font-medium text-slate-500">{label}</span>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 text-right text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[var(--dashboard-gold)]/25"
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
-    </label>
+    </section>
   );
 }
 

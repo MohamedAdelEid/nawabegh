@@ -1,0 +1,216 @@
+{
+  "resultsAnalytics": {
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "results": "النتائج والتحليلات"
+    },
+    "comingSoon": "قريباً",
+    "overview": {
+      "page": {
+        "title": "النتائج والتحليلات",
+        "description": "متابعة أداء الطلاب في الاختبارات واختبارات المحطات.",
+        "descriptionSingleExam": "متابعة أداء الطلاب في اختبار \"{exam}\".",
+        "addResult": "إضافة نتيجة جديدة",
+        "exportReport": "تصدير التقرير"
+      },
+      "stats": {
+        "totalStudents": {
+          "label": "إجمالي الطلاب المختبرين",
+          "trend": "{value} عن الأسبوع الماضي"
+        },
+        "averageScore": {
+          "label": "متوسط الدرجات",
+          "badgeHigh": "مرتفع",
+          "badgeStable": "مستقر"
+        },
+        "passRate": {
+          "label": "نسبة النجاح العامة"
+        },
+        "averageTime": {
+          "label": "متوسط وقت الحل",
+          "unit": "{value} دقيقة",
+          "trend": "تغيّر {value}"
+        }
+      },
+      "filters": {
+        "search": {
+          "label": "بحث",
+          "placeholder": "ابحث بالاسم، اسم المستخدم، أو الهاتف..."
+        },
+        "exam": {
+          "label": "فلترة حسب الاختبار",
+          "all": "جميع الاختبارات"
+        },
+        "school": {
+          "label": "المدرسة / المنطقة",
+          "all": "كل المدارس"
+        },
+        "scoreMode": {
+          "label": "طريقة احتساب الدرجة",
+          "best": "أفضل محاولة",
+          "latest": "أحدث محاولة",
+          "first": "أول محاولة"
+        }
+      },
+      "table": {
+        "student": "الطالب",
+        "averageScore": "متوسط الدرجة",
+        "attempts": "المحاولات",
+        "lastActivity": "آخر نشاط",
+        "status": "حالة النتيجة",
+        "actions": "إجراءات",
+        "analyze": "تحليل",
+        "empty": "لا توجد نتائج مطابقة للفلاتر.",
+        "showing": "عرض {from} إلى {to} من أصل {total} نتيجة"
+      }
+    },
+    "student": {
+      "page": {
+        "title": "تحليل الطالب",
+        "description": "نظرة تفصيلية على أداء الطالب المحدد."
+      },
+      "alert": {
+        "title": "تنبيه هام"
+      },
+      "profile": {
+        "active": "حساب نشط",
+        "inactive": "حساب غير نشط",
+        "studentId": "معرف الطالب: {id}",
+        "editData": "تعديل البيانات",
+        "instantMessage": "رسالة فورية"
+      },
+      "stats": {
+        "averageScore": "متوسط الدرجات",
+        "totalAttempts": "إجمالي المحاولات",
+        "attemptsThisMonth": "{count} محاولة هذا الشهر",
+        "successfulExams": "اختبارات ناجحة",
+        "failedExams": "اختبارات لم يجتزها",
+        "lastFailure": "آخر إخفاق: {time}",
+        "lastActivity": "آخر نشاط",
+        "lastActivityDetail": "درس: {label}",
+        "increase": "+{value}% زيادة"
+      },
+      "parent": {
+        "title": "بيانات ولي الأمر",
+        "phone": "الهاتف",
+        "linkedChildren": "{count} أبناء مرتبطين",
+        "viewProfile": "ملف ولي الأمر"
+      },
+      "subscription": {
+        "title": "ملخص الاشتراك",
+        "enrolledCourses": "الدورات المسجّلة",
+        "completedCourses": "الدورات المكتملة",
+        "latestPackage": "آخر تسجيل",
+        "latestEnrollmentAt": "تاريخ التسجيل: {date}"
+      },
+      "charts": {
+        "academicProgress": "تطور المستوى الأكاديمي",
+        "period30": "آخر 30 يوم",
+        "period60": "آخر 60 يوم",
+        "period90": "آخر 90 يوم",
+        "scoreLabel": "متوسط الدرجة"
+      },
+      "recentExams": {
+        "title": "آخر الاختبارات",
+        "empty": "لا توجد تقييمات حديثة."
+      },
+      "tabs": {
+        "exams": "الاختبارات",
+        "certificates": "الشهادات"
+      },
+      "examsTab": {
+        "examName": "اسم الاختبار",
+        "result": "النتيجة",
+        "attempts": "المحاولات",
+        "status": "الحالة",
+        "analysis": "التحليل",
+        "analyzePerformance": "تحليل الأداء",
+        "empty": "لا توجد اختبارات لهذا الطالب.",
+        "showing": "عرض {from}-{to} من أصل {total}"
+      },
+      "certificatesTab": {
+        "title": "الشهادات المستحقة",
+        "description": "الشهادات التي حصل عليها الطالب بعد اجتياز الاختبارات النهائية.",
+        "certified": "معتمد",
+        "issueDate": "تاريخ الإصدار",
+        "finalGrade": "الدرجة النهائية",
+        "serialNumber": "الرقم التسلسلي",
+        "preview": "معاينة",
+        "downloadPdf": "تحميل PDF",
+        "downloadZip": "تحميل الكل (ZIP)",
+        "empty": "لا توجد شهادات بعد.",
+        "pdfUnavailable": "ملف PDF غير متوفر بعد."
+      },
+      "loadError": "تعذّر تحميل تحليل الطالب."
+    },
+    "quizAnalysis": {
+      "page": {
+        "meta": "تم إجراء الاختبار في: {date} | إجمالي الطلاب: {count}",
+        "exportPdf": "تصدير PDF",
+        "shareResults": "مشاركة النتائج"
+      },
+      "stats": {
+        "averageScore": "متوسط الدرجات",
+        "passRate": "نسبة النجاح",
+        "averageTime": "متوسط وقت الإنجاز",
+        "participationRate": "نسبة المشاركة",
+        "minutesUnit": "{value} د"
+      },
+      "charts": {
+        "gradeDistribution": "توزيع الدرجات",
+        "questionPerformance": "أداء الأسئلة",
+        "questionPerformanceHint": "(نسبة الإجابة الصحيحة)",
+        "studentsLabel": "الطلاب"
+      },
+      "questions": {
+        "title": "تحليل الأسئلة التفصيلي",
+        "sortHardest": "الأصعب أولاً",
+        "sortClassification": "حسب التصنيف",
+        "number": "#",
+        "text": "نص السؤال",
+        "classification": "التصنيف",
+        "difficulty": "الصعوبة",
+        "empty": "لا توجد أسئلة للعرض.",
+        "showing": "عرض {from}-{to} من أصل {total}"
+      },
+      "topStudents": {
+        "title": "الطلاب الأكثر تميزاً",
+        "viewAll": "عرض الكل",
+        "score": "الدرجة: {value}%",
+        "time": "الوقت: {value}د"
+      },
+      "scoreMode": {
+        "label": "طريقة احتساب الدرجة",
+        "best": "أفضل محاولة",
+        "latest": "أحدث محاولة",
+        "first": "أول محاولة"
+      },
+      "loadError": "تعذّر تحميل تحليل الاختبار."
+    },
+    "resultStatus": {
+      "PassedWithExcellence": "ناجح بامتياز",
+      "Passed": "ناجح",
+      "Failed": "لم يجتز",
+      "InProgress": "قيد الانتظار",
+      "NotAttempted": "لم يُجرَ"
+    },
+    "quizType": {
+      "0": "اختبار محطة",
+      "1": "اختبار نهائي"
+    },
+    "difficulty": {
+      "0": "سهل",
+      "1": "متوسط",
+      "2": "صعب"
+    },
+    "examStatus": {
+      "Completed": "مكتمل",
+      "Active": "نشط",
+      "Draft": "مسودة"
+    },
+    "pagination": {
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    }
+  }
+}

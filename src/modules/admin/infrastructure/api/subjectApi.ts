@@ -17,7 +17,18 @@ export type SubjectListItem = {
   nameEn: string;
   iconUrl: string | null;
   coursesCount: number;
+  teachersCount: number;
   createdAt: string | null;
+};
+
+export type CreateSubjectPayload = {
+  nameAr: string;
+  nameEn: string;
+  iconUrl: string;
+};
+
+export type UpdateSubjectPayload = CreateSubjectPayload & {
+  id: number;
 };
 
 export type SubjectPageParams = {
@@ -150,6 +161,7 @@ function mapSubjectItem(item: unknown): SubjectListItem | null {
     nameEn: readString(record, ["nameEn", "name_EN"], "—"),
     iconUrl: readNullableString(record, ["iconUrl", "iconURL"]),
     coursesCount: readNumber(record, ["coursesCount"]) ?? 0,
+    teachersCount: readNumber(record, ["teachersCount"]) ?? 0,
     createdAt: readNullableString(record, ["createdAt", "created_at"]),
   };
 }
@@ -183,5 +195,71 @@ export async function getSubjectsPage(
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load subjects");
+  }
+}
+
+export async function createSubject(
+  payload: CreateSubjectPayload,
+): Promise<SubjectApiResult<SubjectListItem>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: "/api/v1/Subject",
+      data: payload,
+    });
+
+    const envelope = asRecord(response.data);
+    const nested = envelope ? asRecord(envelope.data) : null;
+    const created = mapSubjectItem(nested ?? envelope);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: created,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to create subject");
+  }
+}
+
+export async function updateSubject(
+  id: number,
+  payload: UpdateSubjectPayload,
+): Promise<SubjectApiResult<SubjectListItem>> {
+  try {
+    const response = await httpClient.put<unknown>({
+      url: `/api/v1/Subject/${id}`,
+      data: payload,
+    });
+
+    const envelope = asRecord(response.data);
+    const nested = envelope ? asRecord(envelope.data) : null;
+    const updated = mapSubjectItem(nested ?? envelope);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: updated,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to update subject");
+  }
+}
+
+export async function deleteSubject(id: number): Promise<SubjectApiResult<null>> {
+  try {
+    const response = await httpClient.delete<unknown>({
+      url: `/api/v1/Subject/${id}`,
+    });
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: null,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to delete subject");
   }
 }

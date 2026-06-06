@@ -1,0 +1,349 @@
+{
+  "adManagement": {
+    "breadcrumbs": { "home": "الرئيسية" },
+    "page": {
+      "title": "إدارة الإعلانات",
+      "description": "قم بإنشاء وتتبع حملات التواصل مع الطلاب والمعلمين.",
+      "createAd": "إنشاء إعلان جديد"
+    },
+    "stats": {
+      "activeAds": {
+        "label": "الإعلانات النشطة",
+        "indicatorStatic": "—",
+        "indicatorTrend": "+{value}%"
+      },
+      "scheduledAds": {
+        "label": "المجدولة",
+        "indicatorStatic": "ثابت"
+      },
+      "totalViews": {
+        "label": "إجمالي المشاهدات",
+        "indicatorStatic": "—",
+        "indicatorTrend": "+{value}%"
+      },
+      "engagementRate": {
+        "label": "معدل التفاعل (CTR)",
+        "indicatorStatic": "—",
+        "indicatorTrend": "{value}%"
+      }
+    },
+    "filters": {
+      "search": { "label": "بحث", "placeholder": "البحث حسب العنوان..." },
+      "type": {
+        "label": "نوع الإعلان",
+        "all": "كل الأنواع",
+        "banner": "شريط علوي",
+        "popup": "نافذة منبثقة",
+        "card": "بطاقة داخلية"
+      },
+      "audience": {
+        "label": "الجمهور",
+        "all": "الجميع",
+        "students": "الطلاب",
+        "teachers": "المعلمون",
+        "parents": "أولياء الأمور"
+      },
+      "placement": {
+        "label": "الموضع",
+        "all": "كل المواضع",
+        "banner": "شريط علوي",
+        "popup": "نافذة منبثقة",
+        "card": "بطاقة داخلية"
+      },
+      "status": {
+        "label": "الحالة",
+        "all": "كل الحالات",
+        "active": "نشط",
+        "scheduled": "مجدول",
+        "expired": "منتهي",
+        "draft": "مسودة",
+        "paused": "موقوف"
+      },
+      "apply": "تصفية"
+    },
+    "types": {
+      "banner": "شريط",
+      "popup": "منبثقة",
+      "card": "بطاقة"
+    },
+    "audiences": {
+      "all": "الجميع",
+      "students": "الطلاب",
+      "teachers": "المعلمون",
+      "parents": "أولياء الأمور"
+    },
+    "statuses": {
+      "active": "نشط",
+      "scheduled": "مجدول",
+      "expired": "منتهي",
+      "draft": "مسودة",
+      "paused": "موقوف"
+    },
+    "table": {
+      "title": "قائمة الإعلانات",
+      "columns": {
+        "ad": "الإعلان",
+        "type": "النوع",
+        "audience": "الجمهور المستهدف",
+        "status": "الحالة",
+        "date": "التاريخ",
+        "performance": "الأداء",
+        "actions": "الإجراءات"
+      },
+      "performance": { "views": "مشاهدات", "clicks": "نقرات" },
+      "pagination": {
+        "summary": "عرض {from}-{to} من أصل {total} إعلان",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "actions": { "view": "عرض", "edit": "تعديل", "delete": "حذف" },
+      "states": {
+        "empty": {
+          "title": "لا توجد إعلانات بعد",
+          "description": "أنشئ أول إعلان للوصول إلى مجتمعك التعليمي."
+        },
+        "error": { "title": "تعذر تحميل الإعلانات", "retry": "إعادة المحاولة" }
+      }
+    },
+    "deleteModal": {
+      "title": "تأكيد الحذف النهائي",
+      "description": "هل أنت متأكد من حذف هذا الإعلان؟ لن تتمكن من استعادته مرة أخرى.",
+      "confirm": "تأكيد الحذف",
+      "cancel": "إلغاء العملية",
+      "success": "تم حذف الإعلان بنجاح.",
+      "audienceLabel": "الفئة المستهدفة",
+      "createdLabel": "تاريخ الإنشاء"
+    },
+    "create": {
+      "title": "إنشاء إعلان جديد",
+      "description": "قم بتعبئة التفاصيل أدناه لنشر إعلان جديد لمجتمعك التعليمي.",
+      "smartDraftBadge": "وضع المسودة الذكية",
+      "breadcrumbs": { "home": "الرئيسية", "list": "إدارة الإعلانات" },
+      "steps": {
+        "content": "المحتوى",
+        "type": "نوع الإعلان",
+        "targeting": "الاستهداف",
+        "scheduling": "الجدولة",
+        "preview": "المعاينة"
+      },
+      "actions": {
+        "cancel": "إلغاء العملية",
+        "saveDraft": "حفظ كمسودة",
+        "back": "رجوع",
+        "next": "الخطوة التالية: {step}",
+        "finish": "نشر الإعلان"
+      },
+      "content": {
+        "title": { "label": "عنوان الإعلان", "placeholder": "أدخل عنواناً جذاباً ومختصراً..." },
+        "description": {
+          "label": "وصف الإعلان",
+          "placeholder": "اكتب تفاصيل الإعلان هنا بوضوح..."
+        },
+        "media": {
+          "label": "رفع صورة / فيديو",
+          "hint": "اسحب الملفات هنا أو اضغط للرفع",
+          "formats": "يدعم JPG, PNG, MP4 (بحد أقصى 50 ميجابايت)"
+        },
+        "cta": { "label": "نص زر الإجراء (CTA)", "placeholder": "مثلاً: سجل الآن، اكتشف المزيد..." },
+        "ctaUrl": { "label": "رابط الوجهة", "placeholder": "https://" }
+      },
+      "type": {
+        "selected": "تم الاختيار",
+        "livePreview": "معاينة حية",
+        "options": {
+          "banner": {
+            "title": "شريط علوي",
+            "description": "يظهر في أعلى الصفحة لجميع المستخدمين. مثالي للتنبيهات العاجلة."
+          },
+          "popup": {
+            "title": "نافذة منبثقة",
+            "description": "تظهر في منتصف الشاشة وتتطلب تفاعلاً فورياً."
+          },
+          "card": {
+            "title": "بطاقة داخلية",
+            "description": "تظهر كجزء من محتوى الصفحة أو في لوحة التحكم."
+          }
+        },
+        "placement": {
+          "label": "موضع العرض",
+          "options": {
+            "home_top": "الرئيسية — شريط علوي",
+            "home_inline": "الرئيسية — داخل المحتوى",
+            "dashboard_sidebar": "الشريط الجانبي للوحة",
+            "lesson_bottom": "أسفل محتوى الدرس",
+            "app_open": "عند فتح التطبيق",
+            "after_login": "بعد تسجيل الدخول",
+            "after_lesson": "بعد إكمال الدرس",
+            "timed_popup": "نافذة منبثقة مؤقتة"
+          }
+        }
+      },
+      "targeting": {
+        "searchPlaceholder": "ابحث عن فئات أو مستخدمين...",
+        "audience": {
+          "all": "الكل",
+          "students": "الطلاب",
+          "parents": "أولياء الأمور",
+          "teachers": "المعلمون"
+        },
+        "school": { "label": "اختيار المدرسة", "all": "جميع المدارس" },
+        "grade": { "label": "المستوى الدراسي", "all": "جميع المستويات" },
+        "subjects": { "label": "المادة الدراسية", "none": "لا يوجد" },
+        "summary": {
+          "title": "ملخص الاستهداف",
+          "estimatedAudience": "الجمهور المقدر",
+          "category": "الفئة",
+          "schools": "المدارس",
+          "subjects": "المواد",
+          "tip": "استهداف طلاب الرياضيات والفيزياء يزيد التفاعل بنسبة 25% للإعلانات الأكاديمية."
+        }
+      },
+      "scheduling": {
+        "startDate": "تاريخ البدء",
+        "startTime": "وقت البدء",
+        "endDate": "تاريخ الانتهاء",
+        "endTime": "وقت الانتهاء",
+        "mode": {
+          "now": {
+            "title": "الإرسال الآن",
+            "description": "سيتم نشر الإعلان فوراً بعد الإعداد."
+          },
+          "schedule": {
+            "title": "جدولة",
+            "description": "حدد تاريخ ووقت البداية والنهاية."
+          }
+        },
+        "tip": {
+          "title": "نصيحة إرشادية",
+          "body": "أفضل وقت لنشر الإعلانات من 9 صباحاً إلى 11 صباحاً لأقصى تفاعل.",
+          "timezone": "المنطقة الزمنية: مكة (GMT+3)"
+        }
+      },
+      "preview": {
+        "fallbackTitle": "تحديث جدول الاختبارات النهائية",
+        "fallbackDescription": "تم تحديث مواعيد الاختبارات. يمكنك الاطلاع عليها من ملفك الشخصي.",
+        "fallbackCta": "عرض الجدول",
+        "bannerBadge": "تنبيه",
+        "popupBadge": "تنبيه هام",
+        "close": "إغلاق",
+        "browserUrl": "student.scholarsystem.edu/dashboard"
+      },
+      "previewStep": {
+        "summaryTitle": "ملخص الإعلان",
+        "sections": { "content": "المحتوى", "type": "نوع الإعلان", "placement": "موضع العرض", "targeting": "الاستهداف" },
+        "publishNow": "نشر الإعلان الآن",
+        "saveDraft": "حفظ كمسودة",
+        "viewport": { "desktop": "عرض سطح المكتب", "mobile": "عرض الجوال" }
+      },
+      "validation": {
+        "titleRequired": "عنوان الإعلان مطلوب.",
+        "placementRequired": "يرجى اختيار موضع العرض.",
+        "scheduleDatesRequired": "تاريخ البداية والنهاية مطلوبان للإعلانات المجدولة.",
+        "mediaUploadFailed": "تعذر رفع الوسائط."
+      },
+      "toast": {
+        "published": "تم نشر الإعلان بنجاح.",
+        "savedDraft": "تم حفظ المسودة بنجاح.",
+        "error": "تعذر حفظ الإعلان.",
+        "publishError": "تم إنشاء الإعلان لكن تعذر نشره."
+      }
+    },
+    "detail": {
+      "loadingTitle": "تفاصيل الإعلان",
+      "meta": "أُنشئ في {date} · {author} · {id}",
+      "statuses": {
+        "active": "نشط",
+        "scheduled": "مجدول",
+        "expired": "منتهي",
+        "draft": "مسودة",
+        "paused": "موقوف"
+      },
+      "actions": { "edit": "تعديل الإعلان", "pause": "إيقاف مؤقت", "delete": "حذف" },
+      "metrics": {
+        "timeRemaining": "الوقت المتبقي",
+        "days": "{count} أيام",
+        "ctr": "نسبة النقر (CTR)",
+        "perfect": "ممتاز",
+        "noData": "لا توجد بيانات بعد",
+        "clicks": "إجمالي النقرات",
+        "views": "المشاهدات الكلية",
+        "impressions": "مرات الظهور",
+        "uniqueUsers": "المستخدمون الفريدون"
+      },
+      "sections": {
+        "content": "محتوى الإعلان",
+        "targeting": "الجمهور المستهدف",
+        "scheduling": "الجدولة الزمنية",
+        "analytics": "تحليلات الأداء"
+      },
+      "analytics": {
+        "empty": "لا توجد تحليلات يومية مسجلة بعد.",
+        "columns": {
+          "day": "اليوم",
+          "impressions": "مرات الظهور",
+          "clicks": "النقرات",
+          "uniqueUsers": "المستخدمون الفريدون"
+        }
+      },
+      "fields": {
+        "cta": "نص الزر",
+        "link": "الرابط",
+        "schools": "المدارس",
+        "grades": "الصفوف",
+        "subjects": "المواد",
+        "start": "تاريخ البداية",
+        "end": "تاريخ النهاية"
+      },
+      "preview": {
+        "title": "معاينة تجربة المستخدم",
+        "desktop": "سطح المكتب",
+        "mobile": "جوال"
+      },
+      "toast": { "deleted": "تم حذف الإعلان.", "paused": "تم إيقاف الإعلان مؤقتاً." },
+      "states": { "error": "تعذر تحميل تفاصيل الإعلان." },
+      "backToList": "العودة لقائمة الإعلانات"
+    },
+    "edit": {
+      "title": "تعديل الإعلان",
+      "description": "قم بتحديث بيانات الإعلان وإعدادات الظهور للمستخدمين.",
+      "breadcrumbs": { "home": "الرئيسية", "list": "إدارة الإعلانات" },
+      "sidebar": {
+        "displayType": "نوع العرض",
+        "scheduling": "الجدولة الزمنية",
+        "scheduleHint": "سيبدأ الإعلان تلقائياً في التاريخ المحدد وسيختفي بنهاية الفترة.",
+        "preview": "عرض المعاينة"
+      },
+      "types": {
+        "popup": {
+          "title": "نافذة منبثقة",
+          "description": "نافذة منبثقة عند تسجيل الدخول"
+        },
+        "banner": {
+          "title": "شريط إعلاني",
+          "description": "شريط إعلاني في الصفحة الرئيسية"
+        }
+      },
+      "fields": {
+        "title": "عنوان الإعلان",
+        "titlePlaceholder": "أدخل عنوان الإعلان",
+        "description": "وصف الإعلان",
+        "descriptionPlaceholder": "أدخل الوصف",
+        "startDate": "تاريخ البداية",
+        "endDate": "تاريخ النهاية",
+        "school": "المدرسة",
+        "allSchools": "جميع المدارس",
+        "grade": "الصف الدراسي",
+        "allGrades": "جميع الصفوف"
+      },
+      "cover": {
+        "hint": "اضغط لتغيير الصورة",
+        "formats": "PNG, JPG — بحد أقصى 5 ميجابايت"
+      },
+      "sections": { "targeting": "إعدادات الاستهداف" },
+      "actions": { "cancel": "إلغاء", "save": "حفظ التغييرات" },
+      "validation": { "mediaUploadFailed": "تعذر رفع صورة الغلاف." },
+      "toast": { "saved": "تم حفظ التغييرات.", "error": "تعذر حفظ التغييرات." },
+      "states": { "error": "تعذر تحميل الإعلان للتعديل." }
+    }
+  }
+}

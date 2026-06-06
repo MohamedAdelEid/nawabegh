@@ -1,5 +1,6 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -30,6 +31,7 @@ export type ChatGroupListItemDto = {
   allowImages: boolean;
   allowDocuments: boolean;
   allowWebLinks: boolean;
+  allowParentView: boolean;
   status: string;
   isLocked: boolean;
   lastActivityAt: string | null;
@@ -181,7 +183,21 @@ function extractListRows(data: unknown): unknown[] {
   return [];
 }
 
-function extractPageMeta(data: unknown, params: ChatGroupListParams, rowCount: number) {
+function extractPageMeta(
+  data: unknown,
+  params: ChatGroupListParams,
+  rowCount: number,
+  headerMeta?: XPaginationMeta | null,
+) {
+  if (headerMeta) {
+    return {
+      currentPage: headerMeta.currentPage,
+      pageSize: headerMeta.pageSize,
+      totalItems: headerMeta.totalCount,
+      totalPages: headerMeta.totalPages,
+    };
+  }
+
   const record = asRecord(data);
   const totalItems =
     readNumber(record, ["totalCount", "total", "count", "totalItems"]) ?? rowCount;
@@ -252,6 +268,7 @@ function mapListItem(record: UnknownRecord): ChatGroupListItemDto | null {
     allowImages: readBoolean(record, ["allowImages"]),
     allowDocuments: readBoolean(record, ["allowDocuments"]),
     allowWebLinks: readBoolean(record, ["allowWebLinks"]),
+    allowParentView: readBoolean(record, ["allowParentView", "parentViewOnly", "isParentViewOnly"]),
     status: readString(record, ["status"], ""),
     isLocked: readBoolean(record, ["isLocked"]),
     lastActivityAt: readNullableString(record, ["lastActivityAt"]),
@@ -304,7 +321,8 @@ export async function getChatGroupsPage(
     const rows = extractListRows(response.data)
       .map((item) => mapListItem(asRecord(item) ?? {}))
       .filter((row): row is ChatGroupListItemDto => row !== null);
-    const meta = extractPageMeta(response.data, params, rows.length);
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const meta = extractPageMeta(response.data, params, rows.length, headerMeta);
 
     return {
       status: response.status,

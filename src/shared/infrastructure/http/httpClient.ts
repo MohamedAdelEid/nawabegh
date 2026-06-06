@@ -1,8 +1,29 @@
-import type { AxiosRequestConfig } from "axios";
+import type { AxiosRequestConfig, AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 import axiosClient from "./axiosClient";
 import { applyRequestInterceptor, applyResponseInterceptor } from "./interceptors";
 import { getRequestLanguage, getToken } from "./tokenStore";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
+
+export type HttpClientResponse<T> = BackendApiResponse<T> & {
+  headers: Record<string, string | undefined>;
+};
+
+function toHeaderRecord(
+  headers: AxiosResponseHeaders | RawAxiosResponseHeaders,
+): Record<string, string | undefined> {
+  const record: Record<string, string | undefined> = {};
+
+  if (typeof headers !== "object" || headers === null) {
+    return record;
+  }
+
+  for (const [key, value] of Object.entries(headers)) {
+    if (value === undefined || value === null) continue;
+    record[key.toLowerCase()] = Array.isArray(value) ? value.join(",") : String(value);
+  }
+
+  return record;
+}
 
 export type RequestOptions<TData = unknown> = {
   url: string;
@@ -61,8 +82,16 @@ applyResponseInterceptor(axiosClient, () => _onUnauthorized?.());
 
 async function get<T>(
   options: Omit<RequestOptions, "data" | "isFormData">,
-): Promise<BackendApiResponse<T>> {
-  return axiosClient.get(options.url, buildConfig(options)) as Promise<BackendApiResponse<T>>;
+): Promise<HttpClientResponse<T>> {
+  const response = await axiosClient.get<BackendApiResponse<T>>(
+    options.url,
+    buildConfig(options),
+  );
+
+  return {
+    ...response.data,
+    headers: toHeaderRecord(response.headers),
+  };
 }
 
 async function post<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Save, Loader2, LockIcon } from "lucide-react";
@@ -48,6 +49,7 @@ interface AdminEditChatGroupPageProps {
 export function AdminEditChatGroupPage({ courseId }: AdminEditChatGroupPageProps) {
   const t = useTranslations("admin.dashboard.chatGroups.editPage");
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const [isSaving, setIsSaving] = useState(false);
   const [form, setForm] = useState<ChatGroupFormValues | null>(null);
@@ -110,7 +112,11 @@ export function AdminEditChatGroupPage({ courseId }: AdminEditChatGroupPageProps
     }
 
     notify.success(result.message ?? t("states.saveSuccess"));
-    // router.push(`${ROUTES.ADMIN.HOME}?tab=chatGroups`);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups"] }),
+      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups-statistics"] }),
+    ]);
+    router.push(`${ROUTES.ADMIN.HOME}?tab=chatGroups`);
   };
 
   if (loadState === "loading" || !form) {

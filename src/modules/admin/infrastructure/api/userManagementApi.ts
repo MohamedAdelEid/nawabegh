@@ -19,6 +19,7 @@ import type {
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { FILE_UPLOAD_URL, resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 
 export const USER_MANAGEMENT_PLACEHOLDER_IDS = {
   countries: {
@@ -87,6 +88,8 @@ export type UserManagementListPage = {
   pageSize: number;
   totalItems: number;
   totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
 };
 
 export type UserManagementDropdownOption<TId extends string | number = string> = {
@@ -146,15 +149,20 @@ export type UserManagementParentStudentOption = {
 export type StudentUserDetail = {
   userId: string;
   fullName: string;
+  profileImagePath: string | null;
   profileImageUrl: string | null;
   email: string;
   phoneNumber: string;
   phoneCountryCode: number | null;
   isActive: boolean;
+  countryId: number | null;
   countryName: string;
+  educationLevelId: number | null;
   educationLevelName: string;
+  gradeId: number | null;
   gradeName: string;
-  schoolName: string;
+  schoolId: string | null;
+  schoolName: string | null;
   address: string;
   whatsAppNumber: string;
   whatsAppCountryCode: number | null;
@@ -174,22 +182,32 @@ export type StudentUserDetail = {
 export type TeacherUserDetail = {
   userId: string;
   fullName: string;
+  profileImagePath: string | null;
   profileImageUrl: string | null;
   email: string;
   phoneNumber: string;
   phoneCountryCode: number | null;
   isActive: boolean;
+  countryId: number | null;
   countryName: string;
+  educationLevelId: number | null;
   jobTitle: string;
+  schoolId: string | null;
   schoolName: string;
   address: string;
-  subjects: string[];
+  about: string;
+  yearsOfExperience: number | null;
+  city: string;
+  rating: number | null;
+  certificatesJson: string;
+  courses: string[];
   assignedGrades: Array<{
     gradeId: number;
     gradeName: string;
   }>;
   permissions: {
-    canCreateLessons: boolean;
+    canManageLearningPaths: boolean;
+    canCreateLearningPaths: boolean;
     canStartLiveSessions: boolean;
     canUploadFiles: boolean;
     canAddExams: boolean;
@@ -201,11 +219,13 @@ export type TeacherUserDetail = {
 export type ParentUserDetail = {
   userId: string;
   fullName: string;
+  profileImagePath: string | null;
   profileImageUrl: string | null;
   email: string;
   phoneNumber: string;
   phoneCountryCode: number | null;
   isActive: boolean;
+  countryId: number | null;
   countryName: string;
   address: string;
   children: Array<{
@@ -461,7 +481,19 @@ function extractPaginationMeta(
   data: unknown,
   params: UserManagementListParams,
   rowCount: number,
+  headerMeta?: XPaginationMeta | null,
 ) {
+  if (headerMeta) {
+    return {
+      totalItems: headerMeta.totalCount,
+      pageSize: headerMeta.pageSize,
+      currentPage: headerMeta.currentPage,
+      totalPages: headerMeta.totalPages,
+      hasPrevious: headerMeta.hasPrevious,
+      hasNext: headerMeta.hasNext,
+    };
+  }
+
   const record = asRecord(data);
   const totalItems =
     readNumber(record, ["totalCount", "total", "count", "totalItems"]) ?? rowCount;
@@ -473,7 +505,14 @@ function extractPaginationMeta(
     readNumber(record, ["totalPages", "pagesCount"]) ??
     Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
 
-  return { totalItems, pageSize, currentPage, totalPages };
+  return {
+    totalItems,
+    pageSize,
+    currentPage,
+    totalPages,
+    hasPrevious: currentPage > 1,
+    hasNext: currentPage < totalPages,
+  };
 }
 
 function mapListRow(item: unknown): UserManagementListRow {
@@ -509,7 +548,8 @@ export async function getUserManagementUsers(
     });
 
     const rows = extractListRows(response.data).map(mapListRow);
-    const meta = extractPaginationMeta(response.data, params, rows.length);
+    const headerMeta = parseXPaginationHeader(response.headers);
+    const meta = extractPaginationMeta(response.data, params, rows.length, headerMeta);
 
     return {
       status: response.status,
@@ -761,22 +801,43 @@ export async function getUserManagementGradesDropdown(
   }
 }
 
-function mapStudentDetail(data: unknown): StudentUserDetail {
+function unwrapDetailRecord(data: unknown): UnknownRecord | null {
   const record = asRecord(data);
+  if (!record) return null;
+  const nested = asRecord(record.data);
+  return nested ?? record;
+}
+
+function readProfileImageFields(record: UnknownRecord | null) {
+  const profileImagePath = readString(record, ["profileImageUrl"], "") || null;
+
+  return {
+    profileImagePath,
+    profileImageUrl: mapImageUrl(profileImagePath ?? ""),
+  };
+}
+
+function mapStudentDetail(data: unknown): StudentUserDetail {
+  const record = unwrapDetailRecord(data);
   const linkedParentRecord = asRecord(record?.linkedParent);
+  const profileImage = readProfileImageFields(record);
 
   return {
     userId: readString(record, ["userId", "id"]),
     fullName: readString(record, ["fullName"], "—"),
-    profileImageUrl: mapImageUrl(readString(record, ["profileImageUrl"], "")),
+    ...profileImage,
     email: readString(record, ["email"]),
     phoneNumber: readString(record, ["phoneNumber"]),
     phoneCountryCode: readNumber(record, ["phoneCountryCode"]),
     isActive: readBoolean(record, ["isActive"], false),
+    countryId: readNumber(record, ["countryId"]),
     countryName: readString(record, ["countryName"]),
+    educationLevelId: readNumber(record, ["educationLevelId"]),
     educationLevelName: readString(record, ["educationLevelName"]),
+    gradeId: readNumber(record, ["gradeId"]),
     gradeName: readString(record, ["gradeName"]),
-    schoolName: readString(record, ["schoolName"]),
+    schoolId: readString(record, ["schoolId"], "") || null,
+    schoolName: readString(record, ["schoolName"], "") || null,
     address: readString(record, ["address"]),
     whatsAppNumber: readString(record, ["whatsAppNumber"]),
     whatsAppCountryCode: readNumber(record, ["whatsAppCountryCode"]),
@@ -797,23 +858,39 @@ function mapStudentDetail(data: unknown): StudentUserDetail {
 }
 
 function mapTeacherDetail(data: unknown): TeacherUserDetail {
-  const record = asRecord(data);
+  const record = unwrapDetailRecord(data);
   const permissions = asRecord(record?.permissions);
+  const profileImage = readProfileImageFields(record);
 
   return {
     userId: readString(record, ["userId", "id"]),
     fullName: readString(record, ["fullName"], "—"),
-    profileImageUrl: mapImageUrl(readString(record, ["profileImageUrl"], "")),
+    ...profileImage,
     email: readString(record, ["email"]),
     phoneNumber: readString(record, ["phoneNumber"]),
     phoneCountryCode: readNumber(record, ["phoneCountryCode"]),
     isActive: readBoolean(record, ["isActive"], false),
+    countryId: readNumber(record, ["countryId"]),
     countryName: readString(record, ["countryName"]),
+    educationLevelId: readNumber(record, ["educationLevelId"]),
     jobTitle: readString(record, ["jobTitle"]),
+    schoolId: readString(record, ["schoolId"], "") || null,
     schoolName: readString(record, ["schoolName"]),
     address: readString(record, ["address"]),
-    subjects: readArray(record, ["subjects"]).map((item) => String(item)),
+    about: readString(record, ["about"]),
+    yearsOfExperience: readNumber(record, ["yearsOfExperience"]),
+    city: readString(record, ["city"]),
+    rating: readNumber(record, ["rating"]),
+    certificatesJson: readString(record, ["certificatesJson"]),
+    courses: readArray(record, ["courses", "subjects"]).map((item) => String(item)),
     assignedGrades: readArray(record, ["assignedGrades"]).map((item) => {
+      if (typeof item === "string") {
+        return {
+          gradeId: 0,
+          gradeName: item,
+        };
+      }
+
       const gradeRecord = asRecord(item);
       return {
         gradeId: readNumber(gradeRecord, ["gradeId"]) ?? 0,
@@ -821,7 +898,8 @@ function mapTeacherDetail(data: unknown): TeacherUserDetail {
       };
     }),
     permissions: {
-      canCreateLessons: readBoolean(permissions, ["canCreateLessons"], false),
+      canManageLearningPaths: readBoolean(permissions, ["canManageLearningPaths"], false),
+      canCreateLearningPaths: readBoolean(permissions, ["canCreateLearningPaths"], false),
       canStartLiveSessions: readBoolean(permissions, ["canStartLiveSessions"], false),
       canUploadFiles: readBoolean(permissions, ["canUploadFiles"], false),
       canAddExams: readBoolean(permissions, ["canAddExams"], false),
@@ -832,16 +910,18 @@ function mapTeacherDetail(data: unknown): TeacherUserDetail {
 }
 
 function mapParentDetail(data: unknown): ParentUserDetail {
-  const record = asRecord(data);
+  const record = unwrapDetailRecord(data);
+  const profileImage = readProfileImageFields(record);
 
   return {
     userId: readString(record, ["userId", "id"]),
     fullName: readString(record, ["fullName"], "—"),
-    profileImageUrl: mapImageUrl(readString(record, ["profileImageUrl"], "")),
+    ...profileImage,
     email: readString(record, ["email"]),
     phoneNumber: readString(record, ["phoneNumber"]),
     phoneCountryCode: readNumber(record, ["phoneCountryCode"]),
     isActive: readBoolean(record, ["isActive"], false),
+    countryId: readNumber(record, ["countryId"]),
     countryName: readString(record, ["countryName"]),
     address: readString(record, ["address"]),
     children: readArray(record, ["children"]).map((item) => {
@@ -914,6 +994,64 @@ export async function getParentUserDetail(userId: string) {
     `/api/v1/UserManagement/parent/${userId}`,
     mapParentDetail,
     "Failed to load parent details",
+  );
+}
+
+export type LinkParentStudentPayload = {
+  parentUserId: string;
+  studentUserId: string;
+};
+
+export async function searchParentsByKeyword(
+  keyword: string,
+  pageNumber = 1,
+  pageSize = 10,
+): Promise<UserManagementApiResult<UserManagementListPage>> {
+  return getUserManagementUsers({
+    roleId: "parent",
+    keyword,
+    pageNumber,
+    pageSize,
+  });
+}
+
+async function mutateParentStudentLink(
+  url: string,
+  payload: LinkParentStudentPayload,
+  fallbackMessage: string,
+): Promise<UserManagementApiResult<Record<string, never>>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url,
+      data: payload,
+    });
+    const validationErrors = mapValidationErrors(response.error?.validationErrors);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: getFirstValidationErrorMessage(validationErrors) ?? response.error?.message,
+      validationErrors,
+      data: response.data !== null ? ({} as Record<string, never>) : null,
+    };
+  } catch (error) {
+    return buildErrorResult(error, fallbackMessage);
+  }
+}
+
+export async function linkParentStudent(payload: LinkParentStudentPayload) {
+  return mutateParentStudentLink(
+    "/api/v1/UserManagement/link-parent-student",
+    payload,
+    "Failed to link parent to student",
+  );
+}
+
+export async function unlinkParentStudent(payload: LinkParentStudentPayload) {
+  return mutateParentStudentLink(
+    "/api/v1/UserManagement/unlink-parent-student",
+    payload,
+    "Failed to unlink parent from student",
   );
 }
 
@@ -1053,6 +1191,19 @@ function mapTeacherPermissions(permissionIds: AddUserPermissionId[]) {
   };
 }
 
+function mapTeacherUpdatePermissions(permissionIds: AddUserPermissionId[]) {
+  const canManageLessons = permissionIds.includes("createLessons");
+
+  return {
+    canManageLearningPaths: canManageLessons,
+    canCreateLearningPaths: canManageLessons,
+    canStartLiveSessions: permissionIds.includes("liveBroadcast"),
+    canUploadFiles: permissionIds.includes("uploadFiles"),
+    canAddExams: permissionIds.includes("addTests"),
+    canManageConversations: permissionIds.includes("manageChats"),
+  };
+}
+
 function mapTeacherSubjects(subjectIds: AddUserSubjectId[]): string[] {
   return subjectIds.map((subjectId) => subjectId);
 }
@@ -1147,5 +1298,139 @@ export async function createParentUser(values: ParentAccountFormValues) {
       childStudentUserIds: values.selectedStudentIds,
     },
     "Failed to create parent",
+  );
+}
+
+async function updateUser<TPayload>(
+  url: string,
+  payload: TPayload,
+  fallbackMessage: string,
+): Promise<UserManagementApiResult<Record<string, never>>> {
+  try {
+    const response = await httpClient.put<unknown>({
+      url,
+      data: payload,
+    });
+    const validationErrors = mapValidationErrors(response.error?.validationErrors);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: getFirstValidationErrorMessage(validationErrors) ?? response.error?.message,
+      validationErrors,
+      data: response.data ? ({} as Record<string, never>) : null,
+    };
+  } catch (error) {
+    return buildErrorResult(error, fallbackMessage);
+  }
+}
+
+export type StudentUserUpdateContext = {
+  phoneCountryCode?: number | null;
+  address?: string;
+  whatsAppNumber?: string;
+  whatsAppCountryCode?: number | null;
+  alternativePhone?: string;
+  parentPhone?: string;
+};
+
+export async function updateStudentUser(
+  userId: string,
+  values: StudentAccountFormValues,
+  context: StudentUserUpdateContext = {},
+) {
+  const phoneCountryCode = context.phoneCountryCode ?? 20;
+
+  return updateUser(
+    `/api/v1/UserManagement/student/${userId}/update`,
+    {
+      userId,
+      fullName: values.fullName,
+      profileImageUrl: values.avatarFilePath ?? "",
+      phoneNumber: values.phoneNumber,
+      phoneCountryCode,
+      countryId: Number(values.countryId),
+      educationLevelId: Number(values.educationLevelId),
+      gradeId: Number(values.gradeId),
+      schoolId: values.schoolId,
+      email: values.email,
+      address: context.address ?? values.schoolName ?? "",
+      whatsAppNumber: context.whatsAppNumber ?? values.phoneNumber,
+      whatsAppCountryCode: context.whatsAppCountryCode ?? phoneCountryCode,
+      alternativePhone: context.alternativePhone ?? values.phoneNumber,
+      parentPhone: context.parentPhone ?? "",
+    },
+    "Failed to update student",
+  );
+}
+
+export type TeacherUserUpdateContext = {
+  phoneCountryCode?: number | null;
+  email?: string;
+  about?: string;
+  yearsOfExperience?: number | null;
+  city?: string;
+  rating?: number | null;
+  certificatesJson?: string;
+};
+
+export async function updateTeacherUser(
+  userId: string,
+  values: TeacherAccountFormValues,
+  context: TeacherUserUpdateContext = {},
+) {
+  const phoneCountryCode = context.phoneCountryCode ?? 20;
+
+  return updateUser(
+    `/api/v1/UserManagement/teacher/${userId}/update`,
+    {
+      userId,
+      fullName: values.fullName,
+      profileImageUrl: values.avatarFilePath ?? "",
+      phoneNumber: values.phoneNumber,
+      phoneCountryCode,
+      countryId: Number(values.countryId),
+      jobTitle: values.jobTitle,
+      schoolName: values.schoolName,
+      schoolId: values.schoolId,
+      email: context.email ?? "",
+      address: values.address,
+      assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
+      ...mapTeacherUpdatePermissions(values.permissionIds),
+      about: context.about ?? "",
+      yearsOfExperience: context.yearsOfExperience ?? 0,
+      city: context.city ?? "",
+      rating: context.rating ?? 0,
+      certificatesJson: context.certificatesJson ?? "",
+    },
+    "Failed to update teacher",
+  );
+}
+
+export type ParentUserUpdateContext = {
+  phoneCountryCode?: number | null;
+};
+
+export async function updateParentUser(
+  userId: string,
+  values: ParentAccountFormValues,
+  context: ParentUserUpdateContext = {},
+) {
+  const phoneCountryCode = context.phoneCountryCode ?? 20;
+
+  return updateUser(
+    `/api/v1/UserManagement/parent/${userId}/update`,
+    {
+      userId,
+      fullName: values.fullName,
+      profileImageUrl: values.avatarFilePath ?? "",
+      phoneNumber: values.phoneNumber,
+      phoneCountryCode,
+      countryId: Number(values.countryId),
+      email: values.email,
+      address: values.address,
+      childStudentUserIds: values.selectedStudentIds,
+    },
+    "Failed to update parent",
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ExternalLink, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -10,6 +10,7 @@ import {
   type ResourceFileDetails,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { ContentFileDeleteModal } from "@/modules/admin/presentation/components/content-management/ContentFileDeleteModal";
+import { HelperResourceFilePreview } from "@/modules/admin/presentation/components/helper-file-management/HelperResourceFilePreview";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { DashboardBadge, DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -165,18 +166,11 @@ export function AdminHelperFileManagementDetailsPage({
           </div>
 
           {detail.fileUrl ? (
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
-              <p className="mb-2 text-xs text-slate-400">{t("fields.fileUrl")}</p>
-              <a
-                href={detail.fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--dashboard-primary)] hover:underline"
-              >
-                {t("openFile")}
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </div>
+            <HelperResourceFilePreview
+              fileUrl={detail.fileUrl}
+              fileName={detail.fileName}
+              fileType={detail.fileType}
+            />
           ) : null}
         </CardContent>
       </Card>

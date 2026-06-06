@@ -38,11 +38,14 @@ const INITIAL_FILTERS: QuestionBankFilters = {
 function buildPages(currentPage: number, totalPages: number): number[] {
   if (totalPages <= 0) return [1];
 
-  const start = Math.max(1, currentPage - 1);
-  const end = Math.min(totalPages, start + 2);
-  const adjustedStart = Math.max(1, end - 2);
+  const start = Math.max(1, currentPage - 2);
+  const end = Math.min(totalPages, start + 4);
+  const adjustedStart = Math.max(1, end - 4);
 
-  return Array.from({ length: end - adjustedStart + 1 }, (_, index) => adjustedStart + index);
+  return Array.from(
+    { length: end - adjustedStart + 1 },
+    (_, index) => adjustedStart + index,
+  );
 }
 
 export function useQuestionBankPage() {
@@ -104,9 +107,18 @@ export function useQuestionBankPage() {
   });
 
   const page = listQuery.data?.data ?? null;
+  const totalPages = page?.totalPages ?? 1;
+  const currentPage = page?.currentPage ?? pageNumber;
+
+  useEffect(() => {
+    if (page && pageNumber > totalPages) {
+      setPageNumber(totalPages);
+    }
+  }, [page, pageNumber, totalPages]);
+
   const pages = useMemo(
-    () => buildPages(page?.currentPage ?? pageNumber, page?.totalPages ?? 1),
-    [page?.currentPage, page?.totalPages, pageNumber],
+    () => buildPages(currentPage, totalPages),
+    [currentPage, totalPages],
   );
 
   return {

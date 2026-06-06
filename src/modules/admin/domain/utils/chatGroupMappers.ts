@@ -80,7 +80,9 @@ export function mapChatGroupListItemToRow(
     studentCount: item.studentsCount,
     chatModeId: mapChatMode(item.chatMode),
     attachments: mapAttachments(item),
+    allowParentView: item.allowParentView,
     statusId: mapStatus(item.status, item.isLocked),
+    isLocked: item.isLocked,
     lastActivityKey: "",
     lastActivityDisplay,
   };

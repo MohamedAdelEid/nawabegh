@@ -10,6 +10,11 @@ export type StationApiResult<T> = {
   data: T | null;
 };
 
+export type ReorderStationsPayload = {
+  learningPathId: string;
+  orderedIds: string[];
+};
+
 export type CreateStationPayload = {
   learningPathId: string;
   name: string;
@@ -221,5 +226,24 @@ export async function deleteStation(stationId: string): Promise<StationApiResult
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to delete station");
+  }
+}
+
+export async function reorderStations(
+  payload: ReorderStationsPayload,
+): Promise<StationApiResult<boolean>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: "/api/v1/Station/reorder",
+      data: payload,
+    });
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: !response.error?.message,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to reorder stations");
   }
 }

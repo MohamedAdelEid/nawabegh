@@ -1,0 +1,172 @@
+{
+  "supportTickets": {
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "page": {
+      "title": "Support tickets & disputes",
+      "description": "Manage and resolve help requests from students and teachers.",
+      "createTicket": "Create ticket"
+    },
+    "createModal": {
+      "title": "Create support ticket",
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Brief summary of the issue..."
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Describe the problem in detail..."
+      },
+      "priority": {
+        "label": "Priority"
+      },
+      "attachments": {
+        "label": "Attachments",
+        "add": "Add file",
+        "remove": "Remove file",
+        "hint": "Images or PDF, up to 10 MB each (max 5 files).",
+        "empty": "No attachments added.",
+        "invalidType": "Only images and PDF files are allowed.",
+        "maxSize": "Each file must be 10 MB or smaller."
+      },
+      "cancel": "Cancel",
+      "submit": "Create ticket",
+      "submitting": "Creating…",
+      "success": "Support ticket created successfully.",
+      "errors": {
+        "createFailed": "Failed to create support ticket."
+      }
+    },
+    "stats": {
+      "open": {
+        "label": "Open tickets",
+        "indicator": "Needs attention"
+      },
+      "inProgress": {
+        "label": "In progress",
+        "indicator": "Average 4 hours"
+      },
+      "closed": {
+        "label": "Closed tickets",
+        "indicator": "94% resolution rate"
+      },
+      "total": {
+        "label": "Total disputes",
+        "indicator": "Last 30 days"
+      }
+    },
+    "filters": {
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by ticket number, username, or subject..."
+      },
+      "status": {
+        "label": "Status",
+        "all": "All statuses",
+        "1": "Open",
+        "2": "In review",
+        "3": "Closed"
+      },
+      "priority": {
+        "label": "Priority",
+        "all": "All priorities",
+        "1": "Low",
+        "2": "Normal",
+        "3": "High",
+        "4": "Very urgent"
+      },
+      "apply": "Apply filters"
+    },
+    "table": {
+      "title": "Support tickets",
+      "assignedTo": "Assigned to {name}",
+      "columns": {
+        "ticketNumber": "Ticket #",
+        "user": "User",
+        "priority": "Priority",
+        "subject": "Subject",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "1": "Open",
+        "2": "In review",
+        "3": "Closed"
+      },
+      "priorities": {
+        "1": "Low",
+        "2": "Normal",
+        "3": "High",
+        "4": "Very urgent"
+      },
+      "actions": {
+        "view": "View ticket"
+      },
+      "pagination": {
+        "summary": "Showing {from} - {to} of {total} tickets",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "states": {
+        "empty": {
+          "title": "No tickets found",
+          "description": "Try adjusting your filters or check back later."
+        },
+        "error": {
+          "title": "Failed to load tickets",
+          "retry": "Retry"
+        }
+      }
+    },
+    "detail": {
+      "sheetTitle": "Ticket details",
+      "ticketNumber": "Ticket #{number}",
+      "createdAt": "Created {date}",
+      "assignedTo": "Assigned to {name}",
+      "owner": {
+        "title": "Ticket owner",
+        "userId": "User ID: {id}..."
+      },
+      "problem": {
+        "title": "Problem details"
+      },
+      "attachments": {
+        "title": "Attachments ({count})",
+        "image": "Image",
+        "file": "File"
+      },
+      "messages": {
+        "title": "Conversation"
+      },
+      "reply": {
+        "label": "Reply to ticket",
+        "placeholder": "Write your reply to the user here...",
+        "send": "Send reply",
+        "success": "Reply sent successfully."
+      },
+      "status": {
+        "label": "Update ticket status",
+        "save": "Save changes",
+        "success": "Ticket status updated."
+      },
+      "close": {
+        "action": "Close ticket",
+        "success": "Ticket closed successfully."
+      },
+      "assign": {
+        "action": "Assign to me",
+        "success": "Ticket assigned successfully."
+      },
+      "errors": {
+        "notFound": "Ticket not found.",
+        "retry": "Retry",
+        "sendReply": "Failed to send reply.",
+        "updateStatus": "Failed to update status.",
+        "closeTicket": "Failed to close ticket.",
+        "assign": "Failed to assign ticket."
+      }
+    }
+  }
+}

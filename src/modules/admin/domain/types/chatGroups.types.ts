@@ -64,7 +64,9 @@ export type ChatGroupRow = {
   studentCount: number;
   chatModeId: ChatGroupChatModeId;
   attachments: ChatGroupAttachment[];
+  allowParentView: boolean;
   statusId: ChatGroupStatusId;
+  isLocked: boolean;
   lastActivityKey: string;
   /** Pre-formatted last activity when loaded from API. */
   lastActivityDisplay?: string;

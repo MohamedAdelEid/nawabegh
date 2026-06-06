@@ -37,7 +37,10 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ChallengeType, DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { ChallengeScheduleDateField } from "@/modules/admin/presentation/components/journey-editor/ChallengeScheduleDateField";
+import {
+  ChallengeScheduleDateField,
+  JourneyEditorStationPageSkeleton,
+} from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -460,7 +463,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
   };
 
   if (loading || !station) {
-    return <PageSpinner />;
+    return <JourneyEditorStationPageSkeleton showSidebar />;
   }
 
   const scheduleSummary = t("sidebar.scheduleValue", {
@@ -860,14 +863,6 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
           </Card>
         </aside>
       </div>
-    </div>
-  );
-}
-
-function PageSpinner() {
-  return (
-    <div className="flex h-64 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
     </div>
   );
 }

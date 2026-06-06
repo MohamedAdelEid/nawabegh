@@ -22,6 +22,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -90,12 +91,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   }, [journeyId, router, stationId]);
 
   if (loading) {
-    return (
-      <div className="flex h-64 flex-col items-center justify-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
-        <p className="text-sm text-slate-500">{t("messages.loading")}</p>
-      </div>
-    );
+    return <JourneyEditorStationPageSkeleton showSidebar />;
   }
 
   if (!station) return null;

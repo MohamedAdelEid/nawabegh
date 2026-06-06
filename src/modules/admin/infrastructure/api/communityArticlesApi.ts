@@ -113,6 +113,16 @@ function estimateReadMinutesFromExcerpt(excerpt: string): number {
   return Math.max(1, Math.round(words / 200));
 }
 
+function readCountFromNumberOrArray(record: UnknownRecord | null, numericKeys: string[], arrayKeys: string[]): number {
+  const numericValue = readNumber(record, numericKeys);
+  if (numericValue !== null) return Math.max(0, numericValue);
+  for (const key of arrayKeys) {
+    const value = record?.[key];
+    if (Array.isArray(value)) return value.length;
+  }
+  return 0;
+}
+
 function mapArticleRow(item: unknown): ArticleRow | null {
   const record = asRecord(item);
   if (!record) return null;
@@ -144,9 +154,21 @@ function mapArticleRow(item: unknown): ArticleRow | null {
     authorAvatarImageUrl,
     authorRole,
     schoolName,
-    likesCount: readNumber(record, ["likesCount"]) ?? 0,
-    commentsCount: readNumber(record, ["commentsCount"]) ?? 0,
-    viewsCount: readNumber(record, ["viewsCount"]) ?? 0,
+    likesCount: readCountFromNumberOrArray(
+      record,
+      ["likesCount", "likeCount", "likes", "totalLikes"],
+      ["likesList"],
+    ),
+    commentsCount: readCountFromNumberOrArray(
+      record,
+      ["commentsCount", "commentCount", "comments", "totalComments", "repliesCount"],
+      ["commentsList", "comments", "replies"],
+    ),
+    viewsCount: readCountFromNumberOrArray(
+      record,
+      ["viewsCount", "viewCount", "views", "totalViews"],
+      ["viewsList"],
+    ),
     publishedAt: readString(record, ["publishedAt", "createdAt", "submittedAt"], "") || "",
     statusId: mapCommunityArticleStatus(statusNum),
     isHidden: statusNum === 4,
@@ -578,12 +600,22 @@ export async function getCommunityArticleComments(
       url: `/api/v1/admin/CommunityArticles/${encodeURIComponent(articleId)}/comments`,
     });
     const root = asRecord(response.data);
+    const rootData = asRecord(root?.data);
     let rows: unknown[] = [];
-    if (Array.isArray(root?.data)) {
+    if (Array.isArray(response.data)) {
+      rows = response.data as unknown[];
+    } else if (Array.isArray(root?.data)) {
       rows = root.data as unknown[];
+    } else if (Array.isArray(rootData?.data)) {
+      rows = rootData.data as unknown[];
+    } else if (Array.isArray(rootData?.comments)) {
+      rows = rootData.comments as unknown[];
+    } else if (Array.isArray(rootData?.items)) {
+      rows = rootData.items as unknown[];
     } else {
       rows = readArray(root, ["data", "comments", "items"]);
     }
+
     const comments = rows
       .map((item) => mapCommentFromRecord(asRecord(item)))
       .filter((c): c is CommunityCommentDto => c !== null);

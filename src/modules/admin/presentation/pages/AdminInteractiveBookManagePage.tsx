@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { motion } from "framer-motion";
 import {
   BookOpen,
   ChevronLeft,
@@ -37,6 +38,11 @@ import { getCoursesPage, type CourseListItemDto } from "@/modules/admin/infrastr
 import { getSubjectsPage, type SubjectListItem } from "@/modules/admin/infrastructure/api/subjectApi";
 import { AddHotspotModal } from "@/modules/admin/presentation/components/interactive-books/AddHotspotModal";
 import {
+  InteractiveBookManagePageSkeleton,
+  InteractiveBooksFilterBar,
+  type InteractiveBooksApiFilterState,
+} from "@/modules/admin/presentation/components/interactive-books";
+import {
   DEFAULT_HOTSPOT_SIZE,
   type HotspotPlacement,
 } from "@/modules/admin/presentation/components/interactive-books/interactiveBookPdfViewer.types";
@@ -60,6 +66,14 @@ const MAX_PDF_SIZE_BYTES = 50 * 1024 * 1024;
 const PDF_SCALE_MIN = 0.5;
 const PDF_SCALE_MAX = 2;
 const PDF_SCALE_STEP = 0.25;
+const fadeInUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.35, ease: "easeOut" as const },
+  }),
+};
 
 const InteractiveBookPdfViewer = dynamic(
   () =>
@@ -113,6 +127,18 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   const [bookLoadState, setBookLoadState] = useState<"idle" | "loading" | "success" | "error" | "notFound">(
     "idle",
   );
+  const [apiFilters, setApiFilters] = useState<InteractiveBooksApiFilterState>({
+    courseId: "",
+    gradeId: "",
+    status: "all",
+    hasHotspots: "all",
+    fromDate: "",
+    toDate: "",
+    keyword: "",
+    pageNumber: "1",
+    pageSize: "50",
+    acceptLanguage: "ar",
+  });
 
   const isEditMode = Boolean(editCourseId?.trim());
   const interactiveBookId = book?.id ?? null;
@@ -528,11 +554,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   };
 
   if (isEditMode && bookLoadState === "loading") {
-    return (
-      <div className="py-16 text-center text-sm text-slate-500">
-        {t("interactiveBooks.table.loading")}
-      </div>
-    );
+    return <InteractiveBookManagePageSkeleton />;
   }
 
   if (isEditMode && bookLoadState === "error") {
@@ -604,6 +626,9 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
         }
       />
 
+      <InteractiveBooksFilterBar value={apiFilters} onChange={setApiFilters} />
+
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <Card className="border-[var(--dashboard-border-soft)] shadow-[var(--dashboard-shadow-soft)]">
         <CardContent className="space-y-6 p-6">
           <div className="flex items-center gap-2 text-[var(--dashboard-primary)]">
@@ -751,9 +776,17 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
           </div>
         </CardContent>
       </Card>
+      </motion.div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-        <Card className="order-2 overflow-hidden border-[var(--dashboard-border-soft)] bg-white shadow-[var(--dashboard-shadow-soft)] lg:order-1">
+        <motion.div
+          className="order-2 lg:order-1"
+          custom={0}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
+        <Card className="overflow-hidden border-[var(--dashboard-border-soft)] bg-white shadow-[var(--dashboard-shadow-soft)]">
           <div className="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
               <button
@@ -839,8 +872,15 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
             />
           </CardContent>
         </Card>
+        </motion.div>
 
-        <aside className="order-1 space-y-6 lg:order-2">
+        <motion.aside
+          className="order-1 space-y-6 lg:order-2"
+          custom={1}
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+        >
           <Card className="border-[var(--dashboard-border-soft)] bg-white shadow-[var(--dashboard-shadow-soft)]">
             <CardHeader className="relative space-y-2 border-b border-slate-100 pb-4 text-right">
               <div className="absolute left-4 top-4">
@@ -941,7 +981,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
               {t("interactiveBooks.managePage.tip.body")}
             </p>
           </div>
-        </aside>
+        </motion.aside>
       </div>
 
     </div>

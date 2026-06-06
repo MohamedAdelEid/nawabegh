@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
   DashboardFilterSelect,
+  DashboardDataTable,
+  type DashboardDataTableColumn,
   DashboardPageHeader,
+  DashboardPagination,
   DashboardSearchFilter,
   DashboardStatCard,
   DashboardTableCard,
@@ -15,10 +18,7 @@ import {
 } from "@/shared/presentation/components/dashboard";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { chatGroupsDashboardData } from "@/modules/admin/domain/data/chatGroupsDashboardData";
-import type {
-  ChatGroupChatModeId,
-  ChatGroupStatusId,
-} from "@/modules/admin/domain/types/chatGroups.types";
+import type { ChatGroupRow } from "@/modules/admin/domain/types/chatGroups.types";
 import {
   formatChatGroupStatValue,
   useChatGroupsDashboard,
@@ -32,14 +32,17 @@ import {
   getUserManagementGradesDropdown,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { notify } from "@/shared/application/lib/toast";
-import { ChatGroupTableRow, ChatGroupDeleteModal } from "../chat-groups";
+import Earth from "../../assets/icons/Earth";
+import SearchPerson from "../../assets/icons/SearchPerson";
+import { ChatGroupsDashboardSkeleton } from "./ChatGroupsDashboardSkeleton";
+import { Settings } from "lucide-react";
 
 const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 10 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.08, duration: 0.4, ease: "easeOut" as const },
+    transition: { delay: i * 0.06, duration: 0.3, ease: "easeOut" as const },
   }),
 };
 
@@ -54,11 +57,10 @@ export function ChatGroupsDashboard() {
   const t = useTranslations("admin.dashboard.chatGroups");
   const locale = useLocale();
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
 
   const [filters, setFilters] = useState<ChatGroupsFilterState>(DEFAULT_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [gradeOptions, setGradeOptions] = useState<DashboardFilterOption<string>[]>([]);
   const [subjectOptions, setSubjectOptions] = useState<DashboardFilterOption<string>[]>([]);
   const [filterOptionsLoading, setFilterOptionsLoading] = useState(true);
@@ -67,11 +69,6 @@ export function ChatGroupsDashboard() {
   const { rows, page, listQuery, statsQuery, statistics } = useChatGroupsDashboard(
     filters,
     currentPage,
-  );
-
-  const selectedGroup = useMemo(
-    () => rows.find((r) => r.id === selectedGroupId),
-    [rows, selectedGroupId],
   );
 
   const totalPages = page?.totalPages ?? 1;
@@ -175,84 +172,125 @@ export function ChatGroupsDashboard() {
     [locale, statConfig, statistics],
   );
 
-  const handleView = (id: string) => {
-    router.push(ROUTES.ADMIN.CHAT_GROUPS.VIEW(id));
-  };
-
   const handleEdit = (chatGroupId: string, courseId: string) => {
     router.push(ROUTES.ADMIN.CHAT_GROUPS.EDIT(courseId || chatGroupId));
   };
 
-  const handleToggleStatus = (id: string) => {
-    console.log("Toggle status for:", id);
-  };
-
-  const handleDelete = (id: string) => {
-    setSelectedGroupId(id);
-    setDeleteModalOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    console.log("Delete group:", selectedGroupId);
-    setDeleteModalOpen(false);
-    setSelectedGroupId(null);
-  };
-
   const isLoading = listQuery.isLoading || listQuery.isFetching;
+  const isInitialLoading = listQuery.isLoading && !page;
   const isStatsLoading = statsQuery.isLoading;
 
-  const renderTableBody = useCallback(() => {
-    if (isLoading) {
-      return (
-        <tr>
-          <td colSpan={7} className="px-4 py-12">
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <Skeleton key={index} className="h-14 w-full rounded-xl" />
-              ))}
+  const columns = useMemo<DashboardDataTableColumn<ChatGroupRow>[]>(
+    () => [
+      {
+        id: "groupName",
+        header: t("table.columns.groupName"),
+        headerClassName: "px-4 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5",
+        renderCell: (row) => (
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-1.5 rounded-full" style={{ backgroundColor: row.colorIndicator }} />
+            <div className="space-y-0.5 text-right">
+              <p className="font-semibold text-slate-800">{row.groupName}</p>
+              <p className="text-xs text-slate-400">{row.courseSubtitle}</p>
             </div>
-          </td>
-        </tr>
-      );
-    }
+          </div>
+        ),
+      },
+      {
+        id: "studentCount",
+        header: t("table.columns.studentCount"),
+        headerClassName:
+          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5 text-center",
+        renderCell: (row) => (
+          <span className="rounded-full bg-[#F1F5F9] p-2 px-5 font-semibold text-slate-700">
+            {row.studentCount.toLocaleString("EG")}
+          </span>
+        ),
+      },
+      {
+        id: "chatMode",
+        header: t("table.columns.chatMode"),
+        headerClassName:
+          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5 text-center",
+        renderCell: (row) => (
+          <span className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium">
+            {t(`chatModes.${row.chatModeId}` as const)}
+            {row.chatModeId === "everyone" ? <Earth /> : <SearchPerson />}
+          </span>
+        ),
+      },
+      {
+        id: "status",
+        header: t("table.columns.status"),
+        headerClassName:
+          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5 text-center",
+        renderCell: (row) => {
+          const isPaused = row.isLocked;
+          return (
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
+                isPaused ? "bg-slate-100 text-slate-500" : "bg-emerald-100 text-emerald-700"
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  isPaused ? "bg-slate-400" : "animate-pulse bg-emerald-500"
+                }`}
+              />
+              {t(`statuses.${isPaused ? "paused" : "active"}`)}
+            </span>
+          );
+        },
+      },
+      {
+        id: "lastActivity",
+        header: t("table.columns.lastActivity"),
+        headerClassName:
+          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5 text-center text-sm text-slate-500",
+        renderCell: (row) => row.lastActivityDisplay ?? (row.lastActivityKey ? t(row.lastActivityKey) : "—"),
+      },
+      {
+        id: "actions",
+        header: t("table.columns.actions"),
+        headerClassName:
+          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
+        cellClassName: "px-4 py-5",
+        renderCell: (row) => (
+          <div className="flex items-center justify-center gap-1">
+            <button
+              type="button"
+              onClick={() => handleEdit(row.id, row.courseId)}
+              title={t("actions.settings")}
+              className="rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            >
+              <Settings className="h-4 w-4" />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [handleEdit, t],
+  );
 
-    if (rows.length === 0) {
-      return (
-        <tr>
-          <td colSpan={7} className="px-4 py-12 text-center text-sm text-slate-500">
-            {t("table.states.empty")}
-          </td>
-        </tr>
-      );
-    }
-
-    return rows.map((row) => (
-      <ChatGroupTableRow
-        key={row.id}
-        row={row}
-        chatModeLabel={(modeId: ChatGroupChatModeId) => t(`chatModes.${modeId}`)}
-        statusLabel={(statusId: ChatGroupStatusId) => t(`statuses.${statusId}`)}
-        lastActivityLabel={(key: string) => (key ? t(key) : "—")}
-        viewLabel={t("actions.view")}
-        settingsLabel={t("actions.settings")}
-        pauseLabel={t("actions.pause")}
-        resumeLabel={t("actions.resume")}
-        deleteLabel={t("actions.delete")}
-        onView={handleView}
-        onEdit={() => handleEdit(row.id, row.courseId)}
-        onToggleStatus={handleToggleStatus}
-        onDelete={handleDelete}
-      />
-    ));
-  }, [
-    handleDelete,
-    handleEdit,
-    handleToggleStatus,
-    handleView,
-    isLoading,
-    rows,
-    t,
-  ]);
+  if (isInitialLoading) {
+    return (
+      <section className="space-y-8">
+        <DashboardPageHeader
+          title={t("title")}
+          breadcrumbs={[
+            { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+            { label: t("breadcrumbs.chatGroups") },
+          ]}
+        />
+        <ChatGroupsDashboardSkeleton />
+      </section>
+    );
+  }
 
   return (
     <section className="space-y-8">
@@ -268,7 +306,15 @@ export function ChatGroupsDashboard() {
         className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
         initial="hidden"
         animate="visible"
-        variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+        variants={{
+          hidden: {},
+          visible: {
+            transition: {
+              staggerChildren: reduceMotion ? 0 : 0.07,
+              delayChildren: reduceMotion ? 0 : 0.03,
+            },
+          },
+        }}
       >
         {statCards.map((stat, idx) => (
           <motion.div key={stat.id} custom={idx} variants={fadeInUp}>
@@ -331,76 +377,47 @@ export function ChatGroupsDashboard() {
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
+        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+        transition={{ delay: reduceMotion ? 0 : 0.18, duration: reduceMotion ? 0.18 : 0.32 }}
       >
         <DashboardTableCard
           title={t("table.title")}
           footer={
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-500">
-                {t("table.pagination.showing", {
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <p className="text-right text-sm text-slate-400">
+                {t("table.pagination.summary", {
                   visible: rows.length,
                   total: totalItems,
                 })}
               </p>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  disabled={currentPage <= 1 || isLoading}
-                  onClick={() => setCurrentPage((p) => p - 1)}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50"
-                >
-                  {t("table.pagination.prev")}
-                </button>
-                <span className="min-w-[4rem] text-center text-sm text-slate-700">
-                  {t("table.pagination.page", {
-                    current: currentPage,
-                    total: totalPages,
-                  })}
-                </span>
-                <button
-                  type="button"
-                  disabled={currentPage >= totalPages || isLoading}
-                  onClick={() => setCurrentPage((p) => p + 1)}
-                  className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50"
-                >
-                  {t("table.pagination.next")}
-                </button>
-              </div>
+              <DashboardPagination
+                pages={Array.from({ length: totalPages }, (_, i) => i + 1)}
+                currentPage={currentPage}
+                previousLabel={t("table.pagination.previous")}
+                nextLabel={t("table.pagination.next")}
+                onPageChange={setCurrentPage}
+              />
             </div>
-          }
+           }
         >
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px] text-right">
-              <thead>
-                <tr className="border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  <th className="px-4 py-4">{t("table.columns.groupName")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.studentCount")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.chatMode")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.attachments")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.status")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.lastActivity")}</th>
-                  <th className="px-4 py-4 text-center">{t("table.columns.actions")}</th>
-                </tr>
-              </thead>
-              <tbody>{renderTableBody()}</tbody>
-            </table>
-          </div>
+          {isLoading ? (
+            <div className="space-y-3 px-4 py-12">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="h-14 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : (
+            <DashboardDataTable
+              rows={rows}
+              columns={columns}
+              getRowKey={(row) => row.id}
+              emptyMessage={t("table.states.empty")}
+              tableClassName="w-full min-w-[900px] text-right"
+            />
+          )}
         </DashboardTableCard>
       </motion.div>
-
-      <ChatGroupDeleteModal
-        open={deleteModalOpen}
-        onOpenChange={setDeleteModalOpen}
-        groupName={selectedGroup?.groupName}
-        title={t("deleteModal.title")}
-        description={t("deleteModal.description")}
-        confirmLabel={t("deleteModal.confirm")}
-        cancelLabel={t("deleteModal.cancel")}
-        onConfirm={handleConfirmDelete}
-      />
     </section>
   );
 }

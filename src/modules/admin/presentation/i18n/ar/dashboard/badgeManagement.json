@@ -1,0 +1,147 @@
+{
+  "badgeManagement": {
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "forum": "المنتدى",
+      "community": "إدارة المجتمع"
+    },
+    "page": {
+      "title": "إدارة أوسمة نوابغ",
+      "description": "أنشئ وأدر أوسمة نوابغ، وحدّد معايير الاستحقاق، وتابع أداء الطلاب والنشطاء على المنصة.",
+      "createBadge": "إضافة وسم جديد",
+      "recalculate": "إعادة احتساب الأوسمة"
+    },
+    "stats": {
+      "totalBadges": {
+        "label": "إجمالي الأوسمة",
+        "indicatorStatic": "—"
+      },
+      "activeBadges": {
+        "label": "الأوسمة المفعلة",
+        "indicatorStatic": "مستقر"
+      },
+      "totalEarners": {
+        "label": "إجمالي الحاصلين",
+        "indicatorStatic": "—"
+      },
+      "mostEarned": {
+        "label": "أكثر وسم حصولاً",
+        "indicatorStatic": "—",
+        "empty": "لا يوجد"
+      },
+      "averagePoints": {
+        "label": "متوسط النقاط",
+        "indicatorStatic": "—"
+      }
+    },
+    "filters": {
+      "search": {
+        "label": "بحث",
+        "placeholder": "ابحث عن اسم الوسم..."
+      },
+      "status": {
+        "label": "الحالة",
+        "all": "الكل",
+        "active": "مفعل",
+        "inactive": "معطل"
+      },
+      "apply": "فلترة"
+    },
+    "table": {
+      "title": "قائمة الأوسمة",
+      "columns": {
+        "icon": "أيقونة الوسم",
+        "name": "اسم الوسم",
+        "status": "الحالة",
+        "toggle": "التفعيل",
+        "points": "النقاط",
+        "earnedCount": "الحاصلين",
+        "createdAt": "تاريخ الإنشاء",
+        "actions": "إجراءات"
+      },
+      "statuses": {
+        "active": "مفعل",
+        "inactive": "معطل"
+      },
+      "actions": {
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "pagination": {
+        "summary": "عرض {from} - {to} من أصل {total} وسم",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "states": {
+        "empty": {
+          "title": "لا توجد أوسمة",
+          "description": "جرّب تعديل الفلاتر أو أضف وسماً جديداً."
+        },
+        "error": {
+          "title": "تعذّر تحميل الأوسمة",
+          "retry": "إعادة المحاولة"
+        }
+      }
+    },
+    "deleteModal": {
+      "title": "حذف الوسم",
+      "description": "هل أنت متأكد من حذف هذا الوسم؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "حذف",
+      "cancel": "إلغاء",
+      "success": "تم حذف الوسم بنجاح."
+    },
+    "detailModal": {
+      "title": "تفاصيل الوسم",
+      "description": "وصف الوسم",
+      "requiredPoints": "النقاط المطلوبة",
+      "earnedCount": "عدد الحاصلين",
+      "createdAt": "تاريخ الإنشاء",
+      "status": "الحالة",
+      "close": "إغلاق"
+    },
+    "form": {
+      "createTitle": "إضافة وسم",
+      "editTitle": "تعديل وسم",
+      "modalTitle": "إضافة / تعديل وسم",
+      "basicInfo": "المعلومات الأساسية",
+      "eligibilitySettings": "إعدادات الاستحقاق",
+      "nameLabel": "اسم الوسم",
+      "namePlaceholder": "مثال: وسام البطل الرقمي",
+      "descriptionLabel": "وصف الوسم",
+      "descriptionPlaceholder": "اكتب وصفاً مختصراً لشروط الحصول على الوسم...",
+      "uploadIcon": "رفع أيقونة",
+      "uploadHint": "PNG أو JPG — حتى 5 م.ب",
+      "activeToggle": "تفعيل الوسم داخل نوابغ",
+      "activeToggleHint": "سيتمكن الطلاب من رؤية هذا الوسم في القائمة",
+      "requiredPointsLabel": "النقاط المطلوبة",
+      "requiredPointsHint": "حدد الحد الأدنى من النقاط المطلوبة للحصول على هذا الوسم",
+      "previewTitle": "معاينة الوسم",
+      "previewLevel": "مستوى ذهبي",
+      "previewRequiredPoints": "النقاط المطلوبة",
+      "previewInfo": "سيظهر هذا الوسم بشكل تلقائي للطلاب بمجرد استيفائهم للشروط المحددة أعلاه في سجل نشاطهم.",
+      "save": "حفظ التغييرات",
+      "cancel": "إلغاء",
+      "createSuccess": "تم إنشاء الوسم بنجاح.",
+      "updateSuccess": "تم تحديث الوسم بنجاح.",
+      "validation": {
+        "nameRequired": "يرجى إدخال اسم الوسم.",
+        "descriptionRequired": "يرجى إدخال وصف الوسم.",
+        "iconRequired": "يرجى رفع أيقونة الوسم.",
+        "pointsRequired": "يرجى إدخال النقاط المطلوبة."
+      }
+    },
+    "toggle": {
+      "success": "تم تحديث حالة الوسم.",
+      "error": "تعذّر تحديث حالة الوسم."
+    },
+    "recalculate": {
+      "success": "تم إعادة احتساب الأوسمة بنجاح.",
+      "error": "تعذّر إعادة احتساب الأوسمة.",
+      "confirmTitle": "إعادة احتساب الأوسمة",
+      "confirmDescription": "سيتم مسح جميع الطلاب ومنح أي أوسمة مفقودة بناءً على أعلى نقاط وصلوا إليها. لن يتم سحب أي وسام.",
+      "confirm": "تأكيد",
+      "cancel": "إلغاء"
+    }
+  }
+}

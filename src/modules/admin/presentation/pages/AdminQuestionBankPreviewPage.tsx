@@ -7,7 +7,7 @@ import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Button } from "@/shared/presentation/components/ui/button";
-import { BookOpen, GraduationCap, BarChart3, WandSparkles, Save } from "lucide-react";
+import { BookOpen, GraduationCap, BarChart3, Save } from "lucide-react";
 import {
   getQuestionBankEnums,
   getQuestionBankQuestionById,
@@ -15,9 +15,11 @@ import {
   type QuestionBankEnumOption,
 } from "@/modules/admin/infrastructure/api/questionBankApi";
 import {
+  QuestionBankAnimatedSection,
   QuestionBankPreviewChoiceCard,
   QuestionBankPreviewInfoItem,
-  QuestionBankPreviewStatCard,
+  QuestionBankPreviewPageSkeleton,
+  QuestionBankPreviewPeopleCard,
 } from "@/modules/admin/presentation/components/question-bank";
 import { notify } from "@/shared/application/lib/toast";
 import { Light } from "../assets/icons/Light";
@@ -96,45 +98,49 @@ export function AdminQuestionBankPreviewPage() {
     return Math.round((correctChoicesCount / sortedChoices.length) * 100);
   }, [correctChoicesCount, sortedChoices.length]);
 
+  const header = (
+    <DashboardPageHeader
+      title={t("questionBankPreview.title")}
+      description={t("questionBankPreview.description")}
+      breadcrumbs={[
+        { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
+        { label: t("questionBankPreview.title") },
+      ]}
+    />
+  );
+
   if (isLoading) {
-    return <div className="py-14 text-center text-slate-500">{t("questionBankPreview.messages.loading")}</div>;
+    return (
+      <div className="space-y-8">
+        {header}
+        <div aria-busy="true" aria-label={t("questionBankPreview.messages.loading")}>
+          <QuestionBankPreviewPageSkeleton />
+        </div>
+      </div>
+    );
   }
 
   if (!questionId || !question) {
     return (
-      <div className="space-y-4 rounded-2xl border border-red-100 bg-red-50 p-6 text-right">
-        <p className="text-lg font-bold text-red-600">{t("questionBankPreview.messages.notFoundTitle")}</p>
-        <p className="text-sm text-red-500">{t("questionBankPreview.messages.notFoundDescription")}</p>
-        <Button type="button" variant="outline" onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.LIST)}>
-          {t("questionBankPreview.actions.close")}
-        </Button>
+      <div className="space-y-8">
+        {header}
+        <QuestionBankAnimatedSection>
+          <div className="space-y-4 rounded-2xl border border-red-100 bg-red-50 p-6 text-right">
+            <p className="text-lg font-bold text-red-600">{t("questionBankPreview.messages.notFoundTitle")}</p>
+            <p className="text-sm text-red-500">{t("questionBankPreview.messages.notFoundDescription")}</p>
+            <Button type="button" variant="outline" onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.LIST)}>
+              {t("questionBankPreview.actions.close")}
+            </Button>
+          </div>
+        </QuestionBankAnimatedSection>
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankPreview.title")}
-        description={t("questionBankPreview.description")}
-        breadcrumbs={[
-          { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
-          { label: t("questionBankPreview.title") },
-        ]}
-        action={
-          <Button
-            type="button"
-            className="dashboard-raised-button h-14 rounded-2xl bg-[#243B5A] px-6 text-base font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
-            style={{
-              boxShadow: "0px 4px 0px 0px #1E2E42"
-            }}
-            // onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.ADD)}
-          >
-            {t("questionBankPreview.actions.save")}
-          <Save className="h-4 w-4" aria-hidden />
-          </Button>
-        }
-      />
+      {header}
+      <QuestionBankAnimatedSection delay={0.02}>
       <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_28rem]">
         <Card className="rounded-2xl border border-slate-200 bg-white shadow-[0px_6px_0px_0px_#0000000A]">
           <CardContent className="space-y-6 p-6">
@@ -176,6 +182,12 @@ export function AdminQuestionBankPreviewPage() {
                 <p className="mt-2 text-slate-700">{question.explanation}</p>
               </div>
             ) : null}
+            {question.hint ? (
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5">
+                <p className="text-lg font-bold text-slate-700">{t("questionBankPreview.hintTitle")}</p>
+                <p className="mt-2 text-slate-700">{question.hint}</p>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
         <div className="space-y-8">
@@ -204,31 +216,16 @@ export function AdminQuestionBankPreviewPage() {
               />
             </CardContent>
           </Card>
-          <Card className="bg-[#243B5A] rounded-2xl border border-slate-200 shadow-[0px_8px_0px_0px_#0000000A]">
-            <CardContent className="space-y-4 p-4 text-right">
-              <h4 className="flex items-center gap-2 text-lg font-extrabold text-white">
-                <WandSparkles className="h-4 w-4" />
-                {t("questionBankPreview.quickActions.title")}
-              </h4>
-              <Button
-                type="button"
-                className="w-full rounded-xl bg-white text-[#A38F5A] hover:bg-slate-100 min-h-14 font-bold shadow-[0px_4px_0px_0px_#A38F5A]"
-                // onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.ADD)}
-              >
-                {t("questionBankPreview.actions.edit")}
-              </Button>
-              <Button
-                variant="secondary"
-                className="w-full rounded-xl bg-[#3A5273] text-white hover:bg-[#334B6B] min-h-14 font-bold shadow-[0px_4px_0px_0px_#334B6B]"
-                // onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.LIST)}
-              >
-                {t("questionBankPreview.actions.close")}
-              </Button>
-            </CardContent>
-          </Card>
+          <QuestionBankPreviewPeopleCard
+            authorUserId={question.authorUserId}
+            submittedAtUtc={question.submittedAtUtc}
+            reviewedByUserId={question.reviewedByUserId}
+            reviewedAtUtc={question.reviewedAtUtc}
+          />
         </div>
       </div>
-      <section className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+      </QuestionBankAnimatedSection>
+      {/* <section className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
         <QuestionBankPreviewStatCard
           value={String(sortedChoices.length)}
           label={t("questionBankPreview.stats.totalChoices")}
@@ -241,7 +238,7 @@ export function AdminQuestionBankPreviewPage() {
           value={`${accuracyPercent}%`}
           label={t("questionBankPreview.stats.correctRatio")}
         />
-      </section>
+      </section> */}
     </div>
   );
 }

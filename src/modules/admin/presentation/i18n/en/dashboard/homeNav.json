@@ -1,0 +1,63 @@
+{
+  "homeNav": {
+    "title": "Control center",
+    "description": "Browse every admin section and jump straight to the tools you need.",
+    "openSection": "Open",
+    "cards": {
+      "userManagement": {
+        "description": "Create and manage student, teacher, and parent accounts. Review profiles, roles, permissions, and account status across the platform."
+      },
+      "schoolManagement": {
+        "description": "Register schools, update their details, and monitor participation. Manage subscriptions, educational stages, and school-level settings."
+      },
+      "courseManagement": {
+        "description": "Review submitted courses, approve or reject content, and track publishing status. Keep the learning catalog organized and up to date."
+      },
+      "helperFileManagement": {
+        "description": "Upload, organize, and maintain helper documents that support lessons and exams. Preview files and keep shared resources accessible."
+      },
+      "pricingManagement": {
+        "description": "Configure subscription plans, pricing tiers, and payment-related settings. Track transactions and manage billing for schools and users."
+      },
+      "articleEditor": {
+        "description": "Moderate community articles, review submissions, and manage editorial workflows. Keep published content aligned with platform standards."
+      },
+      "interactiveBooks": {
+        "description": "Manage interactive book projects, linked courses, and learning assets. Control how digital books are presented to students."
+      },
+      "chatGroups": {
+        "description": "Create and supervise educational chat groups. Manage members, conversations, and group settings for teachers and students."
+      },
+      "sendNotification": {
+        "description": "Compose targeted notifications for students, teachers, or schools. Schedule delivery and choose the right audience for each message."
+      },
+      "questionBank": {
+        "description": "Build and maintain the central question library. Add, edit, preview, and categorize questions used across tests and assessments."
+      },
+      "adsManagement": {
+        "description": "Create promotional campaigns and in-app announcements. Track ad placement, targeting, and performance across the platform."
+      },
+      "curriculumManagement": {
+        "description": "Define education levels, grades, and subjects that structure the curriculum. Keep academic taxonomy consistent across the system."
+      },
+      "examsManagement": {
+        "description": "Design final exams, manage certificate templates, and oversee evaluation workflows. Control how assessments and credentials are delivered."
+      },
+      "badgeManagement": {
+        "description": "Create achievement badges and define how learners earn them. Manage badge visuals, criteria, and visibility across the platform."
+      },
+      "supportTickets": {
+        "description": "Handle support requests and disputes from users. Review ticket details, respond to issues, and track resolution progress."
+      },
+      "resultsAnalytics": {
+        "description": "Analyze student performance, quiz outcomes, and certificate progress. Explore dashboards that turn results into actionable insights."
+      },
+      "helper": {
+        "description": "Find guides and quick references for using the admin panel. Learn how each section works and where to go for common tasks."
+      },
+      "settings": {
+        "description": "Adjust admin preferences, integrations, and platform configuration. Keep your workspace and system options up to date."
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -186,6 +187,7 @@ function mapResourceFileDetails(data: unknown): ResourceFileDetails | null {
 function mapResourceFileListPage(
   data: unknown,
   params: ResourceFileListParams,
+  headerMeta?: XPaginationMeta | null,
 ): ResourceFileListPage | null {
   const root = asRecord(data);
   const payload = asRecord(root?.data) ?? root;
@@ -193,6 +195,16 @@ function mapResourceFileListPage(
   const items = itemsRaw
     .map(mapResourceFileListItem)
     .filter((row): row is ResourceFileListItem => row !== null);
+
+  if (headerMeta) {
+    return {
+      items,
+      totalItems: headerMeta.totalCount,
+      pageNumber: headerMeta.currentPage,
+      pageSize: headerMeta.pageSize,
+      totalPages: headerMeta.totalPages,
+    };
+  }
 
   const pageNumber = params.pageNumber ?? 1;
   const pageSize = params.pageSize ?? 10;
@@ -263,7 +275,8 @@ export async function getResourceFiles(
       },
     });
 
-    const page = mapResourceFileListPage(response.data, params);
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const page = mapResourceFileListPage(response.data, params, headerMeta);
     if (!page) {
       return {
         status: response.status,

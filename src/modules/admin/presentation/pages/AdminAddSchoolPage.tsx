@@ -20,10 +20,15 @@ import type {
 } from "@/modules/admin/domain/types/schoolForm.types";
 import {
   createSchool,
+  getSchoolById,
+  updateSchool,
   type CreateSchoolPayload,
+  type SchoolDetail,
+  type UpdateSchoolPayload,
 } from "@/modules/admin/infrastructure/api/schoolApi";
 import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { notify } from "@/shared/application/lib/toast";
+import { mapSchoolDetailToFormValues } from "@/modules/admin/presentation/lib/schoolFormMappers";
 import { SchoolFormActions } from "@/modules/admin/presentation/components/school-form/SchoolFormActions";
 import { SchoolIdentitySection } from "@/modules/admin/presentation/components/school-form/SchoolIdentitySection";
 import { SchoolContactSection } from "@/modules/admin/presentation/components/school-form/SchoolContactSection";
@@ -31,6 +36,7 @@ import { SchoolSubscriptionSection } from "@/modules/admin/presentation/componen
 import { SchoolLocationSection } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import type { SchoolLocationInput } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 const ARABIC_INDIC_ZERO_CODE = "٠".charCodeAt(0);
 const EXTENDED_ARABIC_INDIC_ZERO_CODE = "۰".charCodeAt(0);
@@ -55,15 +61,21 @@ function normalizeDigitsToLatin(value: string): string {
   });
 }
 
-function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload {
-  const plan = schoolSubscriptionPlans.find((p) => p.id === values.subscriptionPlanId);
-  const rawLogo = values.schoolLogoPreviewUrl ?? "";
-  const logoUrl =
-    rawLogo.startsWith("http://") || rawLogo.startsWith("https://") ? rawLogo : "";
+function buildPerformanceLevel(values: SchoolFormValues): string {
+  return values.educationStageIds.length > 0
+    ? values.educationStageIds.join(", ")
+    : "standard";
+}
 
+function resolveLogoUrl(values: SchoolFormValues): string {
+  const rawLogo = values.schoolLogoPreviewUrl ?? "";
+  return rawLogo.startsWith("http://") || rawLogo.startsWith("https://") ? rawLogo : "";
+}
+
+function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload {
   return {
     name: normalizeTextInput(values.schoolName),
-    logoUrl,
+    logoUrl: resolveLogoUrl(values),
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
     address: normalizeTextInput(values.address),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
@@ -71,19 +83,47 @@ function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload
     city: normalizeTextInput(values.city),
     country: normalizeTextInput(values.country),
     points: 0,
-    performanceLevel:
-      values.educationStageIds.length > 0
-        ? values.educationStageIds.join(", ")
-        : "standard",
+    performanceLevel: buildPerformanceLevel(values),
     establishmentDate: new Date().toISOString(),
-    subscriptionPlanId: plan?.apiId ?? "",
   };
 }
 
-export function AdminAddSchoolPage() {
+function buildUpdateSchoolPayload(
+  values: SchoolFormValues,
+  detail: SchoolDetail,
+): UpdateSchoolPayload {
+  const plan = schoolSubscriptionPlans.find((p) => p.id === values.subscriptionPlanId);
+
+  return {
+    id: detail.id,
+    name: normalizeTextInput(values.schoolName),
+    logoUrl: resolveLogoUrl(values),
+    phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
+    address: normalizeTextInput(values.address),
+    description: normalizeTextInput(values.schoolDescription),
+    email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
+    city: normalizeTextInput(values.city),
+    country: normalizeTextInput(values.country),
+    points: detail.points,
+    performanceLevel: buildPerformanceLevel(values),
+    establishmentDate: detail.establishmentDate || new Date().toISOString(),
+    // subscriptionPlanId: plan?.apiId ?? detail.subscriptionPlanId,
+    status: detail.statusCode,
+  };
+}
+
+interface AdminAddSchoolPageProps {
+  schoolId?: string;
+}
+
+export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
+  const isEditMode = Boolean(schoolId);
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
   const [values, setValues] = useState<SchoolFormValues>(defaultSchoolFormValues);
+  const [loadedSchool, setLoadedSchool] = useState<SchoolDetail | null>(null);
+  const [isLoadingSchool, setIsLoadingSchool] = useState(isEditMode);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<{
     message?: string;
@@ -111,6 +151,37 @@ export function AdminAddSchoolPage() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!schoolId) return;
+
+    let cancelled = false;
+    setIsLoadingSchool(true);
+    setLoadError(null);
+
+    void (async () => {
+      const result = await getSchoolById(schoolId);
+      if (cancelled) return;
+
+      if (!result.data) {
+        setLoadError(result.errorMessage ?? t("schoolManagement.editForm.messages.loadError"));
+        setIsLoadingSchool(false);
+        return;
+      }
+
+      setLoadedSchool(result.data);
+      setIsLoadingSchool(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [schoolId, t]);
+
+  useEffect(() => {
+    if (!loadedSchool) return;
+    setValues(mapSchoolDetailToFormValues(loadedSchool, countryOptions));
+  }, [loadedSchool, countryOptions]);
 
   const setField = <K extends keyof SchoolFormValues>(
     key: K,
@@ -140,22 +211,47 @@ export function AdminAddSchoolPage() {
     });
   };
 
+  const navigateToDashboard = () => {
+    router.push(`${ROUTES.ADMIN.HOME}?tab=schoolManagement&refresh=${Date.now()}`);
+  };
+
   const handleCancel = () => {
     router.push(`${ROUTES.ADMIN.HOME}?tab=schoolManagement`);
   };
 
   const handleSubmit = async () => {
-    if (isSubmitting) return;
+    if (isSubmitting || isLoadingSchool) return;
     setSubmitError(null);
     setIsSubmitting(true);
 
+    if (isEditMode && schoolId && loadedSchool) {
+      const payload = buildUpdateSchoolPayload(values, loadedSchool);
+      const result = await updateSchool(schoolId, payload);
+      const isSuccess = Boolean(result.data?.id) || (result.status === "Success" && !result.errorMessage);
+
+      if (isSuccess) {
+        notify.success(result.message ?? t("schoolManagement.editForm.messages.updateSuccess"));
+        navigateToDashboard();
+        return;
+      }
+
+      setSubmitError({
+        message: result.errorMessage ?? t("schoolManagement.editForm.messages.updateError"),
+        validationErrors: result.validationErrors,
+      });
+      notify.error(result.errorMessage ?? t("schoolManagement.editForm.messages.updateError"));
+      setIsSubmitting(false);
+      return;
+    }
+
     const payload = buildCreateSchoolPayload(values);
     const result = await createSchool(payload);
-    console.log(payload);
+    const created = result.data;
+    const isSuccess = Boolean(created?.id) || (result.status === "Success" && !result.errorMessage);
 
-    if (result.data?.id) {
+    if (isSuccess) {
       notify.success(result.message ?? t("schoolManagement.addForm.messages.createSuccess"));
-      router.push(`${ROUTES.ADMIN.HOME}?tab=schoolManagement&refresh=${Date.now()}`);
+      navigateToDashboard();
       return;
     }
 
@@ -190,20 +286,55 @@ export function AdminAddSchoolPage() {
     [t],
   );
 
+  const pageTitle = isEditMode
+    ? t("schoolManagement.editPage.title")
+    : t("schoolManagement.addPage.title");
+  const pageDescription = isEditMode
+    ? t("schoolManagement.editPage.description")
+    : t("schoolManagement.addPage.description");
+  const submitLabel = isEditMode
+    ? t("schoolManagement.editForm.actions.submit")
+    : t("schoolManagement.addForm.actions.submit");
+
+  if (isEditMode && isLoadingSchool) {
+    return (
+      <div className="space-y-8">
+        <Skeleton className="h-24 w-full rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-2xl" />
+        <Skeleton className="h-48 w-full rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (isEditMode && loadError) {
+    return (
+      <div className="space-y-4 rounded-2xl border border-red-100 bg-red-50 p-6 text-right">
+        <p className="text-lg font-bold text-red-600">{loadError}</p>
+        <button
+          type="button"
+          className="text-sm font-semibold text-[#243B5A] underline"
+          onClick={handleCancel}
+        >
+          {t("schoolManagement.addForm.actions.cancel")}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <DashboardPageHeader
-        title={t("schoolManagement.addPage.title")}
+        title={pageTitle}
         breadcrumbs={[
           { label: t("tabs.home.title") },
           { label: t("schoolManagement.page.title") },
-          { label: t("schoolManagement.addPage.title") },
+          { label: pageTitle },
         ]}
-        description={t("schoolManagement.addPage.description")}
+        description={pageDescription}
         action={
           <SchoolFormActions
             cancelLabel={t("schoolManagement.addForm.actions.cancel")}
-            submitLabel={t("schoolManagement.addForm.actions.submit")}
+            submitLabel={submitLabel}
             onCancel={handleCancel}
             onSubmit={handleSubmit}
           />

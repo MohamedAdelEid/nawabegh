@@ -191,6 +191,31 @@ export function getUserManagementDetail(userId: string) {
   return userManagementDetailsMap[userId];
 }
 
+export function getUserManagementDetailsLayout(): Pick<
+  UserManagementDetail,
+  | "stats"
+  | "weeklyPerformance"
+  | "activities"
+  | "subscriptions"
+  | "floatingActions"
+> {
+  const template =
+    userManagementDetailsMap[userManagementFallbackDetailId] ??
+    Object.values(userManagementDetailsMap)[0];
+
+  if (!template) {
+    throw new Error("User management details layout template is missing.");
+  }
+
+  return {
+    stats: template.stats,
+    weeklyPerformance: template.weeklyPerformance,
+    activities: template.activities,
+    subscriptions: template.subscriptions,
+    floatingActions: template.floatingActions,
+  };
+}
+
 export const userManagementFallbackDetailId = "salman-bin-khaled";
 
 export const userManagementProfileIcon = UserRound;

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ClipboardList, EllipsisVertical, Eye, EyeOff, Heart, MessageSquare, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import {
@@ -24,6 +25,7 @@ import {
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import type { UserManagementSchoolId } from "@/modules/admin/domain/data/userManagementDashboardData";
 import { ArticleDeleteModal, ArticleRejectModal, type RejectReason } from "@/modules/admin/presentation/components/article-editor";
+import { ArticleEditorDashboardSkeleton } from "@/modules/admin/presentation/components/dashboard/ArticleEditorDashboardSkeleton";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
@@ -45,6 +47,14 @@ import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user
 type StatusFilter = "all" | ArticleStatusId;
 
 const PAGE_SIZE = 10;
+const fadeInUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.35, ease: "easeOut" as const },
+  }),
+};
 
 function statusTone(status: ArticleStatusId) {
   if (status === "published") return "success" as const;
@@ -105,6 +115,7 @@ export function ArticleEditorDashboard() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [rejectTargetId, setRejectTargetId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [pendingMutationId, setPendingMutationId] = useState<string | null>(null);
   const [actionsMenuArticleId, setActionsMenuArticleId] = useState<string | null>(null);
   const requestSeq = useRef(0);
@@ -209,6 +220,7 @@ export function ArticleEditorDashboard() {
       notify.error(result.errorMessage ?? t("articleEditor.table.loadError"));
     }
     setIsLoading(false);
+    setInitialLoadComplete(true);
   }, [authorFilter, currentPage, debouncedSearch, schoolFilter, statusFilter, t]);
 
   useEffect(() => {
@@ -429,113 +441,134 @@ export function ArticleEditorDashboard() {
         </Button>}
       />
 
-      <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {computedStats.map((stat) => (
-          <DashboardStatCard
-            key={stat.id}
-            label={t(stat.labelKey)}
-            value={stat.value}
-            indicator={stat.indicatorKey ? t(stat.indicatorKey) : undefined}
-            indicatorClassName={stat.indicatorToneClassName}
-            icon={stat.icon}
-            iconTone={stat.iconTone}
-            className={stat.accentClassName}
-          />
-        ))}
-      </section>
+      {!initialLoadComplete && isLoading ? (
+        <ArticleEditorDashboardSkeleton />
+      ) : (
+        <>
+          <motion.section
+            className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+          >
+            {computedStats.map((stat, idx) => (
+              <motion.div key={stat.id} custom={idx} variants={fadeInUp}>
+                <DashboardStatCard
+                  label={t(stat.labelKey)}
+                  value={stat.value}
+                  indicator={stat.indicatorKey ? t(stat.indicatorKey) : undefined}
+                  indicatorClassName={stat.indicatorToneClassName}
+                  icon={stat.icon}
+                  iconTone={stat.iconTone}
+                  className={stat.accentClassName}
+                />
+              </motion.div>
+            ))}
+          </motion.section>
 
-      <div className="rounded-[1.75rem] border border-white/80 bg-white p-5" style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:gap-4">
-          <DashboardFilterSelect
-            value={statusFilter}
-            label={t("articleEditor.filters.status.label")}
-            onChange={(value) => {
-              setStatusFilter(value as StatusFilter);
-              setCurrentPage(1);
-            }}
-            options={[
-              { id: "all", label: t("articleEditor.filters.status.all") },
-              { id: "published", label: t("articleEditor.table.status.published") },
-              { id: "pendingReview", label: t("articleEditor.table.status.pendingReview") },
-              { id: "draft", label: t("articleEditor.table.status.draft") },
-              { id: "needsEdits", label: t("articleEditor.filters.status.needsEdits") },
-              { id: "hidden", label: t("articleEditor.filters.status.hidden") },
-              { id: "rejected", label: t("articleEditor.filters.status.removed") },
-            ]}
-          />
-          <DashboardFilterSelect
-            value={schoolFilter}
-            label={t("articleEditor.filters.school.label")}
-            disabled={!schoolsLoaded}
-            onChange={(value) => {
-              setSchoolFilter(value);
-              setAuthorFilter("all");
-              setCurrentPage(1);
-            }}
-            options={schoolSelectOptions}
-          />
-          <DashboardFilterSelect
-            value={authorFilter}
-            label={t("articleEditor.filters.author.label")}
-            disabled={authorsListLoading}
-            onChange={(value) => {
-              setAuthorFilter(value);
-              setCurrentPage(1);
-            }}
-            options={authorSelectOptions}
-          />
-          <DashboardSearchFilter
-            label={t("articleEditor.filters.search.label")}
-            placeholder={t("articleEditor.filters.search.placeholder")}
-            value={search}
-            onChange={(value) => {
-              setSearch(value);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
-      </div>
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="rounded-[1.75rem] border border-white/80 bg-white p-5"
+            style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}
+          >
+            <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:gap-4">
+              <DashboardFilterSelect
+                value={statusFilter}
+                label={t("articleEditor.filters.status.label")}
+                onChange={(value) => {
+                  setStatusFilter(value as StatusFilter);
+                  setCurrentPage(1);
+                }}
+                options={[
+                  { id: "all", label: t("articleEditor.filters.status.all") },
+                  { id: "published", label: t("articleEditor.table.status.published") },
+                  { id: "pendingReview", label: t("articleEditor.table.status.pendingReview") },
+                  { id: "draft", label: t("articleEditor.table.status.draft") },
+                  { id: "needsEdits", label: t("articleEditor.filters.status.needsEdits") },
+                  { id: "hidden", label: t("articleEditor.filters.status.hidden") },
+                  { id: "rejected", label: t("articleEditor.filters.status.removed") },
+                ]}
+              />
+              <DashboardFilterSelect
+                value={schoolFilter}
+                label={t("articleEditor.filters.school.label")}
+                disabled={!schoolsLoaded}
+                onChange={(value) => {
+                  setSchoolFilter(value);
+                  setAuthorFilter("all");
+                  setCurrentPage(1);
+                }}
+                options={schoolSelectOptions}
+              />
+              <DashboardFilterSelect
+                value={authorFilter}
+                label={t("articleEditor.filters.author.label")}
+                disabled={authorsListLoading}
+                onChange={(value) => {
+                  setAuthorFilter(value);
+                  setCurrentPage(1);
+                }}
+                options={authorSelectOptions}
+              />
+              <DashboardSearchFilter
+                label={t("articleEditor.filters.search.label")}
+                placeholder={t("articleEditor.filters.search.placeholder")}
+                value={search}
+                onChange={(value) => {
+                  setSearch(value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+          </motion.div>
 
-      <DashboardTableCard
-        title={t("articleEditor.table.title")}
-        footer={
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <p className="text-right text-sm text-slate-500">
-              {t("articleEditor.table.pagination.summary", { visible: rows.length, total: totalItems })}
-            </p>
-            <DashboardPagination
-              pages={Array.from({ length: pages }, (_, index) => index + 1)}
-              currentPage={currentPage}
-              previousLabel={t("articleEditor.table.pagination.previous")}
-              nextLabel={t("articleEditor.table.pagination.next")}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        }
-      >
-        <div className="overflow-x-auto">
-          {isLoading ? (
-            <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.reviewPage.loading")}</p>
-          ) : rows.length === 0 ? (
-            <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.table.empty")}</p>
-          ) : (
-            <DashboardDataTable
-              rows={rows}
-              columns={tableColumns}
-              getRowKey={(row) => row.id}
-              emptyMessage={t("articleEditor.table.empty")}
-              onRowClick={(row) => {
-                if (canReviewArticle(row.statusId)) {
-                  router.push(ROUTES.ADMIN.ARTICLE_EDITOR.VIEW(row.id));
-                }
-              }}
-              rowClassName={(row) => cn(
-                "hover:bg-slate-50/80",
-                canReviewArticle(row.statusId) ? "cursor-pointer" : "cursor-default",
-              )}
-              actionsHeader={t("articleEditor.table.columns.actions")}
-              renderActions={(row) => (
-                <div className="flex items-center justify-end gap-2">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <DashboardTableCard
+              title={t("articleEditor.table.title")}
+              footer={
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <p className="text-right text-sm text-slate-500">
+                    {t("articleEditor.table.pagination.summary", { visible: rows.length, total: totalItems })}
+                  </p>
+                  <DashboardPagination
+                    pages={Array.from({ length: pages }, (_, index) => index + 1)}
+                    currentPage={currentPage}
+                    previousLabel={t("articleEditor.table.pagination.previous")}
+                    nextLabel={t("articleEditor.table.pagination.next")}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              }
+            >
+              <div className="overflow-x-auto">
+                {isLoading ? (
+                  <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.reviewPage.loading")}</p>
+                ) : rows.length === 0 ? (
+                  <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.table.empty")}</p>
+                ) : (
+                  <DashboardDataTable
+                    rows={rows}
+                    columns={tableColumns}
+                    getRowKey={(row) => row.id}
+                    emptyMessage={t("articleEditor.table.empty")}
+                    onRowClick={(row) => {
+                      if (canReviewArticle(row.statusId)) {
+                        router.push(ROUTES.ADMIN.ARTICLE_EDITOR.VIEW(row.id));
+                      }
+                    }}
+                    rowClassName={(row) => cn(
+                      "hover:bg-slate-50/80",
+                      canReviewArticle(row.statusId) ? "cursor-pointer" : "cursor-default",
+                    )}
+                    actionsHeader={t("articleEditor.table.columns.actions")}
+                    renderActions={(row) => (
+                      <div className="flex items-center justify-end gap-2">
                   <div className="hidden flex-wrap items-center justify-end gap-2 lg:flex">
                     {canReviewArticle(row.statusId) ? (
                       <>
@@ -725,12 +758,15 @@ export function ArticleEditorDashboard() {
                       </div>
                     ) : null}
                   </div>
-                </div>
-              )}
-            />
-          )}
-        </div>
-      </DashboardTableCard>
+                      </div>
+                    )}
+                  />
+                )}
+              </div>
+            </DashboardTableCard>
+          </motion.div>
+        </>
+      )}
 
       <ArticleDeleteModal
         open={Boolean(deleteTargetId)}

@@ -45,6 +45,9 @@ function unwrapUploadRecord(data: unknown): UnknownRecord | null {
 }
 
 export const QUESTION_BANK_UPLOAD_FOLDER = "questions";
+export const SUBJECT_ICON_UPLOAD_FOLDER = "subjects/icons";
+export const BADGE_ICON_UPLOAD_FOLDER = "badges/icons";
+export const SUPPORT_TICKET_ATTACHMENT_FOLDER = "support-tickets/attachments";
 
 export type UploadAdminFileResult =
   | { ok: true; filePath: string; message?: string }

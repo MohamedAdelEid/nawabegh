@@ -20,6 +20,10 @@ import {
   uploadAdminFile,
 } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {
+  QuestionBankAddPageSkeleton,
+  QuestionBankAnimatedSection,
+} from "@/modules/admin/presentation/components/question-bank";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -272,29 +276,41 @@ export function AdminQuestionBankAddPage() {
     };
   }, [selectedAttachmentPreview]);
 
+  const isFormLoading = enumsQuery.isPending || subjectsQuery.isPending;
+
+  const header = (
+    <DashboardPageHeader
+      title={t("questionBankAdd.title")}
+      description={t("questionBankAdd.description")}
+      breadcrumbs={[
+        { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
+        { label: t("questionBankAdd.title") },
+      ]}
+      action={
+        <Button
+          type="button"
+          disabled={isSaving || isFormLoading}
+          onClick={() => void handleSave(false)}
+          className="dashboard-raised-button h-14 rounded-2xl bg-[#243B5A] px-6 text-base font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
+          style={{ boxShadow: "0px 4px 0px 0px #1E2E42" }}
+        >
+          <Save className="h-4 w-4" aria-hidden />
+          {t("questionBankAdd.actions.save")}
+        </Button>
+      }
+    />
+  );
+
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankAdd.title")}
-        description={t("questionBankAdd.description")}
-        breadcrumbs={[
-          { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
-          { label: t("questionBankAdd.title") },
-        ]}
-        action={
-          <Button
-            type="button"
-            disabled={isSaving}
-            onClick={() => void handleSave(false)}
-            className="dashboard-raised-button h-14 rounded-2xl bg-[#243B5A] px-6 text-base font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
-            style={{ boxShadow: "0px 4px 0px 0px #1E2E42" }}
-          >
-            <Save className="h-4 w-4" aria-hidden />
-            {t("questionBankAdd.actions.save")}
-          </Button>
-        }
-      />
+      {header}
 
+      {isFormLoading ? (
+        <div aria-busy="true" aria-label={t("questionBankAdd.messages.loading")}>
+          <QuestionBankAddPageSkeleton />
+        </div>
+      ) : (
+        <QuestionBankAnimatedSection delay={0.04}>
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
         <div className="space-y-6">
           <Card className="rounded-2xl border border-slate-200 shadow-[0px_6px_0px_0px_#0000000A]">
@@ -634,6 +650,8 @@ export function AdminQuestionBankAddPage() {
           </Button>
         </div>
       </div>
+        </QuestionBankAnimatedSection>
+      )}
     </div>
   );
 }

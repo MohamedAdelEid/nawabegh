@@ -1,0 +1,166 @@
+{
+  "curriculumManagement": {
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "page": {
+      "title": "Curriculum management",
+      "description": "Manage education levels, grades, and subjects across the platform."
+    },
+    "tabs": {
+      "educationLevels": "Education levels",
+      "grades": "Grades",
+      "subjects": "Subjects"
+    },
+    "filters": {
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by name..."
+      },
+      "country": {
+        "label": "Country",
+        "all": "All countries"
+      },
+      "educationLevel": {
+        "label": "Education level",
+        "all": "All levels"
+      }
+    },
+    "table": {
+      "columns": {
+        "actions": "Actions"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "pagination": {
+        "summary": "Showing {from}–{to} of {total}",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "states": {
+        "empty": {
+          "title": "No results found",
+          "description": "Try adjusting your filters or add a new item."
+        },
+        "error": {
+          "title": "Failed to load data",
+          "retry": "Retry"
+        }
+      }
+    },
+    "deleteModal": {
+      "title": "Confirm deletion",
+      "description": "This action cannot be undone. The following item will be permanently removed:",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Item deleted successfully."
+    },
+    "educationLevels": {
+      "page": {
+        "create": "Add education level"
+      },
+      "table": {
+        "title": "Education levels list",
+        "columns": {
+          "name": "Name",
+          "country": "Country",
+          "order": "Order",
+          "gradeCount": "Grades"
+        }
+      },
+      "form": {
+        "createTitle": "Add education level",
+        "editTitle": "Edit education level",
+        "createDescription": "Create a new education level for a country.",
+        "editDescription": "Update the education level details.",
+        "country": "Country",
+        "countryPlaceholder": "Select country",
+        "nameAr": "Arabic name",
+        "nameArPlaceholder": "Enter Arabic name",
+        "nameEn": "English name",
+        "nameEnPlaceholder": "Enter English name",
+        "order": "Display order",
+        "orderPlaceholder": "e.g. 1",
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "success": "Education level saved successfully."
+      }
+    },
+    "grades": {
+      "page": {
+        "create": "Add grade"
+      },
+      "table": {
+        "title": "Grades list",
+        "columns": {
+          "name": "Name",
+          "educationLevel": "Education level",
+          "country": "Country",
+          "order": "Order",
+          "studentCount": "Students"
+        }
+      },
+      "form": {
+        "createTitle": "Add grade",
+        "editTitle": "Edit grade",
+        "createDescription": "Create a new grade under an education level.",
+        "editDescription": "Update the grade details.",
+        "country": "Country",
+        "countryPlaceholder": "Select country",
+        "educationLevel": "Education level",
+        "educationLevelPlaceholder": "Select education level",
+        "nameAr": "Arabic name",
+        "nameArPlaceholder": "Enter Arabic name",
+        "nameEn": "English name",
+        "nameEnPlaceholder": "Enter English name",
+        "order": "Display order",
+        "orderPlaceholder": "e.g. 1",
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "success": "Grade saved successfully."
+      }
+    },
+    "subjects": {
+      "page": {
+        "create": "Add subject"
+      },
+      "table": {
+        "title": "Subjects list",
+        "columns": {
+          "name": "Subject",
+          "coursesCount": "Courses",
+          "teachersCount": "Teachers",
+          "createdAt": "Created"
+        }
+      },
+      "form": {
+        "createTitle": "Add subject",
+        "editTitle": "Edit subject",
+        "createDescription": "Create a new subject with an icon.",
+        "editDescription": "Update the subject details.",
+        "icon": "Subject icon",
+        "iconUploadLabel": "Upload icon",
+        "iconPreviewAlt": "Subject icon preview",
+        "iconHint": "PNG, JPG or WebP — max 5 MB",
+        "iconInvalidType": "Please upload a valid image file.",
+        "iconTooLarge": "Image must be 5 MB or smaller.",
+        "iconReadError": "Could not read the selected file.",
+        "nameAr": "Arabic name",
+        "nameArPlaceholder": "Enter Arabic name",
+        "nameEn": "English name",
+        "nameEnPlaceholder": "Enter English name",
+        "cancel": "Cancel",
+        "create": "Create",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "success": "Subject saved successfully."
+      }
+    }
+  }
+}

@@ -1,4 +1,8 @@
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import {
+  parseXPaginationHeader,
+  type XPaginationMeta,
+} from "@/shared/infrastructure/http/xPagination";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 
 export type SchoolKpis = {
@@ -28,7 +32,7 @@ export type CreateSchoolPayload = {
   points: number;
   performanceLevel: string;
   establishmentDate: string;
-  subscriptionPlanId: string;
+  // subscriptionPlanId: string;
 };
 
 export type CreatedSchool = {
@@ -57,8 +61,76 @@ export type CreateSchoolResult = {
   data: CreatedSchool | null;
 };
 
+export type SchoolDetail = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  phoneNumber: string;
+  address: string;
+  description: string;
+  email: string;
+  city: string;
+  country: string;
+  points: number;
+  performanceLevel: string;
+  establishmentDate: string;
+  subscriptionPlanId: string;
+  subscriptionPlanName: string;
+  status: string;
+  statusCode: number;
+  studentCount: number;
+  teacherCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SchoolDetailResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: SchoolDetail | null;
+};
+
+export type UpdateSchoolPayload = {
+  id: string;
+  name: string;
+  logoUrl: string;
+  phoneNumber: string;
+  address: string;
+  description: string;
+  email: string;
+  city: string;
+  country: string;
+  points: number;
+  performanceLevel: string;
+  establishmentDate: string;
+  // subscriptionPlanId: string;
+  status: number;
+};
+
+export type UpdateSchoolResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: SchoolDetail | null;
+};
+
+export type DeleteSchoolResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: Record<string, never> | null;
+};
+
 export interface GetSchoolsParams {
   keyword?: string;
+  city?: string;
+  country?: string;
+  points?: number;
+  performanceLevel?: string;
   pageNumber: number;
   pageSize: number;
 }
@@ -256,6 +328,52 @@ function mapSchoolKpisPayload(data: unknown): SchoolKpis | null {
   };
 }
 
+function parseSchoolStatusCode(status: unknown): number {
+  if (typeof status === "number" && Number.isFinite(status)) {
+    return status;
+  }
+  if (typeof status === "string") {
+    const trimmed = status.trim();
+    if (trimmed && !Number.isNaN(Number(trimmed))) {
+      return Number(trimmed);
+    }
+    const normalized = trimmed.toLowerCase();
+    if (normalized.includes("active") || normalized.includes("نشط")) return 0;
+    if (normalized.includes("inactive") || normalized.includes("غير")) return 1;
+  }
+  return 0;
+}
+
+function mapSchoolDetail(data: unknown): SchoolDetail | null {
+  const record = asRecord(data);
+  if (!record) return null;
+  const id = readString(record, ["id"]);
+  if (!id) return null;
+
+  return {
+    id,
+    name: readString(record, ["name"]) ?? "",
+    logoUrl: readString(record, ["logoUrl"]) ?? "",
+    phoneNumber: readString(record, ["phoneNumber"]) ?? "",
+    address: readString(record, ["address"]) ?? "",
+    description: readString(record, ["description"]) ?? "",
+    email: readString(record, ["email"]) ?? "",
+    city: readString(record, ["city", "cityName"]) ?? "",
+    country: readString(record, ["country", "countryName"]) ?? "",
+    points: readNumber(record, ["points"]) ?? 0,
+    performanceLevel: readString(record, ["performanceLevel"]) ?? "",
+    establishmentDate: readString(record, ["establishmentDate"]) ?? "",
+    subscriptionPlanId: readString(record, ["subscriptionPlanId"]) ?? "",
+    subscriptionPlanName: readString(record, ["subscriptionPlanName"]) ?? "",
+    status: readString(record, ["status", "statusName"]) ?? "",
+    statusCode: parseSchoolStatusCode(record["status"]),
+    studentCount: readNumber(record, ["studentCount", "studentsCount"]) ?? 0,
+    teacherCount: readNumber(record, ["teacherCount", "teachersCount"]) ?? 0,
+    createdAt: readString(record, ["createdAt"]) ?? "",
+    updatedAt: readString(record, ["updatedAt"]) ?? "",
+  };
+}
+
 function mapCreatedSchool(data: unknown): CreatedSchool | null {
   const record = asRecord(data);
   if (!record) return null;
@@ -359,32 +477,188 @@ export async function createSchool(
   }
 }
 
-export async function getSchools(params: GetSchoolsParams): Promise<SchoolTableResult> {
+export async function getSchoolById(id: string): Promise<SchoolDetailResult> {
   try {
     const response = await httpClient.get<unknown>({
-      url: "/api/v1/School",
-      params: {
-        keyword: params.keyword ?? "",
-        pageNumber: params.pageNumber,
-        pageSize: params.pageSize,
-      },
+      url: `/api/v1/School/${encodeURIComponent(id)}`,
     });
 
-    const rowsRaw = response.data ? extractRows(response.data) : [];
-    const rows = rowsRaw.map((item, index) =>
-      mapSchoolRow(item, index, params.pageNumber, params.pageSize),
-    );
-    const pageMeta = extractPageMeta(response.data, params, rows.length);
+    const envelope = asRecord(response.data);
+    const nested = envelope ? asRecord(envelope["data"]) : null;
+    const detail = mapSchoolDetail(nested ?? envelope);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: detail ? undefined : response.error?.message,
+      validationErrors: response.error?.validationErrors ?? null,
+      data: detail,
+    };
+  } catch (error) {
+    const axiosError = asRecord(error);
+    const response = asRecord(axiosError?.response);
+    const httpStatusCode = readNumber(response, ["status"]);
+    const data = asRecord(response?.data) as BackendApiResponse<unknown> | null;
+
+    return {
+      status:
+        (data?.status as BackendStatus | string | undefined) ??
+        mapHttpStatus(httpStatusCode),
+      message: data?.message,
+      errorMessage:
+        data?.error?.message ??
+        (axiosError?.message as string | undefined) ??
+        "Failed to load school",
+      validationErrors: data?.error?.validationErrors ?? null,
+      data: null,
+    };
+  }
+}
+
+export async function updateSchool(
+  id: string,
+  payload: UpdateSchoolPayload,
+): Promise<UpdateSchoolResult> {
+  try {
+    const response = await httpClient.put<unknown>({
+      url: `/api/v1/School/${encodeURIComponent(id)}`,
+      data: payload,
+    });
+
+    const envelope = asRecord(response.data);
+    const nested = envelope ? asRecord(envelope["data"]) : null;
+    const updated = mapSchoolDetail(nested ?? envelope);
 
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
       validationErrors: response.error?.validationErrors ?? null,
-      page: {
-        rows,
-        ...pageMeta,
-      },
+      data: updated,
+    };
+  } catch (error) {
+    const axiosError = asRecord(error);
+    const response = asRecord(axiosError?.response);
+    const httpStatusCode = readNumber(response, ["status"]);
+    const data = asRecord(response?.data) as BackendApiResponse<unknown> | null;
+
+    return {
+      status:
+        (data?.status as BackendStatus | string | undefined) ??
+        mapHttpStatus(httpStatusCode),
+      message: data?.message,
+      errorMessage:
+        data?.error?.message ??
+        (axiosError?.message as string | undefined) ??
+        "Failed to update school",
+      validationErrors: data?.error?.validationErrors ?? null,
+      data: null,
+    };
+  }
+}
+
+export async function deleteSchool(id: string): Promise<DeleteSchoolResult> {
+  try {
+    const response = await httpClient.delete<unknown>({
+      url: `/api/v1/School/${encodeURIComponent(id)}`,
+    });
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      validationErrors: response.error?.validationErrors ?? null,
+      data: {},
+    };
+  } catch (error) {
+    const axiosError = asRecord(error);
+    const response = asRecord(axiosError?.response);
+    const httpStatusCode = readNumber(response, ["status"]);
+    const data = asRecord(response?.data) as BackendApiResponse<unknown> | null;
+
+    return {
+      status:
+        (data?.status as BackendStatus | string | undefined) ??
+        mapHttpStatus(httpStatusCode),
+      message: data?.message,
+      errorMessage:
+        data?.error?.message ??
+        (axiosError?.message as string | undefined) ??
+        "Failed to delete school",
+      validationErrors: data?.error?.validationErrors ?? null,
+      data: null,
+    };
+  }
+}
+
+function mapSchoolListPage(
+  data: unknown,
+  params: GetSchoolsParams,
+  headerMeta: XPaginationMeta | null,
+): SchoolTablePage | null {
+  const rowsRaw = data ? extractRows(data) : [];
+  const rows = rowsRaw.map((item, index) =>
+    mapSchoolRow(item, index, params.pageNumber, params.pageSize),
+  );
+
+  if (headerMeta) {
+    return {
+      rows,
+      currentPage: headerMeta.currentPage,
+      pageSize: headerMeta.pageSize,
+      totalItems: headerMeta.totalCount,
+      totalPages: headerMeta.totalPages,
+    };
+  }
+
+  const pageMeta = extractPageMeta(data, params, rows.length);
+  return {
+    rows,
+    ...pageMeta,
+  };
+}
+
+function buildSchoolListQueryParams(params: GetSchoolsParams): Record<string, string | number> {
+  const query: Record<string, string | number> = {
+    pageNumber: params.pageNumber,
+    pageSize: params.pageSize,
+  };
+
+  const keyword = params.keyword?.trim();
+  if (keyword) query.keyword = keyword;
+
+  const city = params.city?.trim();
+  if (city) query.city = city;
+
+  const country = params.country?.trim();
+  if (country) query.country = country;
+
+  if (params.points !== undefined && Number.isFinite(params.points)) {
+    query.points = params.points;
+  }
+
+  const performanceLevel = params.performanceLevel?.trim();
+  if (performanceLevel) query.performanceLevel = performanceLevel;
+
+  return query;
+}
+
+export async function getSchools(params: GetSchoolsParams): Promise<SchoolTableResult> {
+  try {
+    const response = await httpClient.get<unknown>({
+      url: "/api/v1/School",
+      params: buildSchoolListQueryParams(params),
+    });
+
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const page = mapSchoolListPage(response.data, params, headerMeta);
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      validationErrors: response.error?.validationErrors ?? null,
+      page,
     };
   } catch (error) {
     const axiosError = asRecord(error);
@@ -405,4 +679,55 @@ export async function getSchools(params: GetSchoolsParams): Promise<SchoolTableR
       page: null,
     };
   }
+}
+
+export type SchoolFilterOption = {
+  id: string;
+  name: string;
+};
+
+export type SchoolFilterOptionsResult = {
+  status: BackendStatus | string;
+  message?: string;
+  errorMessage?: string;
+  validationErrors?: Record<string, string[]> | null;
+  data: SchoolFilterOption[] | null;
+};
+
+/** Loads schools from GET /api/v1/School for filter dropdowns. */
+export async function getSchoolFilterOptions(
+  params: {
+    keyword?: string;
+    country?: string;
+    pageNumber?: number;
+    pageSize?: number;
+  } = {},
+): Promise<SchoolFilterOptionsResult> {
+  const result = await getSchools({
+    keyword: params.keyword,
+    country: params.country,
+    pageNumber: params.pageNumber ?? 1,
+    pageSize: params.pageSize ?? 500,
+  });
+
+  if (!result.page) {
+    return {
+      status: result.status,
+      message: result.message,
+      errorMessage: result.errorMessage,
+      validationErrors: result.validationErrors ?? null,
+      data: null,
+    };
+  }
+
+  return {
+    status: result.status,
+    message: result.message,
+    errorMessage: result.errorMessage,
+    validationErrors: result.validationErrors ?? null,
+    data: result.page.rows.map((row) => ({
+      id: row.id,
+      name: row.schoolName,
+    })),
+  };
 }

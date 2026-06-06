@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/shared/application/lib/cn";
 import { ChevronDown, Search } from "lucide-react";
 
 export type DashboardFilterOption<T extends string> = {
@@ -42,19 +43,22 @@ export function DashboardFilterSelect<T extends string>({
   );
 }
 
+
 export function DashboardSearchFilter({
   label,
   placeholder,
   value,
   onChange,
+  className,
 }: {
   label: string;
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
+  className?: string;
 }) {
   return (
-    <label className="min-w-[18rem] flex-1 space-y-2 text-right">
+    <label className={cn("min-w-[18rem] flex-1 space-y-2 text-right", className)}>
       <span className="block text-xs font-medium text-slate-400">{label}</span>
       <div className="relative">
         <input

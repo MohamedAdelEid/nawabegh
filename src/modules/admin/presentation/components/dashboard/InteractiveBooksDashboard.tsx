@@ -1,15 +1,21 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { BookOpenText, Clock3, NotebookText, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
+import { motion } from "framer-motion";
 import { interactiveBooksDashboardData } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import type { InteractiveBookTableRow } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import { getInteractiveBooks } from "@/modules/admin/infrastructure/api/interactiveBooksApi";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
-import { InteractiveBooksFilterModal } from "@/modules/admin/presentation/components/interactive-books";
+import {
+  InteractiveBooksFilterBar,
+  type InteractiveBooksApiFilterState,
+  InteractiveBooksDashboardSkeleton,
+  InteractiveBooksFilterModal,
+} from "@/modules/admin/presentation/components/interactive-books";
 import {
   DashboardBadge,
   DashboardDataTable,
@@ -20,6 +26,53 @@ import {
   DashboardTableCard,
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
+
+type SummaryStatValue = number | null;
+type SummaryStats = Record<string, SummaryStatValue>;
+
+type StatPresentation = {
+  labelKey: string;
+  icon: typeof NotebookText;
+  iconTone: "primary" | "success" | "warning" | "info";
+  valueFormatter?: (value: SummaryStatValue) => string;
+};
+
+const interactiveBooksSummaryStatConfig: Record<string, StatPresentation> = {
+  totalInteractiveBooks: {
+    labelKey: "interactiveBooks.stats.totalInteractiveBooks.label",
+    icon: NotebookText,
+    iconTone: "primary",
+  },
+  activeReadersToday: {
+    labelKey: "interactiveBooks.stats.activeReadersToday.label",
+    icon: BookOpenText,
+    iconTone: "warning",
+  },
+  averageReadingMinutesPerStudent: {
+    labelKey: "interactiveBooks.stats.averageReadingMinutesPerStudent.label",
+    icon: Clock3,
+    iconTone: "success",
+    valueFormatter: (value) => String(value ?? 0),
+  },
+};
+
+const INTERACTIVE_BOOKS_PAGE_SIZE = 50;
+const INTERACTIVE_BOOKS_PAGE_SIZE_OPTIONS = [
+  { id: "10", label: "10" },
+  { id: "25", label: "25" },
+  { id: "50", label: "50" },
+  { id: "100", label: "100" },
+] as const;
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 18 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.35, ease: "easeOut" as const },
+  }),
+};
+
 function statusTone(statusId: "published" | "draft") {
   return statusId === "published" ? "success" : "warning";
 }
@@ -29,44 +82,126 @@ export function InteractiveBooksDashboard() {
   const formatter = useFormatter();
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(INTERACTIVE_BOOKS_PAGE_SIZE);
   const [filterOpen, setFilterOpen] = useState(false);
   const [rows, setRows] = useState<InteractiveBookTableRow[]>([]);
+  const [summaryStats, setSummaryStats] = useState<SummaryStats>({});
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+  });
   const [loadState, setLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [apiFilters, setApiFilters] = useState<InteractiveBooksApiFilterState>({
+    courseId: "",
+    gradeId: "",
+    status: "all",
+    hasHotspots: "all",
+    fromDate: "",
+    toDate: "",
+    keyword: "",
+    pageNumber: "1",
+    pageSize: String(INTERACTIVE_BOOKS_PAGE_SIZE),
+    acceptLanguage: "ar",
+  });
 
   useEffect(() => {
     let alive = true;
     const load = async () => {
       setLoadState("loading");
-      const result = await getInteractiveBooks();
+      const result = await getInteractiveBooks({
+        pageNumber: currentPage,
+        pageSize,
+      });
       if (!alive) return;
       if (result.errorMessage) {
         setLoadState("error");
         setRows([]);
+        setSummaryStats({});
         notify.error(result.errorMessage ?? t("interactiveBooks.table.loadError"));
         return;
       }
-      setRows(result.data ?? []);
+      setRows(result.data?.rows ?? []);
+      setSummaryStats(result.data?.summary ?? {});
+      setPagination({
+        currentPage: result.data?.currentPage ?? currentPage,
+        totalPages: result.data?.totalPages ?? 1,
+        totalItems: result.data?.totalItems ?? 0,
+      });
+      if (typeof result.data?.currentPage === "number" && result.data.currentPage !== currentPage) {
+        setCurrentPage(result.data.currentPage);
+      }
       setLoadState("success");
-      setCurrentPage(1);
     };
     void load();
     return () => {
       alive = false;
     };
-  }, []);
+  }, [currentPage, pageSize, t]);
 
   const computedStats = useMemo(() => {
-    return interactiveBooksDashboardData.stats.map((stat) => {
-      if (stat.id === "totalBooks" && loadState === "success") {
-        return { ...stat, value: String(rows.length) };
-      }
-      return stat;
-    });
-  }, [loadState, rows.length]);
+    const fallbackStats = interactiveBooksDashboardData.stats;
+    const summaryEntries = Object.entries(summaryStats).filter(
+      ([key]) => !key.endsWith("TrendPercent"),
+    );
 
-  const totalItems = rows.length;
+    if (summaryEntries.length === 0) {
+      return fallbackStats.map((stat) => {
+        if (stat.id === "totalBooks" && loadState === "success") {
+          return { ...stat, value: String(rows.length) };
+        }
+        return stat;
+      });
+    }
+
+    return summaryEntries.map(([summaryKey, value]) => {
+      const config = interactiveBooksSummaryStatConfig[summaryKey];
+      const trendValue = summaryStats[`${summaryKey}TrendPercent`];
+      const indicator =
+        trendValue === null || typeof trendValue === "undefined"
+          ? undefined
+          : t("interactiveBooks.stats.trendPercent", { value: trendValue });
+
+      if (config) {
+        const formattedValue = config.valueFormatter ? config.valueFormatter(value) : String(value ?? 0);
+        return {
+          id: summaryKey,
+          label: t(config.labelKey),
+          value:
+            summaryKey === "averageReadingMinutesPerStudent"
+              ? t("interactiveBooks.stats.averageReadingMinutesPerStudent.value", {
+                  value: formattedValue,
+                })
+              : formattedValue,
+          indicator,
+          indicatorToneClassName:
+            typeof trendValue === "number" && trendValue >= 0 ? "text-emerald-500" : "text-rose-500",
+          icon: config.icon,
+          iconTone: config.iconTone,
+        };
+      }
+
+      const fallbackLabel = summaryKey
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (char) => char.toUpperCase())
+        .trim();
+
+      return {
+        id: summaryKey,
+        label: fallbackLabel,
+        value: String(value ?? 0),
+        indicator,
+        indicatorToneClassName:
+          typeof trendValue === "number" && trendValue >= 0 ? "text-emerald-500" : "text-rose-500",
+        icon: NotebookText,
+        iconTone: "primary" as const,
+      };
+    });
+  }, [loadState, rows.length, summaryStats, t]);
+
+  const totalItems = pagination.totalItems;
   const visibleItems = rows.length;
-  const totalPages = Math.max(1, totalItems > 0 ? 1 : 1);
+  const totalPages = Math.max(1, pagination.totalPages);
   const pageNumbers = useMemo(() => Array.from({ length: totalPages }, (_, i) => i + 1), [totalPages]);
 
   const formatCreatedAt = (iso: string) => {
@@ -163,95 +298,106 @@ export function InteractiveBooksDashboard() {
         }
       />
 
-      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {computedStats.map((stat) => (
-          <DashboardStatCard
-            key={stat.id}
-            label={t(stat.labelKey)}
-            value={
-              stat.id === "readingTime"
-                ? t("interactiveBooks.stats.readingTime.value", {
-                    value: stat.value,
-                  })
-                : stat.value
-            }
-            indicator={t(stat.indicatorKey)}
-            indicatorClassName={stat.indicatorToneClassName}
-            icon={stat.icon}
-            iconTone={stat.iconTone}
-          />
-        ))}
-      </section>
-
-      <DashboardTableCard
-        title={t("interactiveBooks.table.title")}
-        actions={
-          <Button
-            type="button"
-            variant="outline"
-            className="rounded-2xl border-slate-200 px-5 text-slate-700"
-            onClick={() => setFilterOpen(true)}
+      {loadState === "loading" ? (
+        <InteractiveBooksDashboardSkeleton />
+      ) : (
+        <>
+          <motion.section
+            className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
           >
-            <SlidersHorizontal className="h-4 w-4" aria-hidden />
-            {t("interactiveBooks.table.actions.openFilter")}
-          </Button>
-        }
-        footer={
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <p className="text-right text-sm text-slate-400">
-              {t("interactiveBooks.table.pagination.summary", {
-                visible: loadState === "loading" ? 0 : visibleItems,
-                total: loadState === "loading" ? 0 : totalItems,
-              })}
-            </p>
-            <DashboardPagination
-              pages={pageNumbers}
-              currentPage={Math.min(currentPage, totalPages)}
-              previousLabel={t("interactiveBooks.table.pagination.previous")}
-              nextLabel={t("interactiveBooks.table.pagination.next")}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        }
-      >
-        {loadState === "loading" ? (
-          <p className="px-6 py-12 text-center text-sm text-slate-500">{t("interactiveBooks.table.loading")}</p>
-        ) : loadState === "error" ? (
-          <p className="px-6 py-12 text-center text-sm text-red-600">{t("interactiveBooks.table.loadError")}</p>
-        ) : (
-          <DashboardDataTable
-            rows={rows}
-            columns={tableColumns}
-            getRowKey={(row) => row.id}
-            emptyMessage={t("interactiveBooks.table.empty")}
-            rowClassName="hover:bg-slate-50/80"
-            actionsHeader={t("interactiveBooks.table.columns.actions")}
-            renderActions={(row) => (
-              <div className="flex items-center gap-2">
-                <button
+            {computedStats.map((stat, idx) => (
+              <motion.div key={stat.id} custom={idx} variants={fadeInUp}>
+                <DashboardStatCard
+                  label={"label" in stat ? stat.label : t(stat.labelKey)}
+                  value={stat.value}
+                  indicator={"indicator" in stat ? stat.indicator : t(stat.indicatorKey)}
+                  indicatorClassName={stat.indicatorToneClassName}
+                  icon={stat.icon}
+                  iconTone={stat.iconTone}
+                />
+              </motion.div>
+            ))}
+          </motion.section>
+          <InteractiveBooksFilterBar value={apiFilters} onChange={setApiFilters} />
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+          >
+            <DashboardTableCard
+              title={t("interactiveBooks.table.title")}
+              actions={
+                <Button
                   type="button"
-                  className="dashboard-icon-btn"
-                  aria-label={t("interactiveBooks.table.actions.edit")}
-                  onClick={() => {
-                    if (!row.courseId) return;
-                    router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_BY_COURSE(row.courseId));
-                  }}
-                  disabled={!row.courseId}
+                  variant="outline"
+                  className="rounded-2xl border-slate-200 px-5 text-slate-700"
+                  onClick={() => setFilterOpen(true)}
                 >
-                  <Pencil className="h-4 w-4" aria-hidden />
-                </button>
-                <button
-                  type="button"
-                  className="dashboard-icon-btn dashboard-icon-btn--danger"
-                  aria-label={t("interactiveBooks.table.actions.delete")}
-                >
-                  <Trash2 className="h-4 w-4" aria-hidden />
-                </button>
-              </div>
-            )}
-          />
-        )}
-      </DashboardTableCard>
+                  <SlidersHorizontal className="h-4 w-4" aria-hidden />
+                  {t("interactiveBooks.table.actions.openFilter")}
+                </Button>
+              }
+              footer={
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <p className="text-right text-sm text-slate-400">
+                    {t("interactiveBooks.table.pagination.summary", {
+                      visible: visibleItems,
+                      total: totalItems,
+                    })}
+                  </p>
+                  <DashboardPagination
+                    pages={pageNumbers}
+                    currentPage={Math.min(pagination.currentPage, totalPages)}
+                    previousLabel={t("interactiveBooks.table.pagination.previous")}
+                    nextLabel={t("interactiveBooks.table.pagination.next")}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              }
+            >
+              {loadState === "error" ? (
+                <p className="px-6 py-12 text-center text-sm text-red-600">{t("interactiveBooks.table.loadError")}</p>
+              ) : (
+                <DashboardDataTable
+                  rows={rows}
+                  columns={tableColumns}
+                  getRowKey={(row) => row.id}
+                  emptyMessage={t("interactiveBooks.table.empty")}
+                  rowClassName="hover:bg-slate-50/80"
+                  actionsHeader={t("interactiveBooks.table.columns.actions")}
+                  renderActions={(row) => (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        className="dashboard-icon-btn"
+                        aria-label={t("interactiveBooks.table.actions.edit")}
+                        onClick={() => {
+                          if (!row.courseId) return;
+                          router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_BY_COURSE(row.courseId));
+                        }}
+                        disabled={!row.courseId}
+                      >
+                        <Pencil className="h-4 w-4" aria-hidden />
+                      </button>
+                      <button
+                        type="button"
+                        className="dashboard-icon-btn dashboard-icon-btn--danger"
+                        aria-label={t("interactiveBooks.table.actions.delete")}
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden />
+                      </button>
+                    </div>
+                  )}
+                />
+              )}
+            </DashboardTableCard>
+          </motion.div>
+        </>
+      )}
 
       <InteractiveBooksFilterModal open={filterOpen} onOpenChange={setFilterOpen} />
     </div>

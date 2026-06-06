@@ -1,6 +1,9 @@
 export { SidebarHomeIcon } from "./HomeIcon";
 export { SidebarFolderIcon } from "./FolderIcon";
 export { SidebarBookIcon } from "./BookIcon";
+export { SidebarBankIcon } from "./BankIcon";
 export { SidebarMessageIcon } from "./MessageIcon";
 export { SidebarMapIcon } from "./MapIcon";
 export { SidebarChatGroupIcon } from "./ChatGroupIcon";
+export { SidebarNotifyIcon } from "./NotifyIcon";
+export { SidebarAdsIcon } from "./AdsIcon";

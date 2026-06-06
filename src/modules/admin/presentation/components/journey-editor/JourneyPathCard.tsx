@@ -32,6 +32,7 @@ interface Props {
   onAddStation: (pathId: string) => void;
   onDeleteStation: (stationId: string) => void;
   onDeletePath?: (pathId: string) => void;
+  onReorderStations?: (pathId: string, orderedIds: string[]) => Promise<boolean>;
 }
 
 export function JourneyPathCard({
@@ -40,10 +41,12 @@ export function JourneyPathCard({
   onAddStation,
   onDeleteStation,
   onDeletePath,
+  onReorderStations,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.editor");
   const [collapsed, setCollapsed] = useState(path.isCollapsed);
   const [orderedStations, setOrderedStations] = useState(path.stations);
+  const [isReordering, setIsReordering] = useState(false);
   const stationIds = useMemo(
     () => orderedStations.map((station) => station.id),
     [orderedStations],
@@ -61,14 +64,27 @@ export function JourneyPathCard({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id || isReordering) return;
 
-    setOrderedStations((currentStations) => {
-      const oldIndex = currentStations.findIndex((station) => station.id === active.id);
-      const newIndex = currentStations.findIndex((station) => station.id === over.id);
-      if (oldIndex === -1 || newIndex === -1) return currentStations;
-      return arrayMove(currentStations, oldIndex, newIndex);
-    });
+    const oldIndex = orderedStations.findIndex((station) => station.id === active.id);
+    const newIndex = orderedStations.findIndex((station) => station.id === over.id);
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const previousStations = orderedStations;
+    const nextStations = arrayMove(orderedStations, oldIndex, newIndex);
+    setOrderedStations(nextStations);
+
+    if (!onReorderStations) return;
+
+    const orderedIds = nextStations.map((station) => station.id);
+    setIsReordering(true);
+    void (async () => {
+      const success = await onReorderStations(path.id, orderedIds);
+      setIsReordering(false);
+      if (!success) {
+        setOrderedStations(previousStations);
+      }
+    })();
   };
 
   return (

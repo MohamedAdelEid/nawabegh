@@ -1,13 +1,33 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useSendNotificationPage } from "@/modules/admin/application/hooks/useSendNotificationPage";
+import {
+  SendNotificationAnimatedSection,
+  SendNotificationForm,
+  SendNotificationMobilePreview,
+  SendNotificationPageSkeleton,
+} from "@/modules/admin/presentation/components/send-notification";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
-import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Button } from "@/shared/presentation/components/ui/button";
 
 export function AdminSendNotificationPage() {
   const t = useTranslations("admin.dashboard");
+  const router = useRouter();
+  const {
+    values,
+    patchValues,
+    isBootstrapping,
+    isSubmitting,
+    isLoadingSchools,
+    countryOptions,
+    schoolOptions,
+    expectedViews,
+    submit,
+  } = useSendNotificationPage();
+
   return (
     <div className="space-y-6">
       <DashboardPageHeader
@@ -17,11 +37,38 @@ export function AdminSendNotificationPage() {
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("sendNotification.title") },
         ]}
+        action={
+          <Button
+            variant="outline"
+            className="h-12 rounded-xl border-slate-200 shadow-[0px_4px_0px_0px_#0000000D]"
+            onClick={() => router.push(ROUTES.ADMIN.HOME)}
+          >
+            {t("sendNotification.actions.cancel")}
+          </Button>
+        }
       />
-      <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <Card><CardContent className="h-[42rem] p-4"><div className="h-full rounded-3xl bg-slate-100" /></CardContent></Card>
-        <Card><CardContent className="space-y-4 p-6 text-right"><h3 className="text-2xl font-bold text-[#1E3A66]">{t("sendNotification.formTitle")}</h3><div className="h-[36rem] rounded-xl bg-slate-50" /><Button className="w-full">{t("sendNotification.sendNow")}</Button></CardContent></Card>
-      </div>
+
+      {isBootstrapping ? (
+        <SendNotificationPageSkeleton />
+      ) : (
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_min(100%,25rem)]">
+          <SendNotificationAnimatedSection delay={0}>
+            <SendNotificationForm
+              values={values}
+              onChange={patchValues}
+              countryOptions={countryOptions}
+              schoolOptions={schoolOptions}
+              isLoadingSchools={isLoadingSchools}
+              isSubmitting={isSubmitting}
+              onSubmit={() => void submit()}
+            />
+          </SendNotificationAnimatedSection>
+
+          <SendNotificationAnimatedSection delay={0.1} className="lg:sticky lg:top-6 lg:self-start">
+            <SendNotificationMobilePreview values={values} expectedViews={expectedViews} />
+          </SendNotificationAnimatedSection>
+        </div>
+      )}
     </div>
   );
 }

@@ -107,6 +107,7 @@ export function AdminArticleEditorReviewPage({
     const load = async () => {
       setIsLoading(true);
       const data = await getArticleReviewDetailById(articleId, locale);
+      console.log("data", data);
       if (!alive) return;
       setDetail(data);
       setIsLoading(false);
@@ -136,6 +137,7 @@ export function AdminArticleEditorReviewPage({
     return detail.comments.filter((comment) => commentLocalState[comment.id] !== "removed");
   }, [detail, commentLocalState]);
 
+  console.log("commentsToRender", detail?.comments);
   const completionTone = useMemo(() => {
     if (!detail) return "warning";
     return detail.reviewSummary.informationCompletionPercent >= 80
@@ -264,7 +266,6 @@ export function AdminArticleEditorReviewPage({
       </div>
     );
   }
-  console.log(detail);
 
   return (
     <div className="space-y-8">

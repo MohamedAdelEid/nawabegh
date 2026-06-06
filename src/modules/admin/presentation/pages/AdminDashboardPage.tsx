@@ -2,7 +2,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { DashboardTabPage } from "@/shared/presentation/components/dashboard";
+import {
+  DashboardNotImplementedState,
+  DashboardTabPage,
+} from "@/shared/presentation/components/dashboard";
 import { ChatGroupsDashboard } from "@/modules/admin/presentation/components/dashboard/ChatGroupsDashboard";
 import { InteractiveBooksDashboard } from "@/modules/admin/presentation/components/dashboard/InteractiveBooksDashboard";
 import { LiveBroadcastDashboard } from "@/modules/admin/presentation/components/dashboard/LiveBroadcastDashboard";
@@ -83,8 +86,14 @@ export function AdminDashboardPage() {
   return (
     <DashboardTabPage
       homeLabel={t("tabs.home.title")}
-      title={t(`tabs.${tab}.title`)}
-      description={t(`tabs.${tab}.description`)}
-    />
+      title={t("tabs.helper.title")}
+      description={t("tabs.helper.description")}
+    >
+      <DashboardNotImplementedState
+        badge={t("notImplemented.badge")}
+        title={t("notImplemented.title")}
+        description={t("notImplemented.description")}
+      />
+    </DashboardTabPage>
   );
 }

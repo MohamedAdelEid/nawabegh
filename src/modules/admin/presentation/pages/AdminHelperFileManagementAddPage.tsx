@@ -195,44 +195,7 @@ export function AdminHelperFileManagementAddPage({
         ]}
       />
 
-      <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
-        <aside className="space-y-4">
-          <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
-            <CardContent className="space-y-4 p-5 text-right">
-              <h3 className="font-bold text-[#1E3A66]">{t("form.summary.title")}</h3>
-              <div className="space-y-2 text-sm text-slate-500">
-                <p>{t(stationContext ? "form.stationContext.step1" : "form.summary.step1")}</p>
-                <p>{t(stationContext ? "form.stationContext.step2" : "form.summary.step2")}</p>
-                <p>{t(stationContext ? "form.stationContext.step3" : "form.summary.step3")}</p>
-              </div>
-              {stationContext ? (
-                <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
-                  <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
-                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
-                </div>
-              ) : null}
-              <Button
-                type="button"
-                className="h-12 w-full rounded-xl bg-[#2B415E] text-white hover:bg-[#243B5A]"
-                onClick={() => void submit()}
-                disabled={submitting || uploading}
-              >
-                {submitting ? t("form.actions.saving") : t("form.actions.publish")}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="h-10 w-full text-slate-500"
-                onClick={() =>
-                  router.push(stationContext?.returnHref ?? routeConfig.LIST)
-                }
-              >
-                {t("form.actions.cancel")}
-              </Button>
-            </CardContent>
-          </Card>
-        </aside>
-
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-6">
           <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">
@@ -361,6 +324,43 @@ export function AdminHelperFileManagementAddPage({
             </div>
           </div>
         </div>
+
+        <aside className="space-y-4">
+          <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
+            <CardContent className="space-y-4 p-5 text-right">
+              <h3 className="font-bold text-[#1E3A66]">{t("form.summary.title")}</h3>
+              <div className="space-y-2 text-sm text-slate-500">
+                <p>{t(stationContext ? "form.stationContext.step1" : "form.summary.step1")}</p>
+                <p>{t(stationContext ? "form.stationContext.step2" : "form.summary.step2")}</p>
+                <p>{t(stationContext ? "form.stationContext.step3" : "form.summary.step3")}</p>
+              </div>
+              {stationContext ? (
+                <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
+                  <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
+                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
+                </div>
+              ) : null}
+              <Button
+                type="button"
+                className="h-12 w-full rounded-xl bg-[#2B415E] text-white hover:bg-[#243B5A]"
+                onClick={() => void submit()}
+                disabled={submitting || uploading}
+              >
+                {submitting ? t("form.actions.saving") : t("form.actions.publish")}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-10 w-full text-slate-500"
+                onClick={() =>
+                  router.push(stationContext?.returnHref ?? routeConfig.LIST)
+                }
+              >
+                {t("form.actions.cancel")}
+              </Button>
+            </CardContent>
+          </Card>
+        </aside>
       </div>
     </div>
   );

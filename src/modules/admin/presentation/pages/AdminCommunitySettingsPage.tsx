@@ -1,19 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
-import {
-  BadgeCheck,
-  BookOpen,
-  Lock,
-  Pencil,
-  Plus,
-  PlusCircle,
-  Settings2,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { Lock, PlusCircle, Settings2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { cn } from "@/shared/application/lib/cn";
@@ -22,13 +11,18 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { StarTag } from "../assets/icons/StarTag";
+import { useCommunityBadgesTable } from "@/modules/admin/application/hooks/useCommunityBadgesTable";
+import {
+  CommunityBadgeTableRow,
+  CommunityBadgesDashboardSkeleton,
+} from "@/modules/admin/presentation/components/community-badges";
 
 type PrivacyMode = "public" | "school";
 
-const ENGAGEMENT_PATTERN = "/images/article-editor/community-settings-hero-v2.png";
-
 export function AdminCommunitySettingsPage() {
   const t = useTranslations("admin.dashboard.articleEditor.communitySettings");
+  const badgesTable = useCommunityBadgesTable({ pageSize: 5 });
+  const previewBadges = badgesTable.page?.rows ?? [];
   const [privacy, setPrivacy] = useState<PrivacyMode>("public");
   const [publishing, setPublishing] = useState(true);
   const [evaluation, setEvaluation] = useState(true);
@@ -155,7 +149,7 @@ export function AdminCommunitySettingsPage() {
             </h2>
             <div className="flex flex-wrap items-center justify-end gap-2">
               <Button type="button" variant="outline" className="h-10 rounded-lg border-2 border-[#2D3E50] bg-white text-sm font-bold text-[#2D3E50] hover:bg-slate-50" asChild>
-                <a href="#community-badges">{t("badges.manage")}</a>
+                <Link href={ROUTES.ADMIN.ARTICLE_EDITOR.COMMUNITY_BADGES}>{t("badges.manage")}</Link>
               </Button>
               <Button
                 type="button"
@@ -170,54 +164,41 @@ export function AdminCommunitySettingsPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-xl border border-[#EEF4FD] bg-[#FAFBFC]">
-            <table className="w-full min-w-[720px] text-right text-sm">
-              <thead className="bg-[#F1F5F9] text-xs font-bold uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-4 py-3">{t("badges.table.icon")}</th>
-                  <th className="px-4 py-3">{t("badges.table.name")}</th>
-                  <th className="px-4 py-3">{t("badges.table.condition")}</th>
-                  <th className="px-4 py-3">{t("badges.table.recipients")}</th>
-                  <th className="px-4 py-3">{t("badges.table.actions")}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E8ECF2]">
-                <BadgeTableRow
-                  accent="emerald"
-                  icon={<Star className="h-5 w-5 text-emerald-600" />}
-                  iconBg="bg-emerald-50"
-                  name={t("badges.rows.star.name")}
-                  condition={t("badges.rows.star.condition")}
-                  recipientsLabel={t("badges.rows.star.recipients")}
-                  showAvatarStack
-                  actionLabel={t("badges.rows.star.action")}
-                  actionVariant="danger"
-                />
-                <BadgeTableRow
-                  accent="amber"
-                  icon={<BadgeCheck className="h-5 w-5 text-amber-600" />}
-                  iconBg="bg-amber-50"
-                  name={t("badges.rows.factChecker.name")}
-                  condition={t("badges.rows.factChecker.condition")}
-                  recipientsLabel={t("badges.rows.factChecker.recipients")}
-                  showAvatarStack
-                  actionLabel={t("badges.rows.factChecker.action")}
-                  actionVariant="danger"
-                />
-                <BadgeTableRow
-                  accent="blue"
-                  icon={<BookOpen className="h-5 w-5 text-blue-700" />}
-                  iconBg="bg-blue-50"
-                  name={t("badges.rows.researcher.name")}
-                  condition={t("badges.rows.researcher.condition")}
-                  recipientsLabel={t("badges.rows.researcher.recipients")}
-                  showAvatarStack={false}
-                  actionLabel={t("badges.rows.researcher.action")}
-                  actionVariant="success"
-                />
-              </tbody>
-            </table>
-          </div>
+          {badgesTable.isLoading && previewBadges.length === 0 ? (
+            <CommunityBadgesDashboardSkeleton />
+          ) : (
+            <div className="overflow-x-auto rounded-xl border border-[#EEF4FD] bg-[#FAFBFC]">
+              <table className="w-full min-w-[720px] text-right text-sm">
+                <thead className="bg-[#F1F5F9] text-xs font-bold uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">{t("badges.table.icon")}</th>
+                    <th className="px-4 py-3">{t("badges.table.name")}</th>
+                    <th className="px-4 py-3">{t("badges.table.condition")}</th>
+                    <th className="px-4 py-3">{t("badges.table.recipients")}</th>
+                    <th className="px-4 py-3">{t("badges.table.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E8ECF2]">
+                  {previewBadges.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-12 text-center text-slate-500">
+                        {t("badges.empty")}
+                      </td>
+                    </tr>
+                  ) : (
+                    previewBadges.map((badge) => (
+                      <CommunityBadgeTableRow
+                        key={badge.id}
+                        badge={badge}
+                        editHref={ROUTES.ADMIN.ARTICLE_EDITOR.COMMUNITY_BADGE_EDIT(badge.id)}
+                        compact
+                      />
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -279,94 +260,5 @@ function ToggleRow(props: {
         inactiveClassName="bg-slate-200"
       />
     </div>
-  );
-}
-
-function RecipientAvatarStack() {
-  const colors = ["bg-sky-200", "bg-amber-200", "bg-emerald-200"];
-  return (
-    <div className="flex items-center justify-end">
-      <div className="flex flex-row-reverse items-center">
-        {colors.map((bg, i) => (
-          <span
-            key={`stack-${i}`}
-            className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-white text-[10px] font-bold text-slate-700",
-              bg,
-              i > 0 && "-me-2",
-            )}
-            aria-hidden
-          >
-            {i === 0 ? "+" : ""}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function BadgeTableRow(props: {
-  accent: "emerald" | "amber" | "blue";
-  icon: ReactNode;
-  iconBg: string;
-  name: string;
-  condition: string;
-  recipientsLabel: string;
-  showAvatarStack: boolean;
-  actionLabel: string;
-  actionVariant: "danger" | "success";
-}) {
-  const accentClass =
-    props.accent === "emerald"
-      ? "border-s-emerald-500"
-      : props.accent === "amber"
-        ? "border-s-amber-400"
-        : "border-s-blue-500";
-
-  return (
-    <tr className={cn("border-s-4 bg-white hover:bg-[#FAFCFF]", accentClass)}>
-      <td className="px-4 py-4">
-        <div
-          className={cn(
-            "flex h-11 w-11 items-center justify-center rounded-lg border border-[#E8ECF2]",
-            props.iconBg,
-          )}
-        >
-          {props.icon}
-        </div>
-      </td>
-      <td className="px-4 py-4 font-bold text-[#2D3E50]">{props.name}</td>
-      <td className="max-w-xs px-4 py-4 text-slate-600">{props.condition}</td>
-      <td className="px-4 py-4">
-        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
-          <span className="text-slate-600">{props.recipientsLabel}</span>
-          {props.showAvatarStack ? <RecipientAvatarStack /> : null}
-        </div>
-      </td>
-      <td className="px-4 py-4">
-        <div className="flex items-center justify-end gap-2">
-          <button
-            type="button"
-            className="rounded-lg border border-[#E2E8F0] p-2 text-slate-600 hover:bg-slate-50"
-            aria-label="Edit"
-          >
-            <Pencil className="h-4 w-4" />
-          </button>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className={cn(
-              "h-8 rounded-lg px-3 text-xs font-bold",
-              props.actionVariant === "danger"
-                ? "border-[#F44336]/40 text-[#F44336] hover:bg-red-50"
-                : "border-emerald-300 text-emerald-700 hover:bg-emerald-50",
-            )}
-          >
-            {props.actionLabel}
-          </Button>
-        </div>
-      </td>
-    </tr>
   );
 }

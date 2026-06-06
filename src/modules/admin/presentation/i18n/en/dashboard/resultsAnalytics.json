@@ -1,0 +1,216 @@
+{
+  "resultsAnalytics": {
+    "breadcrumbs": {
+      "home": "Home",
+      "results": "Results & Analytics"
+    },
+    "comingSoon": "Coming soon",
+    "overview": {
+      "page": {
+        "title": "Results & Analytics",
+        "description": "Monitor student performance across exams and station quizzes.",
+        "descriptionSingleExam": "Monitoring student performance in \"{exam}\".",
+        "addResult": "Add new result",
+        "exportReport": "Export report"
+      },
+      "stats": {
+        "totalStudents": {
+          "label": "Total tested students",
+          "trend": "{value} vs last week"
+        },
+        "averageScore": {
+          "label": "Average score",
+          "badgeHigh": "High",
+          "badgeStable": "Stable"
+        },
+        "passRate": {
+          "label": "Overall pass rate"
+        },
+        "averageTime": {
+          "label": "Average completion time",
+          "unit": "{value} min",
+          "trend": "{value} change"
+        }
+      },
+      "filters": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Search by name, username, or phone..."
+        },
+        "exam": {
+          "label": "Filter by exam",
+          "all": "All exams"
+        },
+        "school": {
+          "label": "School / region",
+          "all": "All schools"
+        },
+        "scoreMode": {
+          "label": "Score mode",
+          "best": "Best attempt",
+          "latest": "Latest attempt",
+          "first": "First attempt"
+        }
+      },
+      "table": {
+        "student": "Student",
+        "averageScore": "Average score",
+        "attempts": "Attempts",
+        "lastActivity": "Last activity",
+        "status": "Result status",
+        "actions": "Actions",
+        "analyze": "Analyze",
+        "empty": "No student results match your filters.",
+        "showing": "Showing {from} to {to} of {total} results"
+      }
+    },
+    "student": {
+      "page": {
+        "title": "Student analysis",
+        "description": "Detailed performance overview for the selected student."
+      },
+      "alert": {
+        "title": "Important alert"
+      },
+      "profile": {
+        "active": "Active account",
+        "inactive": "Inactive account",
+        "studentId": "Student ID: {id}",
+        "editData": "Edit data",
+        "instantMessage": "Instant message"
+      },
+      "stats": {
+        "averageScore": "Average score",
+        "totalAttempts": "Total attempts",
+        "attemptsThisMonth": "{count} attempts this month",
+        "successfulExams": "Passed exams",
+        "failedExams": "Failed exams",
+        "lastFailure": "Last failure: {time}",
+        "lastActivity": "Last activity",
+        "lastActivityDetail": "Lesson: {label}",
+        "increase": "+{value}% increase"
+      },
+      "parent": {
+        "title": "Guardian details",
+        "phone": "Phone",
+        "linkedChildren": "{count} linked children",
+        "viewProfile": "Guardian profile"
+      },
+      "subscription": {
+        "title": "Enrollment summary",
+        "enrolledCourses": "Enrolled courses",
+        "completedCourses": "Completed courses",
+        "latestPackage": "Latest enrollment",
+        "latestEnrollmentAt": "Enrolled on {date}"
+      },
+      "charts": {
+        "academicProgress": "Academic progress",
+        "period30": "Last 30 days",
+        "period60": "Last 60 days",
+        "period90": "Last 90 days",
+        "scoreLabel": "Average score"
+      },
+      "recentExams": {
+        "title": "Latest exams",
+        "empty": "No recent assessments."
+      },
+      "tabs": {
+        "exams": "Exams",
+        "certificates": "Certificates"
+      },
+      "examsTab": {
+        "examName": "Exam name",
+        "result": "Result",
+        "attempts": "Attempts",
+        "status": "Status",
+        "analysis": "Analysis",
+        "analyzePerformance": "Performance analysis",
+        "empty": "No exams found for this student.",
+        "showing": "Showing {from}-{to} of {total}"
+      },
+      "certificatesTab": {
+        "title": "Earned certificates",
+        "description": "Certificates earned by passing final exams.",
+        "certified": "Certified",
+        "issueDate": "Issue date",
+        "finalGrade": "Final grade",
+        "serialNumber": "Serial number",
+        "preview": "Preview",
+        "downloadPdf": "Download PDF",
+        "downloadZip": "Download all (ZIP)",
+        "empty": "No certificates earned yet.",
+        "pdfUnavailable": "PDF is not available yet."
+      },
+      "loadError": "Unable to load student analysis."
+    },
+    "quizAnalysis": {
+      "page": {
+        "meta": "Exam date: {date} | Total students: {count}",
+        "exportPdf": "Export PDF",
+        "shareResults": "Share results"
+      },
+      "stats": {
+        "averageScore": "Average score",
+        "passRate": "Pass rate",
+        "averageTime": "Average completion time",
+        "participationRate": "Participation rate",
+        "minutesUnit": "{value} min"
+      },
+      "charts": {
+        "gradeDistribution": "Grade distribution",
+        "questionPerformance": "Question performance",
+        "questionPerformanceHint": "(correct answer percentage)",
+        "studentsLabel": "Students"
+      },
+      "questions": {
+        "title": "Detailed question analysis",
+        "sortHardest": "Hardest first",
+        "sortClassification": "By classification",
+        "number": "#",
+        "text": "Question text",
+        "classification": "Classification",
+        "difficulty": "Difficulty",
+        "empty": "No questions to display.",
+        "showing": "Showing {from}-{to} of {total}"
+      },
+      "topStudents": {
+        "title": "Top performing students",
+        "viewAll": "View all",
+        "score": "Score: {value}%",
+        "time": "Time: {value} min"
+      },
+      "scoreMode": {
+        "label": "Score mode",
+        "best": "Best attempt",
+        "latest": "Latest attempt",
+        "first": "First attempt"
+      },
+      "loadError": "Unable to load exam analysis."
+    },
+    "resultStatus": {
+      "PassedWithExcellence": "Passed with excellence",
+      "Passed": "Passed",
+      "Failed": "Did not pass",
+      "InProgress": "In progress",
+      "NotAttempted": "Not attempted"
+    },
+    "quizType": {
+      "0": "Station quiz",
+      "1": "Final exam"
+    },
+    "difficulty": {
+      "0": "Easy",
+      "1": "Medium",
+      "2": "Hard"
+    },
+    "examStatus": {
+      "Completed": "Completed",
+      "Active": "Active",
+      "Draft": "Draft"
+    },
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page"
+    }
+  }
+}

@@ -46,6 +46,12 @@
         "chatGroups": "Chat groups",
         "sendNotification": "Send notification",
         "questionBank": "Question bank",
+        "adsManagement": "Ads",
+        "curriculumManagement": "Curriculum management",
+        "examsManagement": "Certificates & evaluations",
+        "badgeManagement": "Badge management",
+        "supportTickets": "Support & disputes",
+        "resultsAnalytics": "Results & Analytics",
         "helper": "Help",
         "settings": "Settings",
         "logout": "Log out"
@@ -60,6 +66,27 @@
       "addPage": {
         "title": "Add a new school",
         "description": "Fill in the required school data to register it on the platform."
+      },
+      "editPage": {
+        "title": "Edit school",
+        "description": "Update the school information and save your changes."
+      },
+      "editForm": {
+        "actions": {
+          "submit": "Save changes"
+        },
+        "messages": {
+          "loadError": "Could not load school details.",
+          "updateSuccess": "School updated successfully.",
+          "updateError": "Could not update the school. Check the data and try again."
+        }
+      },
+      "deleteModal": {
+        "title": "Delete school",
+        "description": "Are you sure you want to delete this school? This action cannot be undone.",
+        "confirm": "Delete school",
+        "cancel": "Cancel",
+        "success": "School deleted successfully."
       },
       "addForm": {
         "sections": {
@@ -153,6 +180,28 @@
           "error": "The map could not resolve this place right now."
         }
       },
+      "filters": {
+        "keyword": {
+          "label": "Search",
+          "placeholder": "Search by school name or keyword..."
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Filter by city"
+        },
+        "country": {
+          "label": "Country",
+          "all": "All countries"
+        },
+        "points": {
+          "label": "Points",
+          "placeholder": "Exact points"
+        },
+        "performanceLevel": {
+          "label": "Performance level",
+          "all": "All levels"
+        }
+      },
       "stats": {
         "totalSchools": {
           "label": "Total schools",
@@ -186,12 +235,15 @@
         "actions": {
           "export": "Export",
           "filter": "Filter",
-          "more": "More actions"
+          "more": "More actions",
+          "edit": "Edit school",
+          "delete": "Delete school"
         },
         "pagination": {
           "summary": "Showing {visible} of {total} schools",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         },
         "states": {
           "loading": {
@@ -329,7 +381,8 @@
         "pagination": {
           "summary": "Showing {visible} of {total} users",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         }
       },
       "roles": {
@@ -423,7 +476,9 @@
             "selectSchool": "Select school"
           },
           "messages": {
-            "noSchools": "No schools were found. Try again later or contact support."
+            "noSchools": "No schools were found. Try again later or contact support.",
+            "editLoading": "Loading user details...",
+            "editLoadError": "Could not load user details for editing."
           },
           "countries": {
             "egypt": "Egypt",
@@ -458,7 +513,10 @@
           "page": {
             "title": "Add a new student",
             "description": "Fill in the student information and assign their educational subscription.",
-            "submit": "Add student"
+            "submit": "Add student",
+            "editTitle": "Edit student",
+            "editDescription": "Update the student profile information.",
+            "editSubmit": "Save changes"
           },
           "fields": {
             "educationalStage": "Education level",
@@ -488,7 +546,10 @@
           "page": {
             "title": "Add a new teacher",
             "description": "Fill in the teacher information and configure academic permissions.",
-            "submit": "Add teacher"
+            "submit": "Add teacher",
+            "editTitle": "Edit teacher",
+            "editDescription": "Update the teacher profile and permissions.",
+            "editSubmit": "Save changes"
           },
           "fields": {
             "jobTitle": "Job title",
@@ -523,6 +584,14 @@
             "title": "System permissions"
           },
           "permissions": {
+          "manageLearningPaths": {
+            "title": "Manage learning paths",
+            "description": "Manage available learning paths and assignments."
+          },
+          "createLearningPaths": {
+            "title": "Create learning paths",
+            "description": "Create and publish new learning paths."
+          },
             "createLessons": {
               "title": "Create lessons",
               "description": "Create and publish lessons for assigned grades."
@@ -550,7 +619,10 @@
             "title": "Add parent",
             "description": "Fill in the parent information and connect the related students.",
             "submit": "Add parent",
-            "bottomSubmit": "Save parent addition"
+            "bottomSubmit": "Save parent addition",
+            "editTitle": "Edit parent",
+            "editDescription": "Update the parent profile and linked children.",
+            "editSubmit": "Save changes"
           },
           "fields": {
             "fullName": "Parent full name",
@@ -571,8 +643,11 @@
       },
       "details": {
         "page": {
-          "description": "Monitor the student's weekly progress, related parent details, and subscription history."
+          "description": "Monitor the student's weekly progress, related parent details, and subscription history.",
+          "loadingTitle": "User details"
         },
+        "loadError": "Could not load user details. Please try again.",
+        "emptyValue": "—",
         "stats": {
           "studyHours": "Study hours",
           "testResults": "Test results",
@@ -594,17 +669,38 @@
         },
         "profile": {
           "school": "School",
+          "country": "Country",
           "status": "Status",
           "subscription": "Subscription",
           "code": "Student code",
-          "edit": "Edit profile"
+          "edit": "Edit profile",
+          "pointsTag": "{points} pts"
         },
         "parent": {
           "badge": "Linked parent",
           "type": "Parent",
           "change": "Change parent",
           "unlink": "Unlink parent",
-          "note": "The parent receives attendance and achievement alerts automatically."
+          "note": "The parent receives attendance and achievement alerts automatically.",
+          "noLinkedChildren": "No linked children",
+          "studentHasNoParent": "Student has no linked parent",
+          "loading": "Loading parent details...",
+          "searchPlaceholder": "Search for a parent by name or phone number...",
+          "searching": "Searching for parents...",
+          "noSearchResults": "No parents found",
+          "linkAction": "Link parent",
+          "linking": "Linking...",
+          "linkSuccess": "Parent linked successfully",
+          "linkError": "Failed to link parent",
+          "unlinkSuccess": "Parent unlinked successfully",
+          "unlinkError": "Failed to unlink parent",
+          "unlinking": "Unlinking...",
+          "changeSearchHint": "Search and select a new parent to link with this student"
+        },
+        "permissions": {
+          "title": "Teacher permissions",
+          "enabled": "Enabled",
+          "disabled": "Disabled"
         },
         "activities": {
           "title": "Latest educational activities",
@@ -660,6 +756,9 @@
         },
         "floatingActions": {
           "contact": "Contact the student",
+          "contactStudent": "Contact the student",
+          "contactTeacher": "Contact the teacher",
+          "contactParent": "Contact the parent",
           "share": "Share profile",
           "print": "Print profile"
         }
@@ -783,7 +882,8 @@
         "pagination": {
           "summary": "Showing {visible} of {total} courses",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         },
         "confirmArchive": "Archive this course? It can be hidden from publishing lists."
       },
@@ -1000,6 +1100,53 @@
         "description": "Create, edit, and monitor your platform interactive books.",
         "addBook": "Add interactive book"
       },
+      "filterBar": {
+        "options": {
+          "yes": "Yes",
+          "no": "No"
+        },
+        "fields": {
+          "courseId": {
+            "label": "Course ID",
+            "placeholder": "courseId",
+            "loading": "Loading courses...",
+            "loadError": "Could not load courses"
+          },
+          "gradeId": {
+            "label": "Grade ID",
+            "placeholder": "gradeId"
+          },
+          "status": {
+            "label": "Status"
+          },
+          "hasHotspots": {
+            "label": "Has hotspots"
+          },
+          "fromDate": {
+            "label": "From date",
+            "placeholder": "fromDate"
+          },
+          "toDate": {
+            "label": "To date",
+            "placeholder": "toDate"
+          },
+          "keyword": {
+            "label": "Keyword",
+            "placeholder": "keyword"
+          },
+          "pageNumber": {
+            "label": "Page number",
+            "placeholder": "pageNumber"
+          },
+          "pageSize": {
+            "label": "Page size",
+            "placeholder": "pageSize"
+          },
+          "acceptLanguage": {
+            "label": "Accept-Language"
+          }
+        }
+      },
       "stats": {
         "totalBooks": {
           "label": "Total interactive books",
@@ -1013,7 +1160,18 @@
           "label": "Average reading time per student",
           "indicator": "-2%",
           "value": "{value} min/day"
-        }
+        },
+        "totalInteractiveBooks": {
+          "label": "Total interactive books"
+        },
+        "activeReadersToday": {
+          "label": "Active readers today"
+        },
+        "averageReadingMinutesPerStudent": {
+          "label": "Average reading time per student",
+          "value": "{value} min/day"
+        },
+        "trendPercent": "{value}%"
       },
       "table": {
         "title": "Interactive books list",
@@ -1041,7 +1199,8 @@
         "pagination": {
           "summary": "Showing {visible} of {total} books",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         },
         "loading": "Loading interactive books…",
         "empty": "No interactive books yet.",
@@ -1358,7 +1517,8 @@
           "pagination": {
             "summary": "Showing {visible} of {total} sessions",
             "previous": "Previous page",
-            "next": "Next page"
+            "next": "Next page",
+          "pageSize": "Rows per page"
           }
         },
         "rows": {
@@ -1566,12 +1726,19 @@
           "chatMode": "Chat mode",
           "attachments": "Attachments",
           "status": "Status",
+          "parentMode": "Parent mode",
           "lastActivity": "Last activity",
           "actions": "Actions"
         },
+        "parentMode": {
+          "enabled": "Parents view only",
+          "disabled": "Disabled"
+        },
         "pagination": {
           "showing": "Showing {visible} of {total}",
+          "summary": "Showing {visible} of {total}",
           "prev": "Previous",
+          "previous": "Previous",
           "next": "Next",
           "page": "{current} of {total}"
         },
@@ -1884,7 +2051,8 @@
         "pagination": {
           "summary": "Showing {visible} of {total} articles",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         },
         "empty": "No articles match the current filters.",
         "loadError": "Could not load articles. Please try again."
@@ -2105,6 +2273,7 @@
           "title": "Distinguished contributor badges",
           "add": "Add new badge",
           "manage": "Manage badges",
+          "empty": "No badges yet. Create a new badge to get started.",
           "table": {
             "icon": "Icon",
             "name": "Badge name",
@@ -2134,15 +2303,82 @@
           }
         }
       },
-      "communityBadgeAdd": {
+      "communityBadges": {
         "page": {
-          "title": "Add new badge",
-          "description": "Define badge identity, eligibility, and preview how it appears to students.",
+          "title": "Community badge management",
+          "description": "View, edit, enable, or disable contributor badges in the knowledge community.",
           "breadcrumbs": {
             "home": "Home",
             "articleEditor": "Article editor",
             "communitySettings": "Community settings",
-            "current": "Add badge"
+            "current": "Manage badges"
+          }
+        },
+        "summary": {
+          "total": "Total badges: {count}"
+        },
+        "filters": {
+          "searchPlaceholder": "Search by name or description…"
+        },
+        "table": {
+          "icon": "Icon",
+          "name": "Badge name",
+          "condition": "Eligibility",
+          "recipients": "Earners",
+          "actions": "Actions"
+        },
+        "activity": {
+          "posts": "post",
+          "comments": "comment",
+          "likes": "like",
+          "lessons": "completed lesson"
+        },
+        "recipients": {
+          "none": "None",
+          "users": "{count} users"
+        },
+        "status": {
+          "disabled": "disabled"
+        },
+        "actions": {
+          "add": "Add new badge",
+          "edit": "Edit",
+          "delete": "Delete",
+          "enable": "Enable",
+          "disable": "Disable"
+        },
+        "empty": "No matching badges.",
+        "delete": {
+          "title": "Delete badge",
+          "description": "This badge will be permanently removed and will no longer be awarded.",
+          "confirm": "Delete",
+          "cancel": "Cancel"
+        },
+        "toast": {
+          "enabled": "Badge enabled.",
+          "disabled": "Badge disabled.",
+          "deleted": "Badge deleted.",
+          "toggleFailed": "Could not change badge status.",
+          "deleteFailed": "Could not delete badge."
+        },
+        "pagination": {
+          "previous": "Previous",
+          "next": "Next"
+        }
+      },
+      "communityBadgeAdd": {
+        "page": {
+          "title": "Add new badge",
+          "editTitle": "Edit badge",
+          "description": "Define badge identity, eligibility, and preview how it appears to students.",
+          "editDescription": "Update badge identity and eligibility conditions.",
+          "breadcrumbs": {
+            "home": "Home",
+            "articleEditor": "Article editor",
+            "communitySettings": "Community settings",
+            "badges": "Manage badges",
+            "current": "Add badge",
+            "edit": "Edit badge"
           }
         },
         "identity": {
@@ -2158,7 +2394,8 @@
           "descriptionLabel": "Badge description",
           "descriptionPlaceholder": "Short description that motivates students to earn this badge…",
           "uploadTitle": "Drag an image here or browse files",
-          "uploadHint": "PNG or SVG, max 2MB — 512×512 recommended."
+          "uploadHint": "PNG or SVG, max 2MB — 512×512 recommended.",
+          "uploading": "Uploading icon…"
         },
         "eligibility": {
           "title": "Eligibility conditions",
@@ -2189,10 +2426,18 @@
           "save": "Save",
           "cancel": "Cancel",
           "saving": "Saving…",
-          "saved": "Badge saved."
+          "saved": "Badge saved.",
+          "updated": "Badge updated."
         },
         "validation": {
-          "nameRequired": "Please enter a badge name."
+          "nameRequired": "Please enter a badge name.",
+          "descriptionRequired": "Please enter a badge description.",
+          "iconType": "Unsupported file type. Use PNG, JPEG, WebP, or SVG.",
+          "iconSize": "File exceeds the 2MB limit."
+        },
+        "errors": {
+          "loadFailed": "Could not load badge.",
+          "saveFailed": "Could not save badge."
         }
       }
     },
@@ -2261,7 +2506,12 @@
         "points": "pts",
         "hours": "{count} hrs",
         "paths": "{count} paths",
-        "openEditor": "Open editor"
+        "openEditor": "Open editor",
+        "loading": "Loading journey editor…"
+      },
+      "loading": {
+        "editor": "Loading journey editor…",
+        "station": "Loading station…"
       },
       "editor": {
         "title": "Journey of Excellence Editor",
@@ -2343,7 +2593,8 @@
         "stationCreateError": "Failed to create station.",
         "stationDeleteError": "Failed to delete station.",
         "pathDeleteError": "Failed to delete learning path.",
-        "stationAdded": "Station created successfully."
+        "stationAdded": "Station created successfully.",
+        "stationReorderError": "Failed to reorder stations."
       },
       "addStationModal": {
         "title": "Add New Station to Path",
@@ -2876,9 +3127,14 @@
       "title": "Settings",
       "description": "Configure admin preferences and integrations."
     },
+    "notImplemented": {
+      "badge": "Coming soon",
+      "title": "Not implemented yet",
+      "description": "This section is still under development and will be available in a future update."
+    },
     "homeOverview": {
-      "title": "General monitoring dashboard",
-      "description": "Quick educational indicators and alerts.",
+      "title": "Control center",
+      "description": "Browse every admin section and jump straight to the tools you need.",
       "actions": {
         "openOverview": "General overview",
         "sendNotification": "Send notification"
@@ -2936,7 +3192,110 @@
       "title": "Send notification",
       "description": "Create and customize alerts for your academic community.",
       "formTitle": "Target audience",
-      "sendNow": "Send notification now"
+      "sendNow": "Send notification now",
+      "actions": {
+        "cancel": "Cancel",
+        "sendNow": "Send notification now",
+        "scheduleSend": "Schedule notification"
+      },
+      "sections": {
+        "targeting": {
+          "title": "Target audience"
+        },
+        "content": {
+          "title": "Message content"
+        },
+        "scheduling": {
+          "title": "Timing and delivery channel"
+        }
+      },
+      "targeting": {
+        "audience": {
+          "label": "Target audience",
+          "all": "All",
+          "students_teachers_parents": "All (students, teachers, parents)",
+          "students": "Students",
+          "teachers": "Teachers",
+          "parents": "Parents"
+        },
+        "advanced": {
+          "title": "Advanced targeting filter"
+        },
+        "country": {
+          "label": "Filter by country",
+          "all": "All countries"
+        },
+        "school": {
+          "label": "Filter by school",
+          "placeholder": "Search for a school...",
+          "selectLabel": "Select school",
+          "all": "All schools"
+        },
+        "users": {
+          "label": "Target specific users",
+          "placeholder": "Enter emails or IDs separated by commas"
+        }
+      },
+      "content": {
+        "title": {
+          "label": "Notification title",
+          "placeholder": "e.g. Exam schedule update"
+        },
+        "body": {
+          "label": "Message body",
+          "placeholder": "Write the alert details here..."
+        },
+        "action": {
+          "title": "Action button (optional)",
+          "label": "Button text",
+          "labelPlaceholder": "View updates",
+          "url": "Link URL",
+          "urlPlaceholder": "https://"
+        }
+      },
+      "scheduling": {
+        "time": {
+          "label": "Send time"
+        },
+        "mode": {
+          "now": "Send now",
+          "schedule": "Schedule"
+        },
+        "datetime": {
+          "label": "Schedule date and time",
+          "placeholder": "2026-05-30T09:00"
+        },
+        "channel": {
+          "label": "Delivery channel",
+          "mobile": "Mobile",
+          "inApp": "In-app"
+        }
+      },
+      "preview": {
+        "liveLabel": "Live phone preview",
+        "sampleTitle": "Exam schedule update",
+        "sampleBody": "Final exam dates have been updated. Please review the new schedule.",
+        "sampleAction": "View updates",
+        "sampleTime": "2 minutes ago",
+        "alertTitle": "Important alert",
+        "expectedViews": "{count} expected views",
+        "guaranteedReach": "Guaranteed reach"
+      },
+      "validation": {
+        "titleRequired": "Notification title is required.",
+        "bodyRequired": "Message body is required.",
+        "scheduleRequired": "Please set a schedule date and time.",
+        "scheduleInvalid": "Schedule date and time is invalid.",
+        "countryRequired": "Please select a country for country-based delivery.",
+        "schoolRequired": "Please select a school for school-based delivery.",
+        "specificUsersRequired": "Enter at least one email or user identifier.",
+        "channelRequired": "Enable at least one channel (mobile or in-app)."
+      },
+      "toast": {
+        "sentNow": "Notification sent successfully.",
+        "scheduled": "Notification scheduled successfully.",
+        "sendError": "Could not send the notification. Please try again."
+      }
     },
     "questionBank": {
       "title": "Question bank",
@@ -2995,6 +3354,11 @@
           "delete": "Delete",
           "confirmDelete": "Are you sure you want to delete this question?",
           "deleteSuccess": "Question deleted successfully."
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} questions",
+          "previous": "Previous page",
+          "next": "Next page"
         }
       }
     },
@@ -3072,6 +3436,7 @@
         "studentPreviewTag": "Live preview mode"
       },
       "messages": {
+        "loading": "Loading question form...",
         "createSuccess": "Question created successfully.",
         "createError": "Could not create question. Please review your inputs and try again."
       },
@@ -3132,11 +3497,26 @@
       "attachmentAlt": "Question attachment",
       "emptyChoice": "No text",
       "explanationTitle": "Answer explanation",
+      "hintTitle": "Hint",
       "meta": {
         "title": "Question details"
       },
       "quickActions": {
         "title": "Quick actions"
+      },
+      "people": {
+        "title": "Author & reviewer",
+        "author": "Author",
+        "reviewer": "Reviewer",
+        "submittedAt": "Submitted",
+        "reviewedAt": "Reviewed",
+        "notAssigned": "Not assigned",
+        "loadError": "Could not load user profile.",
+        "roles": {
+          "student": "Student",
+          "teacher": "Teacher",
+          "parent": "Parent"
+        }
       },
       "stats": {
         "totalChoices": "Choices count",
@@ -3213,11 +3593,13 @@
         },
         "station": {
           "label": "Station",
-          "all": "All stations"
+          "all": "All stations",
+          "loading": "Loading stations..."
         },
         "course": {
           "label": "Course",
-          "all": "All courses"
+          "all": "All courses",
+          "loading": "Loading courses..."
         },
         "resourceFileType": {
           "label": "Resource type",
@@ -3258,7 +3640,8 @@
         "pagination": {
           "summary": "Showing {visible} of {total} files",
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "pageSize": "Rows per page"
         }
       },
       "deleteModal": {
@@ -3375,6 +3758,13 @@
         "description": "View helper resource file details (read-only).",
         "readOnlyBadge": "View only",
         "openFile": "Open file",
+        "viewer": {
+          "title": "File preview",
+          "loading": "Loading file preview...",
+          "loadError": "Could not load this file for preview.",
+          "unsupported": "In-browser preview is not available for this file type.",
+          "legacyDocUnsupported": "Legacy Word files (.doc) cannot be previewed in the browser. Please upload .docx or PDF instead."
+        },
         "deleteSuccess": "File deleted successfully",
         "breadcrumbs": {
           "home": "Home",

@@ -1,0 +1,166 @@
+{
+  "curriculumManagement": {
+    "breadcrumbs": {
+      "home": "الرئيسية"
+    },
+    "page": {
+      "title": "إدارة المناهج",
+      "description": "إدارة المراحل التعليمية والصفوف والمواد على المنصة."
+    },
+    "tabs": {
+      "educationLevels": "المراحل التعليمية",
+      "grades": "الصفوف",
+      "subjects": "المواد"
+    },
+    "filters": {
+      "search": {
+        "label": "بحث",
+        "placeholder": "ابحث بالاسم..."
+      },
+      "country": {
+        "label": "الدولة",
+        "all": "كل الدول"
+      },
+      "educationLevel": {
+        "label": "المرحلة التعليمية",
+        "all": "كل المراحل"
+      }
+    },
+    "table": {
+      "columns": {
+        "actions": "إجراءات"
+      },
+      "actions": {
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "pagination": {
+        "summary": "عرض {from}–{to} من {total}",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "states": {
+        "empty": {
+          "title": "لا توجد نتائج",
+          "description": "جرّب تعديل الفلاتر أو أضف عنصراً جديداً."
+        },
+        "error": {
+          "title": "تعذّر تحميل البيانات",
+          "retry": "إعادة المحاولة"
+        }
+      }
+    },
+    "deleteModal": {
+      "title": "تأكيد الحذف",
+      "description": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف العنصر التالي نهائياً:",
+      "confirm": "حذف",
+      "cancel": "إلغاء",
+      "success": "تم الحذف بنجاح."
+    },
+    "educationLevels": {
+      "page": {
+        "create": "إضافة مرحلة تعليمية"
+      },
+      "table": {
+        "title": "قائمة المراحل التعليمية",
+        "columns": {
+          "name": "الاسم",
+          "country": "الدولة",
+          "order": "الترتيب",
+          "gradeCount": "الصفوف"
+        }
+      },
+      "form": {
+        "createTitle": "إضافة مرحلة تعليمية",
+        "editTitle": "تعديل مرحلة تعليمية",
+        "createDescription": "أنشئ مرحلة تعليمية جديدة لدولة محددة.",
+        "editDescription": "حدّث بيانات المرحلة التعليمية.",
+        "country": "الدولة",
+        "countryPlaceholder": "اختر الدولة",
+        "nameAr": "الاسم بالعربية",
+        "nameArPlaceholder": "أدخل الاسم بالعربية",
+        "nameEn": "الاسم بالإنجليزية",
+        "nameEnPlaceholder": "أدخل الاسم بالإنجليزية",
+        "order": "ترتيب العرض",
+        "orderPlaceholder": "مثال: 1",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "save": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ...",
+        "success": "تم حفظ المرحلة التعليمية بنجاح."
+      }
+    },
+    "grades": {
+      "page": {
+        "create": "إضافة صف"
+      },
+      "table": {
+        "title": "قائمة الصفوف",
+        "columns": {
+          "name": "الاسم",
+          "educationLevel": "المرحلة التعليمية",
+          "country": "الدولة",
+          "order": "الترتيب",
+          "studentCount": "الطلاب"
+        }
+      },
+      "form": {
+        "createTitle": "إضافة صف",
+        "editTitle": "تعديل صف",
+        "createDescription": "أنشئ صفاً جديداً ضمن مرحلة تعليمية.",
+        "editDescription": "حدّث بيانات الصف.",
+        "country": "الدولة",
+        "countryPlaceholder": "اختر الدولة",
+        "educationLevel": "المرحلة التعليمية",
+        "educationLevelPlaceholder": "اختر المرحلة التعليمية",
+        "nameAr": "الاسم بالعربية",
+        "nameArPlaceholder": "أدخل الاسم بالعربية",
+        "nameEn": "الاسم بالإنجليزية",
+        "nameEnPlaceholder": "أدخل الاسم بالإنجليزية",
+        "order": "ترتيب العرض",
+        "orderPlaceholder": "مثال: 1",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "save": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ...",
+        "success": "تم حفظ الصف بنجاح."
+      }
+    },
+    "subjects": {
+      "page": {
+        "create": "إضافة مادة"
+      },
+      "table": {
+        "title": "قائمة المواد",
+        "columns": {
+          "name": "المادة",
+          "coursesCount": "الدورات",
+          "teachersCount": "المعلمون",
+          "createdAt": "تاريخ الإنشاء"
+        }
+      },
+      "form": {
+        "createTitle": "إضافة مادة",
+        "editTitle": "تعديل مادة",
+        "createDescription": "أنشئ مادة جديدة مع أيقونة.",
+        "editDescription": "حدّث بيانات المادة.",
+        "icon": "أيقونة المادة",
+        "iconUploadLabel": "رفع أيقونة",
+        "iconPreviewAlt": "معاينة أيقونة المادة",
+        "iconHint": "PNG أو JPG أو WebP — بحد أقصى 5 ميجابايت",
+        "iconInvalidType": "يرجى رفع ملف صورة صالح.",
+        "iconTooLarge": "يجب ألا يتجاوز حجم الصورة 5 ميجابايت.",
+        "iconReadError": "تعذّر قراءة الملف المحدد.",
+        "nameAr": "الاسم بالعربية",
+        "nameArPlaceholder": "أدخل الاسم بالعربية",
+        "nameEn": "الاسم بالإنجليزية",
+        "nameEnPlaceholder": "أدخل الاسم بالإنجليزية",
+        "cancel": "إلغاء",
+        "create": "إنشاء",
+        "save": "حفظ التغييرات",
+        "saving": "جارٍ الحفظ...",
+        "success": "تم حفظ المادة بنجاح."
+      }
+    }
+  }
+}

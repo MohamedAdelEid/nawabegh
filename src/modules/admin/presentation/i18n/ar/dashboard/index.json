@@ -46,6 +46,12 @@
         "chatGroups": "مجموعات الدردشة",
         "sendNotification": "إرسال إشعار",
         "questionBank": "بنك الأسئلة",
+        "adsManagement": "الإعلانات",
+        "curriculumManagement": "إدارة المناهج",
+        "examsManagement": "الشهادات والتقييمات",
+        "badgeManagement": "إدارة الأوسمة",
+        "supportTickets": "الدعم والنزاعات",
+        "resultsAnalytics": "النتائج والتحليلات",
         "helper": "مساعدة",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
@@ -60,6 +66,27 @@
       "addPage": {
         "title": "إضافة مدرسة جديدة",
         "description": "قم بتعبئة بيانات المدرسة الأساسية للتسجيل في المنصة."
+      },
+      "editPage": {
+        "title": "تعديل المدرسة",
+        "description": "حدّث بيانات المدرسة ثم احفظ التغييرات."
+      },
+      "editForm": {
+        "actions": {
+          "submit": "حفظ التغييرات"
+        },
+        "messages": {
+          "loadError": "تعذر تحميل بيانات المدرسة.",
+          "updateSuccess": "تم تحديث المدرسة بنجاح.",
+          "updateError": "تعذر تحديث المدرسة. تحقق من البيانات وحاول مجدداً."
+        }
+      },
+      "deleteModal": {
+        "title": "حذف المدرسة",
+        "description": "هل أنت متأكد من حذف هذه المدرسة؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "حذف المدرسة",
+        "cancel": "إلغاء",
+        "success": "تم حذف المدرسة بنجاح."
       },
       "addForm": {
         "sections": {
@@ -153,6 +180,28 @@
           "error": "تعذر تحديد هذا المكان على الخريطة حالياً."
         }
       },
+      "filters": {
+        "keyword": {
+          "label": "بحث",
+          "placeholder": "ابحث باسم المدرسة أو كلمة مفتاحية..."
+        },
+        "city": {
+          "label": "المدينة",
+          "placeholder": "تصفية حسب المدينة"
+        },
+        "country": {
+          "label": "الدولة",
+          "all": "كل الدول"
+        },
+        "points": {
+          "label": "النقاط",
+          "placeholder": "عدد النقاط"
+        },
+        "performanceLevel": {
+          "label": "مستوى الأداء",
+          "all": "كل المستويات"
+        }
+      },
       "stats": {
         "totalSchools": {
           "label": "إجمالي المدارس",
@@ -186,12 +235,15 @@
         "actions": {
           "export": "تصدير",
           "filter": "تصفية",
-          "more": "إجراءات إضافية"
+          "more": "إجراءات إضافية",
+          "edit": "تعديل المدرسة",
+          "delete": "حذف المدرسة"
         },
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مدرسة",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         },
         "states": {
           "loading": {
@@ -329,7 +381,8 @@
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مستخدم",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         }
       },
       "roles": {
@@ -423,7 +476,9 @@
             "selectSchool": "اختر المدرسة"
           },
           "messages": {
-            "noSchools": "لا توجد مدارس متاحة. حاول لاحقاً أو تواصل مع الدعم."
+            "noSchools": "لا توجد مدارس متاحة. حاول لاحقاً أو تواصل مع الدعم.",
+            "editLoading": "جاري تحميل بيانات المستخدم...",
+            "editLoadError": "تعذر تحميل بيانات المستخدم للتعديل."
           },
           "countries": {
             "egypt": "مصر",
@@ -458,7 +513,10 @@
           "page": {
             "title": "إضافة طالب جديد",
             "description": "قم بتعبئة بيانات الطالب وتخصيص اشتراكه التعليمي",
-            "submit": "إضافة الطالب"
+            "submit": "إضافة الطالب",
+            "editTitle": "تعديل بيانات الطالب",
+            "editDescription": "حدّث معلومات ملف الطالب.",
+            "editSubmit": "حفظ التعديلات"
           },
           "fields": {
             "educationalStage": "المستوى التعليمي",
@@ -488,7 +546,10 @@
           "page": {
             "title": "إضافة معلم جديد",
             "description": "قم بتعبئة بيانات المعلم وتحديد تخصصه وصلاحياته",
-            "submit": "إضافة المعلم"
+            "submit": "إضافة المعلم",
+            "editTitle": "تعديل بيانات المعلم",
+            "editDescription": "حدّث ملف المعلم وصلاحياته.",
+            "editSubmit": "حفظ التعديلات"
           },
           "fields": {
             "jobTitle": "المسمى الوظيفي",
@@ -523,6 +584,14 @@
             "title": "صلاحيات النظام"
           },
           "permissions": {
+          "manageLearningPaths": {
+            "title": "إدارة مسارات التعلم",
+            "description": "إدارة مسارات التعلم المتاحة وتعييناتها."
+          },
+          "createLearningPaths": {
+            "title": "إنشاء مسارات التعلم",
+            "description": "إنشاء ونشر مسارات تعلم جديدة."
+          },
             "createLessons": {
               "title": "إنشاء الدروس",
               "description": "إنشاء ونشر الدروس للصفوف المسندة."
@@ -550,7 +619,10 @@
             "title": "إضافة ولي الأمر",
             "description": "قم بتعبئة بيانات ولي الأمر وربط الأبناء المرتبطين به",
             "submit": "إضافة ولي الأمر",
-            "bottomSubmit": "حفظ إضافة ولي الأمر"
+            "bottomSubmit": "حفظ إضافة ولي الأمر",
+            "editTitle": "تعديل بيانات ولي الأمر",
+            "editDescription": "حدّث ملف ولي الأمر والأبناء المرتبطين.",
+            "editSubmit": "حفظ التعديلات"
           },
           "fields": {
             "fullName": "الاسم الكامل لولي الأمر",
@@ -571,8 +643,11 @@
       },
       "details": {
         "page": {
-          "description": "متابعة التقدم الأسبوعي للطالب وبيانات ولي الأمر وسجل الاشتراكات."
+          "description": "متابعة التقدم الأسبوعي للطالب وبيانات ولي الأمر وسجل الاشتراكات.",
+          "loadingTitle": "تفاصيل المستخدم"
         },
+        "loadError": "تعذر تحميل بيانات المستخدم. حاول مرة أخرى.",
+        "emptyValue": "—",
         "stats": {
           "studyHours": "ساعات الدراسة",
           "testResults": "نتائج الاختبارات",
@@ -594,17 +669,38 @@
         },
         "profile": {
           "school": "المدرسة",
+          "country": "الدولة",
           "status": "الحالة",
           "subscription": "الاشتراك",
           "code": "رقم الاكاديمي",
-          "edit": "تعديل الملف الشخصي"
+          "edit": "تعديل الملف الشخصي",
+          "pointsTag": "{points} نقطة"
         },
         "parent": {
           "badge": "ولي الأمر المرتبط",
           "type": "الاب",
           "change": "تغيير ولي الأمر",
           "unlink": "فك الارتباط",
-          "note": "ولي الأمر يتلقى التنبيهات الخاصة بالحضور والإنجاز بشكل تلقائي."
+          "note": "ولي الأمر يتلقى التنبيهات الخاصة بالحضور والإنجاز بشكل تلقائي.",
+          "noLinkedChildren": "لا يوجد أطفال مرتبطين",
+          "studentHasNoParent": "الطالب غير مرتبط بولي أمر",
+          "loading": "جاري تحميل بيانات ولي الأمر...",
+          "searchPlaceholder": "ابحث عن ولي أمر بالاسم أو رقم الهاتف...",
+          "searching": "جاري البحث عن أولياء الأمور...",
+          "noSearchResults": "لم يتم العثور على أولياء أمور",
+          "linkAction": "ربط ولي الأمر",
+          "linking": "جاري الربط...",
+          "linkSuccess": "تم ربط ولي الأمر بنجاح",
+          "linkError": "تعذر ربط ولي الأمر",
+          "unlinkSuccess": "تم فك ارتباط ولي الأمر بنجاح",
+          "unlinkError": "تعذر فك ارتباط ولي الأمر",
+          "unlinking": "جاري فك الارتباط...",
+          "changeSearchHint": "ابحث واختر ولي أمر جديد لربطه بالطالب"
+        },
+        "permissions": {
+          "title": "صلاحيات المعلم",
+          "enabled": "مفعّل",
+          "disabled": "غير مفعّل"
         },
         "activities": {
           "title": "آخر النشاطات التعليمية",
@@ -660,6 +756,9 @@
         },
         "floatingActions": {
           "contact": "تواصل مع الطالب",
+          "contactStudent": "تواصل مع الطالب",
+          "contactTeacher": "تواصل مع المعلم",
+          "contactParent": "تواصل مع ولي الأمر",
           "share": "مشاركة الملف",
           "print": "طباعة الملف"
         }
@@ -783,7 +882,8 @@
         "pagination": {
           "summary": "عرض {visible} من أصل {total} دورة",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         },
         "confirmArchive": "أرشفة هذه الدورة؟ يمكن إخفاؤها من قوائم النشر."
       },
@@ -1000,6 +1100,53 @@
         "description": "قم بإنشاء وتعديل ومراقبة الكتب التفاعلية الخاصة بك.",
         "addBook": "إضافة كتاب تفاعلي"
       },
+      "filterBar": {
+        "options": {
+          "yes": "نعم",
+          "no": "لا"
+        },
+        "fields": {
+          "courseId": {
+            "label": "معرف الدورة",
+            "placeholder": "courseId",
+            "loading": "جاري تحميل الدورات...",
+            "loadError": "تعذر تحميل الدورات"
+          },
+          "gradeId": {
+            "label": "معرف الصف",
+            "placeholder": "gradeId"
+          },
+          "status": {
+            "label": "الحالة"
+          },
+          "hasHotspots": {
+            "label": "يحتوي نقاط تفاعلية"
+          },
+          "fromDate": {
+            "label": "من تاريخ",
+            "placeholder": "fromDate"
+          },
+          "toDate": {
+            "label": "إلى تاريخ",
+            "placeholder": "toDate"
+          },
+          "keyword": {
+            "label": "الكلمة المفتاحية",
+            "placeholder": "keyword"
+          },
+          "pageNumber": {
+            "label": "رقم الصفحة",
+            "placeholder": "pageNumber"
+          },
+          "pageSize": {
+            "label": "حجم الصفحة",
+            "placeholder": "pageSize"
+          },
+          "acceptLanguage": {
+            "label": "لغة الطلب"
+          }
+        }
+      },
       "stats": {
         "totalBooks": {
           "label": "إجمالي الكتب التفاعلية",
@@ -1013,7 +1160,18 @@
           "label": "متوسط القراءة لكل طالب",
           "indicator": "-2%",
           "value": "{value} دقيقة/يوم"
-        }
+        },
+        "totalInteractiveBooks": {
+          "label": "إجمالي الكتب التفاعلية"
+        },
+        "activeReadersToday": {
+          "label": "قراء نشطون اليوم"
+        },
+        "averageReadingMinutesPerStudent": {
+          "label": "متوسط القراءة لكل طالب",
+          "value": "{value} دقيقة/يوم"
+        },
+        "trendPercent": "{value}%"
       },
       "table": {
         "title": "قائمة الكتب التفاعلية",
@@ -1041,7 +1199,8 @@
         "pagination": {
           "summary": "عرض {visible} من أصل {total} كتاباً",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         },
         "loading": "جاري تحميل الكتب التفاعلية…",
         "empty": "لا توجد كتب تفاعلية بعد.",
@@ -1358,7 +1517,8 @@
           "pagination": {
             "summary": "عرض {visible} من أصل {total} جلسة",
             "previous": "الصفحة السابقة",
-            "next": "الصفحة التالية"
+            "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
           }
         },
         "rows": {
@@ -1566,12 +1726,19 @@
           "chatMode": "وضع الدردشة",
           "attachments": "المرفقات",
           "status": "الحالة",
+          "parentMode": "وضع أولياء الأمور",
           "lastActivity": "آخر نشاط",
           "actions": "الإجراءات"
         },
+        "parentMode": {
+          "enabled": "مفعّل",
+          "disabled": "غير مفعّل"
+        },
         "pagination": {
           "showing": "عرض {visible} من أصل {total}",
+          "summary": "عرض {visible} من أصل {total}",
           "prev": "السابق",
+          "previous": "السابق",
           "next": "التالي",
           "page": "{current} من {total}"
         },
@@ -1884,7 +2051,8 @@
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مقال",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         },
         "empty": "لا توجد مقالات مطابقة للفلاتر الحالية.",
         "loadError": "تعذر تحميل المقالات. حاول مرة أخرى."
@@ -2105,6 +2273,7 @@
           "title": "أوسمة المساهمين المتميزين",
           "add": "إضافة وسام جديد",
           "manage": "إدارة الأوسمة",
+          "empty": "لا توجد أوسمة بعد. أنشئ وساماً جديداً للبدء.",
           "table": {
             "icon": "الأيقونة",
             "name": "اسم الوسام",
@@ -2134,15 +2303,82 @@
           }
         }
       },
-      "communityBadgeAdd": {
+      "communityBadges": {
         "page": {
-          "title": "إضافة وسام جديد",
-          "description": "عرّف هوية الوسام وشروط الاستحقاق ومعاينة شكله للطلاب.",
+          "title": "إدارة أوسمة المجتمع",
+          "description": "عرض وتعديل وتفعيل أو تعطيل أوسمة المساهمين في مجتمع المعرفة.",
           "breadcrumbs": {
             "home": "الرئيسية",
             "articleEditor": "محرر المقالات",
             "communitySettings": "إعدادات المجتمع",
-            "current": "إضافة وسام"
+            "current": "إدارة الأوسمة"
+          }
+        },
+        "summary": {
+          "total": "إجمالي الأوسمة: {count}"
+        },
+        "filters": {
+          "searchPlaceholder": "بحث بالاسم أو الوصف…"
+        },
+        "table": {
+          "icon": "الأيقونة",
+          "name": "اسم الوسام",
+          "condition": "شرط الاستحقاق",
+          "recipients": "عدد الحاصلين عليه",
+          "actions": "إجراءات"
+        },
+        "activity": {
+          "posts": "منشور",
+          "comments": "تعليق",
+          "likes": "إعجاب",
+          "lessons": "درس مكتمل"
+        },
+        "recipients": {
+          "none": "لا يوجد",
+          "users": "{count} مستخدم"
+        },
+        "status": {
+          "disabled": "معطل"
+        },
+        "actions": {
+          "add": "إضافة وسام جديد",
+          "edit": "تعديل",
+          "delete": "حذف",
+          "enable": "تفعيل",
+          "disable": "تعطيل"
+        },
+        "empty": "لا توجد أوسمة مطابقة.",
+        "delete": {
+          "title": "حذف الوسام",
+          "description": "سيتم حذف هذا الوسام نهائياً. لن يُمنح للمستخدمين الجدد.",
+          "confirm": "حذف",
+          "cancel": "إلغاء"
+        },
+        "toast": {
+          "enabled": "تم تفعيل الوسام.",
+          "disabled": "تم تعطيل الوسام.",
+          "deleted": "تم حذف الوسام.",
+          "toggleFailed": "تعذّر تغيير حالة الوسام.",
+          "deleteFailed": "تعذّر حذف الوسام."
+        },
+        "pagination": {
+          "previous": "السابق",
+          "next": "التالي"
+        }
+      },
+      "communityBadgeAdd": {
+        "page": {
+          "title": "إضافة وسام جديد",
+          "editTitle": "تعديل الوسام",
+          "description": "عرّف هوية الوسام وشروط الاستحقاق ومعاينة شكله للطلاب.",
+          "editDescription": "حدّث هوية الوسام وشروط الاستحقاق.",
+          "breadcrumbs": {
+            "home": "الرئيسية",
+            "articleEditor": "محرر المقالات",
+            "communitySettings": "إعدادات المجتمع",
+            "badges": "إدارة الأوسمة",
+            "current": "إضافة وسام",
+            "edit": "تعديل الوسام"
           }
         },
         "identity": {
@@ -2158,7 +2394,8 @@
           "descriptionLabel": "وصف الوسام",
           "descriptionPlaceholder": "اكتب وصفاً قصيراً يحفز الطلاب للحصول على هذا الوسم…",
           "uploadTitle": "اسحب الصورة هنا أو تصفح الملفات",
-          "uploadHint": "PNG أو SVG بحد أقصى 2 ميجابايت — يُفضّل 512×512."
+          "uploadHint": "PNG أو SVG بحد أقصى 2 ميجابايت — يُفضّل 512×512.",
+          "uploading": "جاري رفع الأيقونة…"
         },
         "eligibility": {
           "title": "شروط الاستحقاق",
@@ -2192,10 +2429,18 @@
           "save": "حفظ",
           "cancel": "إلغاء",
           "saving": "جاري الحفظ…",
-          "saved": "تم حفظ الوسام."
+          "saved": "تم حفظ الوسام.",
+          "updated": "تم تحديث الوسام."
         },
         "validation": {
-          "nameRequired": "يرجى إدخال اسم الوسام."
+          "nameRequired": "يرجى إدخال اسم الوسام.",
+          "descriptionRequired": "يرجى إدخال وصف الوسام.",
+          "iconType": "نوع الملف غير مدعوم. استخدم PNG أو JPEG أو WebP أو SVG.",
+          "iconSize": "حجم الملف يتجاوز 2 ميجابايت."
+        },
+        "errors": {
+          "loadFailed": "تعذّر تحميل الوسام.",
+          "saveFailed": "تعذّر حفظ الوسام."
         }
       }
     },
@@ -2264,7 +2509,12 @@
         "points": "نقطة",
         "hours": "{count} ساعة",
         "paths": "{count} مسارات",
-        "openEditor": "فتح المحرر"
+        "openEditor": "فتح المحرر",
+        "loading": "جاري تحميل محرر الرحلة…"
+      },
+      "loading": {
+        "editor": "جاري تحميل محرر الرحلة…",
+        "station": "جاري تحميل المحطة…"
       },
       "editor": {
         "title": "محرر رحلة التفوق",
@@ -2346,7 +2596,8 @@
         "stationCreateError": "تعذر إنشاء المحطة.",
         "stationDeleteError": "تعذر حذف المحطة.",
         "pathDeleteError": "تعذر حذف المسار التعليمي.",
-        "stationAdded": "تم إنشاء المحطة بنجاح."
+        "stationAdded": "تم إنشاء المحطة بنجاح.",
+        "stationReorderError": "تعذر إعادة ترتيب المحطات."
       },
       "addStationModal": {
         "title": "إضافة محطة جديدة للمسار",
@@ -2879,9 +3130,14 @@
       "title": "الإعدادات",
       "description": "ضبط تفضيلات الإدارة والتكاملات."
     },
+    "notImplemented": {
+      "badge": "قريبًا",
+      "title": "لم يُنفَّذ بعد",
+      "description": "هذا القسم قيد التطوير وسيتوفر في تحديث لاحق."
+    },
     "homeOverview": {
-      "title": "لوحة المتابعة العامة",
-      "description": "مؤشرات سريعة للوحدات التعليمية والتنبيهات.",
+      "title": "مركز التحكم",
+      "description": "استعرض جميع أقسام لوحة الإدارة وانتقل مباشرة إلى الأدوات التي تحتاجها.",
       "actions": {
         "openOverview": "نظره عامه",
         "sendNotification": "إرسال إشعار"
@@ -2939,7 +3195,110 @@
       "title": "إرسال إشعار",
       "description": "قم بإنشاء وتخصيص التنبيهات وإرسالها للمجتمع الأكاديمي.",
       "formTitle": "اختيار الجمهور المستهدف",
-      "sendNow": "إرسال الإشعار الآن"
+      "sendNow": "إرسال الإشعار الآن",
+      "actions": {
+        "cancel": "إلغاء",
+        "sendNow": "إرسال الإشعار الآن",
+        "scheduleSend": "جدولة الإشعار"
+      },
+      "sections": {
+        "targeting": {
+          "title": "اختيار الجمهور المستهدف"
+        },
+        "content": {
+          "title": "محتوى الرسالة"
+        },
+        "scheduling": {
+          "title": "توقيت وقناة الإرسال"
+        }
+      },
+      "targeting": {
+        "audience": {
+          "label": "الجمهور المستهدف",
+          "all": "الكل",
+          "students_teachers_parents": "الكل (طلاب، معلمون، أولياء أمور)",
+          "students": "الطلاب",
+          "teachers": "المعلمون",
+          "parents": "أولياء الأمور"
+        },
+        "advanced": {
+          "title": "فلتر الاستهداف المتقدم"
+        },
+        "country": {
+          "label": "تحديد حسب الدولة",
+          "all": "كل الدول"
+        },
+        "school": {
+          "label": "تحديد حسب المدرسة",
+          "placeholder": "ابحث عن مدرسة...",
+          "selectLabel": "اختر المدرسة",
+          "all": "كل المدارس"
+        },
+        "users": {
+          "label": "استهداف مستخدمين محددين",
+          "placeholder": "أدخل البريد أو المعرّف مفصولاً بفاصلة"
+        }
+      },
+      "content": {
+        "title": {
+          "label": "عنوان الإشعار",
+          "placeholder": "مثال: تحديث جدول الاختبارات"
+        },
+        "body": {
+          "label": "نص الرسالة",
+          "placeholder": "اكتب تفاصيل التنبيه هنا..."
+        },
+        "action": {
+          "title": "زر الإجراء (اختياري)",
+          "label": "نص الزر",
+          "labelPlaceholder": "عرض التحديثات",
+          "url": "الرابط",
+          "urlPlaceholder": "https://"
+        }
+      },
+      "scheduling": {
+        "time": {
+          "label": "وقت الإرسال"
+        },
+        "mode": {
+          "now": "إرسال الآن",
+          "schedule": "جدولة"
+        },
+        "datetime": {
+          "label": "تاريخ ووقت الجدولة",
+          "placeholder": "2026-05-30T09:00"
+        },
+        "channel": {
+          "label": "قناة الإرسال",
+          "mobile": "الموبايل",
+          "inApp": "داخل التطبيق"
+        }
+      },
+      "preview": {
+        "liveLabel": "معاينة حية على الهاتف",
+        "sampleTitle": "تحديث جدول الاختبارات",
+        "sampleBody": "تم تحديث مواعيد الاختبارات النهائية. يرجى مراجعة الجدول الجديد.",
+        "sampleAction": "عرض التحديثات",
+        "sampleTime": "منذ دقيقتين",
+        "alertTitle": "تنبيه هام",
+        "expectedViews": "{count} مشاهدة متوقعة",
+        "guaranteedReach": "وصول مضمون"
+      },
+      "validation": {
+        "titleRequired": "عنوان الإشعار مطلوب.",
+        "bodyRequired": "نص الرسالة مطلوب.",
+        "scheduleRequired": "يرجى تحديد تاريخ ووقت الجدولة.",
+        "scheduleInvalid": "تاريخ الجدولة غير صالح.",
+        "countryRequired": "يرجى اختيار دولة للإرسال حسب الدولة.",
+        "schoolRequired": "يرجى اختيار مدرسة للإرسال حسب المدرسة.",
+        "specificUsersRequired": "يرجى إدخال بريد أو معرّف مستخدم واحد على الأقل.",
+        "channelRequired": "فعّل قناة واحدة على الأقل (موبايل أو داخل التطبيق)."
+      },
+      "toast": {
+        "sentNow": "تم إرسال الإشعار بنجاح.",
+        "scheduled": "تمت جدولة الإشعار بنجاح.",
+        "sendError": "تعذر إرسال الإشعار. حاول مرة أخرى."
+      }
     },
     "questionBank": {
       "title": "بنك الأسئلة",
@@ -2998,6 +3357,11 @@
           "delete": "حذف",
           "confirmDelete": "هل أنت متأكد من حذف هذا السؤال؟",
           "deleteSuccess": "تم حذف السؤال بنجاح."
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} سؤال",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
         }
       }
     },
@@ -3075,6 +3439,7 @@
         "studentPreviewTag": "وضع المعاينة المباشرة"
       },
       "messages": {
+        "loading": "جاري تحميل نموذج السؤال...",
         "createSuccess": "تم إنشاء السؤال بنجاح.",
         "createError": "تعذر إنشاء السؤال. يرجى مراجعة البيانات وإعادة المحاولة."
       },
@@ -3135,11 +3500,26 @@
       "attachmentAlt": "مرفق السؤال",
       "emptyChoice": "بدون نص",
       "explanationTitle": "تفسير الإجابة",
+      "hintTitle": "تلميح",
       "meta": {
         "title": "بيانات السؤال"
       },
       "quickActions": {
         "title": "الإجراءات السريعة"
+      },
+      "people": {
+        "title": "الكاتب والمراجع",
+        "author": "الكاتب",
+        "reviewer": "المراجع",
+        "submittedAt": "تاريخ الإرسال",
+        "reviewedAt": "تاريخ المراجعة",
+        "notAssigned": "غير محدد",
+        "loadError": "تعذر تحميل بيانات المستخدم.",
+        "roles": {
+          "student": "طالب",
+          "teacher": "معلم",
+          "parent": "ولي أمر"
+        }
       },
       "stats": {
         "totalChoices": "عدد الاختيارات",
@@ -3216,11 +3596,13 @@
         },
         "station": {
           "label": "المحطة",
-          "all": "كل المحطات"
+          "all": "كل المحطات",
+          "loading": "جاري تحميل المحطات..."
         },
         "course": {
           "label": "الدورة",
-          "all": "كل الدورات"
+          "all": "كل الدورات",
+          "loading": "جاري تحميل الدورات..."
         },
         "resourceFileType": {
           "label": "نوع المورد",
@@ -3261,7 +3643,8 @@
         "pagination": {
           "summary": "عرض {visible} من {total} ملف",
           "previous": "الصفحة السابقة",
-          "next": "الصفحة التالية"
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
         }
       },
       "deleteModal": {
@@ -3378,6 +3761,13 @@
         "description": "عرض تفاصيل الملف المساعد (للقراءة فقط).",
         "readOnlyBadge": "عرض فقط",
         "openFile": "فتح الملف",
+        "viewer": {
+          "title": "معاينة الملف",
+          "loading": "جاري تحميل معاينة الملف...",
+          "loadError": "تعذر تحميل هذا الملف للمعاينة.",
+          "unsupported": "المعاينة داخل الصفحة غير متاحة لهذا النوع من الملفات.",
+          "legacyDocUnsupported": "لا يمكن معاينة ملفات Word القديمة (.doc) في المتصفح. يُرجى رفع الملف بصيغة .docx أو PDF."
+        },
         "deleteSuccess": "تم حذف الملف بنجاح",
         "breadcrumbs": {
           "home": "الرئيسية",

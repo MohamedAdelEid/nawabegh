@@ -85,10 +85,29 @@ export function QuestionBankQuestionPreviewCard({
               {subjectName}
             </span>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
-            <TypeIcon className="h-3.5 w-3.5" aria-hidden />
-            {questionTypeLabel}
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-bold text-slate-600">
+              <TypeIcon className="h-3.5 w-3.5" aria-hidden />
+              {questionTypeLabel}
+            </span>
+            <button
+              type="button"
+              onClick={onEdit}
+              className="dashboard-icon-btn"
+              aria-label={editLabel}
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={isDeleting}
+              className="dashboard-icon-btn dashboard-icon-btn--danger disabled:opacity-50"
+              aria-label={deleteLabel}
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         <h3 className="flex-1 text-2xl font-bold leading-relaxed text-[#2B415E] my-8">{questionText}</h3>
@@ -110,34 +129,6 @@ export function QuestionBankQuestionPreviewCard({
             ) : null} */}
             <DashboardBadge tone="success">{approvalLabel}</DashboardBadge>
 
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              type="button"
-              onClick={onDetails}
-              className="dashboard-raised-button h-12 rounded-2xl bg-[#243B5A] px-5 text-sm font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
-              style={{ boxShadow: "0px 4px 0px 0px #1E2E42" }}
-            >
-              <Eye className="h-4 w-4" aria-hidden />
-              {detailsLabel}
-            </Button>
-            <button
-              type="button"
-              onClick={onEdit}
-              className="dashboard-icon-btn"
-              aria-label={editLabel}
-            >
-              <Pencil className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={onDelete}
-              disabled={isDeleting}
-              className="dashboard-icon-btn dashboard-icon-btn--danger disabled:opacity-50"
-              aria-label={deleteLabel}
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
           </div>
         </div>
 

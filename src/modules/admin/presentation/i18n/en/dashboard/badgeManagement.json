@@ -1,0 +1,147 @@
+{
+  "badgeManagement": {
+    "breadcrumbs": {
+      "home": "Home",
+      "forum": "Forum",
+      "community": "Community management"
+    },
+    "page": {
+      "title": "Manage Nawabegh badges",
+      "description": "Create and manage Nawabegh badges, define eligibility criteria, and track student and activist performance on the platform.",
+      "createBadge": "Add new badge",
+      "recalculate": "Recalculate badges"
+    },
+    "stats": {
+      "totalBadges": {
+        "label": "Total badges",
+        "indicatorStatic": "—"
+      },
+      "activeBadges": {
+        "label": "Active badges",
+        "indicatorStatic": "Stable"
+      },
+      "totalEarners": {
+        "label": "Total earners",
+        "indicatorStatic": "—"
+      },
+      "mostEarned": {
+        "label": "Most earned badge",
+        "indicatorStatic": "—",
+        "empty": "None"
+      },
+      "averagePoints": {
+        "label": "Average points",
+        "indicatorStatic": "—"
+      }
+    },
+    "filters": {
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by badge name..."
+      },
+      "status": {
+        "label": "Status",
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "apply": "Filter"
+    },
+    "table": {
+      "title": "Badge list",
+      "columns": {
+        "icon": "Badge icon",
+        "name": "Badge name",
+        "status": "Status",
+        "toggle": "Activation",
+        "points": "Points",
+        "earnedCount": "Earners",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "pagination": {
+        "summary": "Showing {from} - {to} of {total} badges",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "states": {
+        "empty": {
+          "title": "No badges found",
+          "description": "Try adjusting filters or add a new badge."
+        },
+        "error": {
+          "title": "Failed to load badges",
+          "retry": "Retry"
+        }
+      }
+    },
+    "deleteModal": {
+      "title": "Delete badge",
+      "description": "Are you sure you want to delete this badge? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Badge deleted successfully."
+    },
+    "detailModal": {
+      "title": "Badge details",
+      "description": "Description",
+      "requiredPoints": "Required points",
+      "earnedCount": "Earners",
+      "createdAt": "Created at",
+      "status": "Status",
+      "close": "Close"
+    },
+    "form": {
+      "createTitle": "Add badge",
+      "editTitle": "Edit badge",
+      "modalTitle": "Add / edit badge",
+      "basicInfo": "Basic information",
+      "eligibilitySettings": "Eligibility settings",
+      "nameLabel": "Badge name",
+      "namePlaceholder": "e.g. Digital hero badge",
+      "descriptionLabel": "Badge description",
+      "descriptionPlaceholder": "Write a brief description of how to earn this badge...",
+      "uploadIcon": "Upload icon",
+      "uploadHint": "PNG or JPG — up to 5 MB",
+      "activeToggle": "Activate badge in Nawabegh",
+      "activeToggleHint": "Students will be able to see this badge in the list",
+      "requiredPointsLabel": "Required points",
+      "requiredPointsHint": "Set the minimum points required to earn this badge",
+      "previewTitle": "Badge preview",
+      "previewLevel": "Gold level",
+      "previewRequiredPoints": "Required points",
+      "previewInfo": "This badge will appear automatically for students once they meet the conditions above in their activity log.",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "createSuccess": "Badge created successfully.",
+      "updateSuccess": "Badge updated successfully.",
+      "validation": {
+        "nameRequired": "Please enter a badge name.",
+        "descriptionRequired": "Please enter a badge description.",
+        "iconRequired": "Please upload a badge icon.",
+        "pointsRequired": "Please enter required points."
+      }
+    },
+    "toggle": {
+      "success": "Badge status updated.",
+      "error": "Failed to update badge status."
+    },
+    "recalculate": {
+      "success": "Badges recalculated successfully.",
+      "error": "Failed to recalculate badges.",
+      "confirmTitle": "Recalculate badges",
+      "confirmDescription": "All students will be scanned and any missing badges will be awarded based on max points ever reached. Badges are never revoked.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    }
+  }
+}

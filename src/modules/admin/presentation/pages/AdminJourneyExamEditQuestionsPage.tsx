@@ -24,6 +24,7 @@ import { AddExamQuestionModal } from "@/modules/admin/presentation/components/jo
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -139,11 +140,7 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
   };
 
   if (loading || !exam) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
-      </div>
-    );
+    return <JourneyEditorStationPageSkeleton />;
   }
 
   const totalPoints = exam.questions.reduce((sum, q) => sum + q.points, 0);

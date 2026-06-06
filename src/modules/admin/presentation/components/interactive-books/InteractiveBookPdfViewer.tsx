@@ -10,6 +10,7 @@ import {
 import { cn } from "@/shared/application/lib/cn";
 import type { HotspotPlacement } from "@/modules/admin/presentation/components/interactive-books/interactiveBookPdfViewer.types";
 import { fetchFileAsArrayBuffer } from "@/shared/infrastructure/files/fetchFileForViewer";
+import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
@@ -45,7 +46,6 @@ function HotspotTooltip({
   onClose: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-console.log("hotspot", hotspot);
   // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -167,6 +167,16 @@ export function InteractiveBookPdfViewer({
   const [pageHotspots, setPageHotspots] = useState<InteractiveBookHotspot[]>([]);
   const [hotspotsLoading, setHotspotsLoading] = useState(false);
 
+  const renderDocumentSkeleton = () => (
+    <div className="w-full space-y-4">
+      <div className="mx-auto w-full max-w-[46rem] space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+        <Skeleton className="h-5 w-32" />
+        <Skeleton className="h-[20rem] w-full rounded-xl" />
+      </div>
+      <p className="text-center text-sm text-slate-500">{t("loading")}</p>
+    </div>
+  );
+
   useEffect(() => {
     let alive = true;
 
@@ -238,7 +248,6 @@ export function InteractiveBookPdfViewer({
       if (!alive) return;
       setHotspotsLoading(false);
       if (!result.errorMessage && result.data) {
-        console.log("result.data", result.data);
         setPageHotspots(result.data);
       } else {
         setPageHotspots([]);
@@ -282,9 +291,8 @@ export function InteractiveBookPdfViewer({
 
   if (!reactPdf) {
     return (
-      <div className="flex min-h-[20rem] items-center justify-center gap-2 text-sm text-slate-500">
-        <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-        {t("loading")}
+      <div className="flex min-h-[20rem] items-center justify-center">
+        {renderDocumentSkeleton()}
       </div>
     );
   }
@@ -294,9 +302,8 @@ export function InteractiveBookPdfViewer({
   return (
     <div className="relative min-h-[22rem] rounded-2xl border border-slate-200 bg-slate-100/50 p-4">
       {isResolving ? (
-        <div className="flex min-h-[20rem] items-center justify-center gap-2 text-sm text-slate-500">
-          <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-          {t("loading")}
+        <div className="flex min-h-[20rem] items-center justify-center">
+          {renderDocumentSkeleton()}
         </div>
       ) : loadError || !documentFile ? (
         <p className="py-16 text-center text-sm text-red-600">{t("loadError")}</p>
@@ -304,9 +311,8 @@ export function InteractiveBookPdfViewer({
         <Document
           file={documentFile}
           loading={
-            <div className="flex min-h-[20rem] items-center justify-center gap-2 text-sm text-slate-500">
-              <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
-              {t("loading")}
+            <div className="flex min-h-[20rem] items-center justify-center">
+              {renderDocumentSkeleton()}
             </div>
           }
           onLoadSuccess={({ numPages }) => {
@@ -348,7 +354,6 @@ export function InteractiveBookPdfViewer({
             ) : null}
 
             {pageHotspots.map((hotspot) => {
-              console.log("hotspot", hotspot, openHotspotId);
               const isOpen = openHotspotId === hotspot.id;
 
               return (

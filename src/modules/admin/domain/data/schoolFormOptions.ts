@@ -8,23 +8,23 @@ import type {
 
 /** Backend subscription plan ids — align with `/api/v1/...` subscription catalog. */
 export const schoolSubscriptionPlans: Array<
-  SchoolSelectOption<SchoolSubscriptionPlanId> & { apiId: string }
+  SchoolSelectOption<SchoolSubscriptionPlanId> & { apiId: string | null }
 > = [
   {
     id: "basic",
-    apiId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    apiId: null,
     labelKey: "schoolManagement.addForm.plans.basic.title",
     descriptionKey: "schoolManagement.addForm.plans.basic.description",
   },
   {
     id: "gold",
-    apiId: "4fa85f64-5717-4562-b3fc-2c963f66afa7",
+    apiId: null,
     labelKey: "schoolManagement.addForm.plans.gold.title",
     descriptionKey: "schoolManagement.addForm.plans.gold.description",
   },
   {
     id: "interactive",
-    apiId: "5fa85f64-5717-4562-b3fc-2c963f66afa8",
+    apiId: null,
     labelKey: "schoolManagement.addForm.plans.interactive.title",
     descriptionKey: "schoolManagement.addForm.plans.interactive.description",
   },

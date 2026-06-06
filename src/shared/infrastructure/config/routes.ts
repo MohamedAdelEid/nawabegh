@@ -76,6 +76,39 @@ export const ROUTES = {
     SEND_NOTIFICATION: {
       LIST: "/admin/send-notification",
     },
+    ADS: {
+      LIST: "/admin/ads",
+      CREATE: "/admin/ads/create",
+      VIEW: (adId: string) => `/admin/ads/${encodeURIComponent(adId)}`,
+      EDIT: (adId: string) => `/admin/ads/${encodeURIComponent(adId)}/edit`,
+    },
+    CURRICULUM_MANAGEMENT: {
+      LIST: "/admin/curriculum-management",
+    },
+    EXAMS: {
+      LIST: "/admin/exams",
+      ALL: "/admin/exams/list",
+      CREATE: "/admin/exams/create",
+      EDIT: (courseId: string) => `/admin/exams/${encodeURIComponent(courseId)}`,
+      PREVIEW: (courseId: string) =>
+        `/admin/exams/${encodeURIComponent(courseId)}/preview`,
+      CERTIFICATE_TEMPLATES: "/admin/exams/certificate-templates",
+    },
+    BADGE_MANAGEMENT: {
+      LIST: "/admin/badges",
+    },
+    SUPPORT_TICKETS: {
+      LIST: "/admin/support-tickets",
+      VIEW: (ticketId: string) =>
+        `/admin/support-tickets/${encodeURIComponent(ticketId)}`,
+    },
+    RESULTS: {
+      LIST: "/admin/results",
+      STUDENT: (studentId: string) =>
+        `/admin/results/students/${encodeURIComponent(studentId)}`,
+      QUIZ_ANALYSIS: (quizId: string) =>
+        `/admin/results/quizzes/${encodeURIComponent(quizId)}/analysis`,
+    },
     QUESTION_BANK: {
       LIST: "/admin/question-bank",
       MANAGE: "/admin/question-bank/manage",
@@ -89,7 +122,10 @@ export const ROUTES = {
       REQUEST_AMENDMENTS: (id: string) =>
         `/admin/article-editor/${id}/request-amendments`,
       COMMUNITY_SETTINGS: "/admin/article-editor/community-settings",
+      COMMUNITY_BADGES: "/admin/article-editor/community-settings/badges",
       COMMUNITY_BADGE_ADD: "/admin/article-editor/community-settings/badges/add",
+      COMMUNITY_BADGE_EDIT: (id: string) =>
+        `/admin/article-editor/community-settings/badges/${id}/edit`,
     },
     JOURNEY_EDITOR: {
       EDITOR: (journeyId: string) => `/admin/journey-editor/${journeyId}`,

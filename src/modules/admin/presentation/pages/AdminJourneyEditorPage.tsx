@@ -43,10 +43,17 @@ import {
   getCourseLearningPathsForEditor,
   type CourseLearningPath,
 } from "@/modules/admin/infrastructure/api/learningPathsApi";
-import { createStation, deleteStation, type CreatedStation } from "@/modules/admin/infrastructure/api/stationsApi";
+import {
+  createStation,
+  deleteStation,
+  reorderStations,
+  type CreatedStation,
+} from "@/modules/admin/infrastructure/api/stationsApi";
 import {
   AddLearningPathModal,
   AddStationModal,
+  JourneyEditorAnimatedSection,
+  JourneyEditorPageSkeleton,
   JourneyPathCard,
   type AddLearningPathDraft,
 } from "@/modules/admin/presentation/components/journey-editor";
@@ -391,6 +398,40 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     });
   };
 
+  const handleReorderStations = async (
+    pathId: string,
+    orderedIds: string[],
+  ): Promise<boolean> => {
+    const result = await reorderStations({ learningPathId: pathId, orderedIds });
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.stationReorderError"));
+      return false;
+    }
+
+    const orderById = new Map(orderedIds.map((id, index) => [id, index + 1]));
+    setData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        paths: prev.paths.map((path) =>
+          path.id === pathId
+            ? {
+                ...path,
+                stations: [...path.stations]
+                  .sort(
+                    (a, b) =>
+                      (orderById.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+                      (orderById.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+                  )
+                  .map((station, index) => ({ ...station, order: index + 1 })),
+              }
+            : path,
+        ),
+      };
+    });
+    return true;
+  };
+
   const handleDeletePath = async (pathId: string) => {
     const result = await deleteLearningPath(pathId);
     if (result.errorMessage || !result.data) {
@@ -458,8 +499,8 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#C8AC59]" />
+      <div role="status" aria-label={t("loading.editor")}>
+        <JourneyEditorPageSkeleton />
       </div>
     );
   }
@@ -468,37 +509,31 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("editor.title")}
-        description={t("editor.description")}
-        breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
-          { label: t("breadcrumbs.journeyEditor") },
-        ]}
-        action={
-          <div className="flex gap-3">
-            {/* <Button
-              variant="outline"
-              className="h-12 px-6 border-2 border-[#2B415E] rounded-xl shadow-[0px_4px_0px_0px_#0000000D]"
-              onClick={() => router.push(ROUTES.ADMIN.HOME + "?tab=journeyEditor")}
-            >
-              <Eye className="h-4 w-4" />
-              {t("editor.actions.previewJourney")}
-            </Button> */}
-            <Button
-              className="h-12 rounded-xl bg-[#C8AC59] px-8 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
-              onClick={() => void handleSave()}
-              disabled={saving}
-            >
-              <Save className="h-4 w-4" />
-              {t("editor.actions.saveChanges")}
-            </Button>
-          </div>
-        }
-      />
+      <JourneyEditorAnimatedSection>
+        <DashboardPageHeader
+          title={t("editor.title")}
+          description={t("editor.description")}
+          breadcrumbs={[
+            { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+            { label: t("breadcrumbs.journeyEditor") },
+          ]}
+          action={
+            <div className="flex gap-3">
+              <Button
+                className="h-12 rounded-xl bg-[#C8AC59] px-8 text-white shadow-[0px_4px_0px_0px_#8F6C0B] hover:bg-[#B79A46]"
+                onClick={() => void handleSave()}
+                disabled={saving}
+              >
+                <Save className="h-4 w-4" />
+                {t("editor.actions.saveChanges")}
+              </Button>
+            </div>
+          }
+        />
+      </JourneyEditorAnimatedSection>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <main className="space-y-5">
+        <JourneyEditorAnimatedSection delay={0.06} className="space-y-5">
           {data.paths.map((path) => (
             <JourneyPathCard
               key={path.id}
@@ -507,10 +542,11 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
               onAddStation={openAddStationModal}
               onDeleteStation={(stationId) => void handleDeleteStation(stationId)}
               onDeletePath={(pathId) => void handleDeletePath(pathId)}
+              onReorderStations={handleReorderStations}
             />
           ))}
-        </main>
-        <aside className="space-y-5">
+        </JourneyEditorAnimatedSection>
+        <JourneyEditorAnimatedSection delay={0.12} className="space-y-5">
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-5 p-5">
               <div>
@@ -728,7 +764,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
               </div>
             </CardContent>
           </Card>
-        </aside>
+        </JourneyEditorAnimatedSection>
       </div>
 
       <AddStationModal

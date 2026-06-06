@@ -22,7 +22,6 @@ import {
   getCountriesDropdown,
   getEducationLevelsDropdown,
   getUserManagementGradesDropdown,
-  getUserManagementSchoolsDropdown,
   getUserManagementStats,
   getUserManagementUsers,
   normalizeUserManagementRole,
@@ -31,6 +30,7 @@ import {
   type UserManagementListPage,
   type UserManagementStats,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
+import { getSchoolFilterOptions } from "@/modules/admin/infrastructure/api/schoolApi";
 import { cn } from "@/shared/application/lib/cn";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { notify } from "@/shared/application/lib/toast";
@@ -51,9 +51,28 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { AddUserSelectionModal as AddUserModal } from "@/modules/admin/presentation/components/add-user";
 import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
+import {
+  UserManagementAnimatedSection,
+  UserManagementDashboardSkeleton,
+} from "@/modules/admin/presentation/components/user-management";
 
 type CountryFilterId = "all" | (string & {});
 type EducationLevelFilterId = "all" | (string & {});
+
+const USER_MANAGEMENT_PAGE_SIZE = 10;
+
+function buildPaginationPages(currentPage: number, totalPages: number) {
+  if (totalPages <= 0) return [1];
+
+  const start = Math.max(1, currentPage - 2);
+  const end = Math.min(totalPages, start + 4);
+  const adjustedStart = Math.max(1, end - 4);
+
+  return Array.from(
+    { length: end - adjustedStart + 1 },
+    (_, index) => adjustedStart + index,
+  );
+}
 
 type FilterState = {
   query: string;
@@ -293,7 +312,7 @@ export function UserManagementDashboard() {
           : filters.subscriptionId === "active",
       keyword: debouncedQuery,
       pageNumber: currentPage,
-      pageSize: data.pagination.visibleItems,
+      pageSize: USER_MANAGEMENT_PAGE_SIZE,
     });
 
     if (requestId !== requestSequenceRef.current) return;
@@ -307,7 +326,6 @@ export function UserManagementDashboard() {
     setIsLoadingUsers(false);
   }, [
     currentPage,
-    data.pagination.visibleItems,
     debouncedQuery,
     filters.gradeId,
     filters.roleId,
@@ -337,12 +355,19 @@ export function UserManagementDashboard() {
   }, [loadUsers]);
 
   useEffect(() => {
+    const totalPages = usersPage?.totalPages ?? 1;
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages));
+    }
+  }, [currentPage, usersPage?.totalPages]);
+
+  useEffect(() => {
     let mounted = true;
 
     const loadDashboardMetadata = async () => {
       const [statsResult, schoolsResult, countriesResult] = await Promise.all([
         getUserManagementStats(),
-        getUserManagementSchoolsDropdown(),
+        getSchoolFilterOptions(),
         getCountriesDropdown(),
       ]);
 
@@ -352,6 +377,10 @@ export function UserManagementDashboard() {
         setStatsData(statsResult.data);
       } else if (statsResult.errorMessage) {
         notify.error(statsResult.errorMessage);
+      }
+
+      if (schoolsResult.errorMessage) {
+        notify.error(schoolsResult.errorMessage);
       }
 
       if (schoolsResult.data && schoolsResult.data.length > 0) {
@@ -367,7 +396,7 @@ export function UserManagementDashboard() {
             label: option.name,
           })),
         ]);
-      } else {
+      } else if (!schoolsResult.errorMessage) {
         setSchoolOptions(
           data.filters.schools.map((option) => ({
             ...option,
@@ -657,17 +686,17 @@ export function UserManagementDashboard() {
     [pendingToggleUserId, t],
   );
 
-  const paginationPages = useMemo(() => {
-    const totalPages = usersPage?.totalPages ?? 1;
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(totalPages, start + 4);
-    const adjustedStart = Math.max(1, end - 4);
+  const activePage = usersPage?.currentPage ?? currentPage;
+  const totalPages = usersPage?.totalPages ?? 1;
 
-    return Array.from({ length: end - adjustedStart + 1 }, (_, index) => adjustedStart + index);
-  }, [currentPage, usersPage?.totalPages]);
+  const paginationPages = useMemo(
+    () => buildPaginationPages(activePage, totalPages),
+    [activePage, totalPages],
+  );
 
   const summaryTotal = usersPage?.totalItems ?? 0;
-  const summaryVisible = visibleRows.length;
+  const summaryVisible = usersPage?.rows.length ?? visibleRows.length;
+  const showContentSkeleton = isLoadingUsers;
 
   const handleOpenUser = (row: DashboardUserRow) => {
     router.push(`${ROUTES.ADMIN.USER_MANAGEMENT.VIEW(row.id)}?role=${row.roleQuery}`);
@@ -758,158 +787,170 @@ export function UserManagementDashboard() {
         }}
       />
 
-      <section className="grid gap-5 lg:grid-cols-4">
-        {statCards.map((stat) => (
-          <UserManagementStatCard
-            key={stat.id}
-            label={t(stat.labelKey)}
-            value={stat.value}
-            indicator={stat.indicatorKey ? t(stat.indicatorKey) : undefined}
-            accentClassName={stat.accentClassName}
-            icon={stat.icon}
-            iconToneClassName={stat.iconToneClassName}
-          />
-        ))}
-      </section>
+      {showContentSkeleton ? (
+        <UserManagementDashboardSkeleton />
+      ) : (
+        <>
+          <UserManagementAnimatedSection delay={0.02}>
+            <section className="grid gap-5 lg:grid-cols-4">
+              {statCards.map((stat) => (
+                <UserManagementStatCard
+                  key={stat.id}
+                  label={t(stat.labelKey)}
+                  value={stat.value}
+                  indicator={stat.indicatorKey ? t(stat.indicatorKey) : undefined}
+                  accentClassName={stat.accentClassName}
+                  icon={stat.icon}
+                  iconToneClassName={stat.iconToneClassName}
+                />
+              ))}
+            </section>
+          </UserManagementAnimatedSection>
 
-      <DashboardFiltersPanel isLoading={isLoadingUsers}>
-          <DashboardFilterSelect
-            label={t("userManagement.filters.roles.label")}
-            value={filters.roleId}
-            options={data.filters.roles.map((option) => ({
-              ...option,
-              label: t(option.labelKey),
-            }))}
-            onChange={(value) =>
-              setFilters((current) => ({ ...current, roleId: value }))
-            }
-          />
-          <DashboardFilterSelect
-            label={t("userManagement.filters.countries.label")}
-            value={filters.countryId}
-            options={resolvedCountryOptions}
-            onChange={(value) =>
-              setFilters((current) => ({
-                ...current,
-                countryId: value as CountryFilterId,
-                educationLevelId: "all",
-                gradeId: "allGrades",
-              }))
-            }
-          />
-          <DashboardFilterSelect
-            label={t("userManagement.filters.educationLevels.label")}
-            value={filters.educationLevelId}
-            options={resolvedEducationLevelOptions}
-            disabled={filters.countryId === "all"}
-            onChange={(value) =>
-              setFilters((current) => ({
-                ...current,
-                educationLevelId: value as EducationLevelFilterId,
-                gradeId: "allGrades",
-              }))
-            }
-          />
-          <DashboardFilterSelect
-            label={t("userManagement.filters.schools.label")}
-            value={filters.schoolId}
-            options={resolvedSchoolOptions}
-            onChange={(value) =>
-              setFilters((current) => ({ ...current, schoolId: value }))
-            }
-          />
-          <DashboardFilterSelect
-            label={t("userManagement.filters.grades.label")}
-            value={filters.gradeId}
-            options={resolvedGradeOptions}
-            disabled={
-              filters.countryId === "all" || filters.educationLevelId === "all"
-            }
-            onChange={(value) =>
-              setFilters((current) => ({ ...current, gradeId: value }))
-            }
-          />
-          <DashboardFilterSelect
-            label={t("userManagement.filters.subscriptions.label")}
-            value={filters.subscriptionId}
-            options={data.filters.subscriptions.map((option) => ({
-              ...option,
-              label: t(option.labelKey),
-            }))}
-            onChange={(value) =>
-              setFilters((current) => ({ ...current, subscriptionId: value }))
-            }
-          />
-          <DashboardSearchFilter
-            label={t("userManagement.filters.search.label")}
-            placeholder={t("userManagement.filters.search.placeholder")}
-            value={filters.query}
-            onChange={(value) =>
-              setFilters((current) => ({ ...current, query: value }))
-            }
-          />
-      </DashboardFiltersPanel>
+          <UserManagementAnimatedSection delay={0.05}>
+            <DashboardFiltersPanel isLoading={isLoadingUsers}>
+              <DashboardFilterSelect
+                label={t("userManagement.filters.roles.label")}
+                value={filters.roleId}
+                options={data.filters.roles.map((option) => ({
+                  ...option,
+                  label: t(option.labelKey),
+                }))}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, roleId: value }))
+                }
+              />
+              <DashboardFilterSelect
+                label={t("userManagement.filters.countries.label")}
+                value={filters.countryId}
+                options={resolvedCountryOptions}
+                onChange={(value) =>
+                  setFilters((current) => ({
+                    ...current,
+                    countryId: value as CountryFilterId,
+                    educationLevelId: "all",
+                    gradeId: "allGrades",
+                  }))
+                }
+              />
+              <DashboardFilterSelect
+                label={t("userManagement.filters.educationLevels.label")}
+                value={filters.educationLevelId}
+                options={resolvedEducationLevelOptions}
+                disabled={filters.countryId === "all"}
+                onChange={(value) =>
+                  setFilters((current) => ({
+                    ...current,
+                    educationLevelId: value as EducationLevelFilterId,
+                    gradeId: "allGrades",
+                  }))
+                }
+              />
+              <DashboardFilterSelect
+                label={t("userManagement.filters.schools.label")}
+                value={filters.schoolId}
+                options={resolvedSchoolOptions}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, schoolId: value }))
+                }
+              />
+              <DashboardFilterSelect
+                label={t("userManagement.filters.grades.label")}
+                value={filters.gradeId}
+                options={resolvedGradeOptions}
+                disabled={
+                  filters.countryId === "all" || filters.educationLevelId === "all"
+                }
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, gradeId: value }))
+                }
+              />
+              <DashboardFilterSelect
+                label={t("userManagement.filters.subscriptions.label")}
+                value={filters.subscriptionId}
+                options={data.filters.subscriptions.map((option) => ({
+                  ...option,
+                  label: t(option.labelKey),
+                }))}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, subscriptionId: value }))
+                }
+              />
+              <DashboardSearchFilter
+                label={t("userManagement.filters.search.label")}
+                placeholder={t("userManagement.filters.search.placeholder")}
+                value={filters.query}
+                onChange={(value) =>
+                  setFilters((current) => ({ ...current, query: value }))
+                }
+              />
+            </DashboardFiltersPanel>
+          </UserManagementAnimatedSection>
 
-      <DashboardTableCard
-        title={t("userManagement.table.title")}
-        footer={
-          <DashboardTableFooterPagination
-            summary={t("userManagement.table.pagination.summary", {
-              visible: summaryVisible,
-              total: summaryTotal,
-            })}
-            pages={paginationPages}
-            currentPage={currentPage}
-            previousLabel={t("userManagement.table.pagination.previous")}
-            nextLabel={t("userManagement.table.pagination.next")}
-            onPageChange={setCurrentPage}
-          />
-        }
-      >
-        <DashboardDataTable
-          rows={visibleRows}
-          columns={tableColumns}
-          getRowKey={(row) => row.id}
-          emptyMessage={t("userManagement.table.empty")}
-          onRowClick={handleOpenUser}
-          actionsHeader={t("userManagement.table.columns.actions")}
-          renderActions={(row) => (
-            <>
-              <button
-                type="button"
-                className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                aria-label={t("userManagement.table.actions.more")}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setMenuOpenUserId((current) => (current === row.id ? null : row.id));
-                }}
-              >
-                <EllipsisVertical className="h-5 w-5" aria-hidden />
-              </button>
-              <div className="relative">
-                {menuOpenUserId === row.id ? (
-                  <div
-                    className="absolute left-0 top-2 z-20 min-w-[8rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
-                    onClick={(event) => event.stopPropagation()}
-                  >
+          <UserManagementAnimatedSection delay={0.08}>
+            <DashboardTableCard
+              title={t("userManagement.table.title")}
+              footer={
+                <DashboardTableFooterPagination
+                  summary={t("userManagement.table.pagination.summary", {
+                    visible: summaryVisible,
+                    total: summaryTotal,
+                  })}
+                  pages={paginationPages}
+                  currentPage={activePage}
+                  previousLabel={t("userManagement.table.pagination.previous")}
+                  nextLabel={t("userManagement.table.pagination.next")}
+                  onPageChange={setCurrentPage}
+                />
+              }
+            >
+              <DashboardDataTable
+                rows={visibleRows}
+                columns={tableColumns}
+                getRowKey={(row) => row.id}
+                emptyMessage={t("userManagement.table.empty")}
+                onRowClick={handleOpenUser}
+                actionsHeader={t("userManagement.table.columns.actions")}
+                renderActions={(row) => (
+                  <>
                     <button
                       type="button"
-                      disabled={pendingDeleteUserId === row.id}
-                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
-                      onClick={() => {
-                        setMenuOpenUserId(null);
-                        setDeleteModalUser(row);
+                      className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+                      aria-label={t("userManagement.table.actions.more")}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setMenuOpenUserId((current) => (current === row.id ? null : row.id));
                       }}
                     >
-                      {t("userManagement.table.actions.delete")}
+                      <EllipsisVertical className="h-5 w-5" aria-hidden />
                     </button>
-                  </div>
-                ) : null}
-              </div>
-            </>
-          )}
-        />
-      </DashboardTableCard>
+                    <div className="relative">
+                      {menuOpenUserId === row.id ? (
+                        <div
+                          className="absolute left-0 top-2 z-20 min-w-[8rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            disabled={pendingDeleteUserId === row.id}
+                            className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                            onClick={() => {
+                              setMenuOpenUserId(null);
+                              setDeleteModalUser(row);
+                            }}
+                          >
+                            {t("userManagement.table.actions.delete")}
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </>
+                )}
+              />
+            </DashboardTableCard>
+          </UserManagementAnimatedSection>
+        </>
+      )}
     </div>
   );
 }

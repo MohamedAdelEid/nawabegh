@@ -5,12 +5,14 @@ import type { PropsWithChildren } from "react";
 type DashboardFiltersPanelProps = PropsWithChildren<{
   isLoading?: boolean;
   className?: string;
+  innerClassName?: string;
 }>;
 
 export function DashboardFiltersPanel({
   children,
   isLoading = false,
   className,
+  innerClassName,
 }: DashboardFiltersPanelProps) {
   return (
     <div
@@ -18,7 +20,7 @@ export function DashboardFiltersPanel({
       style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}
       aria-busy={isLoading}
     >
-      <div className="flex flex-col flex-wrap gap-4 xl:flex-row xl:items-end">{children}</div>
+      <div className={`flex flex-col flex-wrap gap-4 xl:flex-row xl:items-end ${innerClassName ?? ""}`.trim()}>{children}</div>
     </div>
   );
 }

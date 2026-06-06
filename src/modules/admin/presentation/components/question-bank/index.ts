@@ -1,3 +1,8 @@
+export { QuestionBankAnimatedSection } from "./QuestionBankAnimatedSection";
+export { QuestionBankAddPageSkeleton } from "./QuestionBankAddPageSkeleton";
+export { QuestionBankDashboardSkeleton } from "./QuestionBankDashboardSkeleton";
+export { QuestionBankPreviewAllPageSkeleton } from "./QuestionBankPreviewAllPageSkeleton";
+export { QuestionBankPreviewPageSkeleton } from "./QuestionBankPreviewPageSkeleton";
 export { QuestionBankPreviewChoiceCard } from "./QuestionBankPreviewChoiceCard";
 export { QuestionBankPreviewInfoItem } from "./QuestionBankPreviewInfoItem";
 export { QuestionBankPreviewStatCard } from "./QuestionBankPreviewStatCard";
@@ -5,3 +10,4 @@ export { QuestionBankDifficultyStatCard } from "./QuestionBankDifficultyStatCard
 export type { QuestionBankDifficultyDistribution } from "./QuestionBankDifficultyStatCard";
 export { QuestionBankQuestionPreviewCard } from "./QuestionBankQuestionPreviewCard";
 export { QuestionBankQuestionPreviewCardSkeleton } from "./QuestionBankQuestionPreviewCardSkeleton";
+export { QuestionBankPreviewPeopleCard } from "./QuestionBankPreviewPeopleCard";
