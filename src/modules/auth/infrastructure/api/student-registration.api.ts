@@ -10,9 +10,9 @@ import type {
   StudentRegistrationResponse,
 } from "@/modules/auth/domain/types/student-registration.types";
 
-const STUDENT_REGISTRATION_PATH = "/Auth/student-registration";
-const RESEND_EMAIL_OTP_PATH = "/Auth/resend-email-otp";
-const CONFIRM_EMAIL_OTP_PATH = "/Auth/confirm-email-otp";
+const STUDENT_REGISTRATION_PATH = "/api/v1/Auth/student-registration";
+const RESEND_EMAIL_OTP_PATH = "/api/v1/Auth/resend-email-otp";
+const CONFIRM_EMAIL_OTP_PATH = "/api/v1/Auth/confirm-email-otp";
 
 type ApiErrorBody = {
   error?: { message?: string } | null;

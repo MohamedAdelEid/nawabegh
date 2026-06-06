@@ -11,7 +11,7 @@ export async function getCountriesDropdown(
   params?: PaginatedQueryParams,
 ): Promise<Country[]> {
   const response = await httpClient.get<unknown>({
-    url: "Countries/dropdown",
+    url: "/api/v1/Countries/dropdown",
     params: paginatedParams(params),
   });
 

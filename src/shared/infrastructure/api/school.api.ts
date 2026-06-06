@@ -19,7 +19,7 @@ export async function getSchoolsDropdown(
 ): Promise<School[]> {
   try {
     const response = await httpClient.get<unknown>({
-      url: "School/dropdown",
+      url: "/api/v1/School/dropdown",
       params: schoolDropdownParams(params),
     });
 

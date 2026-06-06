@@ -8,7 +8,7 @@ export async function getGrades(
   params?: GradesQueryParams,
 ): Promise<Grade[]> {
   const response = await httpClient.get<unknown>({
-    url: "Grades",
+    url: "/api/v1/Grades",
     params: {
       ...paginatedParams(params),
       ...(params?.educationLevelId != null

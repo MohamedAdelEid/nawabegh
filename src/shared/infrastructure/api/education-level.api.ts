@@ -11,7 +11,7 @@ export async function getEducationLevels(
   params?: EducationLevelsQueryParams,
 ): Promise<EducationLevel[]> {
   const response = await httpClient.get<unknown>({
-    url: "EducationLevels",
+    url: "/api/v1/EducationLevels",
     params: {
       ...paginatedParams(params),
       ...(params?.countryId != null ? { countryId: params.countryId } : {}),
