@@ -23,5 +23,6 @@ export interface BackendApiResponse<TData> {
   status: BackendStatus | string;
   statusCode: BackendStatus | string | number;
   hasValue: boolean;
+  isSuccess?: boolean;
   message?: string;
 }

@@ -29,6 +29,7 @@ import {
 import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
 import { SchoolManagementFilterBar } from "@/modules/admin/presentation/components/school-management";
 import { notify } from "@/shared/application/lib/toast";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 function statusTone(status: string) {
@@ -332,7 +333,7 @@ export function SchoolManagementDashboard() {
             title={t("schoolManagement.table.states.unauthorized.title")}
             description={t("schoolManagement.table.states.unauthorized.description")}
             action={
-              <Button type="button" onClick={() => router.push(ROUTES.AUTH.LOGIN)}>
+              <Button type="button" onClick={() => router.push(AUTH_ROUTES.LOGIN)}>
                 {t("schoolManagement.table.states.actions.goToLogin")}
               </Button>
             }

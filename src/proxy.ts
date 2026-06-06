@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getAuthSecret } from "@/shared/infrastructure/auth/authSecret";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 const PROTECTED_PREFIXES = ["/admin", "/student", "/teacher", "/parent"];
@@ -47,12 +48,12 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const token = await readAuthToken(request);
 
-  if (pathname === ROUTES.AUTH.LOGIN && token) {
+  if (pathname === AUTH_ROUTES.LOGIN && token) {
     return NextResponse.redirect(new URL(getRoleHome(token.role), request.url));
   }
 
   if (isProtectedPath(pathname) && !token) {
-    const loginUrl = new URL(ROUTES.AUTH.LOGIN, request.url);
+    const loginUrl = new URL(AUTH_ROUTES.LOGIN, request.url);
     loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
     const response = NextResponse.redirect(loginUrl);
     return token === undefined ? clearAuthCookies(response) : response;
@@ -66,5 +67,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/login", "/admin/:path*", "/student/:path*", "/teacher/:path*", "/parent/:path*"],
+  matcher: [
+    "/auth/login",
+    "/admin/:path*",
+    "/student/:path*",
+    "/teacher/:path*",
+    "/parent/:path*",
+  ],
 };

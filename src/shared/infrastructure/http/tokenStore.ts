@@ -11,19 +11,19 @@ export async function getToken(): Promise<string | null> {
   return session?.accessToken ?? null;
 }
 
-export function getRequestLanguage(): string {
-  if (typeof window === "undefined") {
-    return "ar";
-  }
-
-  try {
-    const fromStorage = localStorage.getItem(LOCALE_STORAGE_KEY);
-    if (isAppLocale(fromStorage)) {
-      return fromStorage;
+export async function getRequestLanguage(): Promise<string> {
+  if (typeof window !== "undefined") {
+    try {
+      const fromStorage = localStorage.getItem(LOCALE_STORAGE_KEY);
+      if (isAppLocale(fromStorage)) return fromStorage;
+    } catch {
     }
-  } catch {
+
+    const fromDocument = document.documentElement.lang;
+    return isAppLocale(fromDocument) ? fromDocument : "ar";
   }
 
-  const fromDocument = document.documentElement.lang;
-  return isAppLocale(fromDocument) ? fromDocument : "ar";
+  const { cookies } = await import("next/headers");
+  const fromCookie = (await cookies()).get("NEXT_LOCALE")?.value ?? null;
+  return isAppLocale(fromCookie) ? fromCookie : "ar";
 }

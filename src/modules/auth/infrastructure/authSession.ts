@@ -8,6 +8,7 @@ import type {
   LoginCredentials,
   RefreshTokenApiResponse,
 } from "@/modules/auth/domain/types/login.types";
+import type { ConfirmEmailOtpData } from "@/modules/auth/domain/types/student-registration.types";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
@@ -141,6 +142,40 @@ function isLoginEnvelopeFailed(response: LoginApiResponse): boolean {
   if (response.isSuccess === false) return true;
   if (response.hasValue === false) return true;
   return false;
+}
+
+export function mapConfirmOtpResponseToSession(
+  data: ConfirmEmailOtpData,
+): AuthSessionPayload | null {
+  const token = data.token;
+  const apiUser = data.user;
+  if (!token || !apiUser?.id) return null;
+
+  const claims = decodeAuthTokenClaims(token);
+  const claimRole = claims[ROLE_CLAIM] ?? claims.role;
+  const roleCandidates =
+    apiUser.roles && apiUser.roles.length > 0
+      ? apiUser.roles
+      : claimRole
+        ? [claimRole]
+        : ["Student"];
+  const role = pickPrimaryRole(roleCandidates);
+
+  const user: AuthSessionUser = {
+    id: apiUser.id,
+    domainUid: claims.domain_uid ?? null,
+    name: apiUser.fullName ?? claims.name ?? claims[NAME_CLAIM] ?? "User",
+    email: apiUser.email ?? claims.email ?? claims.sub ?? "",
+    role,
+    avatar: apiUser.photo ?? null,
+  };
+
+  return {
+    user,
+    accessToken: token,
+    refreshToken: data.refreshToken ?? undefined,
+    accessTokenExpiresAt: data.expiresAt ?? "",
+  };
 }
 
 export function mapLoginResponseToSession(response: LoginApiResponse): AuthSessionPayload | null {

@@ -28,7 +28,7 @@ export function LoginInput({
   const hasError = Boolean(error);
 
   return (
-    <label className="flex flex-col gap-2 text-right">
+    <label className="flex flex-col gap-2">
       <span className={cn("text-sm font-semibold text-[var(--dashboard-primary)]", labelClassName)}>
         {label}
       </span>

@@ -2,10 +2,11 @@ import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import { getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import {
   decodeAuthTokenClaims,
   getAuthErrorMessage,
+  mapConfirmOtpResponseToSession,
   mapLoginResponseToSession,
   mapRefreshResponseToTokens,
 } from "@/modules/auth/infrastructure/authSession";
@@ -53,7 +54,7 @@ async function refreshJwtToken(token: JWT): Promise<JWT> {
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: ROUTES.AUTH.LOGIN,
+    signIn: AUTH_ROUTES.LOGIN,
   },
   providers: [
     CredentialsProvider({
@@ -83,6 +84,63 @@ export const authOptions: NextAuthOptions = {
         const sessionPayload = mapLoginResponseToSession(response);
         if (sessionPayload == null) {
           throw new Error(getAuthErrorMessage(response));
+        }
+
+        return {
+          id: sessionPayload.user.id,
+          name: sessionPayload.user.name,
+          email: sessionPayload.user.email,
+          image: sessionPayload.user.avatar ?? undefined,
+          role: sessionPayload.user.role,
+          domainUid: sessionPayload.user.domainUid,
+          accessToken: sessionPayload.accessToken,
+          refreshToken: sessionPayload.refreshToken,
+          accessTokenExpiresAt: sessionPayload.accessTokenExpiresAt,
+        };
+      },
+    }),
+    CredentialsProvider({
+      id: "registration-otp",
+      name: "Registration OTP",
+      credentials: {
+        accessToken: { type: "text" },
+        refreshToken: { type: "text" },
+        accessTokenExpiresAt: { type: "text" },
+        userId: { type: "text" },
+        userName: { type: "text" },
+        email: { type: "text" },
+        role: { type: "text" },
+        avatar: { type: "text" },
+        domainUid: { type: "text" },
+      },
+      async authorize(credentials) {
+        if (!credentials) {
+          throw new Error("Missing OTP session credentials.");
+        }
+
+        const accessToken = credentials.accessToken?.trim();
+        const userId = credentials.userId?.trim();
+        const email = credentials.email?.trim();
+
+        if (!accessToken || !userId || !email) {
+          throw new Error("Missing OTP session credentials.");
+        }
+
+        const sessionPayload = mapConfirmOtpResponseToSession({
+          token: accessToken,
+          refreshToken: credentials.refreshToken ?? null,
+          expiresAt: credentials.accessTokenExpiresAt ?? "",
+          user: {
+            id: userId,
+            fullName: credentials.userName ?? "User",
+            email,
+            photo: credentials.avatar || null,
+            roles: credentials.role ? [credentials.role] : ["Student"],
+          },
+        });
+
+        if (!sessionPayload) {
+          throw new Error("Unable to establish session after verification.");
         }
 
         return {
