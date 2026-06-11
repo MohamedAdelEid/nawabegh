@@ -32,7 +32,38 @@ export type InteractiveBooksListData = {
 export type GetInteractiveBooksParams = {
   pageNumber: number;
   pageSize: number;
+  courseId?: string;
+  gradeId?: number;
+  status?: number;
+  hasHotspots?: boolean;
+  fromDate?: string;
+  toDate?: string;
+  keyword?: string;
+  acceptLanguage?: string;
 };
+
+function buildInteractiveBooksQueryParams(
+  params: GetInteractiveBooksParams,
+): Record<string, string | number | boolean> {
+  const query: Record<string, string | number | boolean> = {
+    pageNumber: params.pageNumber,
+    pageSize: params.pageSize,
+  };
+
+  if (params.courseId?.trim()) query.courseId = params.courseId.trim();
+  if (params.gradeId !== undefined && Number.isFinite(params.gradeId)) {
+    query.gradeId = params.gradeId;
+  }
+  if (params.status !== undefined && Number.isFinite(params.status)) {
+    query.status = params.status;
+  }
+  if (params.hasHotspots !== undefined) query.hasHotspots = params.hasHotspots;
+  if (params.fromDate?.trim()) query.fromDate = params.fromDate.trim();
+  if (params.toDate?.trim()) query.toDate = params.toDate.trim();
+  if (params.keyword?.trim()) query.keyword = params.keyword.trim();
+
+  return query;
+}
 
 function asRecord(value: unknown): UnknownRecord | null {
   return value !== null && typeof value === "object" ? (value as UnknownRecord) : null;
@@ -196,12 +227,11 @@ export async function getInteractiveBooks(
   params: GetInteractiveBooksParams,
 ): Promise<InteractiveBooksApiResult<InteractiveBooksListData>> {
   try {
+    const acceptLanguage = params.acceptLanguage?.trim();
     const response = await httpClient.get<unknown>({
       url: "/api/v1/InteractiveBook",
-      params: {
-        pageNumber: params.pageNumber,
-        pageSize: params.pageSize,
-      },
+      params: buildInteractiveBooksQueryParams(params),
+      ...(acceptLanguage ? { headers: { "Accept-Language": acceptLanguage } } : {}),
     });
     const root = asRecord(response.data);
     const nested = asRecord(root?.data);

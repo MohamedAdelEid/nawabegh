@@ -1,5 +1,6 @@
 import { DashboardBadge } from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import type { UserManagementParentChildRow } from "./types";
 
 export type ParentChildrenCardProps = {
@@ -31,13 +32,31 @@ export function ParentChildrenCard({
             children.map((child) => (
               <div
                 key={child.id}
-                className="rounded-[1.5rem] border border-slate-100 bg-[#F8FAFC] p-4 text-right"
+                className="flex items-center gap-3 rounded-[1.5rem] border border-slate-100 bg-[#F8FAFC] p-4 text-right"
               >
-                <p className="font-semibold text-slate-800">{child.fullName}</p>
-                <p className="mt-1 text-sm text-slate-500">{child.gradeName || emptyLabel}</p>
-                <p dir="ltr" className="mt-1 text-xs text-slate-400">
-                  {child.username || emptyLabel}
-                </p>
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-[#DBE3F3] bg-white">
+                  {child.profileImageUrl ? (
+                    <img
+                      src={child.profileImageUrl}
+                      alt={child.fullName}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <UserAvatarImageOrInitials
+                      trackKey={child.id}
+                      name={child.fullName}
+                      imageUrl={null}
+                      circleClassName="h-full w-full rounded-full bg-[#E8EEF8] text-sm text-[#243B5A]"
+                    />
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-slate-800">{child.fullName}</p>
+                  <p className="mt-1 text-sm text-slate-500">{child.gradeName || emptyLabel}</p>
+                  <p dir="ltr" className="mt-1 text-xs text-slate-400">
+                    {child.username || emptyLabel}
+                  </p>
+                </div>
               </div>
             ))
           ) : (

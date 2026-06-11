@@ -22,6 +22,7 @@ import {
   getUserManagementDetailsReturnPath,
   loadParentEditForm,
 } from "@/modules/admin/presentation/lib/userManagementEditForm";
+import { useAvatarUploadOnSelect } from "@/modules/admin/presentation/lib/useAvatarUploadOnSelect";
 import {
   AddUserAnimatedSection,
   AddUserFormActions,
@@ -76,6 +77,7 @@ export function AdminAddParentPage() {
   const searchParams = useSearchParams();
   const editUserId = searchParams.get("userId")?.trim() ?? "";
   const isEditMode = Boolean(editUserId);
+  const { uploadingAvatar, handleAvatarChange } = useAvatarUploadOnSelect(isEditMode);
   const [values, setValues] = useState(defaultParentAccountValues);
   const [updateContext, setUpdateContext] = useState<ParentUserUpdateContext>({});
   const [isLoadingEdit, setIsLoadingEdit] = useState(isEditMode);
@@ -234,7 +236,7 @@ export function AdminAddParentPage() {
     setIsSubmitting(true);
     let avatarFilePath = values.avatarFilePath;
 
-    if (values.avatarFile) {
+    if (!isEditMode && values.avatarFile) {
       const uploadResult = await uploadUserImage(values.avatarFile);
       if (!uploadResult.data?.filePath) {
         setSubmitError({
@@ -329,6 +331,7 @@ export function AdminAddParentPage() {
       cancelLabel={t("userManagement.addUser.shared.actions.cancel")}
       submitLabel={submitLabel}
       onSubmit={handleSubmit}
+      actionsDisabled={isSubmitting || uploadingAvatar}
     >
       {submitError ? (
         <ApiFailureAlert
@@ -349,17 +352,17 @@ export function AdminAddParentPage() {
               hint={t("userManagement.addUser.shared.fields.avatar.hint")}
               previewAlt={t("userManagement.addUser.shared.fields.avatar.previewAlt")}
               uploadLabel={t("userManagement.addUser.shared.fields.avatar.upload")}
+              uploadingLabel={t("userManagement.addUser.shared.fields.avatar.uploading")}
               invalidTypeMessage={t("userManagement.addUser.shared.fields.avatar.invalidType")}
               tooLargeMessage={t("userManagement.addUser.shared.fields.avatar.tooLarge")}
               readErrorMessage={t("userManagement.addUser.shared.fields.avatar.readError")}
+              disabled={uploadingAvatar || isSubmitting}
               value={{
                 file: values.avatarFile,
                 previewUrl: values.avatarPreviewUrl,
               }}
               onChange={(next) => {
-                setField("avatarFile", next.file);
-                setField("avatarPreviewUrl", next.previewUrl);
-                setField("avatarFilePath", null);
+                void handleAvatarChange(next, setValues);
               }}
             />
 

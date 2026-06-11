@@ -833,7 +833,7 @@ export function UserManagementDashboard() {
                   }))
                 }
               />
-              <DashboardFilterSelect
+              {/* <DashboardFilterSelect
                 label={t("userManagement.filters.educationLevels.label")}
                 value={filters.educationLevelId}
                 options={resolvedEducationLevelOptions}
@@ -845,7 +845,7 @@ export function UserManagementDashboard() {
                     gradeId: "allGrades",
                   }))
                 }
-              />
+              /> */}
               <DashboardFilterSelect
                 label={t("userManagement.filters.schools.label")}
                 value={filters.schoolId}
@@ -854,7 +854,7 @@ export function UserManagementDashboard() {
                   setFilters((current) => ({ ...current, schoolId: value }))
                 }
               />
-              <DashboardFilterSelect
+              {/* <DashboardFilterSelect
                 label={t("userManagement.filters.grades.label")}
                 value={filters.gradeId}
                 options={resolvedGradeOptions}
@@ -864,7 +864,7 @@ export function UserManagementDashboard() {
                 onChange={(value) =>
                   setFilters((current) => ({ ...current, gradeId: value }))
                 }
-              />
+              /> */}
               <DashboardFilterSelect
                 label={t("userManagement.filters.subscriptions.label")}
                 value={filters.subscriptionId}

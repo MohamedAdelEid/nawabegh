@@ -81,7 +81,6 @@ export function activityTypeToKey(type: number): CommunityBadgeActivityKey {
 export function buildCommunityBadgePayload(input: {
   name: string;
   description: string;
-  color: CommunityBadgeColor;
   activity: CommunityBadgeActivityKey;
   minCount: number;
   iconUrl: string;
@@ -89,8 +88,6 @@ export function buildCommunityBadgePayload(input: {
   return {
     name: input.name.trim(),
     description: input.description.trim(),
-    color: colorToHex(input.color),
-    level: colorToLevel(input.color),
     activityType: activityKeyToType(input.activity),
     minCount: input.minCount,
     iconUrl: input.iconUrl,

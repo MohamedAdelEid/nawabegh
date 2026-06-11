@@ -73,7 +73,7 @@ export function SearchableSelect<TValue extends string | number>({
   );
 
   return (
-    <Field invalid={Boolean(error)} disabled={disabled} className="gap-3">
+    <Field invalid={Boolean(error)} disabled={disabled} className="gap-0 space-y-1">
       <FieldLabel required={required} icon={icon} className="flex items-center gap-2">{label}</FieldLabel>
 
       <Popover open={open} onOpenChange={setOpen}>
@@ -85,10 +85,10 @@ export function SearchableSelect<TValue extends string | number>({
             aria-expanded={open}
             className={cn(
               "flex w-full items-center justify-between gap-3 border-[var(--border-input)]",
-              "h-[var(--field-input-height)] rounded-[var(--field-input-radius)]",
-              "border-[length:var(--field-input-border-width)] bg-[var(--field-input-bg)] px-4",
+              "h-12 rounded-[var(--field-input-radius)]",
+              "border-2 border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-4",
               "text-base font-medium transition-[border-color,box-shadow,transform] duration-300 ease-[var(--field-input-ease)]",
-              "outline-none focus-visible:border-[var(--field-input-border-focus)] focus-visible:shadow-[var(--field-input-ring-focus)]",
+              "outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dashboard-primary)]",
               error
                 ? "border-[var(--field-input-border-error)]"
                 : "border-[var(--border-input)]",
@@ -153,7 +153,7 @@ export function SearchableSelect<TValue extends string | number>({
                       setSearchValue("");
                     }}
                     className={cn(
-                      "flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-slate-50",
+                      "flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-slate-50",
                       isSelected && "bg-[#eef2f8] font-semibold text-[var(--dashboard-primary)]",
                     )}
                   >

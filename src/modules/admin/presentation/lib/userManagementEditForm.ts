@@ -83,6 +83,7 @@ export function mapStudentDetailToFormValues(
   );
   const gradeId = resolveDropdownIdByName(grades, detail.gradeId, detail.gradeName);
   const schoolId = resolveDropdownIdByName(schools, detail.schoolId, detail.schoolName ?? "");
+  const schoolRow = schools.find((row) => String(row.id) === schoolId);
 
   return {
     fullName: detail.fullName,
@@ -91,7 +92,7 @@ export function mapStudentDetailToFormValues(
     gradeId,
     phoneNumber: detail.phoneNumber,
     schoolId,
-    schoolName: detail.schoolName ?? "",
+    schoolName: detail.schoolName?.trim() || schoolRow?.name || "",
     email: detail.email,
     password: "",
     avatarFile: null,
@@ -106,15 +107,23 @@ export function mapStudentDetailToFormValues(
   };
 }
 
-export function mapTeacherDetailToFormValues(detail: TeacherUserDetail): TeacherAccountFormValues {
+export function mapTeacherDetailToFormValues(
+  detail: TeacherUserDetail,
+  countries: UserManagementDropdownOption<number>[],
+  schools: UserManagementDropdownOption<string>[],
+): TeacherAccountFormValues {
+  const countryId = resolveDropdownIdByName(countries, detail.countryId, detail.countryName);
+  const schoolId = resolveDropdownIdByName(schools, detail.schoolId, detail.schoolName);
+  const schoolRow = schools.find((row) => String(row.id) === schoolId);
+
   return {
     fullName: detail.fullName,
     phoneNumber: detail.phoneNumber,
-    countryId: detail.countryId ? String(detail.countryId) : "",
+    countryId,
     educationLevelId: detail.educationLevelId ? String(detail.educationLevelId) : "",
     jobTitle: detail.jobTitle,
-    schoolId: detail.schoolId ?? "",
-    schoolName: detail.schoolName,
+    schoolId,
+    schoolName: detail.schoolName?.trim() || schoolRow?.name || "",
     password: "",
     address: detail.address,
     avatarFile: null,
@@ -264,10 +273,7 @@ export async function loadTeacherEditForm(userId: string): Promise<TeacherEditFo
     }
   }
 
-  const formValues = mapTeacherDetailToFormValues(teacher);
-  if (!formValues.countryId && countryId) {
-    formValues.countryId = countryId;
-  }
+  const formValues = mapTeacherDetailToFormValues(teacher, countries, schools);
   if (!formValues.educationLevelId && educationLevelId) {
     formValues.educationLevelId = educationLevelId;
   }

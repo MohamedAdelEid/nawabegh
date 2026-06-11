@@ -32,6 +32,7 @@ export type UserManagementParentChildRow = {
   fullName: string;
   username: string;
   gradeName: string;
+  profileImageUrl: string | null;
 };
 
 export type UserManagementActivityRow = {

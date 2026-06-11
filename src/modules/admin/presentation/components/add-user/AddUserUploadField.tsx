@@ -14,21 +14,25 @@ export function AddUserUploadField({
   hint,
   previewAlt,
   uploadLabel,
+  uploadingLabel,
   invalidTypeMessage,
   tooLargeMessage,
   readErrorMessage,
   value,
   onChange,
+  disabled = false,
 }: {
   title: string;
   hint: string;
   previewAlt: string;
   uploadLabel: string;
+  uploadingLabel?: string;
   invalidTypeMessage: string;
   tooLargeMessage: string;
   readErrorMessage: string;
   value: { file: File | null; previewUrl: string | null };
   onChange: (value: { file: File | null; previewUrl: string | null }) => void;
+  disabled?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -102,14 +106,17 @@ export function AddUserUploadField({
           <Button
             type="button"
             size="icon"
-            className="absolute bottom-[-20px] right-[-20px] rounded-xl bg-[var(--dashboard-primary)] text-white hover:bg-[var(--dashboard-primary-pressed)]"
+            disabled={disabled}
+            className="absolute bottom-[-20px] right-[-20px] rounded-xl bg-[var(--dashboard-primary)] text-white hover:bg-[var(--dashboard-primary-pressed)] disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
           >
             <Pencil className="h-4 w-4" aria-hidden />
           </Button>
         </div>
 
-        <p className="text-xs text-slate-400">{hint}</p>
+        <p className="text-xs text-slate-400">
+          {disabled && uploadingLabel ? uploadingLabel : hint}
+        </p>
         {error ? <p className="text-xs font-medium text-rose-500">{error}</p> : null}
       </div>
     </div>

@@ -16,8 +16,6 @@ export type CommunityBadgeRow = {
 export type CommunityBadgePayload = {
   name: string;
   description: string;
-  color: string;
-  level: number;
   activityType: number;
   minCount: number;
   iconUrl: string;

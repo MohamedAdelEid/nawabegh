@@ -50,9 +50,12 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import {
   DashboardBadge,
-  DashboardFilterSelect,
   DashboardPageHeader,
 } from "@/shared/presentation/components/dashboard";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/shared/presentation/components/ui/searchable-select";
 import { resolveFileUrl, resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -103,6 +106,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   const [bookTitle, setBookTitle] = useState("");
   const [subjectSelectValue, setSubjectSelectValue] = useState(createDefaults.subjectSelectValue);
   const [courseSelectValue, setCourseSelectValue] = useState("");
+  const [courseSearchQuery, setCourseSearchQuery] = useState("");
   const [bookStatus, setBookStatus] = useState<0 | 1>(0);
   const [courses, setCourses] = useState<CourseListItemDto[]>([]);
   const [coursesLoadState, setCoursesLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -190,22 +194,20 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   }, [isEditMode]);
 
   useEffect(() => {
-    if (isEditMode || !subjectSelectValue.trim()) {
+    if (isEditMode) {
       setCourses([]);
       setCourseSelectValue("");
       setCoursesLoadState("idle");
       return;
     }
 
-    const subjectId = Number(subjectSelectValue);
-    if (!Number.isFinite(subjectId)) return;
+    // const subjectId = Number(subjectSelectValue);
+    // if (!Number.isFinite(subjectId)) return;
 
     let alive = true;
     (async () => {
       setCoursesLoadState("loading");
-      setCourseSelectValue("");
       const result = await getCoursesPage({
-        subjectId,
         pageNumber: 1,
         pageSize: 240,
       });
@@ -222,7 +224,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     return () => {
       alive = false;
     };
-  }, [isEditMode, subjectSelectValue]);
+  }, [isEditMode]);
 
   useEffect(() => {
     return () => {
@@ -291,31 +293,18 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     ];
   }, [subjects, subjectsLoadState, t]);
 
-  const courseFilterOptions = useMemo(() => {
-    const placeholder = {
-      id: "",
-      label: t("interactiveBooks.managePage.config.coursePlaceholder"),
-    };
-    if (!subjectSelectValue.trim()) return [placeholder];
-    if (coursesLoadState === "loading") {
-      return [{ id: "", label: t("interactiveBooks.managePage.config.coursesLoading") }];
-    }
-    if (coursesLoadState === "error" || courses.length === 0) {
-      return [
-        placeholder,
-        ...(coursesLoadState === "error"
-          ? [{ id: "", label: t("interactiveBooks.managePage.config.coursesLoadError") }]
-          : []),
-      ];
-    }
-    return [
-      placeholder,
-      ...courses.map((course) => ({
-        id: course.id,
-        label: course.title,
-      })),
-    ];
-  }, [courses, coursesLoadState, subjectSelectValue, t]);
+  const courseSelectOptions = useMemo<SearchableSelectOption<string>[]>(() => {
+    return courses.map((course) => ({
+      value: course.id,
+      label: course.title,
+    }));
+  }, [courses]);
+
+  const filteredCourseSelectOptions = useMemo(() => {
+    const query = courseSearchQuery.trim().toLowerCase();
+    if (!query) return courseSelectOptions;
+    return courseSelectOptions.filter((option) => option.label.toLowerCase().includes(query));
+  }, [courseSearchQuery, courseSelectOptions]);
 
   const selectedCourse = useMemo(
     () => courses.find((course) => course.id === courseSelectValue) ?? null,
@@ -626,8 +615,6 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
         }
       />
 
-      <InteractiveBooksFilterBar value={apiFilters} onChange={setApiFilters} />
-
       <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <Card className="border-[var(--dashboard-border-soft)] shadow-[var(--dashboard-shadow-soft)]">
         <CardContent className="space-y-6 p-6">
@@ -680,21 +667,34 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
                     className="h-12 rounded-xl border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] outline-none"
                   />
                 </div>
-                <DashboardFilterSelect
+                {/* <DashboardFilterSelect
                   label={t("interactiveBooks.managePage.config.subjectLabel")}
                   value={subjectSelectValue}
                   options={subjectFilterOptions}
                   onChange={setSubjectSelectValue}
                   disabled={subjectsLoadState === "loading"}
-                />
-                <DashboardFilterSelect
+                /> */}
+                <SearchableSelect
                   label={t("interactiveBooks.managePage.config.courseLabel")}
-                  value={courseSelectValue}
-                  options={courseFilterOptions}
+                  value={courseSelectValue || null}
+                  options={filteredCourseSelectOptions}
                   onChange={setCourseSelectValue}
-                  disabled={!subjectSelectValue.trim() || coursesLoadState === "loading"}
+                  placeholder={t("interactiveBooks.managePage.config.coursePlaceholder")}
+                  searchPlaceholder={t("interactiveBooks.managePage.config.courseSearchPlaceholder")}
+                  emptyMessage={t("interactiveBooks.managePage.config.coursesEmpty")}
+                  loadErrorMessage={t("interactiveBooks.managePage.config.coursesLoadError")}
+                  isLoading={coursesLoadState === "loading"}
+                  isError={coursesLoadState === "error"}
+                  disabled={coursesLoadState === "loading"}
+                  searchValue={courseSearchQuery}
+                  onSearchValueChange={setCourseSearchQuery}
                 />
-                <div className="flex flex-col gap-3">
+              </>
+            )}
+          </div>
+
+          <div className="flex flex-row gap-3 w-full items-center flex-wrap">
+            <div className="flex flex-col gap-3">
                   <Label>{t("interactiveBooks.managePage.config.statusLabel")}</Label>
                   <div
                     className="w-fit rounded-2xl border border-[var(--dashboard-border-soft)] bg-white/80 p-2 shadow-inner"
@@ -726,10 +726,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
                     </button>
                   </div>
                 </div>
-              </>
-            )}
-
-            <div className="space-y-2 md:col-span-2 md:col-start-1">
+                <div className="space-y-2 md:col-span-2 md:col-start-1 flex-1">
               <Label htmlFor="ib-pdf-input">{t("interactiveBooks.managePage.config.pdfLabel")}</Label>
               <input
                 ref={pdfInputRef}
@@ -773,7 +770,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
                 </div>
               </div>
             </div>
-          </div>
+            </div>
         </CardContent>
       </Card>
       </motion.div>

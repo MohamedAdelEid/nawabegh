@@ -454,6 +454,7 @@
               "hint": "يدعم JPG وPNG وWEBP حتى 5 ميجابايت",
               "previewAlt": "صورة المستخدم المرفوعة",
               "upload": "رفع صورة الطالب",
+              "uploading": "جاري رفع الصورة...",
               "invalidType": "يرجى اختيار ملف صورة صالح.",
               "tooLarge": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت.",
               "readError": "تعذر تحميل الصورة المحددة."
@@ -477,6 +478,8 @@
           },
           "messages": {
             "noSchools": "لا توجد مدارس متاحة. حاول لاحقاً أو تواصل مع الدعم.",
+            "countryRequired": "يرجى اختيار الدولة.",
+            "schoolRequired": "يرجى اختيار المدرسة.",
             "editLoading": "جاري تحميل بيانات المستخدم...",
             "editLoadError": "تعذر تحميل بيانات المستخدم للتعديل."
           },
@@ -651,7 +654,45 @@
         "stats": {
           "studyHours": "ساعات الدراسة",
           "testResults": "نتائج الاختبارات",
-          "completedLessons": "دروس مكتملة"
+          "completedLessons": "دروس مكتملة",
+          "points": "النقاط الحالية",
+          "maxPoints": "أعلى نقاط",
+          "badges": "شارات الإنجاز"
+        },
+        "info": {
+          "contactTitle": "معلومات التواصل",
+          "academicTitle": "المعلومات الأكاديمية",
+          "accountTitle": "معلومات الحساب",
+          "professionalTitle": "المعلومات المهنية",
+          "email": "البريد الإلكتروني",
+          "phone": "رقم الهاتف",
+          "whatsApp": "واتساب",
+          "alternativePhone": "هاتف بديل",
+          "parentPhone": "هاتف ولي الأمر",
+          "address": "العنوان",
+          "country": "الدولة",
+          "educationLevel": "المرحلة التعليمية",
+          "grade": "الصف",
+          "school": "المدرسة",
+          "username": "اسم المستخدم",
+          "points": "النقاط",
+          "maxPoints": "أعلى نقاط تم الوصول إليها",
+          "badgeCount": "عدد الشارات",
+          "onboardingQuiz": "اكتمال اختبار التعارف",
+          "createdAt": "تاريخ الانضمام",
+          "jobTitle": "المسمى الوظيفي",
+          "about": "نبذة",
+          "yearsOfExperience": "سنوات الخبرة",
+          "city": "المدينة",
+          "rating": "التقييم",
+          "yes": "نعم",
+          "no": "لا"
+        },
+        "badges": {
+          "title": "شارات الإنجاز المكتسبة",
+          "empty": "لا توجد شارات مكتسبة بعد",
+          "earnedAt": "تاريخ الحصول",
+          "requiredPoints": "النقاط المطلوبة"
         },
         "chart": {
           "title": "الأداء الأسبوعي",
@@ -1363,6 +1404,8 @@
           "pdfInvalidType": "يرجى اختيار ملف PDF فقط.",
           "pdfTooLarge": "يجب ألا يتجاوز حجم ملف PDF 50 ميجابايت.",
           "coursePlaceholder": "اختر الدورة",
+          "courseSearchPlaceholder": "ابحث عن دورة…",
+          "coursesEmpty": "لا توجد دورات مطابقة للبحث",
           "coursesLoading": "جاري تحميل الدورات…",
           "coursesLoadError": "تعذر تحميل الدورات",
           "statusLabel": "حالة الكتاب",

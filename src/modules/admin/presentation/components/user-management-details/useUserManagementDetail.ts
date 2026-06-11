@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { getUserManagementDetailsLayout } from "@/modules/admin/domain/data/userManagementDetailsData";
 import {
   getParentUserDetail,
   getStudentUserDetail,
@@ -12,6 +11,7 @@ import {
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { notify } from "@/shared/application/lib/toast";
 import { buildProfileView } from "./buildProfileView";
+import { buildUserDetailInfoSections } from "./buildUserDetailInfoSections";
 import type {
   UserManagementParentChildRow,
   UserManagementRemoteDetail,
@@ -20,7 +20,6 @@ import type {
 export function useUserManagementDetail(userId: string) {
   const t = useTranslations("admin.dashboard");
   const searchParams = useSearchParams();
-  const layout = useMemo(() => getUserManagementDetailsLayout(), []);
   const emptyLabel = t("userManagement.details.emptyValue");
   const [remoteDetail, setRemoteDetail] = useState<UserManagementRemoteDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,6 +85,11 @@ export function useUserManagementDetail(userId: string) {
     return buildProfileView(remoteDetail, t, emptyLabel);
   }, [emptyLabel, remoteDetail, t]);
 
+  const infoSections = useMemo(() => {
+    if (!remoteDetail) return [];
+    return buildUserDetailInfoSections(remoteDetail, t, emptyLabel);
+  }, [emptyLabel, remoteDetail, t]);
+
   const teacherGrades =
     remoteDetail?.kind === "teacher"
       ? remoteDetail.data.assignedGrades.map((grade) => grade.gradeName).filter(Boolean)
@@ -98,17 +102,18 @@ export function useUserManagementDetail(userId: string) {
           fullName: child.fullName,
           username: child.username,
           gradeName: child.gradeName,
+          profileImageUrl: child.profileImageUrl,
         }))
       : [];
 
   const pageTitle = profileView?.fullName ?? t("userManagement.details.page.loadingTitle");
 
   return {
-    layout,
     emptyLabel,
     remoteDetail,
     isLoading,
     profileView,
+    infoSections,
     teacherGrades,
     parentChildren,
     pageTitle,

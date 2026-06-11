@@ -15,6 +15,7 @@ export function AddUserPageShell({
   submitLabel,
   onSubmit,
   children,
+  actionsDisabled = false,
 }: {
   title: string;
   description: string;
@@ -23,6 +24,7 @@ export function AddUserPageShell({
   submitLabel: string;
   onSubmit: () => void;
   children: React.ReactNode;
+  actionsDisabled?: boolean;
 }) {
   const router = useRouter();
 
@@ -39,6 +41,7 @@ export function AddUserPageShell({
               submitLabel={submitLabel}
               onCancel={() => router.back()}
               onSubmit={onSubmit}
+              disabled={actionsDisabled}
             />
           }
         />

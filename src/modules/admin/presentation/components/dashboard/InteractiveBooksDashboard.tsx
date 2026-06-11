@@ -92,6 +92,7 @@ export function InteractiveBooksDashboard() {
     totalItems: 0,
   });
   const [loadState, setLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [apiFilters, setApiFilters] = useState<InteractiveBooksApiFilterState>({
     courseId: "",
     gradeId: "",
@@ -104,6 +105,26 @@ export function InteractiveBooksDashboard() {
     pageSize: String(INTERACTIVE_BOOKS_PAGE_SIZE),
     acceptLanguage: "ar",
   });
+  const [debouncedKeyword, setDebouncedKeyword] = useState("");
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedKeyword(apiFilters.keyword.trim());
+    }, 300);
+    return () => window.clearTimeout(timeoutId);
+  }, [apiFilters.keyword]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    apiFilters.courseId,
+    apiFilters.gradeId,
+    apiFilters.status,
+    apiFilters.hasHotspots,
+    apiFilters.fromDate,
+    apiFilters.toDate,
+    debouncedKeyword,
+  ]);
 
   useEffect(() => {
     let alive = true;
@@ -112,6 +133,22 @@ export function InteractiveBooksDashboard() {
       const result = await getInteractiveBooks({
         pageNumber: currentPage,
         pageSize,
+        ...(apiFilters.courseId.trim() ? { courseId: apiFilters.courseId.trim() } : {}),
+        ...(apiFilters.gradeId.trim() && !Number.isNaN(Number(apiFilters.gradeId))
+          ? { gradeId: Number(apiFilters.gradeId) }
+          : {}),
+        ...(apiFilters.status !== "all" ? { status: Number(apiFilters.status) } : {}),
+        ...(apiFilters.hasHotspots === "true"
+          ? { hasHotspots: true }
+          : apiFilters.hasHotspots === "false"
+            ? { hasHotspots: false }
+            : {}),
+        ...(apiFilters.fromDate.trim() ? { fromDate: apiFilters.fromDate.trim() } : {}),
+        ...(apiFilters.toDate.trim() ? { toDate: apiFilters.toDate.trim() } : {}),
+        ...(debouncedKeyword ? { keyword: debouncedKeyword } : {}),
+        ...(apiFilters.acceptLanguage.trim()
+          ? { acceptLanguage: apiFilters.acceptLanguage.trim() }
+          : {}),
       });
       if (!alive) return;
       if (result.errorMessage) {
@@ -131,13 +168,26 @@ export function InteractiveBooksDashboard() {
       if (typeof result.data?.currentPage === "number" && result.data.currentPage !== currentPage) {
         setCurrentPage(result.data.currentPage);
       }
+      setHasLoadedOnce(true);
       setLoadState("success");
     };
     void load();
     return () => {
       alive = false;
     };
-  }, [currentPage, pageSize, t]);
+  }, [
+    currentPage,
+    pageSize,
+    apiFilters.courseId,
+    apiFilters.gradeId,
+    apiFilters.status,
+    apiFilters.hasHotspots,
+    apiFilters.fromDate,
+    apiFilters.toDate,
+    apiFilters.acceptLanguage,
+    debouncedKeyword,
+    t,
+  ]);
 
   const computedStats = useMemo(() => {
     const fallbackStats = interactiveBooksDashboardData.stats;
@@ -298,7 +348,7 @@ export function InteractiveBooksDashboard() {
         }
       />
 
-      {loadState === "loading" ? (
+      {loadState === "loading" && !hasLoadedOnce ? (
         <InteractiveBooksDashboardSkeleton />
       ) : (
         <>
@@ -327,6 +377,7 @@ export function InteractiveBooksDashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
+            className={loadState === "loading" ? "pointer-events-none opacity-60" : undefined}
           >
             <DashboardTableCard
               title={t("interactiveBooks.table.title")}

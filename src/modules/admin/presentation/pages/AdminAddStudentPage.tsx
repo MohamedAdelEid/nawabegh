@@ -25,6 +25,11 @@ import {
   getUserManagementDetailsReturnPath,
   loadStudentEditForm,
 } from "@/modules/admin/presentation/lib/userManagementEditForm";
+import { useAvatarUploadOnSelect } from "@/modules/admin/presentation/lib/useAvatarUploadOnSelect";
+import {
+  validateRequiredCountryAndSchool,
+  withResolvedStudentSchoolName,
+} from "@/modules/admin/presentation/lib/validateUserFormLocation";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -53,6 +58,7 @@ export function AdminAddStudentPage() {
   const searchParams = useSearchParams();
   const editUserId = searchParams.get("userId")?.trim() ?? "";
   const isEditMode = Boolean(editUserId);
+  const { uploadingAvatar, handleAvatarChange } = useAvatarUploadOnSelect(isEditMode);
   const [values, setValues] = useState(defaultStudentAccountValues);
   const [updateContext, setUpdateContext] = useState<StudentUserUpdateContext>({});
   const [isLoadingEdit, setIsLoadingEdit] = useState(isEditMode);
@@ -296,12 +302,22 @@ export function AdminAddStudentPage() {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
+    const locationError = validateRequiredCountryAndSchool(values.countryId, values.schoolId);
+    if (locationError) {
+      const message = t(`userManagement.addUser.shared.messages.${locationError}`);
+      notify.error(message);
+      setSubmitError({ message });
+      return;
+    }
+
+    const submitValues = withResolvedStudentSchoolName(values, schoolRows);
+
     setSubmitError(null);
     setIsSubmitting(true);
-    let avatarFilePath = values.avatarFilePath;
+    let avatarFilePath = submitValues.avatarFilePath;
 
-    if (values.avatarFile) {
-      const uploadResult = await uploadUserImage(values.avatarFile);
+    if (!isEditMode && submitValues.avatarFile) {
+      const uploadResult = await uploadUserImage(submitValues.avatarFile);
       if (!uploadResult.data?.filePath) {
         setSubmitError({
           message: uploadResult.errorMessage ?? "Failed to upload image.",
@@ -318,13 +334,13 @@ export function AdminAddStudentPage() {
       ? await updateStudentUser(
           editUserId,
           {
-            ...values,
+            ...submitValues,
             avatarFilePath,
           },
           updateContext,
         )
       : await createStudentUser({
-          ...values,
+          ...submitValues,
           avatarFilePath,
         });
 
@@ -396,6 +412,7 @@ export function AdminAddStudentPage() {
       cancelLabel={t("userManagement.addUser.shared.actions.cancel")}
       submitLabel={submitLabel}
       onSubmit={handleSubmit}
+      actionsDisabled={isSubmitting || uploadingAvatar}
     >
       {submitError ? (
         <ApiFailureAlert
@@ -416,17 +433,17 @@ export function AdminAddStudentPage() {
               hint={t("userManagement.addUser.shared.fields.avatar.hint")}
               previewAlt={t("userManagement.addUser.shared.fields.avatar.previewAlt")}
               uploadLabel={t("userManagement.addUser.shared.fields.avatar.upload")}
+              uploadingLabel={t("userManagement.addUser.shared.fields.avatar.uploading")}
               invalidTypeMessage={t("userManagement.addUser.shared.fields.avatar.invalidType")}
               tooLargeMessage={t("userManagement.addUser.shared.fields.avatar.tooLarge")}
               readErrorMessage={t("userManagement.addUser.shared.fields.avatar.readError")}
+              disabled={uploadingAvatar || isSubmitting}
               value={{
                 file: values.avatarFile,
                 previewUrl: values.avatarPreviewUrl,
               }}
               onChange={(next) => {
-                setField("avatarFile", next.file);
-                setField("avatarPreviewUrl", next.previewUrl);
-                setField("avatarFilePath", null);
+                void handleAvatarChange(next, setValues);
               }}
             />
 

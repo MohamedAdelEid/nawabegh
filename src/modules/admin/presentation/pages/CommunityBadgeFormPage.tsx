@@ -27,7 +27,7 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
-import type { CommunityBadgeColor, CommunityBadgeRow } from "@/modules/admin/domain/types/communityBadges.types";
+import type { CommunityBadgeRow } from "@/modules/admin/domain/types/communityBadges.types";
 import {
   activityTypeToKey,
   buildCommunityBadgePayload,
@@ -60,7 +60,6 @@ export function CommunityBadgeFormPage({ mode, badgeId }: CommunityBadgeFormPage
 
   const [loading, setLoading] = useState(mode === "edit");
   const [name, setName] = useState("");
-  const [level, setLevel] = useState<CommunityBadgeColor>("gold");
   const [description, setDescription] = useState("");
   const [activity, setActivity] = useState<CommunityBadgeActivityKey>("posts");
   const [minimum, setMinimum] = useState("50");
@@ -96,7 +95,6 @@ export function CommunityBadgeFormPage({ mode, badgeId }: CommunityBadgeFormPage
 
   const applyBadgeToForm = (badge: CommunityBadgeRow) => {
     setName(badge.name);
-    setLevel(badge.color);
     setDescription(badge.description);
     setActivity(activityTypeToKey(badge.activityType));
     setMinimum(String(badge.minCount));
@@ -155,7 +153,6 @@ export function CommunityBadgeFormPage({ mode, badgeId }: CommunityBadgeFormPage
       const payload = buildCommunityBadgePayload({
         name,
         description,
-        color: level,
         activity,
         minCount: target,
         iconUrl: iconUrl.trim(),
@@ -235,31 +232,14 @@ export function CommunityBadgeFormPage({ mode, badgeId }: CommunityBadgeFormPage
                   <FilePenLine className="h-6 w-6 shrink-0 text-[#2B415E]" aria-hidden />
                   <span>{t("identity.title")}</span>
                 </h2>
-                <div className="grid grid-cols-2 gap-3">
-                  <LabeledInput
-                    label={t("identity.nameLabel")}
-                    value={name}
-                    onChange={setName}
-                    placeholder={t("identity.namePlaceholder")}
-                    labelClassName="text-[#2D3E50] font-bold"
-                    inputClassName="h-12 rounded-xl border-[#E2E8F0] bg-[#FAFBFC]"
-                  />
-                  <div className="space-y-2">
-                    <label className="block text-sm font-bold text-[#2D3E50]" htmlFor="badge-level">
-                      {t("identity.levelLabel")}
-                    </label>
-                    <select
-                      id="badge-level"
-                      value={level}
-                      onChange={(e) => setLevel(e.target.value as CommunityBadgeColor)}
-                      className="h-12 w-full rounded-xl border border-[#E2E8F0] bg-[#FAFBFC] px-3 text-right text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#2D3E50]/20"
-                    >
-                      <option value="bronze">{t("identity.levels.bronze")}</option>
-                      <option value="silver">{t("identity.levels.silver")}</option>
-                      <option value="gold">{t("identity.levels.gold")}</option>
-                    </select>
-                  </div>
-                </div>
+                <LabeledInput
+                  label={t("identity.nameLabel")}
+                  value={name}
+                  onChange={setName}
+                  placeholder={t("identity.namePlaceholder")}
+                  labelClassName="text-[#2D3E50] font-bold"
+                  inputClassName="h-12 rounded-xl border-[#E2E8F0] bg-[#FAFBFC]"
+                />
                 <LabeledTextarea
                   label={t("identity.descriptionLabel")}
                   value={description}
@@ -363,7 +343,6 @@ export function CommunityBadgeFormPage({ mode, badgeId }: CommunityBadgeFormPage
             <BadgeLivePreview
               name={name}
               description={description}
-              level={level}
               current={previewCurrent}
               target={target}
               iconPreviewUrl={iconPreviewUrl}
@@ -410,7 +389,6 @@ function ActivityCard(props: {
 function BadgeLivePreview(props: {
   name: string;
   description: string;
-  level: CommunityBadgeColor;
   current: number;
   target: number;
   iconPreviewUrl: string | null;
@@ -418,12 +396,6 @@ function BadgeLivePreview(props: {
   const t = useTranslations("admin.dashboard.articleEditor.communityBadgeAdd");
   const pct =
     props.target > 0 ? Math.min(100, Math.round((props.current / props.target) * 100)) : 0;
-  const ribbon =
-    props.level === "gold"
-      ? t("preview.levelRibbon")
-      : props.level === "silver"
-        ? t("identity.levels.silver")
-        : t("identity.levels.bronze");
 
   return (
     <Card className="overflow-hidden rounded-[1.5rem] border border-[#E8ECF2] bg-white shadow-[0px_8px_0px_0px_#0000000D]">
@@ -444,9 +416,6 @@ function BadgeLivePreview(props: {
                 <Award className="h-9 w-9 text-[#FFC857]" aria-hidden />
               )}
             </div>
-            <span className="absolute -bottom-2 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md bg-[#C7AF6E] px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-[#1E293B] shadow">
-              {ribbon}
-            </span>
           </div>
           <div className="space-y-1 pt-2 text-center">
             <p className="text-base font-extrabold text-[#2D3E50]">

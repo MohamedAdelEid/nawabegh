@@ -454,6 +454,7 @@
               "hint": "Supports JPG, PNG, and WEBP up to 5 MB",
               "previewAlt": "Uploaded user photo",
               "upload": "Upload user image",
+              "uploading": "Uploading image...",
               "invalidType": "Please choose a valid image file.",
               "tooLarge": "The image must be smaller than 5 MB.",
               "readError": "The selected image could not be loaded."
@@ -477,6 +478,8 @@
           },
           "messages": {
             "noSchools": "No schools were found. Try again later or contact support.",
+            "countryRequired": "Please select a country.",
+            "schoolRequired": "Please select a school.",
             "editLoading": "Loading user details...",
             "editLoadError": "Could not load user details for editing."
           },
@@ -651,7 +654,45 @@
         "stats": {
           "studyHours": "Study hours",
           "testResults": "Test results",
-          "completedLessons": "Completed lessons"
+          "completedLessons": "Completed lessons",
+          "points": "Current points",
+          "maxPoints": "Max points reached",
+          "badges": "Achievement badges"
+        },
+        "info": {
+          "contactTitle": "Contact information",
+          "academicTitle": "Academic information",
+          "accountTitle": "Account information",
+          "professionalTitle": "Professional information",
+          "email": "Email",
+          "phone": "Phone number",
+          "whatsApp": "WhatsApp",
+          "alternativePhone": "Alternative phone",
+          "parentPhone": "Parent phone",
+          "address": "Address",
+          "country": "Country",
+          "educationLevel": "Education level",
+          "grade": "Grade",
+          "school": "School",
+          "username": "Username",
+          "points": "Points",
+          "maxPoints": "Max points ever reached",
+          "badgeCount": "Badge count",
+          "onboardingQuiz": "Onboarding quiz completed",
+          "createdAt": "Member since",
+          "jobTitle": "Job title",
+          "about": "About",
+          "yearsOfExperience": "Years of experience",
+          "city": "City",
+          "rating": "Rating",
+          "yes": "Yes",
+          "no": "No"
+        },
+        "badges": {
+          "title": "Earned achievement badges",
+          "empty": "No badges earned yet",
+          "earnedAt": "Earned on",
+          "requiredPoints": "Required points"
         },
         "chart": {
           "title": "Weekly performance",
@@ -1363,6 +1404,8 @@
           "pdfInvalidType": "Please choose a PDF file only.",
           "pdfTooLarge": "PDF must be 50 MB or smaller.",
           "coursePlaceholder": "Select a course",
+          "courseSearchPlaceholder": "Search courses…",
+          "coursesEmpty": "No courses match your search",
           "coursesLoading": "Loading courses…",
           "coursesLoadError": "Could not load courses",
           "statusLabel": "Book status",

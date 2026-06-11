@@ -18,6 +18,7 @@ import type {
 } from "@/modules/admin/domain/data/userManagementDashboardData";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { FILE_UPLOAD_URL, resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { unwrapUploadRecord } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 
@@ -170,6 +171,17 @@ export type StudentUserDetail = {
   parentPhone: string;
   username: string;
   points: number | null;
+  maxPointsEverReached: number | null;
+  achievementBadgeCount: number | null;
+  earnedAchievementBadges: Array<{
+    badgeId: string;
+    name: string;
+    description: string;
+    iconUrl: string | null;
+    requiredPoints: number | null;
+    earnedAt: string | null;
+  }>;
+  onboardingQuizCompleted: boolean;
   linkedParent: {
     parentUserId: string;
     fullName: string;
@@ -360,15 +372,18 @@ function getFirstValidationErrorMessage(
 const mapImageUrl = (pathOrUrl: string): string | null => resolveFileUrl(pathOrUrl);
 
 function mapUploadedFileData(data: unknown): UploadedFileData | null {
-  const record = asRecord(data);
+  const record = unwrapUploadRecord(data);
   if (!record) return null;
-  const success = readBoolean(record, ["success"], false);
-  const filePath = readString(record, ["filePath"]);
 
-  if (!success || !filePath) return null;
+  const filePath = readString(record, ["filePath", "fileUrl", "url", "path"]);
+  const explicitSuccess = readBoolean(record, ["success"], false);
+  const hasPath = Boolean(filePath.trim());
+
+  if (!hasPath && !explicitSuccess) return null;
+  if (!hasPath) return null;
 
   return {
-    filePath,
+    filePath: filePath.trim(),
     fileUrl: readString(record, ["fileUrl"]),
     originalFileName: readString(record, ["originalFileName"]),
     storedFileName: readString(record, ["storedFileName"]),
@@ -845,6 +860,20 @@ function mapStudentDetail(data: unknown): StudentUserDetail {
     parentPhone: readString(record, ["parentPhone"]),
     username: readString(record, ["username"]),
     points: readNumber(record, ["points"]),
+    maxPointsEverReached: readNumber(record, ["maxPointsEverReached"]),
+    achievementBadgeCount: readNumber(record, ["achievementBadgeCount"]),
+    earnedAchievementBadges: readArray(record, ["earnedAchievementBadges"]).map((item) => {
+      const badgeRecord = asRecord(item);
+      return {
+        badgeId: readString(badgeRecord, ["badgeId"]),
+        name: readString(badgeRecord, ["name"]),
+        description: readString(badgeRecord, ["description"]),
+        iconUrl: mapImageUrl(readString(badgeRecord, ["iconUrl"], "")),
+        requiredPoints: readNumber(badgeRecord, ["requiredPoints"]),
+        earnedAt: readString(badgeRecord, ["earnedAt"], "") || null,
+      };
+    }),
+    onboardingQuizCompleted: readBoolean(record, ["onboardingQuizCompleted"], false),
     linkedParent: linkedParentRecord
       ? {
           parentUserId: readString(linkedParentRecord, ["parentUserId"]),
@@ -1149,8 +1178,8 @@ export async function uploadUserImage(
       isFormData: true,
     });
 
-    const uploaded = mapUploadedFileData(response.data);
-    const responseRecord = asRecord(response.data);
+    const uploaded = mapUploadedFileData(response);
+    const responseRecord = unwrapUploadRecord(response);
     const message = readString(responseRecord, ["message"]);
 
     if (!uploaded) {

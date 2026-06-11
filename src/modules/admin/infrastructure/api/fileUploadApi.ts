@@ -30,7 +30,7 @@ function hasUploadPath(record: UnknownRecord | null): boolean {
 }
 
 /** Backend may return the payload at the root, under `data`, or nested further. */
-function unwrapUploadRecord(data: unknown): UnknownRecord | null {
+export function unwrapUploadRecord(data: unknown): UnknownRecord | null {
   const root = asRecord(data);
   if (!root) return null;
   if (hasUploadPath(root)) return root;
@@ -68,7 +68,7 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       isFormData: true,
     });
 
-    const record = unwrapUploadRecord(response.data);
+    const record = unwrapUploadRecord(response);
     if (!record) {
       return { ok: false, errorMessage: "Invalid upload response" };
     }
