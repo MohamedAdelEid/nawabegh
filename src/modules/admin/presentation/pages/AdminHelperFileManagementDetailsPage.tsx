@@ -11,7 +11,7 @@ import {
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { ContentFileDeleteModal } from "@/modules/admin/presentation/components/content-management/ContentFileDeleteModal";
 import { HelperResourceFilePreview } from "@/modules/admin/presentation/components/helper-file-management/HelperResourceFilePreview";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import { DashboardBadge, DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -20,8 +20,6 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 interface AdminHelperFileManagementDetailsPageProps {
   fileId: string;
 }
-
-const routeConfig = ROUTES.ADMIN.HELPER_FILE_MANAGEMENT;
 
 function formatDate(iso: string) {
   if (!iso) return "—";
@@ -42,6 +40,8 @@ export function AdminHelperFileManagementDetailsPage({
   const t = useTranslations("admin.dashboard.contentManagement.details");
   const tRoot = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
+  const routeConfig = routes.helperFileManagement;
   const [detail, setDetail] = useState<ResourceFileDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -124,7 +124,7 @@ export function AdminHelperFileManagementDetailsPage({
         title={detail.fileName}
         description={t("description")}
         breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+          { label: t("breadcrumbs.home"), href: routes.home },
           { label: t("breadcrumbs.content"), href: routeConfig.LIST },
           { label: detail.fileName },
         ]}

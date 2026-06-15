@@ -11,7 +11,7 @@ import {
   JourneyEditorAnimatedSection,
   JourneyEditorDashboardSkeleton,
 } from "@/modules/admin/presentation/components/journey-editor";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 export function JourneyEditorDashboard() {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const [journey, setJourney] = useState<JourneyEditorData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -109,7 +110,7 @@ export function JourneyEditorDashboard() {
                 <Button
                   className="h-11 w-full cursor-pointer gap-2 rounded-lg bg-[#2C4260] text-white shadow-[0px_4px_0px_0px_#1E3050] hover:bg-[#1E3050]"
                   onClick={() =>
-                    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journey.id))
+                    router.push(routes.journeyEditor.EDITOR(journey.id))
                   }
                   disabled={journey.stats.pathReadinessPct === 0}
                 >

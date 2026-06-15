@@ -36,7 +36,7 @@ import { getStation } from "@/modules/admin/infrastructure/api/stationsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ChallengeType, DifficultyLevel } from "@/shared/domain/enums/cms.enums";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import {
   ChallengeScheduleDateField,
   JourneyEditorStationPageSkeleton,
@@ -176,6 +176,7 @@ function pickDefaultTimeZone(timezones: string[]) {
 export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.challengeEditor");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
+  const routes = useScopedDashboardRoutes();
 
   const [station, setStation] = useState<ChallengeStation | null>(null);
   const [stationName, setStationName] = useState("");
@@ -480,10 +481,10 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         title={t("title")}
         description={t("description")}
         breadcrumbs={[
-          { label: tBc("home"), href: ROUTES.ADMIN.HOME },
+          { label: tBc("home"), href: routes.home },
           {
             label: tBc("journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           { label: tBc("challengeEditor") },
         ]}

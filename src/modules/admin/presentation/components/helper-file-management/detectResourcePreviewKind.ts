@@ -2,6 +2,8 @@ export type ResourcePreviewKind =
   | "pdf"
   | "docx"
   | "doc-legacy"
+  | "pptx"
+  | "ppt-legacy"
   | "image"
   | "video"
   | "audio"
@@ -10,6 +12,8 @@ export type ResourcePreviewKind =
 
 const DOCX_EXTENSIONS = new Set(["docx"]);
 const DOC_LEGACY_EXTENSIONS = new Set(["doc"]);
+const PPTX_EXTENSIONS = new Set(["pptx"]);
+const PPT_LEGACY_EXTENSIONS = new Set(["ppt"]);
 const IMAGE_EXTENSIONS = new Set(["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"]);
 const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "ogg", "mov", "m4v"]);
 const AUDIO_EXTENSIONS = new Set(["mp3", "wav", "ogg", "m4a", "aac"]);
@@ -47,6 +51,21 @@ export function detectResourcePreviewKind(
     return "doc-legacy";
   }
   if (
+    normalizedType.includes("presentationml") ||
+    normalizedType.includes("officedocument.presentationml") ||
+    normalizedType.includes("pptx") ||
+    PPTX_EXTENSIONS.has(extension)
+  ) {
+    return "pptx";
+  }
+  if (
+    normalizedType.includes("ms-powerpoint") ||
+    normalizedType.includes("powerpoint") ||
+    PPT_LEGACY_EXTENSIONS.has(extension)
+  ) {
+    return "ppt-legacy";
+  }
+  if (
     normalizedType.startsWith("image/") ||
     normalizedType.includes("image") ||
     IMAGE_EXTENSIONS.has(extension)
@@ -78,6 +97,8 @@ export function mimeTypeForPreviewKind(kind: ResourcePreviewKind): string {
       return "application/pdf";
     case "docx":
       return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    case "pptx":
+      return "application/vnd.openxmlformats-officedocument.presentationml.presentation";
     case "image":
       return "image/*";
     case "video":

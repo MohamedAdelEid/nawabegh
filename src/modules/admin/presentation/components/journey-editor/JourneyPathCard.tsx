@@ -23,6 +23,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { JourneyPath, JourneyStation } from "@/modules/admin/domain/data/journeyEditorData";
 import { getStationEditorHref } from "@/modules/admin/domain/utils/journeyEditorRoutes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { cn } from "@/shared/application/lib/cn";
 import { JourneyStationCard } from "./JourneyStationCard";
 
@@ -191,6 +192,7 @@ interface SortableStationCardProps {
 
 function SortableStationCard({ journeyId, station, onDelete }: SortableStationCardProps) {
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const {
     attributes,
     listeners,
@@ -201,7 +203,7 @@ function SortableStationCard({ journeyId, station, onDelete }: SortableStationCa
     isDragging,
   } = useSortable({ id: station.id });
 
-  const editorHref = getStationEditorHref(journeyId, station);
+  const editorHref = getStationEditorHref(routes.journeyEditor, journeyId, station);
 
   return (
     <div

@@ -20,9 +20,11 @@ import {
   type CommunityArticleStatusCode,
 } from "@/modules/admin/infrastructure/api/communityArticlesApi";
 import {
-  getUserManagementSchoolsDropdown,
+  getCountriesDropdown,
   getUserManagementUsers,
+  type UserManagementDropdownOption,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
+import { fetchSchoolDropdownRowsForCountryId } from "@/modules/admin/presentation/lib/loadSchoolsForCountry";
 import type { UserManagementSchoolId } from "@/modules/admin/domain/data/userManagementDashboardData";
 import { ArticleDeleteModal, ArticleRejectModal, type RejectReason } from "@/modules/admin/presentation/components/article-editor";
 import { ArticleEditorDashboardSkeleton } from "@/modules/admin/presentation/components/dashboard/ArticleEditorDashboardSkeleton";
@@ -105,10 +107,13 @@ export function ArticleEditorDashboard() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [countryFilter, setCountryFilter] = useState<"all" | string>("all");
   const [schoolFilter, setSchoolFilter] = useState<"all" | string>("all");
   const [authorFilter, setAuthorFilter] = useState<"all" | string>("all");
+  const [countryRows, setCountryRows] = useState<UserManagementDropdownOption<number>[]>([]);
   const [schoolOptions, setSchoolOptions] = useState<Array<{ id: string; label: string }>>([]);
   const [authorOptions, setAuthorOptions] = useState<Array<{ id: string; label: string }>>([]);
+  const [countriesLoaded, setCountriesLoaded] = useState(false);
   const [schoolsLoaded, setSchoolsLoaded] = useState(false);
   const [authorsListLoading, setAuthorsListLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -131,19 +136,49 @@ export function ArticleEditorDashboard() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const schoolsRes = await getUserManagementSchoolsDropdown("");
+      const countriesRes = await getCountriesDropdown();
       if (cancelled) return;
-      if (schoolsRes.data) {
-        setSchoolOptions(schoolsRes.data.map((s) => ({ id: String(s.id), label: s.name })));
-      } else if (schoolsRes.errorMessage) {
-        notify.error(schoolsRes.errorMessage ?? t("articleEditor.filters.schoolsLoadError"));
+      if (countriesRes.data) {
+        setCountryRows(countriesRes.data);
+      } else if (countriesRes.errorMessage) {
+        notify.error(countriesRes.errorMessage ?? t("articleEditor.filters.countriesLoadError"));
       }
-      setSchoolsLoaded(true);
+      setCountriesLoaded(true);
     })();
     return () => {
       cancelled = true;
     };
   }, [t]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (countryFilter === "all") {
+      setSchoolOptions([]);
+      setSchoolsLoaded(true);
+      return;
+    }
+
+    (async () => {
+      setSchoolsLoaded(false);
+      const { rows, errorMessage } = await fetchSchoolDropdownRowsForCountryId(
+        countryRows,
+        countryFilter,
+      );
+      if (cancelled) return;
+      if (errorMessage) {
+        notify.error(errorMessage ?? t("articleEditor.filters.schoolsLoadError"));
+        setSchoolOptions([]);
+      } else {
+        setSchoolOptions(rows.map((s) => ({ id: String(s.id), label: s.name })));
+      }
+      setSchoolsLoaded(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [countryFilter, countryRows, t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -178,6 +213,13 @@ export function ArticleEditorDashboard() {
       cancelled = true;
     };
   }, [schoolFilter, t]);
+
+  const countrySelectOptions = useMemo((): Array<DashboardFilterOption<string>> => {
+    return [
+      { id: "all", label: t("articleEditor.filters.country.all") },
+      ...countryRows.map((o) => ({ id: String(o.id), label: o.name })),
+    ];
+  }, [countryRows, t]);
 
   const schoolSelectOptions = useMemo((): Array<DashboardFilterOption<string>> => {
     return [
@@ -492,9 +534,21 @@ export function ArticleEditorDashboard() {
                 ]}
               />
               <DashboardFilterSelect
+                value={countryFilter}
+                label={t("articleEditor.filters.country.label")}
+                disabled={!countriesLoaded}
+                onChange={(value) => {
+                  setCountryFilter(value);
+                  setSchoolFilter("all");
+                  setAuthorFilter("all");
+                  setCurrentPage(1);
+                }}
+                options={countrySelectOptions}
+              />
+              <DashboardFilterSelect
                 value={schoolFilter}
                 label={t("articleEditor.filters.school.label")}
-                disabled={!schoolsLoaded}
+                disabled={countryFilter === "all" || !schoolsLoaded}
                 onChange={(value) => {
                   setSchoolFilter(value);
                   setAuthorFilter("all");

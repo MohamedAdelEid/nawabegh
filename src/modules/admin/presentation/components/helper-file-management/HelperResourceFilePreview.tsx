@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { HelperDocxPreview } from "@/modules/admin/presentation/components/helper-file-management/HelperDocxPreview";
+import { HelperPptxPreview } from "@/modules/admin/presentation/components/helper-file-management/HelperPptxPreview";
 import {
   detectResourcePreviewKind,
   mimeTypeForPreviewKind,
@@ -66,7 +67,11 @@ export function HelperResourceFilePreview({
       setBlobUrl(null);
       setPdfPages(0);
 
-      if (previewKind === "unsupported" || previewKind === "doc-legacy") {
+      if (
+        previewKind === "unsupported" ||
+        previewKind === "doc-legacy" ||
+        previewKind === "ppt-legacy"
+      ) {
         setLoading(false);
         return;
       }
@@ -82,7 +87,7 @@ export function HelperResourceFilePreview({
 
       setFileBuffer(buffer);
 
-      if (previewKind !== "docx") {
+      if (previewKind !== "docx" && previewKind !== "pptx") {
         const mime = mimeTypeForPreviewKind(previewKind);
         const blob = new Blob([buffer], { type: mime });
         objectUrl = URL.createObjectURL(blob);
@@ -112,6 +117,14 @@ export function HelperResourceFilePreview({
     return (
       <PreviewShell title={t("title")}>
         <p className="py-12 text-center text-sm text-slate-500">{t("legacyDocUnsupported")}</p>
+      </PreviewShell>
+    );
+  }
+
+  if (previewKind === "ppt-legacy") {
+    return (
+      <PreviewShell title={t("title")}>
+        <p className="py-12 text-center text-sm text-slate-500">{t("legacyPptUnsupported")}</p>
       </PreviewShell>
     );
   }
@@ -193,6 +206,16 @@ function PreviewContent({
   if (kind === "docx") {
     return (
       <HelperDocxPreview
+        fileBuffer={fileBuffer}
+        loadingLabel={loadingLabel}
+        loadErrorLabel={loadErrorLabel}
+      />
+    );
+  }
+
+  if (kind === "pptx") {
+    return (
+      <HelperPptxPreview
         fileBuffer={fileBuffer}
         loadingLabel={loadingLabel}
         loadErrorLabel={loadErrorLabel}

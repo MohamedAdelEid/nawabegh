@@ -57,7 +57,7 @@ import {
   type SearchableSelectOption,
 } from "@/shared/presentation/components/ui/searchable-select";
 import { resolveFileUrl, resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
@@ -101,6 +101,7 @@ export type AdminInteractiveBookManagePageProps = {
 export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiveBookManagePageProps) {
   const t = useTranslations("admin.dashboard");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const createDefaults = emptyInteractiveBookManagePageData;
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const [bookTitle, setBookTitle] = useState("");
@@ -539,7 +540,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     }
 
     notify.success(result.message ?? t("interactiveBooks.managePage.create.success"));
-    router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_BY_COURSE(result.data.courseId));
+    router.push(routes.interactiveBooks.MANAGE_BY_COURSE(result.data.courseId));
   };
 
   if (isEditMode && bookLoadState === "loading") {
@@ -570,17 +571,17 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
 
   const breadcrumbs = isEditMode
     ? [
-        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: ROUTES.ADMIN.HOME },
-        { label: t("tabs.interactiveBooks.title"), href: `${ROUTES.ADMIN.HOME}?tab=interactiveBooks` },
+        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: routes.home },
+        { label: t("tabs.interactiveBooks.title"), href: routes.interactiveBooksListHref },
         {
           label: t("interactiveBooks.managePage.breadcrumbs.content"),
-          href: ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE,
+          href: routes.interactiveBooks.MANAGE,
         },
         { label: t("interactiveBooks.managePage.breadcrumbs.editBook") },
       ]
     : [
-        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: ROUTES.ADMIN.HOME },
-        { label: t("tabs.interactiveBooks.title"), href: `${ROUTES.ADMIN.HOME}?tab=interactiveBooks` },
+        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: routes.home },
+        { label: t("tabs.interactiveBooks.title"), href: routes.interactiveBooksListHref },
         { label: t("interactiveBooks.managePage.breadcrumbs.content") },
       ];
 

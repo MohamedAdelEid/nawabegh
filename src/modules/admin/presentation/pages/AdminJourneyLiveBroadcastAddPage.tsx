@@ -23,7 +23,7 @@ import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadAp
 import { createLiveSession } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -83,6 +83,7 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
   const t = useTranslations("admin.dashboard.journeyEditor.liveBroadcastAdd");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   const [activeStep, setActiveStep] = useState<StepId>("basicInfo");
   const [saving, setSaving] = useState(false);
@@ -278,7 +279,7 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
 
     storeSessionId(stationId, result.data.id);
     notify.success(t("messages.saveSuccess"));
-    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_VIEW(journeyId, stationId));
+    router.push(routes.journeyEditor.LIVE_BROADCAST_VIEW(journeyId, stationId));
   };
 
   const durationOptions = [30, 45, 60, 90, 120].map((minutes) => ({
@@ -296,10 +297,10 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
         title={t("title")}
         description={t("description")}
         breadcrumbs={[
-          { label: tBc("home"), href: ROUTES.ADMIN.HOME },
+          { label: tBc("home"), href: routes.home },
           {
             label: tBc("journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           { label: tBc("liveBroadcastAdd") },
         ]}

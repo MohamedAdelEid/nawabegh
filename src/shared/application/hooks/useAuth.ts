@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { logoutFromBackend } from "@/modules/auth/infrastructure/loginApi";
+import { TEACHER_MOCK_PROFILE } from "@/modules/teacher/domain/data/teacherMockProfile";
 
 export type AuthUser = {
   name: string;
@@ -40,6 +41,11 @@ export function useAuth() {
         role: session.user.role ?? "Student",
       }
     : null;
+
+  if (user?.role === "Teacher") {
+    if (!user.name) user.name = TEACHER_MOCK_PROFILE.name;
+    if (!user.email) user.email = TEACHER_MOCK_PROFILE.email;
+  }
 
   return {
     user,

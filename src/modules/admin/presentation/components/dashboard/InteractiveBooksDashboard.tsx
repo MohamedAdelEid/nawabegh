@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { interactiveBooksDashboardData } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import type { InteractiveBookTableRow } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import { getInteractiveBooks } from "@/modules/admin/infrastructure/api/interactiveBooksApi";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import {
   InteractiveBooksFilterBar,
@@ -81,6 +81,7 @@ export function InteractiveBooksDashboard() {
   const t = useTranslations("admin.dashboard");
   const formatter = useFormatter();
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(INTERACTIVE_BOOKS_PAGE_SIZE);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -331,7 +332,7 @@ export function InteractiveBooksDashboard() {
       <DashboardPageHeader
         title={t("interactiveBooks.page.title")}
         breadcrumbs={[
-          { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
+          { label: t("tabs.home.title"), href: routes.home },
           { label: t("tabs.interactiveBooks.title") },
         ]}
         description={t("interactiveBooks.page.description")}
@@ -340,7 +341,7 @@ export function InteractiveBooksDashboard() {
             type="button"
             className="dashboard-raised-button h-14 cursor-pointer rounded-2xl bg-[var(--dashboard-primary)] px-6 text-base font-semibold text-white hover:bg-[var(--dashboard-primary)]"
             style={{ boxShadow: "var(--dashboard-shadow-button)" }}
-            onClick={() => router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE)}
+            onClick={() => router.push(routes.interactiveBooks.MANAGE)}
           >
             <Plus className="h-5 w-5" aria-hidden />
             {t("interactiveBooks.page.addBook")}
@@ -428,7 +429,7 @@ export function InteractiveBooksDashboard() {
                         aria-label={t("interactiveBooks.table.actions.edit")}
                         onClick={() => {
                           if (!row.courseId) return;
-                          router.push(ROUTES.ADMIN.INTERACTIVE_BOOKS.MANAGE_BY_COURSE(row.courseId));
+                          router.push(routes.interactiveBooks.MANAGE_BY_COURSE(row.courseId));
                         }}
                         disabled={!row.courseId}
                       >

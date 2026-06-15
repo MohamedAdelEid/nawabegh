@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminHelperFileManagementAddPage } from "./AdminHelperFileManagementAddPage";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 
 interface AdminJourneyHelperResourceEditorPageProps {
   journeyId: string;
@@ -12,12 +12,14 @@ export function AdminJourneyHelperResourceEditorPage({
   journeyId,
   stationId,
 }: AdminJourneyHelperResourceEditorPageProps) {
+  const routes = useScopedDashboardRoutes();
+
   return (
     <AdminHelperFileManagementAddPage
       stationContext={{
         journeyId,
         stationId,
-        returnHref: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+        returnHref: routes.journeyEditor.EDITOR(journeyId),
       }}
     />
   );

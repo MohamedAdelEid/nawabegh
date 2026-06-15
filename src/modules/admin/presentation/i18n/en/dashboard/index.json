@@ -2038,8 +2038,13 @@
           "hidden": "Hidden",
           "removed": "Removed"
         },
+        "countriesLoadError": "Could not load countries for filters.",
         "schoolsLoadError": "Could not load schools for filters.",
         "authorsLoadError": "Could not load authors for filters.",
+        "country": {
+          "label": "Country",
+          "all": "All countries"
+        },
         "school": {
           "label": "School",
           "all": "All schools",
@@ -2311,6 +2316,9 @@
           "likesDescription": "Quick heart interaction on posts.",
           "following": "Enable following",
           "followingDescription": "Follow preferred authors."
+        },
+        "toast": {
+          "saveError": "Could not save community settings. Please try again."
         },
         "badges": {
           "title": "Distinguished contributor badges",
@@ -3642,7 +3650,9 @@
         "course": {
           "label": "Course",
           "all": "All courses",
-          "loading": "Loading courses..."
+          "loading": "Loading courses...",
+          "searchPlaceholder": "Search courses…",
+          "empty": "No courses match your search"
         },
         "resourceFileType": {
           "label": "Resource type",
@@ -3755,6 +3765,8 @@
           "stationPlaceholder": "Select station",
           "course": "Course",
           "coursePlaceholder": "Select course",
+          "courseSearchPlaceholder": "Search courses…",
+          "coursesEmpty": "No courses match your search",
           "resourceFileType": "Resource type",
           "fileName": "Learning file name",
           "fileNamePlaceholder": "Example: Advanced algebra summary",
@@ -3806,7 +3818,8 @@
           "loading": "Loading file preview...",
           "loadError": "Could not load this file for preview.",
           "unsupported": "In-browser preview is not available for this file type.",
-          "legacyDocUnsupported": "Legacy Word files (.doc) cannot be previewed in the browser. Please upload .docx or PDF instead."
+          "legacyDocUnsupported": "Legacy Word files (.doc) cannot be previewed in the browser. Please upload .docx or PDF instead.",
+          "legacyPptUnsupported": "Legacy PowerPoint files (.ppt) cannot be previewed in the browser. Please upload .pptx or PDF instead."
         },
         "deleteSuccess": "File deleted successfully",
         "breadcrumbs": {

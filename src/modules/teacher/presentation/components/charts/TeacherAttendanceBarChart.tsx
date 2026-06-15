@@ -1,0 +1,77 @@
+"use client";
+
+import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import type { TeacherAttendanceChartPoint } from "@/modules/teacher/domain/types/teacher.types";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/shared/presentation/components/ui/chart";
+import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { DashboardSegmentedControl } from "@/shared/presentation/components/dashboard/DashboardSegmentedControl";
+
+const chartConfig = {
+  attendance: { label: "Attendance", color: "#2C4260" },
+  highlight: { label: "Highlight", color: "#C9A227" },
+} satisfies ChartConfig;
+
+type Period = "weekly" | "monthly";
+
+export function TeacherAttendanceBarChart({
+  title,
+  subtitle,
+  rows,
+  weeklyLabel,
+  monthlyLabel,
+}: {
+  title: string;
+  subtitle: string;
+  rows: TeacherAttendanceChartPoint[];
+  weeklyLabel: string;
+  monthlyLabel: string;
+}) {
+  const data = rows.map((row) => ({
+    label: row.dayKey,
+    attendance: row.attendance,
+    isHighlighted: row.isHighlighted,
+  }));
+
+  return (
+    <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
+      <CardContent className="space-y-6 p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-1 text-right">
+            <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
+            <p className="text-sm text-slate-500">{subtitle}</p>
+          </div>
+          <DashboardSegmentedControl<Period>
+            options={[
+              { id: "weekly", label: weeklyLabel },
+              { id: "monthly", label: monthlyLabel },
+            ]}
+            value="weekly"
+            onChange={() => {}}
+          />
+        </div>
+
+        <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
+          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
+            <XAxis dataKey="label" tickLine={false} axisLine={false} />
+            <YAxis tickLine={false} axisLine={false} />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <Bar dataKey="attendance" radius={[12, 12, 12, 12]} maxBarSize={48}>
+              {data.map((entry) => (
+                <Cell
+                  key={entry.label}
+                  fill={entry.isHighlighted ? "#C9A227" : "#2C4260"}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
+}

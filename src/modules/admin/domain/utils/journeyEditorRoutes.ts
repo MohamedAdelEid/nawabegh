@@ -1,23 +1,24 @@
 import type { JourneyStation } from "@/modules/admin/domain/data/journeyEditorData";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import type { JourneyEditorRoutes } from "@/shared/infrastructure/config/scopedDashboardRoutes";
 
 /** Route for the station editor screen, or null when no dedicated UI exists yet. */
 export function getStationEditorHref(
+  journeyEditorRoutes: JourneyEditorRoutes,
   journeyId: string,
   station: JourneyStation,
 ): string | null {
   switch (station.type) {
     case "flashcard":
-      return ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, station.id);
+      return journeyEditorRoutes.FLASHCARD_GROUP(journeyId, station.id);
     case "liveBroadcast":
-      return ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_VIEW(journeyId, station.id);
+      return journeyEditorRoutes.LIVE_BROADCAST_VIEW(journeyId, station.id);
     case "challenge":
-      return ROUTES.ADMIN.JOURNEY_EDITOR.CHALLENGE_EDITOR(journeyId, station.id);
+      return journeyEditorRoutes.CHALLENGE_EDITOR(journeyId, station.id);
     case "shortQuiz":
     case "exam":
-      return ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDITOR(journeyId, station.id);
+      return journeyEditorRoutes.EXAM_EDITOR(journeyId, station.id);
     case "helperFile":
-      return ROUTES.ADMIN.JOURNEY_EDITOR.HELPER_RESOURCE_EDITOR(journeyId, station.id);
+      return journeyEditorRoutes.HELPER_RESOURCE_EDITOR(journeyId, station.id);
     default:
       return null;
   }

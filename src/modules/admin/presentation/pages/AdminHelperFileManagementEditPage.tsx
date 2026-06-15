@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 
 interface AdminHelperFileManagementEditPageProps {
   fileId: string;
@@ -13,10 +13,11 @@ export function AdminHelperFileManagementEditPage({
   fileId,
 }: AdminHelperFileManagementEditPageProps) {
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   useEffect(() => {
-    router.replace(ROUTES.ADMIN.HELPER_FILE_MANAGEMENT.VIEW(fileId));
-  }, [fileId, router]);
+    router.replace(routes.helperFileManagement.VIEW(fileId));
+  }, [fileId, router, routes.helperFileManagement]);
 
   return null;
 }

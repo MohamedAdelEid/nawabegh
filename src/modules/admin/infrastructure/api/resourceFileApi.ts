@@ -60,7 +60,7 @@ export type ResourceFileStationOption = {
 };
 
 export type CreateResourceFilePayload = {
-  stationId: string;
+  stationId?: string;
   courseId: string;
   fileName: string;
   fileUrl: string;
@@ -319,9 +319,18 @@ export async function createResourceFile(
   payload: CreateResourceFilePayload,
 ): Promise<ResourceFileApiResult<{ id: string }>> {
   try {
+    const stationId = payload.stationId?.trim();
     const response = await httpClient.post<unknown>({
       url: "/api/v1/ResourceFile",
-      data: payload,
+      data: {
+        ...(stationId ? { stationId } : {}),
+        courseId: payload.courseId,
+        fileName: payload.fileName,
+        fileUrl: payload.fileUrl,
+        fileType: payload.fileType,
+        accessPolicy: payload.accessPolicy,
+        resourceFileType: payload.resourceFileType,
+      },
     });
     return {
       status: response.status,

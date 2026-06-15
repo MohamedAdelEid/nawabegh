@@ -11,6 +11,12 @@ import {
   mapRefreshResponseToTokens,
 } from "@/modules/auth/infrastructure/authSession";
 import { loginWithCredentials, refreshAuthToken } from "@/modules/auth/infrastructure/loginApi";
+import {
+  buildTeacherMockAuthorizeUser,
+  isTeacherMockAccessToken,
+  isTeacherMockLoginEnabled,
+  matchesTeacherMockCredentials,
+} from "@/modules/teacher/infrastructure/auth/teacherMockAuth";
 import { getAuthSecret } from "./authSecret";
 
 const SESSION_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
@@ -31,6 +37,10 @@ function getTokenExpiryMs(token: JWT) {
 }
 
 async function refreshJwtToken(token: JWT): Promise<JWT> {
+  if (isTeacherMockAccessToken(token.accessToken)) {
+    return token;
+  }
+
   if (!token.accessToken || !token.refreshToken) {
     return { ...token, error: "RefreshAccessTokenError" };
   }
@@ -71,6 +81,10 @@ export const authOptions: NextAuthOptions = {
 
         if (!email || !password) {
           throw new Error("Missing email or password.");
+        }
+
+        if (isTeacherMockLoginEnabled() && matchesTeacherMockCredentials(email, password)) {
+          return buildTeacherMockAuthorizeUser();
         }
 
         const response = await loginWithCredentials(

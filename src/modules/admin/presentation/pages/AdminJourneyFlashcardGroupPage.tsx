@@ -26,7 +26,7 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -116,6 +116,7 @@ function mapDeckToGroup(deck: FlashcardDeck): FlashCardGroup {
 export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const searchParams = useSearchParams();
   const deckIdFromUrl = searchParams.get("deckId")?.trim() || null;
   const [group, setGroup] = useState<FlashCardGroup | null>(null);
@@ -201,7 +202,7 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
       cards: [],
     });
     setCreateDeckOpen(false);
-    router.replace(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId, result.data.id));
+    router.replace(routes.journeyEditor.FLASHCARD_GROUP(journeyId, stationId, result.data.id));
     notify.success(t("flashcardGroup.createDeckModal.createSuccess"));
   };
 
@@ -234,7 +235,7 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
   };
   const difficultyLabel = t(`flashcardGroup.difficulty.${activeGroup.avgDifficulty}`);
   const addCardHref = group
-    ? ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_ADD(journeyId, stationId, group.id)
+    ? routes.journeyEditor.FLASHCARD_ADD(journeyId, stationId, group.id)
     : null;
 
   return (
@@ -243,10 +244,10 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
         title={t("flashcardGroup.title", { title: activeGroup.title })}
         description={t("flashcardGroup.description")}
         breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+          { label: t("breadcrumbs.home"), href: routes.home },
           {
             label: t("breadcrumbs.journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           { label: t("breadcrumbs.flashcardGroup") },
         ]}

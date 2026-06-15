@@ -18,7 +18,7 @@ import {
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -86,6 +86,7 @@ export function AdminJourneyFlashcardAddPage({
   stationId,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
+  const routes = useScopedDashboardRoutes();
   const router = useRouter();
   const searchParams = useSearchParams();
   const deckIdFromUrl = searchParams.get("deckId")?.trim() || null;
@@ -249,7 +250,7 @@ export function AdminJourneyFlashcardAddPage({
     const existingDeckId = deckId?.trim();
     if (existingDeckId) return existingDeckId;
     notify.error(t("flashcardAdd.messages.deckIdRequired"));
-    router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId));
+    router.push(routes.journeyEditor.FLASHCARD_GROUP(journeyId, stationId));
     return null;
   };
 
@@ -300,7 +301,7 @@ export function AdminJourneyFlashcardAddPage({
       setCardCount((prev) => prev + 1);
       setSelectedCardIndex(cardCount);
     } else {
-      router.push(ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, stationId, activeDeckId));
+      router.push(routes.journeyEditor.FLASHCARD_GROUP(journeyId, stationId, activeDeckId));
     }
   };
 
@@ -315,14 +316,14 @@ export function AdminJourneyFlashcardAddPage({
         title={t("flashcardAdd.title")}
         description={t("flashcardAdd.description")}
         breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+          { label: t("breadcrumbs.home"), href: routes.home },
           {
             label: t("breadcrumbs.journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           {
             label: t("breadcrumbs.flashcardGroup"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(
+            href: routes.journeyEditor.FLASHCARD_GROUP(
               journeyId,
               stationId,
               deckId ?? undefined,

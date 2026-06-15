@@ -64,7 +64,8 @@ import {
   StationAccessPolicy,
   StationType,
 } from "@/shared/domain/enums/cms.enums";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import type { JourneyEditorRoutes } from "@/shared/infrastructure/config/scopedDashboardRoutes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -147,14 +148,18 @@ function getDefaultCompletionRule(stationType: JourneyStationTypeId): JourneySta
   }
 }
 
-function getCreatedStationHref(journeyId: string, station: JourneyStation): string | null {
+function getCreatedStationHref(
+  journeyEditorRoutes: JourneyEditorRoutes,
+  journeyId: string,
+  station: JourneyStation,
+): string | null {
   if (station.type === "flashcard") {
-    return ROUTES.ADMIN.JOURNEY_EDITOR.FLASHCARD_GROUP(journeyId, station.id);
+    return journeyEditorRoutes.FLASHCARD_GROUP(journeyId, station.id);
   }
   if (station.type === "liveBroadcast") {
-    return ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, station.id);
+    return journeyEditorRoutes.LIVE_BROADCAST_ADD(journeyId, station.id);
   }
-  return getStationEditorHref(journeyId, station);
+  return getStationEditorHref(journeyEditorRoutes, journeyId, station);
 }
 
 function journeyCompletionRuleToApi(completionRule: JourneyStationCompletionRuleId): CompletionRuleType {
@@ -257,6 +262,7 @@ function mapCourseLearningPaths(
 export function AdminJourneyEditorPage({ journeyId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   const [data, setData] = useState<JourneyEditorData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -361,7 +367,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     const createdStation = await createStationFromDraft(draft);
     if (createdStation) {
       setDraft((prev) => ({ ...prev, name: "" }));
-      const editorHref = getCreatedStationHref(journeyId, createdStation);
+      const editorHref = getCreatedStationHref(routes.journeyEditor, journeyId, createdStation);
       if (editorHref) {
         router.push(editorHref);
       }
@@ -373,7 +379,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     if (!createdStation) return false;
 
     setModalOpen(false);
-    const editorHref = getCreatedStationHref(journeyId, createdStation);
+    const editorHref = getCreatedStationHref(routes.journeyEditor, journeyId, createdStation);
     if (editorHref) {
       router.push(editorHref);
     }
@@ -514,7 +520,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
           title={t("editor.title")}
           description={t("editor.description")}
           breadcrumbs={[
-            { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+            { label: t("breadcrumbs.home"), href: routes.home },
             { label: t("breadcrumbs.journeyEditor") },
           ]}
           action={

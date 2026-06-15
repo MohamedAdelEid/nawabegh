@@ -24,7 +24,7 @@ import {
 } from "@/modules/admin/infrastructure/api/quizzesApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -41,6 +41,7 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
   const tQuestion = useTranslations("admin.dashboard.journeyEditor.examEditQuestions.question");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   const [exam, setExam] = useState<ExamStation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,14 +118,14 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
         title={t("title", { name: exam.name })}
         description={t("description")}
         breadcrumbs={[
-          { label: tBc("home"), href: ROUTES.ADMIN.HOME },
+          { label: tBc("home"), href: routes.home },
           {
             label: tBc("journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           {
             label: tBc("examEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDITOR(journeyId, stationId),
+            href: routes.journeyEditor.EXAM_EDITOR(journeyId, stationId),
           },
           { label: tBc("examPreview") },
         ]}
@@ -142,7 +143,7 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
               className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
               onClick={() =>
                 router.push(
-                  ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDIT_QUESTIONS(journeyId, stationId),
+                  routes.journeyEditor.EXAM_EDIT_QUESTIONS(journeyId, stationId),
                 )
               }
             >

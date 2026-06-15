@@ -1,0 +1,947 @@
+{
+  "dashboard": {
+    "title": "لوحة المعلّم",
+    "header": {
+      "searchPlaceholder": "بحث عن مدرسة، طالب، أو نتيجة...",
+      "actions": {
+        "settings": "إعدادات سريعة",
+        "notifications": "الإشعارات"
+      },
+      "mobileMenu": {
+        "open": "فتح القائمة",
+        "close": "إغلاق القائمة"
+      },
+      "menu": {
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      },
+      "user": {
+        "menuLabel": "فتح قائمة الحساب",
+        "guestName": "معلّم",
+        "roles": {
+          "admin": "مدير النظام",
+          "student": "طالب",
+          "teacher": "معلّم",
+          "parent": "ولي أمر"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "الصفحات الرئيسية",
+      "footerSection": "المساعدة والحساب",
+      "toggleExpand": "توسيع الشريط الجانبي",
+      "toggleCollapse": "طي الشريط الجانبي",
+      "nav": {
+        "home": "الرئيسية",
+        "courses": "دوراتي",
+        "chatGroups": "مجموعات الدردشة",
+        "courseStatistics": "إحصائيات الدورات",
+        "liveAnalytics": "إحصائيات البث المباشر",
+        "schedule": "الجدول الزمني",
+        "interactiveBooks": "إدارة الكتاب التفاعلي",
+        "journeyEditor": "محرر الرحلة التعليمية",
+        "helperFileManagement": "إدارة ملفات المساعدة",
+        "helper": "مساعدة",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "settingsPage": {
+      "title": "إعدادات الحساب",
+      "description": "إدارة بيانات حساب المعلّم.",
+      "mockNotice": "بيانات مؤقتة حتى يتم ربط الحساب من الخادم.",
+      "fields": {
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور"
+      }
+    },
+    "home": {
+      "level": {
+        "title": "مستوى {level}",
+        "quality": "جودة الأداء",
+        "xp": "{current} / {max} XP"
+      },
+      "stats": {
+        "todaySessions": "جلسات اليوم",
+        "totalStudents": "إجمالي الطلاب",
+        "activeCourses": "المساقات النشطة"
+      },
+      "chart": {
+        "title": "تحليل أداء الطلاب",
+        "subtitle": "معدلات التفاعل الأسبوعية",
+        "interactionRate": "معدل التفاعل الأكاديمي",
+        "referenceAverage": "المتوسط المرجعي",
+        "currentWeek": "الأسبوع الحالي",
+        "previousWeek": "السابق",
+        "days": {
+          "sunday": "الأحد",
+          "monday": "الإثنين",
+          "tuesday": "الثلاثاء",
+          "wednesday": "الأربعاء",
+          "thursday": "الخميس"
+        }
+      },
+      "courses": {
+        "title": "إدارة المساقات التعليمية",
+        "viewAll": "عرض كل المساقات",
+        "weeks": "{count} أسابيع",
+        "students": "{count} طالب",
+        "enterTrack": "دخول المسار",
+        "physics": "الفيزياء: ميكانيكا الكم المتقدمة",
+        "biochem": "مبادئ الكيمياء الحيوية"
+      },
+      "liveClasses": {
+        "title": "حصص مباشرة اليوم",
+        "activeNow": "مباشر الآن",
+        "enter": "دخول",
+        "remindMe": "ذكّرني",
+        "physicsNuclear": "الفيزياء: الطاقة النووية",
+        "chemistryReview": "الكيمياء: مراجعة العناصر"
+      },
+      "alerts": {
+        "title": "تنبيهات الأداء",
+        "intervention": {
+          "title": "طلاب يحتاجون تدخلاً",
+          "description": "انخفض التفاعل بنسبة 30% في مادة الكيمياء"
+        },
+        "forum": {
+          "title": "استفسارات أكاديمية",
+          "description": "12 سؤالاً جديداً في المنتدى"
+        }
+      },
+      "support": {
+        "title": "دعم فني مخصص",
+        "description": "فريقنا جاهز لمساعدتك في أي وقت",
+        "cta": "تحدث معنا الآن"
+      }
+    },
+    "liveAnalytics": {
+      "title": "تحليلات الجلسات المباشرة",
+      "description": "متابعة أداء الطلاب والتفاعل خلال الجلسات التعليمية",
+      "actions": {
+        "startSession": "بدء جلسة جديدة",
+        "exportReport": "تصدير التقرير"
+      },
+      "stats": {
+        "totalAttendance": "إجمالي الحضور",
+        "avgWatchTime": "متوسط وقت المشاهدة",
+        "peakViews": "أعلى عدد مشاهدات",
+        "interactionRate": "معدل التفاعل",
+        "minutesSuffix": "دقيقة"
+      },
+      "upcoming": {
+        "title": "الجلسات القادمة",
+        "manageSchedule": "إدارة الجدول الزمني",
+        "today": "اليوم",
+        "tomorrow": "غداً",
+        "students": "{count} طالب",
+        "quantum": "الفيزياء الكمية: الجزء 3",
+        "organicChem": "مراجعة الكيمياء العضوية"
+      },
+      "metrics": {
+        "title": "أداء المحاضر",
+        "attendance": "نسبة الحضور",
+        "absence": "نسبة الغياب",
+        "newStudents": "نسبة حضور الطلاب الجدد"
+      },
+      "tip": {
+        "title": "نصيحة تعليمية",
+        "body": "تُظهر البيانات أن الطلاب يتفاعلون بنسبة 40% أكثر عند بدء الجلسة باختبار قصير لمدة 3 دقائق.",
+        "readMore": "اقرأ المزيد"
+      },
+      "chart": {
+        "title": "اتجاهات الحضور الأسبوعية",
+        "subtitle": "مقارنة الحضور المباشر مقابل المسجّل",
+        "weekly": "أسبوعي",
+        "monthly": "شهري",
+        "days": {
+          "saturday": "السبت",
+          "sunday": "الأحد",
+          "monday": "الإثنين",
+          "tuesday": "الثلاثاء",
+          "wednesday": "الأربعاء",
+          "thursday": "الخميس"
+        }
+      },
+      "absent": {
+        "title": "الطلاب المتغيبون",
+        "alertAll": "تنبيه الكل",
+        "sendReminder": "إرسال تذكير",
+        "viewAll": "عرض كل المتغيبين ({count})",
+        "sessionTitle": "الفيزياء الكمية: الجزء 3",
+        "sessionTime": "اليوم، 02:00 م",
+        "lastSeen": {
+          "yesterday": "آخر ظهور: أمس",
+          "twoDays": "آخر ظهور: قبل يومين",
+          "threeDays": "آخر ظهور: قبل 3 أيام"
+        },
+        "students": {
+          "ahmed": "أحمد العلي",
+          "sara": "سارة خالد",
+          "yousef": "يوسف محمد"
+        }
+      }
+    },
+    "schedule": {
+      "title": "إدارة الجدول الزمني",
+      "description": "تنظيم ومتابعة جلساتك التعليمية الأسبوعية",
+      "viewToggle": {
+        "weekly": "أسبوعي",
+        "monthly": "شهري"
+      },
+      "performance": {
+        "title": "ملخص الأداء",
+        "sessions": "{completed} / {planned}",
+        "message": "أداء ممتاز! أكملت 80% من مهامك الأسبوعية المخططة.",
+        "viewReport": "عرض التقرير المفصل"
+      },
+      "topics": {
+        "title": "مواضيع هامة قادمة",
+        "clinical": "بروتوكولات السلامة السريرية",
+        "dataStructures": "مقدمة في هياكل البيانات",
+        "badges": {
+          "tomorrow": "غداً",
+          "wednesday": "الأربعاء"
+        }
+      },
+      "featured": {
+        "liveNow": "مباشر الآن",
+        "title": "الذكاء الاصطناعي في الطب الحديث",
+        "level": "الطب - المستوى 4",
+        "registered": "مسجّل",
+        "duration": "المدة المتوقعة",
+        "resources": "الموارد المرفقة",
+        "status": "الحالة",
+        "statusReady": "جاهز للبث",
+        "minutes": "{count} دقيقة",
+        "files": "{count} ملفات",
+        "students": "{count} طالب",
+        "startStream": "ابدأ البث المباشر",
+        "edit": "تعديل"
+      },
+      "calendar": {
+        "title": "الجدول الأسبوعي",
+        "noSessions": "لا جلسات",
+        "days": {
+          "saturday": "السبت",
+          "sunday": "الأحد",
+          "monday": "الإثنين",
+          "tuesday": "الثلاثاء",
+          "wednesday": "الأربعاء",
+          "thursday": "الخميس",
+          "friday": "الجمعة"
+        },
+        "sessions": {
+          "chemistry": "الكيمياء",
+          "ai": "الذكاء الاصطناعي",
+          "review": "مراجعة عامة",
+          "histology": "علم الأنسجة",
+          "biology": "الأحياء",
+          "math": "الرياضيات"
+        }
+      },
+      "sessions": {
+        "title": "قائمة الجلسات",
+        "viewAll": "عرض كل الجلسات",
+        "viewLiveSessions": "إدارة الحصص المباشرة",
+        "edit": "تعديل",
+        "students": "+{count}",
+        "level3": "المستوى 3",
+        "softwareSystems": "تحليل أنظمة البرمجيات المعقدة",
+        "instructorYasser": "د. ياسر جلال",
+        "instructorAhmed": "د. أحمد محمود",
+        "badges": {
+          "mon14": "إثن 14",
+          "sun13": "أحد 13"
+        }
+      }
+    },
+    "liveSessions": {
+      "title": "إدارة الحصص المباشرة",
+      "description": "تتبع وإدارة جميع جلسات البث المباشر",
+      "actions": {
+        "startNew": "بدء حصة مباشرة جديدة"
+      },
+      "filters": {
+        "search": "بحث باسم الحصة...",
+        "allSubjects": "كل المواد",
+        "allStatuses": "كل الحالات",
+        "advanced": "تصفية متقدمة"
+      },
+      "stats": {
+        "totalStreaming": "إجمالي البث",
+        "hoursSuffix": "ساعة",
+        "liveAttendance": "حضور مباشر",
+        "studentsSuffix": "طالب",
+        "sessionsRating": "تقييم الجلسات"
+      },
+      "table": {
+        "sessionName": "اسم الحصة",
+        "subject": "المادة",
+        "lecturer": "المحاضر",
+        "dateTime": "التاريخ والوقت",
+        "duration": "المدة",
+        "status": "الحالة",
+        "actions": "العمليات",
+        "empty": "لا توجد حصص مباشرة",
+        "view": "عرض",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "status": {
+        "live": "مباشر الآن",
+        "upcoming": "قادمة",
+        "ended": "منتهية"
+      },
+      "pagination": {
+        "showing": "عرض {from}-{to} من {total} حصة مباشرة",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "rows": {
+        "calculus": "التفاضل والتكامل",
+        "advancedMath": "الرياضيات المتقدمة",
+        "lecturerAhmed": "د. أحمد محمود",
+        "today8pm": "اليوم 08:00 م",
+        "sixtyMinutes": "60 دقيقة",
+        "physics": "الفيزياء النووية",
+        "physicsSubject": "الفيزياء",
+        "lecturerSara": "د. سارة خالد",
+        "tomorrow10am": "غداً 10:00 ص",
+        "ninetyMinutes": "90 دقيقة",
+        "chemistry": "مراجعة الكيمياء",
+        "chemistrySubject": "الكيمياء",
+        "lecturerYousef": "د. يوسف محمد",
+        "yesterday4pm": "أمس 04:00 م",
+        "fortyFiveMinutes": "45 دقيقة"
+      }
+    },
+    "sessionDetails": {
+      "breadcrumbSchedule": "الجدول الأسبوعي",
+      "breadcrumbDetails": "تفاصيل الحصة",
+      "joinLive": "انضم إلى الحصة المباشرة",
+      "liveNow": "مباشر الآن",
+      "upcoming": "قادمة",
+      "ended": "منتهية",
+      "lessonInfo": {
+        "title": "معلومات الحصة",
+        "attendance": "حالة الحضور",
+        "active": "نشط"
+      },
+      "tasks": {
+        "title": "مهام ما قبل الحصة"
+      },
+      "overview": {
+        "title": "نظرة عامة على الحصة"
+      },
+      "goals": {
+        "title": "الأهداف التعليمية"
+      },
+      "resources": {
+        "title": "مصادر التعلم",
+        "download": "تحميل"
+      },
+      "related": {
+        "title": "حصص ذات صلة",
+        "watched": "تمت المشاهدة",
+        "comingSoon": "قريباً",
+        "review": "مراجعة الحصة",
+        "viewDetails": "عرض التفاصيل"
+      },
+      "help": {
+        "title": "هل لديك سؤال؟",
+        "cta": "اسأل المعلّم"
+      },
+      "sessions": {
+        "aiMedicine": {
+          "title": "الذكاء الاصطناعي في الطب الحديث",
+          "instructor": "د. أحمد محمود",
+          "overview": "تستكشف هذه الحصة تطبيقات الذكاء الاصطناعي في التشخيص الطبي واتخاذ القرار السريري، مع أمثلة عملية من المستشفيات الحديثة.",
+          "goals": {
+            "goal1": "فهم أساسيات نماذج التعلم الآلي في الطب",
+            "goal2": "تحليل حالات استخدام AI في التشخيص المبكر"
+          },
+          "tasks": {
+            "readChapter": "قراءة الفصل الخامس",
+            "prepareCalculator": "تجهيز الآلة الحاسبة"
+          },
+          "resources": {
+            "slides": "عرض الشرائح - AI in Medicine",
+            "handout": "ملخص الحصة"
+          },
+          "related": {
+            "intro": "مقدمة في الذكاء الاصطناعي",
+            "advanced": "تطبيقات متقدمة في التشخيص"
+          }
+        },
+        "softwareSystems": {
+          "overview": "مراجعة شاملة لأنماط تصميم الأنظمة المعقدة واستراتيجيات التوسع.",
+          "goals": {
+            "goal1": "تحليل متطلبات الأنظمة الموزعة",
+            "goal2": "تطبيق أنماط التصميم في مشاريع حقيقية"
+          },
+          "tasks": {
+            "reviewNotes": "مراجعة ملاحظات المحاضرة السابقة"
+          },
+          "resources": {
+            "syllabus": "خطة المساق"
+          }
+        },
+        "calculus": {
+          "overview": "جلسة مباشرة في التفاضل والتكامل تغطي التكاملات المتعددة.",
+          "goals": {
+            "goal1": "حل مسائل التكامل المتقدمة"
+          }
+        }
+      },
+      "notFound": {
+        "title": "الحصة غير موجودة",
+        "description": "تعذر العثور على تفاصيل هذه الحصة.",
+        "back": "العودة للجدول"
+      }
+    },
+    "courses": {
+      "list": {
+        "title": "دوراتي",
+        "description": "مرحباً بك في لوحة تحكم Nawabigh، راجع المساقات الجديدة بانتظار الموافقة.",
+        "actions": {
+          "addCourse": "إضافة دورة جديدة",
+          "exportReport": "تصدير التقرير",
+          "view": "عرض الدورة",
+          "edit": "تعديل الدورة",
+          "delete": "حذف الدورة"
+        },
+        "stats": {
+          "totalTracks": "إجمالي المسارات",
+          "pendingApproval": "بانتظار الموافقة",
+          "activeLearners": "المتعلمون النشطون",
+          "totalCourses": "إجمالي الدورات",
+          "important": "هام"
+        },
+        "filters": {
+          "searchLabel": "بحث",
+          "searchPlaceholder": "البحث حسب عنوان المساق أو المعلم...",
+          "allGrades": "جميع المراحل",
+          "grade1": "الأول ثانوي",
+          "grade2": "الثاني ثانوي",
+          "grade3": "الثالث ثانوي",
+          "grade4": "الثاني متوسط",
+          "allSubjects": "جميع المواد",
+          "chemistry": "الكيمياء",
+          "mathematics": "الرياضيات",
+          "physics": "الفيزياء",
+          "biology": "الأحياء",
+          "allStatuses": "جميع الحالات",
+          "gradeAria": "المرحلة الدراسية",
+          "subjectAria": "المادة",
+          "statusAria": "الحالة",
+          "more": "المزيد من الفلاتر"
+        },
+        "status": {
+          "pending": "قيد الانتظار",
+          "approved": "معتمد",
+          "rejected": "مرفوض",
+          "draft": "مسودة"
+        },
+        "access": {
+          "free": "مجاني",
+          "paid": "مدفوع",
+          "subscription": "اشتراك",
+          "unspecified": "غير محدد"
+        },
+        "table": {
+          "title": "عنوان المسار",
+          "subjectGrade": "المادة / المرحلة",
+          "access": "نوع الوصول",
+          "status": "الحالة",
+          "actions": "الإجراءات",
+          "empty": "لا توجد دورات مطابقة للفلاتر."
+        },
+        "pagination": {
+          "summary": "عرض {start} - {end} من أصل {total} مساق",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        }
+      },
+      "details": {
+        "subjectLine": "المادة: {subject} • {term}",
+        "instructorLabel": "مدرس الدورة",
+        "actions": {
+          "viewJourney": "عرض الرحلة التعليمية",
+          "editCourse": "تعديل الدورة",
+          "viewStatistics": "عرض إحصائيات الدورة"
+        },
+        "labels": {
+          "subject": "المادة",
+          "grade": "المرحلة"
+        },
+        "metrics": {
+          "lessons": "إجمالي الدروس",
+          "lessonsValue": "{count} درس",
+          "price": "السعر"
+        },
+        "managementStats": {
+          "title": "إحصائيات الإدارة",
+          "registered": "طالب مسجل حالياً",
+          "revenue": "إجمالي الإيرادات (ر.س)",
+          "completion": "معدل إكمال الطلاب"
+        },
+        "samples": {
+          "organicChemistry": {
+            "title": "أساسيات الكيمياء العضوية",
+            "subject": "الكيمياء",
+            "term": "الفصل الدراسي الثاني",
+            "grade": "الصف الثالث الثانوي",
+            "instructor": "د. أحمد الرافعي"
+          },
+          "generic": {
+            "title": "دورة تعليمية",
+            "subject": "مادة عامة",
+            "term": "الفصل الدراسي الأول",
+            "grade": "ثانوي",
+            "instructor": "مدرس الدورة"
+          }
+        },
+        "curriculum": {
+          "title": "المسار التعليمي",
+          "viewPath": "عرض المسار التعليمي",
+          "unit1": {
+            "title": "الوحدة الأولى: مدخل إلى الروابط الكربونية",
+            "lesson1": {
+              "title": "مقدمة في الهجين المداري",
+              "meta": "15:00 دقيقة",
+              "subMeta": "فيديو عالي الجودة"
+            },
+            "quiz1": {
+              "title": "اختبار قصير: الروابط التساهمية",
+              "meta": "10 أسئلة",
+              "subMeta": "درجة النجاح 70%"
+            }
+          },
+          "unit2": {
+            "title": "الوحدة الثانية: الهيدروكربونات والألكانات",
+            "pdf1": {
+              "title": "ملخص تسمية الألكانات (PDF)",
+              "meta": "12 صفحة",
+              "subMeta": "4.5 ميجابايت"
+            },
+            "locked": {
+              "title": "التفاعلات الكيميائية في الألكينات",
+              "meta": "يتطلب إكمال الدرس السابق"
+            }
+          },
+          "generic": {
+            "unit": {
+              "title": "وحدة الدورة"
+            },
+            "lesson": {
+              "title": "درس تمهيدي",
+              "meta": "درس فيديو"
+            }
+          }
+        }
+      },
+      "statistics": {
+        "title": "إحصائيات الدورة: {course}",
+        "description": "تحليل شامل لأداء الطلاب والتفاعل مع محتوى الدورة التعليمي.",
+        "subtitleMeta": "{students} طالب · {paths} مسار تعلم · {performance} متوسط الأداء",
+        "actions": {
+          "editCourse": "تعديل الدورة",
+          "exportReport": "تصدير التقرير",
+          "sendAlert": "إرسال تنبيه"
+        },
+        "stats": {
+          "totalStudents": "إجمالي الطلاب",
+          "completionRate": "معدل الإكمال",
+          "avgTestScores": "متوسط درجات الاختبارات",
+          "avgGrades": "متوسط الدرجات",
+          "sessionAttendance": "حضور الجلسات",
+          "studyTime": "وقت الدراسة",
+          "activeStudents": "الطلاب النشطون",
+          "hoursSuffix": "ساعة",
+          "activeToday": "الطلاب النشطون اليوم",
+          "liveNow": "مباشر الآن"
+        },
+        "weeks": {
+          "week1": "الأسبوع 1",
+          "week2": "الأسبوع 2",
+          "week3": "الأسبوع 3",
+          "week4": "الأسبوع 4"
+        },
+        "weeklyPerformance": {
+          "title": "تطور أداء الطلاب",
+          "lessonCompletion": "إكمال الدروس",
+          "testResults": "نتائج الاختبارات"
+        },
+        "highlights": {
+          "stuck": {
+            "title": "نقطة تعثر: الألكينات",
+            "description": "22% من الطلاب يتعثرون في هذا الدرس.",
+            "action": "تحسين المسار"
+          },
+          "hardest": {
+            "title": "أصعب درس تقييماً",
+            "description": "التهجين الهجين للكربون هو الموضوع الأصعب.",
+            "action": "مراجعة المحتوى"
+          }
+        },
+        "topStudents": {
+          "title": "الطلاب الأكثر تفاعلاً",
+          "points": "{count} نقطة تفاعل",
+          "student1": "أحمد المنصوري",
+          "student2": "سارة خالد",
+          "student3": "خالد عبدالله"
+        },
+        "upcoming": {
+          "title": "الجلسات المباشرة القادمة",
+          "soon": "قريباً",
+          "session1": "مراجعة تفاعلات الألكينات",
+          "session2": "أسئلة وأجوبة الكيمياء العضوية",
+          "registered": "{count} مسجل"
+        },
+        "interactionTip": "أرسل تذكيراً للطلاب غير النشطين لزيادة التفاعل هذا الأسبوع.",
+        "interactionTipAction": "أرسل الآن ←",
+        "weeklyInteraction": {
+          "title": "تفاعل الطلاب (أسبوعياً)",
+          "legend": "تفاعل عالي"
+        },
+        "days": {
+          "saturday": "السبت",
+          "sunday": "الأحد",
+          "monday": "الإثنين",
+          "tuesday": "الثلاثاء",
+          "wednesday": "الأربعاء",
+          "thursday": "الخميس",
+          "friday": "الجمعة"
+        },
+        "stationPerformance": {
+          "title": "أداء المحطات"
+        },
+        "stations": {
+          "live": "البث المباشر",
+          "tests": "الاختبارات",
+          "flashcards": "بطاقات الاستذكار",
+          "resources": "المصادر"
+        },
+        "insight": "الطلاب يتفاعلون بشكل ممتاز مع البطاقات التعليمية، ينصح بزيادة محتواها.",
+        "journey": {
+          "title": "رحلة النجاح: محطات الدورة",
+          "station1": "المقدمة",
+          "station2": "المفاهيم الأساسية",
+          "station3": "التطبيق العملي",
+          "station4": "مواضيع متقدمة",
+          "finalExam": "الاختبار النهائي",
+          "completedCount": "{count} طالب أتمها",
+          "status": {
+            "locked": "قيد التقدم",
+            "current": "قيد التقدم"
+          }
+        },
+        "table": {
+          "title": "تتبع تقدم الطلاب",
+          "searchPlaceholder": "بحث باسم الطالب...",
+          "filter": "تصفية الطلاب",
+          "student": "اسم الطالب",
+          "completion": "نسبة الإكمال",
+          "lastActivity": "آخر نشاط",
+          "status": "الحالة",
+          "empty": "لا يوجد طلاب."
+        },
+        "studentStatus": {
+          "onTrack": "على المسار",
+          "needsHelp": "يحتاج مساعدة",
+          "atRisk": "معرض للخطر"
+        },
+        "students": {
+          "ahmed": "أحمد العتيبي",
+          "sara": "سارة القحطاني",
+          "khaled": "خالد بن محمد",
+          "fiveMinutesAgo": "منذ 5 دقائق",
+          "weekAgo": "منذ أسبوع"
+        },
+        "chat": {
+          "title": "تفاعل الدردشة",
+          "messagesToday": "رسالة اليوم",
+          "openDiscussion": "فتح غرفة النقاش"
+        },
+        "aiPrediction": "تتوقع الذكاء الاصطناعي زيادة في الاستفسارات حول الكيمياء الحلقية غداً."
+      },
+      "create": {
+        "title": "إعداد دورة تعليمية جديدة",
+        "editTitle": "تعديل الدورة التعليمية",
+        "description": "قم بتعبئة التفاصيل اللازمة لإطلاق رحلتك التعليمية القادمة",
+        "stepper": {
+          "ariaLabel": "خطوات إنشاء الدورة"
+        },
+        "steps": {
+          "basic": "المعلومات الأساسية",
+          "pricing": "التسعير والوصول",
+          "paths": "مسارات التعلم"
+        },
+        "sections": {
+          "basic": "المعلومات الأساسية",
+          "pricing": "التسعير والوصول"
+        },
+        "fields": {
+          "title": "عنوان الدورة",
+          "titlePlaceholder": "مثال: الرياضيات المتقدمة للصف الثاني ثانوي",
+          "description": "وصف الدورة",
+          "descriptionPlaceholder": "اكتب وصفاً شاملاً للأهداف والمخرجات التعليمية...",
+          "grade": "الصف الدراسي",
+          "gradePlaceholder": "اختر الصف الدراسي",
+          "term": "الفصل الدراسي",
+          "termPlaceholder": "اختر الفصل الدراسي",
+          "subject": "المادة",
+          "subjectPlaceholder": "اختر المادة",
+          "cover": "غلاف الدورة",
+          "coverHint": "اسحب الصورة هنا أو تصفح الملفات",
+          "coverRequirements": "JPG, PNG — نسبة 16:9 — الحد الأقصى 5 ميجابايت",
+          "basePrice": "السعر الأصلي (ر.س)",
+          "offerPrice": "السعر بعد الخصم (ر.س)"
+        },
+        "options": {
+          "grade1": "الأول ثانوي",
+          "grade2": "الثاني ثانوي",
+          "grade3": "الثالث ثانوي",
+          "math": "الرياضيات",
+          "chemistry": "الكيمياء",
+          "physics": "الفيزياء",
+          "term1": "الفصل الأول",
+          "term2": "الفصل الثاني",
+          "term3": "الفصل الثالث"
+        },
+        "pricing": {
+          "free": "مجانية",
+          "oneTime": "مدفوعة (لمرة واحدة)",
+          "monthly": "اشتراك شهري"
+        },
+        "actions": {
+          "saveDraft": "حفظ كمسودة",
+          "saveCourse": "حفظ الدورة التعليمية"
+        },
+        "preview": {
+          "title": "معاينة الملخص",
+          "fallbackTitle": "الرياضيات المتقدمة للصف الثاني ثانوي",
+          "fallbackSubject": "الرياضيات",
+          "fallbackGrade": "الثاني ثانوي",
+          "currency": "ر.س",
+          "accessType": "نوع الوصول",
+          "lessons": "{count} درس",
+          "paths": "{count} مسار",
+          "viewPath": "عرض المسار التعليمي"
+        },
+        "tip": {
+          "title": "نصيحة الخبراء",
+          "body": "إضافة صورة غلاف جذابة تزيد من معدل التحويل والاشتراك في الدورة بنسبة 40%."
+        },
+        "success": {
+          "title": "تم إنشاء الدورة بنجاح!",
+          "description": "عمل رائع! استمر الآن في استكمال الدورة من خلال إضافة محطات التعلم.",
+          "stepLabel": "الخطوة {current} من {total}",
+          "progressHint": "معلومات الدورة ← المحطات ← النشر",
+          "note": "يمكنك دائماً تعديل أو إعادة ترتيب المحطات لاحقاً من مدير المنهج.",
+          "startPaths": "ابدأ إضافة المسارات",
+          "continueLater": "المتابعة لاحقاً"
+        }
+      }
+    },
+    "chatGroups": {
+      "title": "مجموعات الدردشة",
+      "description": "قم بإنشاء وتعديل ومراقبة مجموعات الدردشة الخاصة بمنصتك",
+      "breadcrumbs": {
+        "home": "الرئيسية",
+        "chatGroups": "مجموعات الدردشة"
+      },
+      "stats": {
+        "totalGroups": { "label": "إجمالي المجموعات", "indicator": "+12%" },
+        "activeMessages": { "label": "الرسائل النشطة اليوم", "indicator": "نشط" },
+        "interactionRate": { "label": "نسبة التفاعل", "indicator": "مرتفع" },
+        "activeNow": { "label": "المجموعات النشطة الآن", "indicator": "مباشر" }
+      },
+      "filters": {
+        "statuses": { "label": "الحالة", "all": "الكل", "active": "نشط", "paused": "معطل" },
+        "grades": { "label": "الصف", "all": "الكل" },
+        "subjects": { "label": "الدورة", "all": "الكل" },
+        "search": { "label": "بحث سريع" }
+      },
+      "table": {
+        "title": "مجموعات الدردشة",
+        "searchPlaceholder": "ابحث باسم المجموعة أو المادة...",
+        "addButton": "إضافة مجموعة دردشة جديدة",
+        "columns": {
+          "groupName": "عنوان الدردشة",
+          "studentCount": "عدد الطلاب",
+          "chatMode": "وضع الشات",
+          "attachments": "المرفقات",
+          "status": "الحالة",
+          "lastActivity": "آخر نشاط",
+          "actions": "الإجراءات"
+        },
+        "pagination": { "summary": "عرض {visible} من أصل {total} مجموعة", "previous": "السابق", "next": "التالي" },
+        "states": { "empty": "لا توجد مجموعات مطابقة.", "error": "فشل تحميل مجموعات الدردشة." }
+      },
+      "chatModes": { "everyone": "مفتوح للجميع", "teacherOnly": "المعلم فقط" },
+      "statuses": { "active": "نشط الآن", "paused": "معطل مؤقتاً" },
+      "actions": {
+        "view": "عرض الدردشة",
+        "settings": "الإعدادات",
+        "pause": "إيقاف المجموعة",
+        "resume": "استئناف المجموعة",
+        "paused": "تم إيقاف المجموعة",
+        "resumed": "تم استئناف المجموعة"
+      },
+      "delete": {
+        "title": "حذف مجموعة الدردشة",
+        "description": "هل أنت متأكد من حذف هذه المجموعة؟ سيؤدي هذا إلى حذف كافة السجلات والرسائل والملفات نهائياً.",
+        "confirm": "نعم، احذف المجموعة",
+        "cancel": "إلغاء",
+        "success": "تم حذف مجموعة الدردشة"
+      },
+      "conversation": {
+        "error": "فشل تحميل المحادثة",
+        "inputPlaceholder": "اكتب رسالتك...",
+        "dates": { "today": "اليوم، ٢٣ أكتوبر" },
+        "status": { "activeNow": "نشط الآن" },
+        "lastSeen": { "fiveMinutes": "آخر ظهور منذ ٥ دقائق" },
+        "samples": {
+          "physics": { "title": "الفيزياء - ميكانيكا الكم" },
+          "teacherName": "أ. محمد علي",
+          "studentSara": "سارة خالد",
+          "studentAhmed": "أحمد العتيبي",
+          "greeting": "السلام عليكم يا شباب، راجعوا الملخص المرفق قبل حصة الغد.",
+          "fileName": "ملخص ميكانيكا الكم.pdf",
+          "studentReply": "شكراً أستاذ، سأراجعه الليلة.",
+          "mentionReply": "أتفق مع @سارة، الملخص مفيد جداً."
+        }
+      },
+      "members": {
+        "error": "فشل تحميل المشاركين",
+        "participantsTitle": "المشاركون ({count})",
+        "searchPlaceholder": "البحث عن اسم الطالب...",
+        "youTeacher": "أنت / المعلم",
+        "connectedStudents": "الطلاب المتصلون",
+        "muted": "مكتوم",
+        "loadMore": "تحميل المزيد من الطلاب ({count} إضافي)",
+        "status": { "online": "متصل", "typing": "تكتب الآن...", "offline": "غير متصل" },
+        "lastSeen": { "oneHour": "آخر ظهور منذ ساعة", "yesterday": "آخر ظهور أمس" },
+        "settings": {
+          "title": "إعدادات المجموعة",
+          "mute": "كتم التنبيهات",
+          "pin": "تثبيت المجموعة",
+          "chatStatus": "حالة الدردشة",
+          "open": "مفتوح",
+          "closed": "مغلق"
+        },
+        "media": { "title": "الوسائط والملفات", "viewAll": "عرض الكل" },
+        "samples": {
+          "physics": {
+            "title": "الفيزياء - ميكانيكا الكم",
+            "description": "مجموعة لمناقشة مفاهيم ميكانيكا الكم والواجبات والتحضير للاختبارات."
+          },
+          "createdAt": "تم الإنشاء في 15 أكتوبر 2023",
+          "teacherName": "د. أحمد علي",
+          "studentSara": "سارة محمود",
+          "studentKhaled": "خالد عبدالله",
+          "studentAhmed": "أحمد العتيبي",
+          "studentNoura": "نورا سالم"
+        }
+      },
+      "editPage": {
+        "titleCreate": "إضافة مجموعة دردشة جديدة",
+        "titleWithName": "تعديل مجموعة {name}",
+        "descriptionCreate": "أنشئ مجموعة دردشة جديدة لطلابك.",
+        "descriptionEdit": "تعديل هوية المجموعة والصلاحيات وإعدادات الخصوصية.",
+        "breadcrumbs": { "home": "الرئيسية", "chatGroups": "مجموعات الدردشة", "create": "إضافة مجموعة", "edit": "تعديل المجموعة" },
+        "buttons": { "save": "حفظ", "cancel": "إلغاء" },
+        "sections": {
+          "identity": { "title": "هوية المجموعة", "subtitle": "الاسم والمعلومات الأساسية" },
+          "controlPrivacy": { "title": "إعدادات التحكم والخصوصية", "subtitle": "صلاحيات الإرسال والوسائط" }
+        },
+        "fields": {
+          "groupName": { "label": "اسم المجموعة", "placeholder": "كيمياء - الصف الثاني عشر (أ)" },
+          "subject": { "label": "المادة الدراسية" },
+          "grade": { "label": "الصف الدراسي" },
+          "description": { "label": "الوصف والتعليمات", "placeholder": "اكتب وصف المجموعة والقواعد..." },
+          "chatMode": {
+            "everyone": "الجميع",
+            "everyoneDesc": "يمكن لجميع الأعضاء إرسال الرسائل",
+            "teacherOnly": "المعلم فقط",
+            "teacherOnlyDesc": "المعلم فقط يمكنه النشر"
+          },
+          "media": {
+            "files": "الملفات",
+            "images": "الصور",
+            "pdf": "PDF",
+            "webLinks": "روابط الويب",
+            "blockAll": "حظر جميع المرفقات",
+            "blockAllDesc": "منع مشاركة أي وسائط"
+          },
+          "parentMode": {
+            "label": "وضع عرض أولياء الأمور",
+            "description": "السماح لأولياء الأمور بالمشاهدة دون تفاعل"
+          },
+          "lockGroup": {
+            "label": "قفل المجموعة",
+            "description": "تعطيل المراسلة مؤقتاً"
+          }
+        },
+        "states": {
+          "loadError": "فشل تحميل المجموعة",
+          "saveError": "فشل حفظ المجموعة",
+          "saveSuccess": "تم حفظ المجموعة بنجاح",
+          "nameRequired": "اسم المجموعة مطلوب",
+          "createPending": "سيتوفر إنشاء المجموعة عند جاهزية واجهة البرمجة"
+        }
+      }
+    },
+    "coursesStatisticsOverview": {
+      "title": "إحصائيات دوراتي",
+      "description": "نظرة شاملة على الأداء عبر جميع دوراتك.",
+      "actions": { "exportReport": "تصدير تقرير", "sendAlert": "إرسال تنبيه" },
+      "filters": {
+        "days7": "7 أيام",
+        "days30": "30 يوماً",
+        "custom": "مخصص",
+        "allCourses": "جميع الدورات",
+        "allClasses": "جميع الصفوف",
+        "advanced": "تصفية متقدمة"
+      },
+      "stats": {
+        "totalStudents": "إجمالي الطلاب",
+        "avgAchievement": "متوسط الإنجاز",
+        "attendanceRate": "نسبة الحضور",
+        "testAverage": "متوسط الاختبارات",
+        "strugglingStudents": "الطلاب المتعثرون",
+        "activeStudents": "الطلاب النشطون"
+      },
+      "alerts": {
+        "title": "تنبيهات حرجة",
+        "badge": "{count} مهام",
+        "inactive": { "title": "طلاب غير نشطين", "description": "12 طالب لم يسجلوا دخولاً منذ 7 أيام." },
+        "repeatedFailure": { "title": "رسوب متكرر", "description": "8 طلاب رسبوا في نفس الاختبار مرتين." },
+        "dropout": { "title": "نقاط انسحاب", "description": "انخفض التفاعل في درس المنطق." }
+      },
+      "activityChart": { "title": "تطور نشاط الطلاب", "current": "الأسبوع الحالي" },
+      "coursePerformance": {
+        "title": "أداء الدورات التدريبية",
+        "viewAll": "عرض الكل",
+        "students": "{count} طالب",
+        "achievement": "نسبة الإنجاز",
+        "interaction": "التفاعل",
+        "attendance": "الحضور",
+        "struggling": "المتعثرون"
+      },
+      "courses": {
+        "status": { "veryActive": "نشط جداً", "average": "متوسط", "excellent": "ممتاز" },
+        "programming": { "title": "مقدمة في البرمجة" },
+        "math": { "title": "الرياضيات المتقدمة" },
+        "chemistry": { "title": "أساسيات الكيمياء التحليلية" }
+      }
+    },
+    "common": {
+      "loading": "جاري التحميل...",
+      "error": "حدث خطأ أثناء تحميل البيانات"
+    }
+  }
+}

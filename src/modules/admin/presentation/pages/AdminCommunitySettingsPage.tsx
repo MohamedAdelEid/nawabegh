@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Lock, PlusCircle, Settings2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -9,26 +8,25 @@ import { cn } from "@/shared/application/lib/cn";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { StarTag } from "../assets/icons/StarTag";
 import { useCommunityBadgesTable } from "@/modules/admin/application/hooks/useCommunityBadgesTable";
+import { useCommunitySettings } from "@/modules/admin/application/hooks/useCommunitySettings";
+import { COMMUNITY_PRIVACY_MODE } from "@/modules/admin/domain/types/communitySettings.types";
+import { isSchoolPrivacyMode } from "@/modules/admin/domain/utils/communitySettingsMappers";
 import {
   CommunityBadgeTableRow,
   CommunityBadgesDashboardSkeleton,
 } from "@/modules/admin/presentation/components/community-badges";
 
-type PrivacyMode = "public" | "school";
-
 export function AdminCommunitySettingsPage() {
   const t = useTranslations("admin.dashboard.articleEditor.communitySettings");
   const badgesTable = useCommunityBadgesTable({ pageSize: 5 });
   const previewBadges = badgesTable.page?.rows ?? [];
-  const [privacy, setPrivacy] = useState<PrivacyMode>("public");
-  const [publishing, setPublishing] = useState(true);
-  const [evaluation, setEvaluation] = useState(true);
-  const [comments, setComments] = useState(true);
-  const [likes, setLikes] = useState(true);
-  const [following, setFollowing] = useState(false);
+  const communitySettings = useCommunitySettings();
+  const { form, isLoading, isSaving } = communitySettings;
+  const controlsDisabled = isLoading || isSaving || !form;
 
   return (
     <div className="space-y-8 text-right">
@@ -51,46 +49,57 @@ export function AdminCommunitySettingsPage() {
                 <span>{t("controls.title")}</span>
               </h2>
               <div className="flex flex-1 flex-col justify-between gap-0">
-                <ToggleRow
-                  label={t("controls.publishing")}
-                  description={t("controls.publishingDescription")}
-                  checked={publishing}
-                  onChange={setPublishing}
-                  activeLabel={t("controls.on")}
-                  inactiveLabel={t("controls.off")}
-                />
-                <ToggleRow
-                  label={t("controls.evaluation")}
-                  description={t("controls.evaluationDescription")}
-                  checked={evaluation}
-                  onChange={setEvaluation}
-                  activeLabel={t("controls.on")}
-                  inactiveLabel={t("controls.off")}
-                />
-                <ToggleRow
-                  label={t("controls.comments")}
-                  description={t("controls.commentsDescription")}
-                  checked={comments}
-                  onChange={setComments}
-                  activeLabel={t("controls.on")}
-                  inactiveLabel={t("controls.off")}
-                />
-                <ToggleRow
-                  label={t("controls.likes")}
-                  description={t("controls.likesDescription")}
-                  checked={likes}
-                  onChange={setLikes}
-                  activeLabel={t("controls.on")}
-                  inactiveLabel={t("controls.off")}
-                />
-                <ToggleRow
-                  label={t("controls.following")}
-                  description={t("controls.followingDescription")}
-                  checked={following}
-                  onChange={setFollowing}
-                  activeLabel={t("controls.on")}
-                  inactiveLabel={t("controls.off")}
-                />
+                {isLoading || !form ? (
+                  <CommunitySettingsControlsSkeleton />
+                ) : (
+                  <>
+                    <ToggleRow
+                      label={t("controls.publishing")}
+                      description={t("controls.publishingDescription")}
+                      checked={form.enablePublishing}
+                      onChange={communitySettings.setEnablePublishing}
+                      activeLabel={t("controls.on")}
+                      inactiveLabel={t("controls.off")}
+                      disabled={controlsDisabled}
+                    />
+                    <ToggleRow
+                      label={t("controls.evaluation")}
+                      description={t("controls.evaluationDescription")}
+                      checked={form.enableRatings}
+                      onChange={communitySettings.setEnableRatings}
+                      activeLabel={t("controls.on")}
+                      inactiveLabel={t("controls.off")}
+                      disabled={controlsDisabled}
+                    />
+                    <ToggleRow
+                      label={t("controls.comments")}
+                      description={t("controls.commentsDescription")}
+                      checked={form.enableComments}
+                      onChange={communitySettings.setEnableComments}
+                      activeLabel={t("controls.on")}
+                      inactiveLabel={t("controls.off")}
+                      disabled={controlsDisabled}
+                    />
+                    <ToggleRow
+                      label={t("controls.likes")}
+                      description={t("controls.likesDescription")}
+                      checked={form.enableLikes}
+                      onChange={communitySettings.setEnableLikes}
+                      activeLabel={t("controls.on")}
+                      inactiveLabel={t("controls.off")}
+                      disabled={controlsDisabled}
+                    />
+                    <ToggleRow
+                      label={t("controls.following")}
+                      description={t("controls.followingDescription")}
+                      checked={form.enableFollowing}
+                      onChange={communitySettings.setEnableFollowing}
+                      activeLabel={t("controls.on")}
+                      inactiveLabel={t("controls.off")}
+                      disabled={controlsDisabled}
+                    />
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -101,18 +110,26 @@ export function AdminCommunitySettingsPage() {
                   <Lock className="h-5 w-5 shrink-0 text-[#C7AF6E]" aria-hidden />
                   <span>{t("privacy.title")}</span>
                 </h2>
-                <PrivacyOption
-                  selected={privacy === "public"}
-                  title={t("privacy.publicTitle")}
-                  description={t("privacy.publicDescription")}
-                  onSelect={() => setPrivacy("public")}
-                />
-                <PrivacyOption
-                  selected={privacy === "school"}
-                  title={t("privacy.schoolTitle")}
-                  description={t("privacy.schoolDescription")}
-                  onSelect={() => setPrivacy("school")}
-                />
+                {isLoading || !form ? (
+                  <CommunitySettingsPrivacySkeleton />
+                ) : (
+                  <>
+                    <PrivacyOption
+                      selected={!isSchoolPrivacyMode(form.privacyMode)}
+                      title={t("privacy.publicTitle")}
+                      description={t("privacy.publicDescription")}
+                      onSelect={() => communitySettings.setPrivacyMode(COMMUNITY_PRIVACY_MODE.Public)}
+                      disabled={controlsDisabled}
+                    />
+                    <PrivacyOption
+                      selected={isSchoolPrivacyMode(form.privacyMode)}
+                      title={t("privacy.schoolTitle")}
+                      description={t("privacy.schoolDescription")}
+                      onSelect={() => communitySettings.setPrivacyMode(COMMUNITY_PRIVACY_MODE.School)}
+                      disabled={controlsDisabled}
+                    />
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -205,19 +222,41 @@ export function AdminCommunitySettingsPage() {
   );
 }
 
+function CommunitySettingsControlsSkeleton() {
+  return (
+    <div className="space-y-3">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Skeleton key={`community-settings-control-${index}`} className="h-[4.75rem] w-full rounded-xl" />
+      ))}
+    </div>
+  );
+}
+
+function CommunitySettingsPrivacySkeleton() {
+  return (
+    <div className="space-y-3">
+      <Skeleton className="h-[5.5rem] w-full rounded-xl" />
+      <Skeleton className="h-[5.5rem] w-full rounded-xl" />
+    </div>
+  );
+}
+
 function PrivacyOption(props: {
   selected: boolean;
   title: string;
   description: string;
   onSelect: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={props.onSelect}
+      disabled={props.disabled}
       className={cn(
         "flex w-full items-start justify-between gap-3 rounded-xl border-2 p-4 text-right transition-colors",
         props.selected ? "border-[#2D3E50] bg-[#F0F4FA]" : "border-[#E8ECF2] bg-white hover:border-slate-300",
+        props.disabled && "cursor-not-allowed opacity-60",
       )}
     >
       <div className="min-w-0 flex-1 space-y-1">
@@ -244,6 +283,7 @@ function ToggleRow(props: {
   onChange: (v: boolean) => void;
   activeLabel: string;
   inactiveLabel: string;
+  disabled?: boolean;
 }) {
   return (
     <div className="bg-[#F8F9FA] rounded-xl p-4 flex flex-col gap-2 border-b border-[#EEF2F6] py-3 last:border-0 sm:flex-row sm:items-center sm:justify-between sm:py-3.5">
@@ -258,6 +298,7 @@ function ToggleRow(props: {
         inactiveLabel={props.inactiveLabel}
         activeClassName="bg-[#4CAF50]"
         inactiveClassName="bg-slate-200"
+        disabled={props.disabled}
       />
     </div>
   );

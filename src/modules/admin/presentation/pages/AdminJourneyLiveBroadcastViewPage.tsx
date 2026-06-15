@@ -20,7 +20,7 @@ import {
 } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -51,6 +51,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   const t = useTranslations("admin.dashboard.journeyEditor.liveBroadcastView");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   const [station, setStation] = useState<LiveBroadcastStation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +66,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
       }
 
       if (!sessionId) {
-        router.replace(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, stationId));
+        router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
         return;
       }
 
@@ -79,7 +80,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
       clearStoredSessionId(stationId);
       if (result.status === "NotFound") {
-        router.replace(ROUTES.ADMIN.JOURNEY_EDITOR.LIVE_BROADCAST_ADD(journeyId, stationId));
+        router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
         return;
       }
 
@@ -115,10 +116,10 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
         title={station.title}
         description={contextLine || t("description")}
         breadcrumbs={[
-          { label: tBc("home"), href: ROUTES.ADMIN.HOME },
+          { label: tBc("home"), href: routes.home },
           {
             label: tBc("journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           { label: tBc("liveBroadcastView") },
         ]}

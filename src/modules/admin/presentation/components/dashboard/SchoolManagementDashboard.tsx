@@ -429,7 +429,7 @@ export function SchoolManagementDashboard() {
         onConfirm={() => void handleConfirmDelete()}
       />
 
-      <section className="grid gap-6 xl:grid-cols-2">
+      {/* <section className="grid gap-6 xl:grid-cols-2">
         <DashboardInsightCard
           title={t(data.insights.updates.titleKey)}
           description={t(data.insights.updates.descriptionKey)}
@@ -444,7 +444,7 @@ export function SchoolManagementDashboard() {
           icon={data.insights.supervisorTip.icon}
           variant={data.insights.supervisorTip.variant}
         />
-      </section>
+      </section> */}
     </div>
   );
 }

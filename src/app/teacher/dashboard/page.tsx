@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { StudentDashboardPage } from "@/modules/student/presentation/pages/StudentDashboardPage";
+import { TeacherDashboardPage } from "@/modules/teacher/presentation/pages/TeacherDashboardPage";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 function DashboardFallback() {
@@ -14,7 +14,7 @@ function DashboardFallback() {
 export default function TeacherDashboardRoutePage() {
   return (
     <Suspense fallback={<DashboardFallback />}>
-      <StudentDashboardPage />
+      <TeacherDashboardPage />
     </Suspense>
   );
 }

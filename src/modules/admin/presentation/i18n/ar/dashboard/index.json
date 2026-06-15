@@ -2038,8 +2038,13 @@
           "hidden": "مخفي",
           "removed": "محذوف"
         },
+        "countriesLoadError": "تعذر تحميل قائمة الدول للتصفية.",
         "schoolsLoadError": "تعذر تحميل قائمة المدارس للتصفية.",
         "authorsLoadError": "تعذر تحميل قائمة المؤلفين للتصفية.",
+        "country": {
+          "label": "الدولة",
+          "all": "كل الدول"
+        },
         "school": {
           "label": "المدرسة",
           "all": "كل المدارس",
@@ -2311,6 +2316,9 @@
           "likesDescription": "زر التفاعل السريع (قلب) على المنشورات.",
           "following": "تفعيل المتابعة",
           "followingDescription": "متابعة الباحثين المفضلين."
+        },
+        "toast": {
+          "saveError": "تعذر حفظ إعدادات المجتمع. يرجى المحاولة مرة أخرى."
         },
         "badges": {
           "title": "أوسمة المساهمين المتميزين",
@@ -3645,7 +3653,9 @@
         "course": {
           "label": "الدورة",
           "all": "كل الدورات",
-          "loading": "جاري تحميل الدورات..."
+          "loading": "جاري تحميل الدورات...",
+          "searchPlaceholder": "ابحث عن دورة…",
+          "empty": "لا توجد دورات مطابقة للبحث"
         },
         "resourceFileType": {
           "label": "نوع المورد",
@@ -3758,6 +3768,8 @@
           "stationPlaceholder": "اختر المحطة",
           "course": "الدورة التدريبية",
           "coursePlaceholder": "اختر الدورة",
+          "courseSearchPlaceholder": "ابحث عن دورة…",
+          "coursesEmpty": "لا توجد دورات مطابقة للبحث",
           "resourceFileType": "نوع المورد",
           "fileName": "اسم الملف التعليمي",
           "fileNamePlaceholder": "مثال: ملخص الجبر المتقدم",
@@ -3809,7 +3821,8 @@
           "loading": "جاري تحميل معاينة الملف...",
           "loadError": "تعذر تحميل هذا الملف للمعاينة.",
           "unsupported": "المعاينة داخل الصفحة غير متاحة لهذا النوع من الملفات.",
-          "legacyDocUnsupported": "لا يمكن معاينة ملفات Word القديمة (.doc) في المتصفح. يُرجى رفع الملف بصيغة .docx أو PDF."
+          "legacyDocUnsupported": "لا يمكن معاينة ملفات Word القديمة (.doc) في المتصفح. يُرجى رفع الملف بصيغة .docx أو PDF.",
+          "legacyPptUnsupported": "لا يمكن معاينة ملفات PowerPoint القديمة (.ppt) في المتصفح. يُرجى رفع الملف بصيغة .pptx أو PDF."
         },
         "deleteSuccess": "تم حذف الملف بنجاح",
         "breadcrumbs": {

@@ -7,3 +7,4 @@ export { HelperFileManagementAnimatedSection } from "./HelperFileManagementAnima
 export { HelperFileManagementDashboard } from "./HelperFileManagementDashboard";
 export { HelperResourceFilePreview } from "./HelperResourceFilePreview";
 export { HelperDocxPreview } from "./HelperDocxPreview";
+export { HelperPptxPreview } from "./HelperPptxPreview";

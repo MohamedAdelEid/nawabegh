@@ -175,6 +175,67 @@ export const ROUTES = {
     TEACHER: {
       HOME: "/teacher/dashboard",
       SETTINGS: "/teacher/settings",
+      LIVE_ANALYTICS: "/teacher/live-analytics",
+      SCHEDULE: "/teacher/schedule",
+      LIVE_SESSIONS: "/teacher/live-sessions",
+      SESSION_DETAILS: (sessionId: string) => `/teacher/schedule/${sessionId}`,
+      COURSES: {
+        LIST: "/teacher/courses",
+        CREATE: "/teacher/courses/create",
+        DETAILS: (courseId: string) => `/teacher/courses/${courseId}`,
+        EDIT: (courseId: string) => `/teacher/courses/${courseId}/edit`,
+        STATISTICS: (courseId: string) => `/teacher/courses/${courseId}/statistics`,
+        STATISTICS_OVERVIEW: "/teacher/course-statistics",
+      },
+      CHAT_GROUPS: {
+        LIST: "/teacher/chat-groups",
+        CREATE: "/teacher/chat-groups/create",
+        VIEW: (courseId: string) => `/teacher/chat-groups/${encodeURIComponent(courseId)}`,
+        MEMBERS: (courseId: string) =>
+          `/teacher/chat-groups/${encodeURIComponent(courseId)}/members`,
+        EDIT: (courseId: string) => `/teacher/chat-groups/${encodeURIComponent(courseId)}/edit`,
+      },
+      HELPER_FILE_MANAGEMENT: {
+        LIST: "/teacher/helper-file-management",
+        ADD: "/teacher/helper-file-management/add",
+        VIEW: (fileId: string) => `/teacher/helper-file-management/${fileId}`,
+        EDIT: (fileId: string) => `/teacher/helper-file-management/${fileId}/edit`,
+      },
+      INTERACTIVE_BOOKS: {
+        LIST: "/teacher/interactive-books",
+        ADD: "/teacher/interactive-books/add",
+        MANAGE: "/teacher/interactive-books/manage",
+        MANAGE_BY_COURSE: (courseId: string) =>
+          `/teacher/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
+        MANAGE_EDIT: (courseId: string) =>
+          `/teacher/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
+      },
+      JOURNEY_EDITOR: {
+        LIST: "/teacher/journey-editor",
+        EDITOR: (journeyId: string) => `/teacher/journey-editor/${journeyId}`,
+        FLASHCARD_GROUP: (journeyId: string, stationId: string, deckId?: string) => {
+          const base = `/teacher/journey-editor/${journeyId}/flashcard/${stationId}`;
+          return deckId ? `${base}?deckId=${encodeURIComponent(deckId)}` : base;
+        },
+        FLASHCARD_ADD: (journeyId: string, stationId: string, deckId?: string) => {
+          const base = `/teacher/journey-editor/${journeyId}/flashcard/${stationId}/add`;
+          return deckId ? `${base}?deckId=${encodeURIComponent(deckId)}` : base;
+        },
+        LIVE_BROADCAST_ADD: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/live-broadcast/${stationId}/add`,
+        LIVE_BROADCAST_VIEW: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/live-broadcast/${stationId}`,
+        CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/challenge/${stationId}`,
+        EXAM_EDITOR: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/exam/${stationId}`,
+        EXAM_PREVIEW: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/exam/${stationId}/preview`,
+        EXAM_EDIT_QUESTIONS: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/exam/${stationId}/edit-questions`,
+        HELPER_RESOURCE_EDITOR: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/helper-resource/${stationId}`,
+      },
     },
     PARENT: {
       HOME: "/parent/dashboard",

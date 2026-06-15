@@ -36,7 +36,7 @@ import { getStation } from "@/modules/admin/infrastructure/api/stationsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -108,6 +108,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
   const tPreview = useTranslations("admin.dashboard.journeyEditor.examPreview.settings");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
 
   const [exam, setExam] = useState<ExamStation | null>(null);
   const [sourceFiles, setSourceFiles] = useState<PendingSourceFile[]>([]);
@@ -344,10 +345,10 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
         title={t("title")}
         description={t("description")}
         breadcrumbs={[
-          { label: tBc("home"), href: ROUTES.ADMIN.HOME },
+          { label: tBc("home"), href: routes.home },
           {
             label: tBc("journeyEditor"),
-            href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
+            href: routes.journeyEditor.EDITOR(journeyId),
           },
           { label: tBc("examEditor") },
         ]}
@@ -355,7 +356,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
           hasQuiz ? (
             <Button
               className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
-              onClick={() => router.push(ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_PREVIEW(journeyId, stationId))}
+              onClick={() => router.push(routes.journeyEditor.EXAM_PREVIEW(journeyId, stationId))}
             >
               <Eye className="h-4 w-4" />
               {t("actions.preview")}

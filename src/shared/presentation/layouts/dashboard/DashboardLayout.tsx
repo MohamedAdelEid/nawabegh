@@ -10,6 +10,7 @@ import {
   buildStudentShellSidebar,
   studentSidebarItems,
 } from "@/modules/student/domain/data/studentSidebarItems";
+import { teacherSidebarItems } from "@/modules/teacher/domain/data/teacherSidebarItems";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 
 export type DashboardShellVariant = "admin" | "student" | "teacher" | "parent";
@@ -25,9 +26,7 @@ interface DashboardLayoutProps {
 
 function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
   if (variant === "admin") return adminSidebarItems;
-  if (variant === "teacher") {
-    return buildStudentShellSidebar("/teacher/dashboard", "/teacher/settings");
-  }
+  if (variant === "teacher") return teacherSidebarItems;
   if (variant === "parent") {
     return buildStudentShellSidebar("/parent/dashboard", "/parent/settings");
   }
@@ -36,6 +35,7 @@ function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
 
 function intlNamespaceForVariant(variant: DashboardShellVariant): string {
   if (variant === "admin") return "admin.dashboard";
+  if (variant === "teacher") return "teacher.dashboard";
   return "student.dashboard";
 }
 

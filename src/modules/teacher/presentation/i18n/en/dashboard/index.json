@@ -1,0 +1,947 @@
+{
+  "dashboard": {
+    "title": "Teacher Dashboard",
+    "header": {
+      "searchPlaceholder": "Search for school, student, or result...",
+      "actions": {
+        "settings": "Quick settings",
+        "notifications": "Notifications"
+      },
+      "mobileMenu": {
+        "open": "Open menu",
+        "close": "Close menu"
+      },
+      "menu": {
+        "settings": "Settings",
+        "logout": "Log out"
+      },
+      "user": {
+        "menuLabel": "Open account menu",
+        "guestName": "Teacher",
+        "roles": {
+          "admin": "System Admin",
+          "student": "Student",
+          "teacher": "Teacher",
+          "parent": "Parent"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "Main pages",
+      "footerSection": "Help & account",
+      "toggleExpand": "Expand sidebar",
+      "toggleCollapse": "Collapse sidebar",
+      "nav": {
+        "home": "Home",
+        "courses": "My courses",
+        "chatGroups": "Chat groups",
+        "courseStatistics": "Course statistics",
+        "liveAnalytics": "Live broadcast stats",
+        "schedule": "Schedule",
+        "interactiveBooks": "Interactive book management",
+        "journeyEditor": "Journey editor",
+        "helperFileManagement": "Help file management",
+        "helper": "Help",
+        "settings": "Settings",
+        "logout": "Log out"
+      }
+    },
+    "settingsPage": {
+      "title": "Account settings",
+      "description": "Manage your teacher account details.",
+      "mockNotice": "Temporary credentials until the account is provisioned by the server.",
+      "fields": {
+        "name": "Name",
+        "email": "Email",
+        "password": "Password"
+      }
+    },
+    "home": {
+      "level": {
+        "title": "Level {level}",
+        "quality": "Performance quality",
+        "xp": "{current} / {max} XP"
+      },
+      "stats": {
+        "todaySessions": "Today's sessions",
+        "totalStudents": "Total students",
+        "activeCourses": "Active courses"
+      },
+      "chart": {
+        "title": "Student performance analysis",
+        "subtitle": "Weekly interaction rates",
+        "interactionRate": "Academic interaction rate",
+        "referenceAverage": "Reference average",
+        "currentWeek": "Current week",
+        "previousWeek": "Previous",
+        "days": {
+          "sunday": "Sunday",
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday"
+        }
+      },
+      "courses": {
+        "title": "Course management",
+        "viewAll": "View all courses",
+        "weeks": "{count} weeks",
+        "students": "{count} students",
+        "enterTrack": "Enter track",
+        "physics": "Physics: Advanced Quantum Mechanics",
+        "biochem": "Principles of Biochemistry"
+      },
+      "liveClasses": {
+        "title": "Live classes today",
+        "activeNow": "Active now",
+        "enter": "Enter",
+        "remindMe": "Remind me",
+        "physicsNuclear": "Physics: Nuclear Energy",
+        "chemistryReview": "Chemistry: Element Review"
+      },
+      "alerts": {
+        "title": "Performance alerts",
+        "intervention": {
+          "title": "Students needing intervention",
+          "description": "Interaction dropped 30% in Chemistry"
+        },
+        "forum": {
+          "title": "Academic inquiries",
+          "description": "12 new questions in the forum"
+        }
+      },
+      "support": {
+        "title": "Dedicated technical support",
+        "description": "Our team is ready to help you anytime",
+        "cta": "Talk to us now"
+      }
+    },
+    "liveAnalytics": {
+      "title": "Live session analytics",
+      "description": "Track student performance and interaction during live sessions",
+      "actions": {
+        "startSession": "Start a new session",
+        "exportReport": "Export report"
+      },
+      "stats": {
+        "totalAttendance": "Total attendance",
+        "avgWatchTime": "Average watch time",
+        "peakViews": "Peak view count",
+        "interactionRate": "Interaction rate",
+        "minutesSuffix": "min"
+      },
+      "upcoming": {
+        "title": "Upcoming sessions",
+        "manageSchedule": "Manage schedule",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "students": "{count} students",
+        "quantum": "Quantum Physics: Part 3",
+        "organicChem": "Organic Chemistry Review"
+      },
+      "metrics": {
+        "title": "Instructor performance",
+        "attendance": "Attendance rate",
+        "absence": "Absence rate",
+        "newStudents": "New student attendance"
+      },
+      "tip": {
+        "title": "Teaching tip",
+        "body": "Data shows students interact 40% more when starting with a 3-minute quiz at the beginning of the session.",
+        "readMore": "Read more"
+      },
+      "chart": {
+        "title": "Weekly attendance trends",
+        "subtitle": "Live vs recorded attendance comparison",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "days": {
+          "saturday": "Saturday",
+          "sunday": "Sunday",
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday"
+        }
+      },
+      "absent": {
+        "title": "Absent students",
+        "alertAll": "Alert all",
+        "sendReminder": "Send reminder",
+        "viewAll": "View all absent students ({count})",
+        "sessionTitle": "Quantum Physics: Part 3",
+        "sessionTime": "Today, 2:00 PM",
+        "lastSeen": {
+          "yesterday": "Last seen: yesterday",
+          "twoDays": "Last seen: 2 days ago",
+          "threeDays": "Last seen: 3 days ago"
+        },
+        "students": {
+          "ahmed": "Ahmed Al-Ali",
+          "sara": "Sara Khalid",
+          "yousef": "Yousef Mohammed"
+        }
+      }
+    },
+    "schedule": {
+      "title": "Schedule management",
+      "description": "Organize and track your weekly teaching sessions",
+      "viewToggle": {
+        "weekly": "Weekly",
+        "monthly": "Monthly"
+      },
+      "performance": {
+        "title": "Performance summary",
+        "sessions": "{completed} / {planned}",
+        "message": "Excellent performance! You completed 80% of your planned weekly tasks.",
+        "viewReport": "View detailed report"
+      },
+      "topics": {
+        "title": "Upcoming important topics",
+        "clinical": "Clinical Safety Protocols",
+        "dataStructures": "Introduction to Data Structures",
+        "badges": {
+          "tomorrow": "Tomorrow",
+          "wednesday": "Wednesday"
+        }
+      },
+      "featured": {
+        "liveNow": "Live now",
+        "title": "Artificial Intelligence in Modern Medicine",
+        "level": "Medicine - Level 4",
+        "registered": "Registered",
+        "duration": "Expected duration",
+        "resources": "Attached resources",
+        "status": "Status",
+        "statusReady": "Ready for broadcast",
+        "minutes": "{count} minutes",
+        "files": "{count} files",
+        "students": "{count} students",
+        "startStream": "Start live stream",
+        "edit": "Edit"
+      },
+      "calendar": {
+        "title": "Weekly schedule",
+        "noSessions": "No sessions",
+        "days": {
+          "saturday": "Saturday",
+          "sunday": "Sunday",
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday"
+        },
+        "sessions": {
+          "chemistry": "Chemistry",
+          "ai": "AI",
+          "review": "General review",
+          "histology": "Histology",
+          "biology": "Biology",
+          "math": "Mathematics"
+        }
+      },
+      "sessions": {
+        "title": "Sessions list",
+        "viewAll": "View all sessions",
+        "viewLiveSessions": "Manage live sessions",
+        "edit": "Edit",
+        "students": "+{count}",
+        "level3": "Level 3",
+        "softwareSystems": "Complex Software Systems Analysis",
+        "instructorYasser": "Dr. Yasser Jalal",
+        "instructorAhmed": "Dr. Ahmed Mahmoud",
+        "badges": {
+          "mon14": "MON 14",
+          "sun13": "SUN 13"
+        }
+      }
+    },
+    "liveSessions": {
+      "title": "Live sessions management",
+      "description": "Track and manage all your live stream sessions",
+      "actions": {
+        "startNew": "Start a new live session"
+      },
+      "filters": {
+        "search": "Search by session name...",
+        "allSubjects": "All subjects",
+        "allStatuses": "All statuses",
+        "advanced": "Advanced filter"
+      },
+      "stats": {
+        "totalStreaming": "Total streaming",
+        "hoursSuffix": "hours",
+        "liveAttendance": "Live attendance",
+        "studentsSuffix": "students",
+        "sessionsRating": "Sessions rating"
+      },
+      "table": {
+        "sessionName": "Session name",
+        "subject": "Subject",
+        "lecturer": "Lecturer",
+        "dateTime": "Date & time",
+        "duration": "Duration",
+        "status": "Status",
+        "actions": "Actions",
+        "empty": "No live sessions found",
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "status": {
+        "live": "Live now",
+        "upcoming": "Upcoming",
+        "ended": "Ended"
+      },
+      "pagination": {
+        "showing": "Showing {from}-{to} of {total} live sessions",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "rows": {
+        "calculus": "Calculus",
+        "advancedMath": "Advanced Mathematics",
+        "lecturerAhmed": "Dr. Ahmed Mahmoud",
+        "today8pm": "Today 08:00 PM",
+        "sixtyMinutes": "60 minutes",
+        "physics": "Nuclear Physics",
+        "physicsSubject": "Physics",
+        "lecturerSara": "Dr. Sara Khalid",
+        "tomorrow10am": "Tomorrow 10:00 AM",
+        "ninetyMinutes": "90 minutes",
+        "chemistry": "Chemistry Review",
+        "chemistrySubject": "Chemistry",
+        "lecturerYousef": "Dr. Yousef Mohammed",
+        "yesterday4pm": "Yesterday 04:00 PM",
+        "fortyFiveMinutes": "45 minutes"
+      }
+    },
+    "sessionDetails": {
+      "breadcrumbSchedule": "Weekly schedule",
+      "breadcrumbDetails": "Lesson details",
+      "joinLive": "Join live lesson",
+      "liveNow": "Live now",
+      "upcoming": "Upcoming",
+      "ended": "Ended",
+      "lessonInfo": {
+        "title": "Lesson info",
+        "attendance": "Attendance status",
+        "active": "Active"
+      },
+      "tasks": {
+        "title": "Pre-lesson tasks"
+      },
+      "overview": {
+        "title": "Lesson overview"
+      },
+      "goals": {
+        "title": "Learning goals"
+      },
+      "resources": {
+        "title": "Learning resources",
+        "download": "Download"
+      },
+      "related": {
+        "title": "Related lessons",
+        "watched": "Watched",
+        "comingSoon": "Coming soon",
+        "review": "Review lesson",
+        "viewDetails": "View details"
+      },
+      "help": {
+        "title": "Have a question?",
+        "cta": "Ask the teacher"
+      },
+      "sessions": {
+        "aiMedicine": {
+          "title": "Artificial Intelligence in Modern Medicine",
+          "instructor": "Dr. Ahmed Mahmoud",
+          "overview": "This lesson explores AI applications in medical diagnosis and clinical decision-making with real hospital case studies.",
+          "goals": {
+            "goal1": "Understand ML fundamentals in medicine",
+            "goal2": "Analyze AI use cases in early diagnosis"
+          },
+          "tasks": {
+            "readChapter": "Read Chapter 5",
+            "prepareCalculator": "Prepare calculator"
+          },
+          "resources": {
+            "slides": "Slides - AI in Medicine",
+            "handout": "Lesson handout"
+          },
+          "related": {
+            "intro": "Introduction to AI",
+            "advanced": "Advanced diagnostic applications"
+          }
+        },
+        "softwareSystems": {
+          "overview": "A comprehensive review of complex system design patterns and scaling strategies.",
+          "goals": {
+            "goal1": "Analyze distributed system requirements",
+            "goal2": "Apply design patterns in real projects"
+          },
+          "tasks": {
+            "reviewNotes": "Review previous lecture notes"
+          },
+          "resources": {
+            "syllabus": "Course syllabus"
+          }
+        },
+        "calculus": {
+          "overview": "Live session on advanced integration and multivariable calculus.",
+          "goals": {
+            "goal1": "Solve advanced integration problems"
+          }
+        }
+      },
+      "notFound": {
+        "title": "Session not found",
+        "description": "Could not find details for this session.",
+        "back": "Back to schedule"
+      }
+    },
+    "courses": {
+      "list": {
+        "title": "My courses",
+        "description": "Welcome to the Nawabigh dashboard. Review new courses awaiting approval.",
+        "actions": {
+          "addCourse": "Add new course",
+          "exportReport": "Export report",
+          "view": "View course",
+          "edit": "Edit course",
+          "delete": "Delete course"
+        },
+        "stats": {
+          "totalTracks": "Total tracks",
+          "pendingApproval": "Awaiting approval",
+          "activeLearners": "Active learners",
+          "totalCourses": "Total courses",
+          "important": "Important"
+        },
+        "filters": {
+          "searchLabel": "Search",
+          "searchPlaceholder": "Search by course title or teacher...",
+          "allGrades": "All levels",
+          "grade1": "First secondary",
+          "grade2": "Second secondary",
+          "grade3": "Third secondary",
+          "grade4": "Second intermediate",
+          "allSubjects": "All subjects",
+          "chemistry": "Chemistry",
+          "mathematics": "Mathematics",
+          "physics": "Physics",
+          "biology": "Biology",
+          "allStatuses": "All statuses",
+          "gradeAria": "Grade level",
+          "subjectAria": "Subject",
+          "statusAria": "Status",
+          "more": "More filters"
+        },
+        "status": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "draft": "Draft"
+        },
+        "access": {
+          "free": "Free",
+          "paid": "Paid",
+          "subscription": "Subscription",
+          "unspecified": "Unspecified"
+        },
+        "table": {
+          "title": "Track title",
+          "subjectGrade": "Subject / Level",
+          "access": "Access type",
+          "status": "Status",
+          "actions": "Actions",
+          "empty": "No courses match your filters."
+        },
+        "pagination": {
+          "summary": "Showing {start} - {end} of {total} courses",
+          "previous": "Previous page",
+          "next": "Next page"
+        }
+      },
+      "details": {
+        "subjectLine": "Subject: {subject} • {term}",
+        "instructorLabel": "Course instructor",
+        "actions": {
+          "viewJourney": "View educational journey",
+          "editCourse": "Edit course",
+          "viewStatistics": "View course statistics"
+        },
+        "labels": {
+          "subject": "Subject",
+          "grade": "Grade"
+        },
+        "metrics": {
+          "lessons": "Total lessons",
+          "lessonsValue": "{count} lessons",
+          "price": "Price"
+        },
+        "managementStats": {
+          "title": "Management statistics",
+          "registered": "Currently registered students",
+          "revenue": "Total revenue (SAR)",
+          "completion": "Student completion rate"
+        },
+        "samples": {
+          "organicChemistry": {
+            "title": "Basics of Organic Chemistry",
+            "subject": "Chemistry",
+            "term": "Second semester",
+            "grade": "Third secondary",
+            "instructor": "Dr. Ahmed Al-Rafei"
+          },
+          "generic": {
+            "title": "Educational course",
+            "subject": "General subject",
+            "term": "First semester",
+            "grade": "Secondary",
+            "instructor": "Course instructor"
+          }
+        },
+        "curriculum": {
+          "title": "Educational path",
+          "viewPath": "View educational path",
+          "unit1": {
+            "title": "Unit one: Introduction to carbon bonds",
+            "lesson1": {
+              "title": "Introduction to orbital hybridization",
+              "meta": "15:00 minutes",
+              "subMeta": "High quality video"
+            },
+            "quiz1": {
+              "title": "Short quiz: Covalent bonds",
+              "meta": "10 questions",
+              "subMeta": "Passing grade 70%"
+            }
+          },
+          "unit2": {
+            "title": "Unit two: Hydrocarbons and alkanes",
+            "pdf1": {
+              "title": "Alkane naming summary (PDF)",
+              "meta": "12 pages",
+              "subMeta": "4.5 MB"
+            },
+            "locked": {
+              "title": "Chemical reactions in alkenes",
+              "meta": "Requires completion of previous lesson"
+            }
+          },
+          "generic": {
+            "unit": {
+              "title": "Course unit"
+            },
+            "lesson": {
+              "title": "Introductory lesson",
+              "meta": "Video lesson"
+            }
+          }
+        }
+      },
+      "statistics": {
+        "title": "Course statistics: {course}",
+        "description": "Comprehensive analysis of student performance and interaction with course content.",
+        "subtitleMeta": "{students} students · {paths} learning paths · {performance} average performance",
+        "actions": {
+          "editCourse": "Edit course",
+          "exportReport": "Export report",
+          "sendAlert": "Send alert"
+        },
+        "stats": {
+          "totalStudents": "Total students",
+          "completionRate": "Completion rate",
+          "avgTestScores": "Average test scores",
+          "avgGrades": "Average grades",
+          "sessionAttendance": "Session attendance",
+          "studyTime": "Study time",
+          "activeStudents": "Active students",
+          "hoursSuffix": "hrs",
+          "activeToday": "Active students today",
+          "liveNow": "Live now"
+        },
+        "weeks": {
+          "week1": "Week 1",
+          "week2": "Week 2",
+          "week3": "Week 3",
+          "week4": "Week 4"
+        },
+        "weeklyPerformance": {
+          "title": "Student performance development",
+          "lessonCompletion": "Lesson completion",
+          "testResults": "Test results"
+        },
+        "highlights": {
+          "stuck": {
+            "title": "Students stuck at Alkenes",
+            "description": "22% of students struggle at this lesson.",
+            "action": "Improve path"
+          },
+          "hardest": {
+            "title": "Hardest rated lesson",
+            "description": "Carbon hybridization is rated as the most difficult topic.",
+            "action": "Review content"
+          }
+        },
+        "topStudents": {
+          "title": "Most interactive students",
+          "points": "{count} interaction points",
+          "student1": "Ahmed Al-Mansouri",
+          "student2": "Sara Khaled",
+          "student3": "Khaled Abdullah"
+        },
+        "upcoming": {
+          "title": "Upcoming live sessions",
+          "soon": "Soon",
+          "session1": "Alkene reactions review",
+          "session2": "Organic chemistry Q&A",
+          "registered": "{count} registered"
+        },
+        "interactionTip": "Send a reminder to inactive students to boost engagement this week.",
+        "interactionTipAction": "Send now →",
+        "weeklyInteraction": {
+          "title": "Student interaction (weekly)",
+          "legend": "High interaction"
+        },
+        "days": {
+          "saturday": "Saturday",
+          "sunday": "Sunday",
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday"
+        },
+        "stationPerformance": {
+          "title": "Station performance"
+        },
+        "stations": {
+          "live": "Live stream",
+          "tests": "Tests",
+          "flashcards": "Flashcards",
+          "resources": "Resources"
+        },
+        "insight": "Students interact excellently with flashcards; consider increasing their content.",
+        "journey": {
+          "title": "Success journey: course stations",
+          "station1": "Introduction",
+          "station2": "Core concepts",
+          "station3": "Applied practice",
+          "station4": "Advanced topics",
+          "finalExam": "Final exam",
+          "completedCount": "{count} students completed",
+          "status": {
+            "locked": "In progress",
+            "current": "In progress"
+          }
+        },
+        "table": {
+          "title": "Track student progress",
+          "searchPlaceholder": "Search by student name...",
+          "filter": "Filter students",
+          "student": "Student name",
+          "completion": "Completion",
+          "lastActivity": "Last activity",
+          "status": "Status",
+          "empty": "No students found."
+        },
+        "studentStatus": {
+          "onTrack": "On track",
+          "needsHelp": "Needs help",
+          "atRisk": "At risk"
+        },
+        "students": {
+          "ahmed": "Ahmed Al-Otaibi",
+          "sara": "Sara Al-Qahtani",
+          "khaled": "Khaled bin Mohammed",
+          "fiveMinutesAgo": "5 minutes ago",
+          "weekAgo": "A week ago"
+        },
+        "chat": {
+          "title": "Chat interaction",
+          "messagesToday": "messages today",
+          "openDiscussion": "Open discussion room"
+        },
+        "aiPrediction": "AI predicts an increase in inquiries about cyclic chemistry tomorrow."
+      },
+      "create": {
+        "title": "Set up a new educational course",
+        "editTitle": "Edit educational course",
+        "description": "Fill in the details needed to launch your next educational journey.",
+        "stepper": {
+          "ariaLabel": "Course creation steps"
+        },
+        "steps": {
+          "basic": "Basic information",
+          "pricing": "Pricing and access",
+          "paths": "Learning paths"
+        },
+        "sections": {
+          "basic": "Basic information",
+          "pricing": "Pricing and access"
+        },
+        "fields": {
+          "title": "Course title",
+          "titlePlaceholder": "Example: Advanced mathematics for second secondary",
+          "description": "Course description",
+          "descriptionPlaceholder": "Write a comprehensive description of goals and learning outcomes...",
+          "grade": "Grade level",
+          "gradePlaceholder": "Select grade level",
+          "term": "Academic term",
+          "termPlaceholder": "Select term",
+          "subject": "Subject",
+          "subjectPlaceholder": "Select subject",
+          "cover": "Course cover",
+          "coverHint": "Drag the image here or browse files",
+          "coverRequirements": "JPG, PNG — 16:9 ratio — max 5 MB",
+          "basePrice": "Original price (SAR)",
+          "offerPrice": "Price after discount (SAR)"
+        },
+        "options": {
+          "grade1": "First secondary",
+          "grade2": "Second secondary",
+          "grade3": "Third secondary",
+          "math": "Mathematics",
+          "chemistry": "Chemistry",
+          "physics": "Physics",
+          "term1": "First term",
+          "term2": "Second term",
+          "term3": "Third term"
+        },
+        "pricing": {
+          "free": "Free",
+          "oneTime": "Paid (one-time)",
+          "monthly": "Monthly subscription"
+        },
+        "actions": {
+          "saveDraft": "Save as draft",
+          "saveCourse": "Save educational course"
+        },
+        "preview": {
+          "title": "Summary preview",
+          "fallbackTitle": "Advanced mathematics for second secondary",
+          "fallbackSubject": "Mathematics",
+          "fallbackGrade": "Second secondary",
+          "currency": "SAR",
+          "accessType": "Access type",
+          "lessons": "{count} lessons",
+          "paths": "{count} paths",
+          "viewPath": "View learning path"
+        },
+        "tip": {
+          "title": "Expert advice",
+          "body": "Adding an attractive cover image increases conversion and course subscriptions by up to 40%."
+        },
+        "success": {
+          "title": "Course created successfully!",
+          "description": "Great work! Continue by adding learning stations to complete the course.",
+          "stepLabel": "Step {current} of {total}",
+          "progressHint": "Course info → Stations → Publishing",
+          "note": "You can always edit or reorder stations later from the curriculum manager.",
+          "startPaths": "Start adding paths",
+          "continueLater": "Continue later"
+        }
+      }
+    },
+    "chatGroups": {
+      "title": "Chat groups",
+      "description": "Create, edit, and monitor chat groups for your platform.",
+      "breadcrumbs": {
+        "home": "Home",
+        "chatGroups": "Chat groups"
+      },
+      "stats": {
+        "totalGroups": { "label": "Total groups", "indicator": "+12%" },
+        "activeMessages": { "label": "Active messages today", "indicator": "Active" },
+        "interactionRate": { "label": "Interaction rate", "indicator": "High" },
+        "activeNow": { "label": "Groups active now", "indicator": "Live" }
+      },
+      "filters": {
+        "statuses": { "label": "Status", "all": "All", "active": "Active", "paused": "Paused" },
+        "grades": { "label": "Grade", "all": "All" },
+        "subjects": { "label": "Course", "all": "All" },
+        "search": { "label": "Quick search" }
+      },
+      "table": {
+        "title": "Chat groups",
+        "searchPlaceholder": "Search by group name or subject...",
+        "addButton": "Add new chat group",
+        "columns": {
+          "groupName": "Chat title",
+          "studentCount": "Students",
+          "chatMode": "Chat mode",
+          "attachments": "Attachments",
+          "status": "Status",
+          "lastActivity": "Last activity",
+          "actions": "Actions"
+        },
+        "pagination": { "summary": "Showing {visible} of {total} groups", "previous": "Previous", "next": "Next" },
+        "states": { "empty": "No chat groups match your filters.", "error": "Failed to load chat groups." }
+      },
+      "chatModes": { "everyone": "Open to all", "teacherOnly": "Teacher only" },
+      "statuses": { "active": "Active now", "paused": "Temporarily disabled" },
+      "actions": {
+        "view": "View chat",
+        "settings": "Settings",
+        "pause": "Pause group",
+        "resume": "Resume group",
+        "paused": "Group paused",
+        "resumed": "Group resumed"
+      },
+      "delete": {
+        "title": "Delete chat group",
+        "description": "Are you sure you want to delete this group? All records, messages, and files will be permanently removed.",
+        "confirm": "Yes, delete group",
+        "cancel": "Cancel",
+        "success": "Chat group deleted"
+      },
+      "conversation": {
+        "error": "Failed to load conversation",
+        "inputPlaceholder": "Type your message...",
+        "dates": { "today": "Today, October 23" },
+        "status": { "activeNow": "Active now" },
+        "lastSeen": { "fiveMinutes": "Last seen 5 minutes ago" },
+        "samples": {
+          "physics": { "title": "Physics — Quantum Mechanics" },
+          "teacherName": "Mr. Mohamed Ali",
+          "studentSara": "Sara Khaled",
+          "studentAhmed": "Ahmed Al-Otaibi",
+          "greeting": "Peace be upon you. Please review the attached summary before tomorrow's session.",
+          "fileName": "Quantum mechanics summary.pdf",
+          "studentReply": "Thank you, teacher. I will review it tonight.",
+          "mentionReply": "I agree with @Sara, the summary is very helpful."
+        }
+      },
+      "members": {
+        "error": "Failed to load members",
+        "participantsTitle": "Participants ({count})",
+        "searchPlaceholder": "Search for student name...",
+        "youTeacher": "You / Teacher",
+        "connectedStudents": "Connected students",
+        "muted": "Muted",
+        "loadMore": "Load more students ({count} more)",
+        "status": { "online": "Online", "typing": "Typing...", "offline": "Offline" },
+        "lastSeen": { "oneHour": "Last seen an hour ago", "yesterday": "Last seen yesterday" },
+        "settings": {
+          "title": "Group settings",
+          "mute": "Mute notifications",
+          "pin": "Pin group",
+          "chatStatus": "Chat status",
+          "open": "Open",
+          "closed": "Closed"
+        },
+        "media": { "title": "Media and files", "viewAll": "View all" },
+        "samples": {
+          "physics": {
+            "title": "Physics — Quantum Mechanics",
+            "description": "Discussion group for quantum mechanics concepts, homework, and exam preparation."
+          },
+          "createdAt": "Created on October 15, 2023",
+          "teacherName": "Dr. Ahmed Ali",
+          "studentSara": "Sara Mahmoud",
+          "studentKhaled": "Khaled Abdullah",
+          "studentAhmed": "Ahmed Al-Otaibi",
+          "studentNoura": "Noura Salem"
+        }
+      },
+      "editPage": {
+        "titleCreate": "Add new chat group",
+        "titleWithName": "Edit {name} group",
+        "descriptionCreate": "Set up a new chat group for your students.",
+        "descriptionEdit": "Update group identity, permissions, and privacy settings.",
+        "breadcrumbs": { "home": "Home", "chatGroups": "Chat groups", "create": "Add group", "edit": "Edit group" },
+        "buttons": { "save": "Save", "cancel": "Cancel" },
+        "sections": {
+          "identity": { "title": "Group identity", "subtitle": "Name and basic details" },
+          "controlPrivacy": { "title": "Control and privacy", "subtitle": "Messaging permissions and media" }
+        },
+        "fields": {
+          "groupName": { "label": "Group name", "placeholder": "Chemistry — Grade 12 (A)" },
+          "subject": { "label": "Subject" },
+          "grade": { "label": "Grade" },
+          "description": { "label": "Description and instructions", "placeholder": "Describe the group purpose and rules..." },
+          "chatMode": {
+            "everyone": "Everyone",
+            "everyoneDesc": "All members can send messages",
+            "teacherOnly": "Teacher only",
+            "teacherOnlyDesc": "Only the teacher can post"
+          },
+          "media": {
+            "files": "Files",
+            "images": "Images",
+            "pdf": "PDF",
+            "webLinks": "Web links",
+            "blockAll": "Block all attachments",
+            "blockAllDesc": "Prevent sharing any media"
+          },
+          "parentMode": {
+            "label": "Parent view mode",
+            "description": "Allow parents to view without interaction"
+          },
+          "lockGroup": {
+            "label": "Lock group",
+            "description": "Temporarily disable messaging"
+          }
+        },
+        "states": {
+          "loadError": "Failed to load group",
+          "saveError": "Failed to save group",
+          "saveSuccess": "Group saved successfully",
+          "nameRequired": "Group name is required",
+          "createPending": "Group creation will be available when the API endpoint is ready"
+        }
+      }
+    },
+    "coursesStatisticsOverview": {
+      "title": "My course statistics",
+      "description": "Overview of performance across all your courses.",
+      "actions": { "exportReport": "Export report", "sendAlert": "Send alert" },
+      "filters": {
+        "days7": "7 days",
+        "days30": "30 days",
+        "custom": "Custom",
+        "allCourses": "All courses",
+        "allClasses": "All classes",
+        "advanced": "Advanced filter"
+      },
+      "stats": {
+        "totalStudents": "Total students",
+        "avgAchievement": "Average achievement",
+        "attendanceRate": "Attendance rate",
+        "testAverage": "Test average",
+        "strugglingStudents": "Struggling students",
+        "activeStudents": "Active students"
+      },
+      "alerts": {
+        "title": "Critical alerts",
+        "badge": "{count} tasks",
+        "inactive": { "title": "Inactive students", "description": "12 students have not logged in for 7 days." },
+        "repeatedFailure": { "title": "Repeated failure", "description": "8 students failed the same test twice." },
+        "dropout": { "title": "Drop-out points", "description": "Interaction decreased in the Logic lesson." }
+      },
+      "activityChart": { "title": "Student activity development", "current": "Current week" },
+      "coursePerformance": {
+        "title": "Training course performance",
+        "viewAll": "View all",
+        "students": "{count} students",
+        "achievement": "Achievement percentage",
+        "interaction": "Interaction",
+        "attendance": "Attendance",
+        "struggling": "Struggling"
+      },
+      "courses": {
+        "status": { "veryActive": "Very active", "average": "Average", "excellent": "Excellent" },
+        "programming": { "title": "Introduction to programming" },
+        "math": { "title": "Advanced mathematics" },
+        "chemistry": { "title": "Analytical chemistry basics" }
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "Failed to load data"
+    }
+  }
+}

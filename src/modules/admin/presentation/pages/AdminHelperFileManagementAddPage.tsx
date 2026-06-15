@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleAlert, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   createResourceFile,
   getResourceFileCoursesDropdown,
-  getStationsList,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import { AccessPolicy, ResourceFileType } from "@/shared/domain/enums/cms.enums";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
-import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/shared/presentation/components/ui/searchable-select";
 
 const RESOURCE_FILE_UPLOAD_FOLDER = "resource-files";
 
@@ -39,50 +41,29 @@ export function AdminHelperFileManagementAddPage({
 }: AdminHelperFileManagementAddPageProps) {
   const t = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const routeConfig = ROUTES.ADMIN.HELPER_FILE_MANAGEMENT;
+  const routeConfig = routes.helperFileManagement;
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const [stationId, setStationId] = useState(stationContext?.stationId ?? "");
   const [courseId, setCourseId] = useState("");
+  const [courseSearchQuery, setCourseSearchQuery] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileUrl, setFileUrl] = useState("");
   const [fileType, setFileType] = useState("");
   const [accessPolicy, setAccessPolicy] = useState<AccessPolicy>(AccessPolicy.All);
-  const [resourceFileType, setResourceFileType] = useState<ResourceFileType>(
-    stationContext ? ResourceFileType.ForStation : ResourceFileType.ForCourse,
-  );
 
-  const [stationOptions, setStationOptions] = useState<Array<{ value: string; label: string }>>(
-    [],
-  );
   const [courseOptions, setCourseOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   useEffect(() => {
     let alive = true;
     const load = async () => {
       setLoading(true);
-      const [stationsResult, coursesResult] = await Promise.all([
-        getStationsList(),
-        getResourceFileCoursesDropdown(),
-      ]);
+      const coursesResult = await getResourceFileCoursesDropdown();
       if (!alive) return;
-
-      if (stationsResult.errorMessage) {
-        notify.error(stationsResult.errorMessage);
-      } else if (stationsResult.data) {
-        setStationOptions(
-          stationsResult.data.map((station) => ({
-            value: station.id,
-            label: station.learningPathTitle
-              ? `${station.name} — ${station.learningPathTitle}`
-              : station.name,
-          })),
-        );
-      }
 
       if (coursesResult.errorMessage) {
         notify.error(coursesResult.errorMessage);
@@ -90,9 +71,7 @@ export function AdminHelperFileManagementAddPage({
         setCourseOptions(
           coursesResult.data.map((course) => ({
             value: course.id,
-            label: course.teacherName
-              ? `${course.courseName} — ${course.teacherName}`
-              : course.courseName,
+            label: course.courseName,
           })),
         );
       }
@@ -104,6 +83,17 @@ export function AdminHelperFileManagementAddPage({
       alive = false;
     };
   }, []);
+
+  const courseSelectOptions = useMemo<SearchableSelectOption<string>[]>(
+    () => courseOptions,
+    [courseOptions],
+  );
+
+  const filteredCourseSelectOptions = useMemo(() => {
+    const query = courseSearchQuery.trim().toLowerCase();
+    if (!query) return courseSelectOptions;
+    return courseSelectOptions.filter((option) => option.label.toLowerCase().includes(query));
+  }, [courseSearchQuery, courseSelectOptions]);
 
   const handleFilePick = async (file: File | null) => {
     if (!file) return;
@@ -123,10 +113,6 @@ export function AdminHelperFileManagementAddPage({
 
   const submit = async () => {
     if (submitting) return;
-    if (!stationId.trim()) {
-      notify.error(t("form.validation.stationRequired"));
-      return;
-    }
     if (!courseId.trim()) {
       notify.error(t("form.validation.courseRequired"));
       return;
@@ -143,13 +129,13 @@ export function AdminHelperFileManagementAddPage({
     setSubmitting(true);
     try {
       const result = await createResourceFile({
-        stationId: stationId.trim(),
+        ...(stationContext?.stationId ? { stationId: stationContext.stationId } : {}),
         courseId: courseId.trim(),
         fileName: fileName.trim(),
         fileUrl: fileUrl.trim(),
         fileType: (fileType.trim() || inferFileType(fileName)).toUpperCase(),
         accessPolicy,
-        resourceFileType,
+        resourceFileType: ResourceFileType.ForCourse,
       });
 
       if (result.errorMessage || !result.data?.id) {
@@ -182,12 +168,12 @@ export function AdminHelperFileManagementAddPage({
           stationContext ? t("form.stationContext.pageDescription") : t("form.pageDescription")
         }
         breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+          { label: t("breadcrumbs.home"), href: routes.home },
           ...(stationContext
             ? [
                 {
                   label: t("form.breadcrumbs.journeyEditor"),
-                  href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(stationContext.journeyId),
+                  href: routes.journeyEditor.EDITOR(stationContext.journeyId),
                 },
               ]
             : [{ label: t("breadcrumbs.content"), href: routeConfig.LIST }]),
@@ -200,40 +186,16 @@ export function AdminHelperFileManagementAddPage({
           <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">
               <h3 className="font-bold text-[#1E3A66]">{t("form.sections.linkCourse")}</h3>
-              {!stationContext ? (
-                <LabeledSelect
-                  label={t("form.fields.station")}
-                  value={stationId}
-                  onChange={setStationId}
-                  options={[
-                    { value: "", label: t("form.fields.stationPlaceholder") },
-                    ...stationOptions,
-                  ]}
-                />
-              ) : null}
-              <LabeledSelect
+              <SearchableSelect
                 label={t("form.fields.course")}
-                value={courseId}
+                value={courseId || null}
+                options={filteredCourseSelectOptions}
                 onChange={setCourseId}
-                options={[
-                  { value: "", label: t("form.fields.coursePlaceholder") },
-                  ...courseOptions,
-                ]}
-              />
-              <LabeledSelect
-                label={t("form.fields.resourceFileType")}
-                value={String(resourceFileType)}
-                onChange={(value) => setResourceFileType(Number(value) as ResourceFileType)}
-                options={[
-                  {
-                    value: String(ResourceFileType.ForStation),
-                    label: t("filters.resourceFileType.station"),
-                  },
-                  {
-                    value: String(ResourceFileType.ForCourse),
-                    label: t("filters.resourceFileType.course"),
-                  },
-                ]}
+                placeholder={t("form.fields.coursePlaceholder")}
+                searchPlaceholder={t("form.fields.courseSearchPlaceholder")}
+                emptyMessage={t("form.fields.coursesEmpty")}
+                searchValue={courseSearchQuery}
+                onSearchValueChange={setCourseSearchQuery}
               />
             </CardContent>
           </Card>
@@ -334,12 +296,6 @@ export function AdminHelperFileManagementAddPage({
                 <p>{t(stationContext ? "form.stationContext.step2" : "form.summary.step2")}</p>
                 <p>{t(stationContext ? "form.stationContext.step3" : "form.summary.step3")}</p>
               </div>
-              {stationContext ? (
-                <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
-                  <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
-                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
-                </div>
-              ) : null}
               <Button
                 type="button"
                 className="h-12 w-full rounded-xl bg-[#2B415E] text-white hover:bg-[#243B5A]"

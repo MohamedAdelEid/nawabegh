@@ -16,7 +16,7 @@ import {
   HelperFileManagementFilterBar,
   type HelperFileManagementFilterState,
 } from "./HelperFileManagementFilterBar";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import { ResourceFileType } from "@/shared/domain/enums/cms.enums";
 import {
@@ -31,7 +31,6 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 const PAGE_SIZE = 10;
-const routeConfig = ROUTES.ADMIN.HELPER_FILE_MANAGEMENT;
 
 const DEFAULT_FILTERS: HelperFileManagementFilterState = {
   stationId: "all",
@@ -43,6 +42,8 @@ const DEFAULT_FILTERS: HelperFileManagementFilterState = {
 export function HelperFileManagementDashboard() {
   const t = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
+  const routes = useScopedDashboardRoutes();
+  const routeConfig = routes.helperFileManagement;
   const [rows, setRows] = useState<ResourceFileListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<HelperFileManagementFilterState>(DEFAULT_FILTERS);
@@ -199,7 +200,7 @@ export function HelperFileManagementDashboard() {
       title={t("page.title")}
       description={t("page.description")}
       breadcrumbs={[
-        { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
+        { label: t("breadcrumbs.home"), href: routes.home },
         { label: t("breadcrumbs.content") },
       ]}
       action={
