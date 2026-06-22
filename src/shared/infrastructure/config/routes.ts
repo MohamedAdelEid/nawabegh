@@ -45,6 +45,19 @@ export const ROUTES = {
       REJECTION_DETAILS: (courseId: string) =>
         `/admin/course-management/${courseId}/rejection-details`,
     },
+    BUNDLES: {
+      LIST: "/admin/bundles",
+      CREATE: "/admin/bundles/new",
+      EDIT: (bundleId: string) => `/admin/bundles/${encodeURIComponent(bundleId)}/edit`,
+    },
+    PAYMENTS: {
+      OVERVIEW: "/admin/payments",
+      SETTINGS: "/admin/payments/settings",
+      TRANSACTIONS: "/admin/payments/transactions",
+      ENROLLMENTS: "/admin/payments/enrollments",
+      ENROLLMENT_DETAIL: (enrollmentId: string) =>
+        `/admin/payments/enrollments/${encodeURIComponent(enrollmentId)}`,
+    },
     HELPER_FILE_MANAGEMENT: {
       LIST: "/admin/helper-file-management",
       ADD: "/admin/helper-file-management/add",

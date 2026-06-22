@@ -14,6 +14,9 @@ import { schoolLocationMapProvider } from "./mapProvider";
 const DEFAULT_CENTER: [number, number] = [24.7136, 46.6753];
 const DEFAULT_ZOOM = 11;
 const RESOLVED_ZOOM = 13;
+const GEOCODING_DEBOUNCE_MS = 650;
+const NOMINATIM_SEARCH_URL = "https://nominatim.openstreetmap.org/search";
+const GEOCODING_LANGUAGE = "ar,en";
 const LOCATION_MARKER_ICON = new DivIcon({
   className: "school-location-marker",
   html: `
@@ -34,6 +37,9 @@ interface SchoolLocationPreviewProps {
   regionLabel: string;
   /** Country name; included in geocoding query with city and region. */
   countryLabel: string;
+  searchCity?: string;
+  searchRegion?: string;
+  searchCountry?: string;
   providerLabel: string;
   loadingLabel: string;
   emptyLabel: string;
@@ -43,6 +49,66 @@ interface SchoolLocationPreviewProps {
 interface GeocodingResult {
   lat: string;
   lon: string;
+}
+
+function normalizeSearchPart(value?: string): string {
+  return value?.normalize("NFC").trim().replace(/\s+/g, " ") ?? "";
+}
+
+function createGeocodingUrl(params: Record<string, string>): string {
+  const searchParams = new URLSearchParams({
+    format: "jsonv2",
+    limit: "1",
+    addressdetails: "1",
+    "accept-language": GEOCODING_LANGUAGE,
+  });
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      searchParams.set(key, value);
+    }
+  });
+
+  return `${NOMINATIM_SEARCH_URL}?${searchParams.toString()}`;
+}
+
+function buildGeocodingUrls({
+  city,
+  region,
+  country,
+}: {
+  city: string;
+  region: string;
+  country: string;
+}): string[] {
+  const normalizedCity = normalizeSearchPart(city);
+  const normalizedRegion = normalizeSearchPart(region);
+  const normalizedCountry = normalizeSearchPart(country);
+  const urls: string[] = [];
+
+  if (normalizedCity || normalizedRegion || normalizedCountry) {
+    urls.push(
+      createGeocodingUrl({
+        street: normalizedRegion,
+        city: normalizedCity,
+        country: normalizedCountry,
+      }),
+    );
+  }
+
+  const freeTextQuery = [
+    normalizedRegion,
+    normalizedCity,
+    normalizedCountry,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  if (freeTextQuery) {
+    urls.push(createGeocodingUrl({ q: freeTextQuery }));
+  }
+
+  return Array.from(new Set(urls));
 }
 
 function MapViewportUpdater({ center }: { center: [number, number] }) {
@@ -59,6 +125,9 @@ export function SchoolLocationPreview({
   cityLabel,
   regionLabel,
   countryLabel,
+  searchCity,
+  searchRegion,
+  searchCountry,
   providerLabel,
   loadingLabel,
   emptyLabel,
@@ -69,16 +138,21 @@ export function SchoolLocationPreview({
     "loading",
   );
 
-  const placeQuery = useMemo(
-    () => [cityLabel, countryLabel, regionLabel].filter(Boolean).join(", "),
-    [cityLabel, countryLabel, regionLabel],
+  const geocodingUrls = useMemo(
+    () =>
+      buildGeocodingUrls({
+        city: searchCity ?? cityLabel,
+        region: searchRegion ?? regionLabel,
+        country: searchCountry ?? countryLabel,
+      }),
+    [cityLabel, countryLabel, regionLabel, searchCity, searchCountry, searchRegion],
   );
 
   useEffect(() => {
     let isCancelled = false;
 
     async function resolvePlace() {
-      if (!placeQuery) {
+      if (geocodingUrls.length === 0) {
         setCoordinates(null);
         setStatus("empty");
         return;
@@ -87,42 +161,42 @@ export function SchoolLocationPreview({
       setStatus("loading");
 
       try {
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(
-            placeQuery,
-          )}`,
-          {
+        for (const geocodingUrl of geocodingUrls) {
+          const response = await fetch(geocodingUrl, {
             headers: {
               Accept: "application/json",
+              "Accept-Language": GEOCODING_LANGUAGE,
             },
-          },
-        );
+          });
 
-        if (!response.ok) {
-          throw new Error("Failed to geocode place.");
-        }
+          if (!response.ok) {
+            throw new Error("Failed to geocode place.");
+          }
 
-        const results = (await response.json()) as GeocodingResult[];
-        const firstResult = results[0];
+          const results = (await response.json()) as GeocodingResult[];
+          const firstResult = results[0];
 
-        if (!firstResult) {
+          if (!firstResult) {
+            continue;
+          }
+
+          const lat = Number.parseFloat(firstResult.lat);
+          const lng = Number.parseFloat(firstResult.lon);
+
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            throw new Error("Invalid geocoding result.");
+          }
+
           if (!isCancelled) {
-            setCoordinates(null);
-            setStatus("empty");
+            setCoordinates([lat, lng]);
+            setStatus("ready");
           }
           return;
         }
 
-        const lat = Number.parseFloat(firstResult.lat);
-        const lng = Number.parseFloat(firstResult.lon);
-
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-          throw new Error("Invalid geocoding result.");
-        }
-
         if (!isCancelled) {
-          setCoordinates([lat, lng]);
-          setStatus("ready");
+          setCoordinates(null);
+          setStatus("empty");
         }
       } catch {
         if (!isCancelled) {
@@ -132,12 +206,15 @@ export function SchoolLocationPreview({
       }
     }
 
-    void resolvePlace();
+    const resolveTimeout = window.setTimeout(() => {
+      void resolvePlace();
+    }, GEOCODING_DEBOUNCE_MS);
 
     return () => {
       isCancelled = true;
+      window.clearTimeout(resolveTimeout);
     };
-  }, [placeQuery]);
+  }, [geocodingUrls]);
 
   const activeCenter = coordinates ?? DEFAULT_CENTER;
   const statusLabel =

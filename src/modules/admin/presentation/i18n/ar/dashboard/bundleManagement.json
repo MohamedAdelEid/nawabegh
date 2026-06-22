@@ -1,0 +1,192 @@
+{
+  "bundleManagement": {
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "bundles": "ادارة الحزم التعليمية"
+    },
+    "page": {
+      "title": "ادارة الحزم التعليمية",
+      "description": "إنشاء وإدارة الحزم التعليمية المخفّضة للطلاب.",
+      "createBundle": "إنشاء حزمة جديدة"
+    },
+    "stats": {
+      "totalBundles": {
+        "label": "إجمالي الحزم"
+      },
+      "activeBundles": {
+        "label": "الحزم النشطة",
+        "indicator": "نشط"
+      },
+      "inactiveBundles": {
+        "label": "الحزم غير النشطة",
+        "indicator": "غير نشط"
+      },
+      "averageCompletion": {
+        "label": "متوسط الإكمال"
+      }
+    },
+    "filters": {
+      "search": {
+        "label": "ابحث عن اسم الدورة",
+        "placeholder": "أدخل اسم المسار أو الرمز..."
+      },
+      "status": {
+        "label": "الحالة",
+        "all": "الكل",
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "dateRange": {
+        "label": "نطاق التاريخ",
+        "from": "من",
+        "to": "إلى",
+        "placeholder": "اختر التاريخ..."
+      },
+      "minPrice": {
+        "label": "السعر الأدنى"
+      },
+      "maxPrice": {
+        "label": "السعر الأعلى"
+      },
+      "reset": "إعادة تعيين"
+    },
+    "statuses": {
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "publishedStatuses": {
+      "published": "منشور",
+      "draft": "مسودة"
+    },
+    "table": {
+      "title": "قائمة الحزم",
+      "columns": {
+        "name": "اسم المسار",
+        "courses": "الدورات",
+        "price": "السعر",
+        "accessDuration": "مدة الوصول",
+        "status": "الحالة",
+        "published": "النشر",
+        "createdAt": "تاريخ الإنشاء",
+        "actions": "الإجراءات"
+      },
+      "coursesCount": "{count} دورة",
+      "priceValue": "{price} ر.س",
+      "pagination": {
+        "summary": "عرض {from}-{to} من أصل {total} حزمة",
+        "previous": "السابق",
+        "next": "التالي",
+        "pageSize": "{size} لكل صفحة"
+      },
+      "states": {
+        "empty": "لا توجد حزم مطابقة للبحث.",
+        "error": "تعذر تحميل الحزم."
+      }
+    },
+    "actions": {
+      "edit": "تعديل",
+      "publish": "نشر",
+      "unpublish": "إلغاء النشر",
+      "activate": "تفعيل",
+      "deactivate": "إلغاء التفعيل",
+      "delete": "حذف",
+      "more": "المزيد"
+    },
+    "deleteModal": {
+      "title": "حذف الحزمة",
+      "description": "هل أنت متأكد من حذف «{name}»؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "حذف",
+      "cancel": "إلغاء",
+      "success": "تم حذف الحزمة بنجاح.",
+      "error": "تعذر حذف الحزمة."
+    },
+    "messages": {
+      "publishSuccess": "تم نشر الحزمة بنجاح.",
+      "unpublishSuccess": "تم إلغاء نشر الحزمة.",
+      "activateSuccess": "تم تفعيل الحزمة.",
+      "deactivateSuccess": "تم إلغاء تفعيل الحزمة.",
+      "actionError": "تعذر تنفيذ الإجراء."
+    },
+    "accessDuration": {
+      "lifetime": "مدى الحياة",
+      "oneYear": "سنة واحدة",
+      "years": "{count} سنوات",
+      "thirtyDays": "30 يوماً",
+      "days": "{count} يوماً"
+    },
+    "form": {
+      "accessDuration": {
+        "title": "مدة الوصول",
+        "lifetime": "مدى الحياة",
+        "limited": "مدة محددة",
+        "daysLabel": "عدد الأيام",
+        "daysPlaceholder": "مثال: 180",
+        "helpText": "مدة واحدة تنطبق على جميع دورات الحزمة من تاريخ الاشتراك. تغيير المدة لا يؤثر على الاشتراكات الحالية.",
+        "presetDays": "{days} يوماً"
+      },
+      "createTitle": "إنشاء حزمة جديدة",
+      "editTitle": "تعديل الحزمة",
+      "pageDescription": "أنشئ حزمة تعليمية مخفّضة تجمع عدة دورات.",
+      "save": "حفظ الحزمة",
+      "loading": "جاري التحميل...",
+      "breadcrumbs": {
+        "create": "إنشاء حزمة",
+        "edit": "تعديل"
+      },
+      "sections": {
+        "cover": "رفع صورة الغلاف",
+        "basicInfo": "المعلومات الأساسية",
+        "description": "وصف الحزمة",
+        "publishing": "إعدادات النشر",
+        "preview": "معاينة سريعة"
+      },
+      "cover": {
+        "dropTitle": "اختر صورة أو اسحبها هنا",
+        "dropHint": "JPG, PNG (بحد أقصى 5MB)",
+        "uploading": "جاري الرفع..."
+      },
+      "fields": {
+        "name": "اسم المسار",
+        "namePlaceholder": "مثال: أساسيات الذكاء الاصطناعي للمبتدئين",
+        "price": "السعر (ريال)",
+        "courses": "اختر الدورات",
+        "coursesPlaceholder": "اختر دورة لإضافتها...",
+        "coursesSearchPlaceholder": "ابحث عن دورة...",
+        "coursesEmpty": "لا توجد دورات متاحة",
+        "selectedCourses": "الدورات المختارة",
+        "coursesTotalPrice": "سعر الدورات المختارة",
+        "description": "وصف إضافي",
+        "descriptionPlaceholder": "اكتب تفاصيل الحزمة التعليمية",
+        "publishingMode": "حالة المسار",
+        "previewNamePlaceholder": "أدخل اسم المسار أعلاه...",
+        "previewDescriptionPlaceholder": "الوصف المختصر للحزمة يظهر هنا ليشجع الطلاب على الاشتراك.",
+        "previewCoursesBadge": "{count} دورة",
+        "previewPricePlaceholder": "-- ر.س",
+        "previewSavings": "توفير {amount} ر.س ({percent}%)"
+      },
+      "publishingModes": {
+        "activePublished": "نشط (متاح للطلاب)",
+        "activeDraft": "نشط (مسودة — غير منشور)",
+        "inactive": "غير نشط"
+      },
+      "coursesHint": "يمكن تعديل قائمة الدورات قبل شراء الحزمة من قبل الطلاب.",
+      "coursesLockedHint": "لا يمكن تعديل دورات هذه الحزمة بعد شرائها من قبل الطلاب.",
+      "validation": {
+        "nameRequired": "اسم المسار مطلوب.",
+        "priceRequired": "السعر مطلوب.",
+        "priceInvalid": "يجب أن يكون سعر الحزمة أكبر من صفر وأقل من مجموع أسعار الدورات.",
+        "coursesMin": "يجب اختيار دورتين على الأقل.",
+        "coverInvalid": "تعذر رفع صورة الغلاف.",
+        "accessDurationInvalid": "مدة الوصول يجب أن تكون بين 1 و 3650 يوماً، أو مدى الحياة."
+      },
+      "messages": {
+        "createSuccess": "تم إنشاء الحزمة بنجاح.",
+        "updateSuccess": "تم تحديث الحزمة بنجاح.",
+        "createError": "تعذر إنشاء الحزمة.",
+        "updateError": "تعذر تحديث الحزمة.",
+        "loadError": "تعذر تحميل بيانات الحزمة.",
+        "coursesLockedError": "لا يمكن تعديل دورات الحزمة بعد شرائها من قبل الطلاب."
+      }
+    }
+  }
+}

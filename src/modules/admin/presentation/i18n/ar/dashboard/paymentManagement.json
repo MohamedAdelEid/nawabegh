@@ -1,0 +1,263 @@
+{
+  "paymentManagement": {
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "payments": "ادارة الفواتير"
+    },
+    "subNav": {
+      "overview": "نظرة عامة",
+      "transactions": "المعاملات",
+      "enrollments": "الاشتراكات",
+      "settings": "إعدادات البوابة"
+    },
+    "overview": {
+      "title": "نظرة عامة على الفواتير",
+      "description": "مرحباً بك مجدداً، إليك ملخص النشاط المالي اليوم.",
+      "managePlans": "إدارة الخطط والأسعار",
+      "stats": {
+        "totalRevenue": "إجمالي الإيرادات",
+        "activeEnrollments": "الاشتراكات النشطة",
+        "failedPayments": "عمليات فشل الدفع"
+      },
+      "chart": {
+        "title": "الإيرادات الشهرية",
+        "subtitle": "نمو الأرباح لعام {year}",
+        "year": "سنة",
+        "month": "شهر",
+        "week": "أسبوع"
+      },
+      "recentTransactions": {
+        "title": "آخر المعاملات",
+        "viewAll": "عرض الكل"
+      },
+      "pagination": {
+        "previous": "الصفحة السابقة",
+        "next": "الصفحة التالية",
+        "pageSize": "عرض {size}",
+        "summary": "عرض {from}–{to} من {total}"
+      }
+    },
+    "transactions": {
+      "title": "سجل المعاملات المالية",
+      "description": "ابحث واستعرض جميع عمليات الدفع.",
+      "stats": {
+        "totalRevenue": "إجمالي الإيرادات",
+        "revenueChange": "{value} عن الشهر الماضي",
+        "succeeded": "عمليات ناجحة",
+        "successRate": "{value}% معدل النجاح",
+        "failed": "عمليات فشلت"
+      },
+      "filters": {
+        "search": {
+          "label": "بحث",
+          "placeholder": "المرجع، الطالب، الدورة، أو معرف المعاملة..."
+        },
+        "status": {
+          "label": "الحالة",
+          "all": "الكل",
+          "succeeded": "ناجحة",
+          "failed": "فاشلة",
+          "pending": "معلقة",
+          "expired": "منتهية",
+          "cancelled": "ملغاة"
+        },
+        "method": {
+          "label": "طريقة الدفع",
+          "all": "الكل",
+          "visa": "Visa (Tap)",
+          "activationCode": "كود تفعيل",
+          "free": "مجاني"
+        },
+        "fromDate": "من تاريخ",
+        "toDate": "إلى تاريخ",
+        "reset": "إعادة تعيين"
+      },
+      "table": {
+        "reference": "المعرف",
+        "parent": "الأب / المستخدم",
+        "student": "الطالب",
+        "method": "النوع",
+        "amount": "المبلغ",
+        "status": "الحالة",
+        "date": "التاريخ",
+        "empty": "لا توجد معاملات",
+        "viewDetails": "عرض التفاصيل"
+      }
+    },
+    "transactionDetail": {
+      "title": "تفاصيل المعاملة",
+      "reference": "مرجع #{reference}",
+      "operationType": "نوع العملية",
+      "transactionDate": "تاريخ المعاملة",
+      "parties": {
+        "title": "بيانات الأطراف",
+        "parent": "ولي الأمر",
+        "student": "الطالب",
+        "grade": "الصف",
+        "school": "المدرسة"
+      },
+      "payment": {
+        "title": "تفاصيل الدفع",
+        "method": "طريقة الدفع",
+        "provider": "بوابة الدفع"
+      },
+      "access": {
+        "title": "فترة الوصول الممنوحة",
+        "startsAt": "تاريخ البدء",
+        "endsAt": "تاريخ الانتهاء",
+        "duration": "{days} يوم"
+      },
+      "timeline": {
+        "title": "سجل العمليات"
+      },
+      "invoice": {
+        "title": "الفاتورة",
+        "originalPrice": "السعر الأصلي",
+        "discount": "الخصم",
+        "vat": "ضريبة القيمة المضافة ({rate}%)",
+        "finalPrice": "السعر النهائي",
+        "coupon": "كود الخصم",
+        "paidAt": "تاريخ الدفع"
+      },
+      "actions": {
+        "print": "طباعة",
+        "contactParent": "تواصل مع ولي الأمر"
+      },
+      "errors": {
+        "load": "تعذر تحميل تفاصيل المعاملة"
+      }
+    },
+    "enrollments": {
+      "title": "إدارة اشتراكات الطلاب",
+      "description": "إدارة ومراجعة وصول الطلاب للدورات والحزم.",
+      "stats": {
+        "total": "إجمالي الاشتراكات",
+        "active": "الاشتراكات النشطة",
+        "expired": "منتهية الصلاحية",
+        "inactive": "غير نشطة"
+      },
+      "filters": {
+        "search": {
+          "label": "بحث",
+          "placeholder": "الطالب، الدورة، أو الحزمة..."
+        },
+        "status": {
+          "label": "الحالة",
+          "all": "الكل",
+          "active": "نشط",
+          "expired": "منتهي",
+          "inactive": "غير نشط"
+        },
+        "startsFrom": "بدء من",
+        "startsTo": "بدء إلى",
+        "endsFrom": "انتهاء من",
+        "endsTo": "انتهاء إلى",
+        "reset": "إعادة تعيين"
+      },
+      "table": {
+        "parent": "اسم ولي الأمر",
+        "student": "اسم الطالب",
+        "product": "الدورة / الباقة",
+        "startsAt": "تاريخ البدء",
+        "endsAt": "تاريخ الانتهاء",
+        "status": "الحالة",
+        "empty": "لا توجد اشتراكات",
+        "view": "عرض"
+      }
+    },
+    "enrollmentDetail": {
+      "title": "تفاصيل الاشتراك",
+      "totalPaid": "إجمالي المدفوعات",
+      "paymentCount": "{count} عمليات دفع",
+      "payer": "ولي الأمر (الدافع)",
+      "student": "الطالب",
+      "product": {
+        "title": "تفاصيل الباقة",
+        "name": "المنتج",
+        "startsAt": "تاريخ البدء",
+        "endsAt": "تاريخ الانتهاء",
+        "duration": "مدة الوصول",
+        "lifetime": "مدى الحياة",
+        "days": "{days} يوم",
+        "paymentMethod": "طريقة الدفع",
+        "course": "الدورة",
+        "bundle": "الباقة"
+      },
+      "timeline": {
+        "title": "الجدول الزمني للاشتراك",
+        "accountCreated": "إنشاء الحساب",
+        "firstPayment": "تم الدفع",
+        "activeNow": "نشط الآن",
+        "endsAt": "تاريخ الانتهاء"
+      },
+      "paymentHistory": {
+        "title": "سجل المدفوعات",
+        "reference": "رقم الفاتورة",
+        "date": "التاريخ",
+        "description": "الوصف",
+        "amount": "المبلغ",
+        "status": "الحالة",
+        "viewTransaction": "عرض المعاملة",
+        "empty": "لا توجد مدفوعات"
+      },
+      "viewAllTransactions": "عرض جميع المعاملات",
+      "errors": {
+        "load": "تعذر تحميل تفاصيل الاشتراك"
+      }
+    },
+    "gateway": {
+      "title": "إعدادات بوابات الدفع",
+      "description": "تهيئة بوابة الدفع Tap لمنصة نوابغ لإدارة العمليات المالية.",
+      "provider": "Tap",
+      "status": {
+        "connected": "متصل",
+        "notConfigured": "غير مهيأ"
+      },
+      "fields": {
+        "merchantId": "معرف التاجر",
+        "secretKey": "المفتاح السري",
+        "webhookSecret": "سر الويب هوك",
+        "secretKeyPlaceholder": "أدخل المفتاح السري",
+        "webhookSecretPlaceholder": "أدخل سر الويب هوك",
+        "secretKeyHint": "الحالي: {hint}",
+        "webhookSecretHint": "الحالي: {hint}"
+      },
+      "actions": {
+        "save": "حفظ التغييرات",
+        "linkAccount": "ربط الحساب",
+        "updateSettings": "تحديث الإعدادات"
+      },
+      "security": {
+        "title": "أمان المعاملات المالية",
+        "body": "مفاتيح API مشفرة. لا تشارك المفاتيح السرية مع أطراف غير مخولة.",
+        "transactionLog": "سجل العمليات",
+        "contactSupport": "طلب دعم فني"
+      },
+      "footer": {
+        "unsavedChanges": "تم إجراء {count} تغييرات غير محفوظة",
+        "noChanges": "لا توجد تغييرات غير محفوظة",
+        "saveAll": "حفظ كافة الإعدادات",
+        "cancel": "إلغاء"
+      },
+      "messages": {
+        "loadError": "تعذر تحميل إعدادات البوابة",
+        "saveSuccess": "تم حفظ إعدادات البوابة بنجاح",
+        "saveError": "تعذر حفظ إعدادات البوابة",
+        "merchantRequired": "معرف التاجر مطلوب",
+        "secretsRequired": "المفتاح السري وسر الويب هوك مطلوبان عند الإعداد لأول مرة"
+      }
+    },
+    "table": {
+      "parentUser": "الأب / المستخدم",
+      "student": "الطالب",
+      "amount": "المبلغ",
+      "status": "الحالة",
+      "date": "التاريخ"
+    },
+    "common": {
+      "empty": "—",
+      "loading": "جاري التحميل...",
+      "notAvailable": "غير متاح"
+    }
+  }
+}

@@ -21,11 +21,14 @@ import { CourseSectionCard } from "@/modules/admin/presentation/components/cours
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { CourseAccessType, CourseTerm } from "@/shared/domain/enums/cms.enums";
+import { isValidAccessDurationDays } from "@/shared/domain/types/accessDuration.types";
+import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
+import { AccessDurationField } from "@/shared/presentation/components/ui/access-duration-field";
 import { ModalDescription, ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
 import { cn } from "@/shared/application/lib/cn";
 import { MoneyIcon } from "../assets/icons/Money";
@@ -118,6 +121,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
   const [successOpen, setSuccessOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
+  const [accessDurationDays, setAccessDurationDays] = useState<AccessDurationDays>(null);
   const [subjects, setSubjects] = useState<SubjectListItem[]>([]);
   const [gradeOptions, setGradeOptions] = useState<SelectOption[]>([]);
   const [teacherOptions, setTeacherOptions] = useState<UserManagementListRow[]>([]);
@@ -155,6 +159,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
         lessonCount: "",
         pathCount: "",
       });
+      setAccessDurationDays(course.accessDurationDays);
       setExistingCoverImageUrl(course.coverImageUrl);
       if (course.coverImageUrl) {
         setCoverImage({ file: null, previewUrl: course.coverImageUrl });
@@ -285,6 +290,17 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
     }
 
     const accessType = pricingTypeToAccessType(draft.pricingType);
+    const resolvedAccessDurationDays =
+      accessType === CourseAccessType.Free ? null : accessDurationDays;
+
+    if (
+      accessType !== CourseAccessType.Free &&
+      !isValidAccessDurationDays(resolvedAccessDurationDays)
+    ) {
+      setSubmitting(false);
+      notify.error(t("create.validation.accessDurationInvalid"));
+      return;
+    }
 
     if (isEditMode && courseId) {
       const result = await updateCourse(courseId, {
@@ -296,6 +312,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
         term: term as CourseTerm,
         coverImageUrl,
         accessType,
+        accessDurationDays: resolvedAccessDurationDays,
         ...(accessType !== CourseAccessType.Free
           ? {
               originalPrice: priceToNumber(draft.basePrice),
@@ -322,6 +339,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
       teacherId: draft.teacher,
       coverImageUrl,
       accessType,
+      accessDurationDays: resolvedAccessDurationDays,
       ...(accessType !== CourseAccessType.Free
         ? {
             originalPrice: priceToNumber(draft.basePrice),
@@ -602,6 +620,21 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                 onChange={(value) => update("offerPrice", value)}
               />
             </div>
+            {draft.pricingType !== "free" ? (
+              <AccessDurationField
+                value={accessDurationDays}
+                onChange={setAccessDurationDays}
+                labels={{
+                  title: t("create.accessDuration.title"),
+                  lifetime: t("create.accessDuration.lifetime"),
+                  limited: t("create.accessDuration.limited"),
+                  daysLabel: t("create.accessDuration.daysLabel"),
+                  daysPlaceholder: t("create.accessDuration.daysPlaceholder"),
+                  helpText: t("create.accessDuration.helpText"),
+                  presetDays: t("create.accessDuration.presetDays"),
+                }}
+              />
+            ) : null}
           </CourseSectionCard>
 
           <div className="flex justify-end gap-3">

@@ -707,7 +707,7 @@ export function UserManagementDashboard() {
     const result = await toggleUserManagementStatus(row.id);
     console.log(result);
     if (
-      +result.status !== +"200" ||
+      result.status !== "Success" ||
       !result.data ||
       result.data.userId !== row.id
     ) {

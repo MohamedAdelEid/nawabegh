@@ -5,8 +5,39 @@ const withNextIntl = createNextIntlPlugin(
   "./src/shared/infrastructure/config/i18n.ts",
 );
 
+function buildFileRemotePatterns(): NonNullable<NextConfig["images"]>["remotePatterns"] {
+  const bases = [
+    process.env.NEXT_PUBLIC_FILE_PUBLIC_BASE_URL,
+    process.env.NEXT_PUBLIC_API_URL,
+    "https://nawabeghsystem.runasp.net",
+  ].filter((value): value is string => Boolean(value?.trim()));
+
+  const patterns = bases
+    .map((base) => {
+      try {
+        const url = new URL(base);
+        return {
+          protocol: url.protocol.replace(":", "") as "http" | "https",
+          hostname: url.hostname,
+          pathname: "/**",
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter((pattern): pattern is NonNullable<typeof pattern> => pattern !== null);
+
+  const seen = new Set<string>();
+  return patterns.filter((pattern) => {
+    const key = `${pattern.protocol}://${pattern.hostname}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 const nextConfig: NextConfig = {
-  images: { remotePatterns: [] },
+  images: { remotePatterns: buildFileRemotePatterns() },
   async redirects() {
     return [
       { source: "/login", destination: "/auth/login", permanent: false },

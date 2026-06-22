@@ -36,6 +36,8 @@
         "schoolManagement": "إدارة المدارس",
         "contentManagement": "إدارة المحتوى",
         "courseManagement": "إدارة الدورات التعليمية",
+        "bundleManagement": "ادارة الحزم التعليمية",
+        "invoiceManagement": "ادارة الفواتير",
         "helperFileManagement": "إدارة الملفات المساعده",
         "pricingManagement": "إدارة الخطط والأسعار",
         "paymentGatewaySettings": "إعدادات بوابات الدفع",
@@ -1024,6 +1026,18 @@
           "free": "مجانية",
           "oneTime": "مدفوعة (لمرة واحدة)",
           "monthly": "اشتراك شهري"
+        },
+        "accessDuration": {
+          "title": "مدة الوصول",
+          "lifetime": "مدى الحياة",
+          "limited": "مدة محددة",
+          "daysLabel": "عدد الأيام",
+          "daysPlaceholder": "مثال: 90",
+          "helpText": "تبدأ من تاريخ الاشتراك. تغيير المدة لا يؤثر على الاشتراكات الحالية.",
+          "presetDays": "{days} يوماً"
+        },
+        "validation": {
+          "accessDurationInvalid": "مدة الوصول يجب أن تكون بين 1 و 3650 يوماً، أو مدى الحياة."
         },
         "upload": {
           "title": "اسحب الصورة هنا أو تصفح الملفات",

@@ -1,0 +1,192 @@
+{
+  "bundleManagement": {
+    "breadcrumbs": {
+      "home": "Home",
+      "bundles": "Educational bundles management"
+    },
+    "page": {
+      "title": "Educational bundles management",
+      "description": "Create and manage discounted course bundles for students.",
+      "createBundle": "Create new bundle"
+    },
+    "stats": {
+      "totalBundles": {
+        "label": "Total bundles"
+      },
+      "activeBundles": {
+        "label": "Active bundles",
+        "indicator": "Active"
+      },
+      "inactiveBundles": {
+        "label": "Inactive bundles",
+        "indicator": "Inactive"
+      },
+      "averageCompletion": {
+        "label": "Average completion"
+      }
+    },
+    "filters": {
+      "search": {
+        "label": "Search by bundle name",
+        "placeholder": "Enter bundle name or code..."
+      },
+      "status": {
+        "label": "Status",
+        "all": "All",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "dateRange": {
+        "label": "Date range",
+        "from": "From",
+        "to": "To",
+        "placeholder": "Choose date..."
+      },
+      "minPrice": {
+        "label": "Min price"
+      },
+      "maxPrice": {
+        "label": "Max price"
+      },
+      "reset": "Reset"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "publishedStatuses": {
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "table": {
+      "title": "Bundles list",
+      "columns": {
+        "name": "Bundle name",
+        "courses": "Courses",
+        "price": "Price",
+        "accessDuration": "Access duration",
+        "status": "Status",
+        "published": "Published",
+        "createdAt": "Created",
+        "actions": "Actions"
+      },
+      "coursesCount": "{count} courses",
+      "priceValue": "{price} SAR",
+      "pagination": {
+        "summary": "Showing {from}-{to} of {total} bundles",
+        "previous": "Previous",
+        "next": "Next",
+        "pageSize": "{size} per page"
+      },
+      "states": {
+        "empty": "No bundles match your filters.",
+        "error": "Failed to load bundles."
+      }
+    },
+    "actions": {
+      "edit": "Edit",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "more": "More"
+    },
+    "deleteModal": {
+      "title": "Delete bundle",
+      "description": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel",
+      "success": "Bundle deleted successfully.",
+      "error": "Failed to delete bundle."
+    },
+    "messages": {
+      "publishSuccess": "Bundle published successfully.",
+      "unpublishSuccess": "Bundle unpublished successfully.",
+      "activateSuccess": "Bundle activated successfully.",
+      "deactivateSuccess": "Bundle deactivated successfully.",
+      "actionError": "Failed to perform action."
+    },
+    "accessDuration": {
+      "lifetime": "Lifetime",
+      "oneYear": "1 year",
+      "years": "{count} years",
+      "thirtyDays": "30 days",
+      "days": "{count} days"
+    },
+    "form": {
+      "accessDuration": {
+        "title": "Access duration",
+        "lifetime": "Lifetime",
+        "limited": "Limited duration",
+        "daysLabel": "Number of days",
+        "daysPlaceholder": "e.g. 180",
+        "helpText": "One duration applies to all courses in the bundle from enrollment. Changing this does not affect existing enrollments.",
+        "presetDays": "{days} days"
+      },
+      "createTitle": "Create new bundle",
+      "editTitle": "Edit bundle",
+      "pageDescription": "Build a discounted bundle that groups multiple courses.",
+      "save": "Save bundle",
+      "loading": "Loading...",
+      "breadcrumbs": {
+        "create": "Create bundle",
+        "edit": "Edit"
+      },
+      "sections": {
+        "cover": "Upload cover image",
+        "basicInfo": "Basic information",
+        "description": "Bundle description",
+        "publishing": "Publishing settings",
+        "preview": "Quick preview"
+      },
+      "cover": {
+        "dropTitle": "Choose an image or drag it here",
+        "dropHint": "JPG, PNG (max 5MB)",
+        "uploading": "Uploading..."
+      },
+      "fields": {
+        "name": "Bundle name",
+        "namePlaceholder": "Example: AI basics for beginners",
+        "price": "Price (SAR)",
+        "courses": "Choose courses",
+        "coursesPlaceholder": "Choose a course to add...",
+        "coursesSearchPlaceholder": "Search courses...",
+        "coursesEmpty": "No courses available",
+        "selectedCourses": "Selected courses",
+        "coursesTotalPrice": "Selected courses total price",
+        "description": "Additional description",
+        "descriptionPlaceholder": "Write the educational bundle details",
+        "publishingMode": "Bundle status",
+        "previewNamePlaceholder": "Enter bundle name above...",
+        "previewDescriptionPlaceholder": "The short bundle description appears here to encourage students to subscribe.",
+        "previewCoursesBadge": "{count} courses",
+        "previewPricePlaceholder": "-- SAR",
+        "previewSavings": "Save {amount} SAR ({percent}%)"
+      },
+      "publishingModes": {
+        "activePublished": "Active (available to students)",
+        "activeDraft": "Active (draft — not published)",
+        "inactive": "Inactive"
+      },
+      "coursesHint": "Course list can be changed until a student purchases this bundle.",
+      "coursesLockedHint": "Courses cannot be changed after students have purchased this bundle.",
+      "validation": {
+        "nameRequired": "Bundle name is required.",
+        "priceRequired": "Price is required.",
+        "priceInvalid": "Bundle price must be greater than zero and less than the sum of course prices.",
+        "coursesMin": "Select at least two courses.",
+        "coverInvalid": "Failed to upload cover image.",
+        "accessDurationInvalid": "Access duration must be between 1 and 3650 days, or lifetime."
+      },
+      "messages": {
+        "createSuccess": "Bundle created successfully.",
+        "updateSuccess": "Bundle updated successfully.",
+        "createError": "Failed to create bundle.",
+        "updateError": "Failed to update bundle.",
+        "loadError": "Failed to load bundle.",
+        "coursesLockedError": "Bundle courses cannot be changed after students have purchased it."
+      }
+    }
+  }
+}

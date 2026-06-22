@@ -264,13 +264,20 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
   };
 
   const locationInput = useMemo<SchoolLocationInput>(
-    () => ({
-      city:
-        values.city.trim() || t("schoolManagement.addForm.location.fallbackCity"),
-      region:
-        values.address.trim() || t("schoolManagement.addForm.location.fallbackRegion"),
-      country: values.country.trim(),
-    }),
+    () => {
+      const city = values.city.trim();
+      const region = values.address.trim();
+      const country = values.country.trim();
+
+      return {
+        city: city || t("schoolManagement.addForm.location.fallbackCity"),
+        region: region || t("schoolManagement.addForm.location.fallbackRegion"),
+        country,
+        searchCity: city,
+        searchRegion: region,
+        searchCountry: country,
+      };
+    },
     [values.city, values.address, values.country, t],
   );
 

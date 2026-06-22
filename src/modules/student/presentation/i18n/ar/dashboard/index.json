@@ -69,6 +69,27 @@
         "description": "الدعم والإجابات على الأسئلة الشائعة."
       }
     },
+    "helperResource": {
+      "backToJourney": "العودة للرحلة",
+      "noFiles": "لا توجد مصادر متاحة لهذه المحطة.",
+      "fileSize": "الحجم",
+      "mediaKind": "النوع",
+      "progress": "التقدم",
+      "resume": "استئناف",
+      "subscribersOnly": "للمشتركين فقط",
+      "lockedDescription": "هذا المورد متاح للمشتركين فقط. يرجى الاشتراك في المسار/الدورة للوصول إليه.",
+      "completed": "مكتمل",
+      "markCompleted": "تحديد كمكتمل",
+      "errorLoading": "فشل تحميل مصادر المساعدة.",
+      "filters": {
+        "all": "الكل",
+        "pdf": "PDF",
+        "presentation": "عرض تقديمي",
+        "word": "مستند Word",
+        "image": "صور",
+        "video": "فيديوهات"
+      }
+    },
     "settingsPage": {
       "title": "الإعدادات",
       "description": "إدارة ملفك الشخصي وتفضيلاتك."

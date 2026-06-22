@@ -15,6 +15,7 @@ import {
   courseAccessTypeFromApi,
   courseStatusFromApi,
 } from "@/shared/domain/enums/cms.mappers";
+import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -74,6 +75,7 @@ export type CreateCoursePayload = {
   accessType: CourseAccessType;
   originalPrice?: number;
   discountedPrice?: number;
+  accessDurationDays?: AccessDurationDays;
   submitForReview: boolean;
 };
 
@@ -100,6 +102,7 @@ export type CourseEditData = {
   accessType: CourseAccessType;
   originalPrice: number;
   discountedPrice: number;
+  accessDurationDays: AccessDurationDays;
 };
 
 export type UpdateCoursePayload = {
@@ -113,6 +116,7 @@ export type UpdateCoursePayload = {
   accessType: CourseAccessType;
   originalPrice?: number;
   discountedPrice?: number;
+  accessDurationDays?: AccessDurationDays;
 };
 
 function asRecord(value: unknown): UnknownRecord | null {
@@ -156,6 +160,20 @@ function readBoolean(record: UnknownRecord | null, keys: string[], fallback = fa
 function readNullableString(record: UnknownRecord | null, keys: string[]): string | null {
   const value = readString(record, keys, "");
   return value.trim() ? value : null;
+}
+
+function readNullableNumber(record: UnknownRecord | null, keys: string[]): number | null {
+  if (!record) return null;
+  for (const key of keys) {
+    if (!(key in record)) continue;
+    const value = record[key];
+    if (value === null) return null;
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string" && value.trim() !== "" && !Number.isNaN(Number(value))) {
+      return Number(value);
+    }
+  }
+  return null;
 }
 
 function mapHttpStatus(statusCode: number | null): BackendStatus | "Error" {
@@ -377,6 +395,7 @@ function mapCourseEditData(data: unknown): CourseEditData | null {
     accessType: readNumber(record, ["accessType"]) ?? CourseAccessType.Free,
     originalPrice: readNumber(record, ["originalPrice"]) ?? 0,
     discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
+    accessDurationDays: readNullableNumber(record, ["accessDurationDays"]),
   };
 }
 
@@ -581,11 +600,11 @@ export async function updateCourse(
   payload: UpdateCoursePayload,
 ): Promise<CourseApiResult<CourseListItemDto>> {
   try {
-    const { originalPrice, discountedPrice, accessType, ...rest } = payload;
+    const { originalPrice, discountedPrice, accessType, accessDurationDays, ...rest } = payload;
     const data =
       accessType === CourseAccessType.Free
-        ? { ...rest, accessType }
-        : { ...rest, accessType, originalPrice, discountedPrice };
+        ? { ...rest, accessType, accessDurationDays: accessDurationDays ?? null }
+        : { ...rest, accessType, originalPrice, discountedPrice, accessDurationDays: accessDurationDays ?? null };
 
     const response = await httpClient.put<unknown>({
       url: `/api/v1/Course/${encodeURIComponent(courseId)}`,

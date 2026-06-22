@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, useMemo, type ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { HelperDocxPreview } from "@/modules/admin/presentation/components/helper-file-management/HelperDocxPreview";
@@ -24,15 +24,29 @@ type HelperResourceFilePreviewProps = {
   fileUrl: string;
   fileName?: string;
   fileType?: string | null;
+  mediaKind?: string | null;
 };
 
 export function HelperResourceFilePreview({
   fileUrl,
   fileName,
   fileType,
+  mediaKind,
 }: HelperResourceFilePreviewProps) {
   const t = useTranslations("admin.dashboard.contentManagement.details.viewer");
-  const previewKind = detectResourcePreviewKind(fileUrl, fileType);
+
+  const previewKind = useMemo(() => {
+    if (mediaKind) {
+      const normalized = mediaKind.trim().toLowerCase();
+      if (normalized === "pdf") return "pdf";
+      if (normalized === "presentation") return "pptx";
+      if (normalized === "word") return "docx";
+      if (normalized === "image") return "image";
+      if (normalized === "video") return "video";
+      if (normalized === "audio") return "audio";
+    }
+    return detectResourcePreviewKind(fileUrl, fileType);
+  }, [fileUrl, fileType, mediaKind]);
 
   const [fileBuffer, setFileBuffer] = useState<ArrayBuffer | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);

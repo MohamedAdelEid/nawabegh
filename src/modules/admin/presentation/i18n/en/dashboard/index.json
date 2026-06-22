@@ -36,6 +36,8 @@
         "schoolManagement": "School management",
         "contentManagement": "Content management",
         "courseManagement": "Course management",
+        "bundleManagement": "Educational bundles management",
+        "invoiceManagement": "Invoice management",
         "helperFileManagement": "Manage helper files",
         "pricingManagement": "Pricing & plans",
         "paymentGatewaySettings": "Payment gateway settings",
@@ -1024,6 +1026,18 @@
           "free": "Free",
           "oneTime": "Paid (one time)",
           "monthly": "Monthly subscription"
+        },
+        "accessDuration": {
+          "title": "Access duration",
+          "lifetime": "Lifetime",
+          "limited": "Limited duration",
+          "daysLabel": "Number of days",
+          "daysPlaceholder": "e.g. 90",
+          "helpText": "Access starts from the enrollment date. Changing this does not affect existing enrollments.",
+          "presetDays": "{days} days"
+        },
+        "validation": {
+          "accessDurationInvalid": "Access duration must be between 1 and 3650 days, or lifetime."
         },
         "upload": {
           "title": "Drag an image here or browse files",

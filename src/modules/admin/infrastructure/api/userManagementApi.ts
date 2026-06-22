@@ -614,6 +614,7 @@ export async function toggleUserManagementStatus(
       url: "/api/v1/UserManagement/toggle-status",
       data: { userId },
     });
+    console.log(response);
     const record = asRecord(response.data);
     return {
       status: response.status,

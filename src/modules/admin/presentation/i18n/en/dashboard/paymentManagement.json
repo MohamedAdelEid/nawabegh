@@ -1,0 +1,263 @@
+{
+  "paymentManagement": {
+    "breadcrumbs": {
+      "home": "Home",
+      "payments": "Invoice management"
+    },
+    "subNav": {
+      "overview": "Overview",
+      "transactions": "Transactions",
+      "enrollments": "Enrollments",
+      "settings": "Gateway settings"
+    },
+    "overview": {
+      "title": "Invoices overview",
+      "description": "Welcome back — here is a summary of today's financial activity.",
+      "managePlans": "Manage plans & pricing",
+      "stats": {
+        "totalRevenue": "Total revenue",
+        "activeEnrollments": "Active subscriptions",
+        "failedPayments": "Failed payments"
+      },
+      "chart": {
+        "title": "Monthly revenue",
+        "subtitle": "Profit growth for {year}",
+        "year": "Year",
+        "month": "Month",
+        "week": "Week"
+      },
+      "recentTransactions": {
+        "title": "Latest transactions",
+        "viewAll": "View all"
+      },
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page",
+        "pageSize": "Show {size}",
+        "summary": "Showing {from}–{to} of {total}"
+      }
+    },
+    "transactions": {
+      "title": "Financial transactions log",
+      "description": "Search and review all payment operations.",
+      "stats": {
+        "totalRevenue": "Total revenue",
+        "revenueChange": "{value} vs last month",
+        "succeeded": "Successful operations",
+        "successRate": "{value}% success rate",
+        "failed": "Failed operations"
+      },
+      "filters": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Reference, student, course, or transaction id..."
+        },
+        "status": {
+          "label": "Status",
+          "all": "All",
+          "succeeded": "Succeeded",
+          "failed": "Failed",
+          "pending": "Pending",
+          "expired": "Expired",
+          "cancelled": "Cancelled"
+        },
+        "method": {
+          "label": "Payment method",
+          "all": "All",
+          "visa": "Visa (Tap)",
+          "activationCode": "Activation code",
+          "free": "Free"
+        },
+        "fromDate": "From date",
+        "toDate": "To date",
+        "reset": "Reset filters"
+      },
+      "table": {
+        "reference": "Reference",
+        "parent": "Parent / user",
+        "student": "Student",
+        "method": "Type",
+        "amount": "Amount",
+        "status": "Status",
+        "date": "Date",
+        "empty": "No transactions found",
+        "viewDetails": "View details"
+      }
+    },
+    "transactionDetail": {
+      "title": "Transaction details",
+      "reference": "Reference #{reference}",
+      "operationType": "Operation type",
+      "transactionDate": "Transaction date",
+      "parties": {
+        "title": "Parties",
+        "parent": "Parent",
+        "student": "Student",
+        "grade": "Grade",
+        "school": "School"
+      },
+      "payment": {
+        "title": "Payment details",
+        "method": "Payment method",
+        "provider": "Gateway"
+      },
+      "access": {
+        "title": "Access granted",
+        "startsAt": "Starts",
+        "endsAt": "Ends",
+        "duration": "{days} days"
+      },
+      "timeline": {
+        "title": "Activity log"
+      },
+      "invoice": {
+        "title": "Invoice",
+        "originalPrice": "Original price",
+        "discount": "Discount",
+        "vat": "VAT ({rate}%)",
+        "finalPrice": "Final price",
+        "coupon": "Coupon",
+        "paidAt": "Paid at"
+      },
+      "actions": {
+        "print": "Print",
+        "contactParent": "Contact parent"
+      },
+      "errors": {
+        "load": "Failed to load transaction details"
+      }
+    },
+    "enrollments": {
+      "title": "Student subscriptions",
+      "description": "Manage and review student course and bundle access.",
+      "stats": {
+        "total": "Total subscriptions",
+        "active": "Active",
+        "expired": "Expired",
+        "inactive": "Inactive"
+      },
+      "filters": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Student, course, or bundle..."
+        },
+        "status": {
+          "label": "Status",
+          "all": "All",
+          "active": "Active",
+          "expired": "Expired",
+          "inactive": "Inactive"
+        },
+        "startsFrom": "Start from",
+        "startsTo": "Start to",
+        "endsFrom": "End from",
+        "endsTo": "End to",
+        "reset": "Reset filters"
+      },
+      "table": {
+        "parent": "Parent name",
+        "student": "Student name",
+        "product": "Course / bundle",
+        "startsAt": "Start date",
+        "endsAt": "End date",
+        "status": "Status",
+        "empty": "No subscriptions found",
+        "view": "View"
+      }
+    },
+    "enrollmentDetail": {
+      "title": "Subscription details",
+      "totalPaid": "Total paid",
+      "paymentCount": "{count} payments",
+      "payer": "Payer (parent)",
+      "student": "Student",
+      "product": {
+        "title": "Product details",
+        "name": "Product",
+        "startsAt": "Start date",
+        "endsAt": "End date",
+        "duration": "Access duration",
+        "lifetime": "Lifetime",
+        "days": "{days} days",
+        "paymentMethod": "Payment method",
+        "course": "Course",
+        "bundle": "Bundle"
+      },
+      "timeline": {
+        "title": "Subscription timeline",
+        "accountCreated": "Account created",
+        "firstPayment": "Payment completed",
+        "activeNow": "Active now",
+        "endsAt": "End date"
+      },
+      "paymentHistory": {
+        "title": "Payment history",
+        "reference": "Invoice #",
+        "date": "Date",
+        "description": "Description",
+        "amount": "Amount",
+        "status": "Status",
+        "viewTransaction": "View transaction",
+        "empty": "No payments recorded"
+      },
+      "viewAllTransactions": "View all transactions",
+      "errors": {
+        "load": "Failed to load subscription details"
+      }
+    },
+    "gateway": {
+      "title": "Payment gateway settings",
+      "description": "Configure the Tap payment gateway for Nawabegh financial operations.",
+      "provider": "Tap",
+      "status": {
+        "connected": "Connected",
+        "notConfigured": "Not configured"
+      },
+      "fields": {
+        "merchantId": "Merchant ID",
+        "secretKey": "Secret key",
+        "webhookSecret": "Webhook secret",
+        "secretKeyPlaceholder": "Enter secret key",
+        "webhookSecretPlaceholder": "Enter webhook secret",
+        "secretKeyHint": "Current: {hint}",
+        "webhookSecretHint": "Current: {hint}"
+      },
+      "actions": {
+        "save": "Save changes",
+        "linkAccount": "Link account",
+        "updateSettings": "Update settings"
+      },
+      "security": {
+        "title": "Financial transaction security",
+        "body": "API keys are encrypted at rest. Never share secret keys with unauthorized parties.",
+        "transactionLog": "Transaction log",
+        "contactSupport": "Request support"
+      },
+      "footer": {
+        "unsavedChanges": "{count} unsaved changes",
+        "noChanges": "No unsaved changes",
+        "saveAll": "Save all settings",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "loadError": "Failed to load gateway settings",
+        "saveSuccess": "Gateway settings saved successfully",
+        "saveError": "Failed to save gateway settings",
+        "merchantRequired": "Merchant ID is required",
+        "secretsRequired": "Secret key and webhook secret are required for first-time setup"
+      }
+    },
+    "table": {
+      "parentUser": "Parent / user",
+      "student": "Student",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
+    },
+    "common": {
+      "empty": "—",
+      "loading": "Loading...",
+      "notAvailable": "Not available"
+    }
+  }
+}

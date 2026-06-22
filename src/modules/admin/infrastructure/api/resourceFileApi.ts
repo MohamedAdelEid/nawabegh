@@ -24,6 +24,10 @@ export type ResourceFileListItem = {
   accessPolicy: string;
   resourceFileType: string;
   createdAt: string;
+  thumbnailUrl?: string | null;
+  mediaKind?: string | null;
+  category?: string | null;
+  fileSizeBytes?: number | null;
 };
 
 export type ResourceFileDetails = ResourceFileListItem & {
@@ -170,6 +174,10 @@ function mapResourceFileListItem(item: unknown): ResourceFileListItem | null {
     accessPolicy: readString(record, ["accessPolicy"], ""),
     resourceFileType: readString(record, ["resourceFileType"], ""),
     createdAt: readString(record, ["createdAt"], ""),
+    thumbnailUrl: readString(record, ["thumbnailUrl"], "") || null,
+    mediaKind: readString(record, ["mediaKind"], "") || null,
+    category: readString(record, ["category"], "") || null,
+    fileSizeBytes: readNumber(record, ["fileSizeBytes"]),
   };
 }
 

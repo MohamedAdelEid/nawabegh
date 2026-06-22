@@ -1,1 +1,6 @@
-export { AdminPaymentGatewaySettingsPage as default } from "@/modules/admin/presentation/pages/AdminPaymentGatewaySettingsPage";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
+
+export default function PricingPaymentGatewayLegacyRoute() {
+  redirect(ROUTES.ADMIN.PAYMENTS.SETTINGS);
+}

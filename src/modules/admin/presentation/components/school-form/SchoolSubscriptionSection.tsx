@@ -43,7 +43,7 @@ export function SchoolSubscriptionSection({
   return (
     <SchoolFormSectionCard icon={icon} title={title}>
       <div className="space-y-6">
-        <div className="space-y-3 text-right">
+        {/* <div className="space-y-3 text-right">
           <p className="text-sm font-medium text-[#64748B]">{planLabel}</p>
           <div className="grid gap-4 md:grid-cols-3">
             {plans.map((plan) => {
@@ -71,7 +71,7 @@ export function SchoolSubscriptionSection({
               );
             })}
           </div>
-        </div>
+        </div> */}
 
         <div className="space-y-3 text-right">
           <p className="text-sm font-medium text-[#64748B]">{stagesLabel}</p>

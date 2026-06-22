@@ -11,6 +11,9 @@ export interface SchoolLocationInput {
   city: string;
   region: string;
   country: string;
+  searchCity?: string;
+  searchRegion?: string;
+  searchCountry?: string;
 }
 
 const SchoolLocationPreview = dynamic(
@@ -47,6 +50,9 @@ export function SchoolLocationSection({
           cityLabel={locationInput.city}
           regionLabel={locationInput.region}
           countryLabel={locationInput.country}
+          searchCity={locationInput.searchCity}
+          searchRegion={locationInput.searchRegion}
+          searchCountry={locationInput.searchCountry}
           providerLabel={providerLabel}
           loadingLabel={loadingLabel}
           emptyLabel={emptyLabel}
