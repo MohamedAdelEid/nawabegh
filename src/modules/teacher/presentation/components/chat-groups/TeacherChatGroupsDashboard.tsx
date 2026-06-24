@@ -1,24 +1,32 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, Pause, Play, Plus, Settings, Trash2 } from "lucide-react";
-import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
-import { chatGroupsDashboardData } from "@/modules/admin/domain/data/chatGroupsDashboardData";
+import { Eye, Pause, Play, Settings } from "lucide-react";
+import { teacherChatGroupsDashboardData } from "@/modules/teacher/domain/data/teacherChatGroupsDashboardData";
 import {
-  getChatGroupByCourseId,
-  updateChatGroupByCourseId,
-} from "@/modules/admin/infrastructure/api/chatGroupsApi";
-import { mapChatGroupDetailToFormValues, mapChatGroupFormToUpdatePayload } from "@/modules/admin/domain/utils/chatGroupMappers";
+  mapChatGroupDetailToFormValues,
+  mapChatGroupFormToUpdatePayload,
+} from "@/modules/admin/domain/utils/chatGroupMappers";
 import type { ChatGroupRow } from "@/modules/admin/domain/types/chatGroups.types";
 import {
   formatChatGroupStatValue,
   useTeacherChatGroups,
   type TeacherChatGroupsFilterState,
 } from "@/modules/teacher/application/hooks/useTeacherChatGroups";
+import {
+  getTeacherChatGroupByCourseId,
+  updateTeacherChatGroupByCourseId,
+} from "@/modules/teacher/infrastructure/api/teacherChatGroupsApi";
+import { getSubjectsPage } from "@/modules/admin/infrastructure/api/subjectApi";
+import type { SubjectListItem } from "@/modules/admin/infrastructure/api/subjectApi";
+import {
+  getCountriesDropdown,
+  getEducationLevelsDropdown,
+  getUserManagementGradesDropdown,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
 import { ChatGroupsDashboardSkeleton } from "@/modules/admin/presentation/components/dashboard/ChatGroupsDashboardSkeleton";
 import Earth from "@/modules/admin/presentation/assets/icons/Earth";
 import SearchPerson from "@/modules/admin/presentation/assets/icons/SearchPerson";
@@ -35,7 +43,6 @@ import {
   type DashboardDataTableColumn,
   type DashboardFilterOption,
 } from "@/shared/presentation/components/dashboard";
-import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 const DEFAULT_FILTERS: TeacherChatGroupsFilterState = {
@@ -52,6 +59,13 @@ const attachmentColors: Record<string, string> = {
   img: "bg-amber-100 text-amber-600",
 };
 
+function resolveRowStatusKey(row: ChatGroupRow): "activeNow" | "locked" | "inactive" {
+  const normalized = (row.apiStatus ?? "").trim().toLowerCase();
+  if (row.isLocked || normalized === "locked") return "locked";
+  if (normalized === "activenow" || normalized === "active_now") return "activeNow";
+  return "inactive";
+}
+
 export function TeacherChatGroupsDashboard() {
   const t = useTranslations("teacher.dashboard.chatGroups");
   const locale = useLocale();
@@ -60,15 +74,14 @@ export function TeacherChatGroupsDashboard() {
 
   const [filters, setFilters] = useState<TeacherChatGroupsFilterState>(DEFAULT_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
-  const [deleteTarget, setDeleteTarget] = useState<ChatGroupRow | null>(null);
-  const [subjectOptions] = useState<DashboardFilterOption<string>[]>([
-    { id: "all", label: t("filters.subjects.all") },
-  ]);
-  const [gradeOptions] = useState<DashboardFilterOption<string>[]>([
+  const [gradeOptions, setGradeOptions] = useState<DashboardFilterOption<string>[]>([
     { id: "all", label: t("filters.grades.all") },
   ]);
+  const [subjectOptions, setSubjectOptions] = useState<DashboardFilterOption<string>[]>([
+    { id: "all", label: t("filters.subjects.all") },
+  ]);
 
-  const { stats: statConfig, filters: staticFilters } = chatGroupsDashboardData;
+  const { stats: statConfig, filters: staticFilters } = teacherChatGroupsDashboardData;
   const { rows, page, listQuery, statsQuery, statistics } = useTeacherChatGroups(
     filters,
     currentPage,
@@ -93,6 +106,67 @@ export function TeacherChatGroupsDashboard() {
     }
   }, [listQuery.error, statsQuery.error, t]);
 
+  useEffect(() => {
+    let alive = true;
+
+    const loadFilterOptions = async () => {
+      try {
+        const [subjectsResult, countriesResult] = await Promise.all([
+          getSubjectsPage({ pageNumber: 1, pageSize: 240 }),
+          getCountriesDropdown(),
+        ]);
+        if (!alive) return;
+
+        const subjectRows: SubjectListItem[] = subjectsResult.data?.rows ?? [];
+        const nextSubjectOptions: DashboardFilterOption<string>[] = [
+          { id: "all", label: t("filters.subjects.all") },
+          ...subjectRows.map((subject) => ({
+            id: String(subject.id),
+            label: subject.nameAr || subject.nameEn,
+          })),
+        ];
+
+        const gradeById = new Map<number, string>();
+        const country = countriesResult.data?.[0];
+        if (country) {
+          const levelsResult = await getEducationLevelsDropdown(country.id);
+          if (!alive) return;
+          const levels = levelsResult.data ?? [];
+          const gradeBatches = await Promise.all(
+            levels.map((level) => getUserManagementGradesDropdown(level.id)),
+          );
+          gradeBatches.forEach((batch, index) => {
+            const levelName = levels[index]?.name ?? "";
+            const prefix = levelName.trim() ? `${levelName.trim()} — ` : "";
+            (batch.data ?? []).forEach((grade) => {
+              const gradeId = typeof grade.id === "number" ? grade.id : Number(grade.id);
+              if (!Number.isNaN(gradeId) && !gradeById.has(gradeId)) {
+                gradeById.set(gradeId, `${prefix}${grade.name}`);
+              }
+            });
+          });
+        }
+
+        if (!alive) return;
+        setSubjectOptions(nextSubjectOptions);
+        setGradeOptions([
+          { id: "all", label: t("filters.grades.all") },
+          ...Array.from(gradeById.entries()).map(([id, label]) => ({
+            id: String(id),
+            label,
+          })),
+        ]);
+      } catch {
+        // Keep default "all" options when dropdowns fail.
+      }
+    };
+
+    void loadFilterOptions();
+    return () => {
+      alive = false;
+    };
+  }, [t]);
+
   const statCards = useMemo(
     () =>
       statConfig.map((stat) => ({
@@ -104,14 +178,14 @@ export function TeacherChatGroupsDashboard() {
 
   const invalidateChatQueries = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups-statistics"] }),
+      queryClient.invalidateQueries({ queryKey: ["teacher-chat-groups"] }),
+      queryClient.invalidateQueries({ queryKey: ["teacher-chat-groups-statistics"] }),
     ]);
   }, [queryClient]);
 
   const handleTogglePause = useCallback(
     async (row: ChatGroupRow) => {
-      const detailResult = await getChatGroupByCourseId(row.courseId || row.id);
+      const detailResult = await getTeacherChatGroupByCourseId(row.courseId || row.id);
       if (!detailResult.data) {
         notify.error(detailResult.errorMessage ?? t("table.states.error"));
         return;
@@ -119,7 +193,7 @@ export function TeacherChatGroupsDashboard() {
 
       const form = mapChatGroupDetailToFormValues(detailResult.data);
       const payload = mapChatGroupFormToUpdatePayload({ ...form, isLocked: !row.isLocked });
-      const result = await updateChatGroupByCourseId(row.courseId || row.id, payload);
+      const result = await updateTeacherChatGroupByCourseId(row.courseId || row.id, payload);
 
       if (!result.data) {
         notify.error(result.errorMessage ?? t("table.states.error"));
@@ -131,13 +205,6 @@ export function TeacherChatGroupsDashboard() {
     },
     [invalidateChatQueries, t],
   );
-
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!deleteTarget) return;
-    notify.success(t("delete.success"));
-    setDeleteTarget(null);
-    await invalidateChatQueries();
-  }, [deleteTarget, invalidateChatQueries, t]);
 
   const isLoading = listQuery.isLoading || listQuery.isFetching;
   const isInitialLoading = listQuery.isLoading && !page;
@@ -152,7 +219,10 @@ export function TeacherChatGroupsDashboard() {
         cellClassName: "px-4 py-5",
         renderCell: (row) => (
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 shrink-0 rounded-xl bg-slate-100" />
+            <div
+              className="h-10 w-1.5 shrink-0 rounded-full"
+              style={{ backgroundColor: row.colorIndicator }}
+            />
             <div className="space-y-0.5 text-right">
               <p className="font-semibold text-slate-800">{row.groupName}</p>
               <p className="text-xs text-slate-400">{row.courseSubtitle}</p>
@@ -186,48 +256,30 @@ export function TeacherChatGroupsDashboard() {
         ),
       },
       {
-        id: "attachments",
-        header: t("table.columns.attachments"),
-        headerClassName:
-          "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
-        cellClassName: "px-4 py-5 text-center",
-        renderCell: (row) => (
-          <div className="flex flex-wrap justify-center gap-1">
-            {row.attachments.length > 0 ? (
-              row.attachments.map((att, idx) => (
-                <span
-                  key={`${att.type}-${idx}`}
-                  className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-[10px] font-semibold ${attachmentColors[att.type] ?? "bg-slate-100 text-slate-600"}`}
-                >
-                  {att.type.toUpperCase()}
-                </span>
-              ))
-            ) : (
-              <span className="text-xs text-slate-400">—</span>
-            )}
-          </div>
-        ),
-      },
-      {
         id: "status",
         header: t("table.columns.status"),
         headerClassName:
           "px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-slate-500",
         cellClassName: "px-4 py-5 text-center",
         renderCell: (row) => {
-          const isPaused = row.isLocked;
+          const statusKey = resolveRowStatusKey(row);
+          const statusStyles = {
+            activeNow: "bg-emerald-100 text-emerald-700",
+            locked: "bg-sky-100 text-sky-700",
+            inactive: "bg-slate-100 text-slate-600",
+          } as const;
+          const dotStyles = {
+            activeNow: "animate-pulse bg-emerald-500",
+            locked: "bg-sky-400",
+            inactive: "bg-slate-400",
+          } as const;
+
           return (
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${
-                isPaused ? "bg-sky-100 text-sky-700" : "bg-emerald-100 text-emerald-700"
-              }`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${statusStyles[statusKey]}`}
             >
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  isPaused ? "bg-sky-400" : "animate-pulse bg-emerald-500"
-                }`}
-              />
-              {t(`statuses.${isPaused ? "paused" : "active"}`)}
+              <span className={`h-1.5 w-1.5 rounded-full ${dotStyles[statusKey]}`} />
+              {t(`statuses.${statusKey}`)}
             </span>
           );
         },
@@ -287,14 +339,6 @@ export function TeacherChatGroupsDashboard() {
                 <Play className="h-4 w-4" />
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => setDeleteTarget(row)}
-              title={t("delete.title")}
-              className="rounded-xl p-2.5 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
           </div>
         ),
       },
@@ -327,14 +371,6 @@ export function TeacherChatGroupsDashboard() {
           { label: t("breadcrumbs.home"), href: ROUTES.USER.TEACHER.HOME },
           { label: t("breadcrumbs.chatGroups") },
         ]}
-        action={
-          <Button className="h-12 rounded-2xl bg-[#243B5A] px-6" asChild>
-            <Link href={ROUTES.USER.TEACHER.CHAT_GROUPS.CREATE}>
-              <Plus className="ml-2 h-4 w-4" />
-              {t("table.addButton")}
-            </Link>
-          </Button>
-        }
       />
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -424,17 +460,6 @@ export function TeacherChatGroupsDashboard() {
           />
         )}
       </DashboardTableCard>
-
-      <ChatGroupDeleteModal
-        open={Boolean(deleteTarget)}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        groupName={deleteTarget?.groupName}
-        title={t("delete.title")}
-        description={t("delete.description")}
-        confirmLabel={t("delete.confirm")}
-        cancelLabel={t("delete.cancel")}
-        onConfirm={() => void handleDeleteConfirm()}
-      />
     </section>
   );
 }

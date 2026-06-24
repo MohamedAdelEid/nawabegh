@@ -13,18 +13,20 @@ import {
   type QuestionBankListRow,
   type QuestionBankQuestionDetail,
 } from "@/modules/admin/infrastructure/api/questionBankApi";
-import { STATIC_SUBJECT_OPTIONS } from "@/modules/admin/application/hooks/useQuestionBankPage";
-
 const DEFAULT_PAGE_SIZE = 5;
 const SEARCH_DEBOUNCE_MS = 350;
 const DETAIL_STALE_TIME_MS = 5 * 60 * 1000;
 
-type SubjectFilterId = (typeof STATIC_SUBJECT_OPTIONS)[number]["id"];
+function resolveSubjectId(subject: string): number | undefined {
+  if (subject === "all") return undefined;
+  const subjectId = Number(subject);
+  return Number.isNaN(subjectId) ? undefined : subjectId;
+}
 
 export type QuestionBankInfiniteFilters = {
   status: string;
   difficultyLevel: string;
-  subject: SubjectFilterId;
+  subject: string;
   titleQuery: string;
 };
 
@@ -72,11 +74,7 @@ export function useQuestionBankInfiniteList({
     queryFn: getQuestionBankSummary,
   });
 
-  const subjectId = useMemo(
-    () =>
-      STATIC_SUBJECT_OPTIONS.find((subject) => subject.id === filters.subject)?.subjectId,
-    [filters.subject],
-  );
+  const subjectId = useMemo(() => resolveSubjectId(filters.subject), [filters.subject]);
 
   const listQuery = useInfiniteQuery<QuestionBankApiResult<QuestionBankListPage>>({
     queryKey: [

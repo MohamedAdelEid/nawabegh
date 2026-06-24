@@ -1,7 +1,15 @@
 "use client";
 
-import { TeacherEditChatGroupPage } from "@/modules/teacher/presentation/pages/TeacherEditChatGroupPage";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 export function TeacherChatGroupCreatePage() {
-  return <TeacherEditChatGroupPage courseId="new" mode="create" />;
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace(ROUTES.USER.TEACHER.CHAT_GROUPS.LIST);
+  }, [router]);
+
+  return null;
 }

@@ -16,23 +16,29 @@ export interface TeacherLevelProgress {
 }
 
 export interface TeacherPerformanceChartPoint {
-  dayKey: string;
+  dayLabel: string;
   interactionRate: number;
-  referenceAverage: number;
+  referenceAverage?: number;
+}
+
+export interface TeacherPerformanceChartData {
+  currentWeek: TeacherPerformanceChartPoint[];
+  previousWeek: TeacherPerformanceChartPoint[];
 }
 
 export interface TeacherCourseCard {
   id: string;
-  titleKey: string;
+  title: string;
   durationWeeks: number;
   studentCount: number;
   progressPercent: number;
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
 export interface TeacherLiveClassItem {
   id: string;
-  titleKey: string;
+  title: string;
+  courseTitle?: string;
   timeLabel: string;
   status: "active" | "upcoming";
 }
@@ -40,14 +46,15 @@ export interface TeacherLiveClassItem {
 export interface TeacherPerformanceAlert {
   id: string;
   tone: "danger" | "warning";
-  titleKey: string;
-  descriptionKey: string;
+  title: string;
+  description: string;
 }
 
 export interface TeacherUpcomingSession {
   id: string;
-  titleKey: string;
-  dateLabelKey: string;
+  title: string;
+  courseTitle?: string;
+  dateLabel: string;
   timeLabel: string;
   studentCount: number;
 }
@@ -56,113 +63,153 @@ export interface TeacherInstructorMetric {
   id: string;
   labelKey: string;
   percent: number;
+  value?: string;
   tone: "success" | "warning" | "primary";
 }
 
 export interface TeacherAttendanceChartPoint {
-  dayKey: string;
+  dayLabel: string;
   attendance: number;
   isHighlighted?: boolean;
 }
 
 export interface TeacherAbsentStudent {
   id: string;
-  nameKey: string;
-  lastSeenKey: string;
+  studentId: string;
+  liveSessionId?: string;
+  fullName: string;
+  lastSeenLabel: string;
   avatarInitials: string;
+  profileImageUrl?: string | null;
+  sessionTitle?: string;
+  courseTitle?: string;
 }
 
 export interface TeacherScheduleTopic {
   id: string;
-  titleKey: string;
-  badgeKey: string;
+  title: string;
+  badge: string;
+  liveSessionId?: string;
 }
 
 export interface TeacherFeaturedSession {
   id: string;
-  titleKey: string;
-  levelKey: string;
+  stationId?: string;
+  title: string;
+  level: string;
   status: "live" | "upcoming" | "ready";
   registeredCount: number;
   durationMinutes: number;
   resourceCount: number;
-  statusLabelKey: string;
+  statusLabel: string;
+  canStartBroadcast?: boolean;
+  coverImageUrl?: string | null;
 }
 
 export interface TeacherCalendarDay {
-  dateKey: string;
+  dateUtc: string;
+  dayLabel: string;
   dayNumber: number;
   isToday?: boolean;
   sessions: Array<{
     id: string;
-    titleKey: string;
+    title: string;
     timeLabel: string;
   }>;
 }
 
 export interface TeacherScheduleSessionRow {
   id: string;
-  dateBadgeKey: string;
-  titleKey: string;
-  levelKey: string;
-  instructorKey: string;
+  stationId?: string;
+  dateBadge: string;
+  title: string;
+  level: string;
+  instructor: string;
   timeRangeLabel: string;
   studentCount: number;
   avatarCount: number;
+  canStartBroadcast?: boolean;
 }
+
+export type TeacherLiveSessionStatus = "live" | "upcoming" | "ended" | "recorded";
 
 export interface TeacherLiveSessionRow {
   id: string;
-  titleKey: string;
-  subjectKey: string;
-  lecturerKey: string;
-  dateTimeLabelKey: string;
-  durationKey: string;
-  status: "live" | "upcoming" | "ended";
+  stationId?: string;
+  courseId?: string;
+  title: string;
+  subject: string;
+  lecturer: string;
+  dateTimeLabel: string;
+  durationLabel: string;
+  status: TeacherLiveSessionStatus;
+  attendanceCount?: number;
 }
 
 export interface TeacherSessionTask {
   id: string;
-  labelKey: string;
+  label: string;
   completed: boolean;
 }
 
 export interface TeacherLearningResource {
   id: string;
-  titleKey: string;
-  fileType: "pdf" | "pptx";
+  title: string;
+  fileType: string;
+  mediaKind?: string | null;
   sizeLabel: string;
+  fileUrl?: string;
 }
 
 export interface TeacherRelatedLesson {
   id: string;
-  titleKey: string;
+  title: string;
   status: "watched" | "comingSoon";
   imageUrl: string;
 }
 
 export interface TeacherSessionDetails {
   id: string;
-  titleKey: string;
+  stationId?: string;
+  courseId?: string;
+  title: string;
+  courseTitle?: string;
+  subjectName?: string;
+  gradeName?: string;
   status: "live" | "upcoming" | "ended";
-  instructorKey: string;
+  instructor: string;
   dateLabel: string;
   timeRangeLabel: string;
+  durationLabel?: string;
   attendancePercent: number;
-  overviewKey: string;
+  enrolledCount?: number;
+  attendanceCount?: number;
+  overview: string;
   goals: string[];
   tasks: TeacherSessionTask[];
   resources: TeacherLearningResource[];
   relatedLessons: TeacherRelatedLesson[];
+  canStartBroadcast?: boolean;
+  hostTokenPath?: string;
+  relativeLabel?: string;
+  coverImageUrl?: string | null;
 }
 
 export interface TeacherDashboardData {
   level: TeacherLevelProgress;
   stats: TeacherKpiStat[];
-  performanceChart: TeacherPerformanceChartPoint[];
+  performanceChart: TeacherPerformanceChartData;
   courses: TeacherCourseCard[];
   liveClasses: TeacherLiveClassItem[];
   alerts: TeacherPerformanceAlert[];
+}
+
+export interface TeacherLiveAnalyticsParams {
+  chartPeriod?: "weekly" | "monthly";
+  absentPage?: number;
+  absentPageSize?: number;
+  absentKeyword?: string;
+  absentLiveSessionId?: string;
 }
 
 export interface TeacherLiveAnalyticsData {
@@ -172,19 +219,36 @@ export interface TeacherLiveAnalyticsData {
   tipKey: string;
   attendanceChart: TeacherAttendanceChartPoint[];
   absentStudents: TeacherAbsentStudent[];
-  absentSessionTitleKey: string;
-  absentSessionTimeKey: string;
+  absentSessionTitle: string;
+  absentSessionTime: string;
   totalAbsentCount: number;
+}
+
+export interface TeacherScheduleParams {
+  view?: "weekly" | "monthly";
+  anchorDate?: string;
+  upcomingLimit?: number;
 }
 
 export interface TeacherScheduleData {
   completedSessions: number;
   plannedSessions: number;
-  performanceMessageKey: string;
+  completionPercent: number;
+  performanceMessage: string;
   topics: TeacherScheduleTopic[];
   featuredSession: TeacherFeaturedSession;
   calendarDays: TeacherCalendarDay[];
   sessions: TeacherScheduleSessionRow[];
+  rangeStart?: string;
+  rangeEnd?: string;
+}
+
+export interface TeacherLiveSessionsListParams {
+  keyword?: string;
+  subject?: string;
+  status?: "all" | TeacherLiveSessionStatus;
+  page?: number;
+  pageSize?: number;
 }
 
 export interface TeacherLiveSessionsData {
@@ -206,7 +270,7 @@ export interface TeacherProfileData {
 }
 
 export type TeacherCourseAccessType = "free" | "paid" | "subscription" | "unspecified";
-export type TeacherCourseStatus = "draft" | "pending" | "approved" | "rejected";
+export type TeacherCourseStatus = "draft" | "pending" | "approved" | "rejected" | "archived";
 
 export interface TeacherCourseListRow {
   id: string;
@@ -218,12 +282,21 @@ export interface TeacherCourseListRow {
   coverTone: "blue" | "green" | "gold" | "slate";
   coverLabel: string;
   coverImageUrl?: string | null;
+  studentCount?: number;
+  learningPathCount?: number;
+  stationCount?: number;
+  fileCount?: number;
+  price?: number;
+  originalPrice?: number;
+  isPublished?: boolean;
+  term?: number;
 }
 
 export interface TeacherCoursesListParams {
   query?: string;
   gradeId?: string;
   subjectId?: string;
+  subjectName?: string;
   status?: TeacherCourseStatus | "all";
   page?: number;
   pageSize?: number;
@@ -239,45 +312,61 @@ export interface TeacherCoursesListData {
     pageSize: number;
   };
   filterOptions: {
-    grades: Array<{ id: string; labelKey: string }>;
-    subjects: Array<{ id: string; labelKey: string }>;
+    grades: Array<{ id: string; labelKey?: string; label?: string }>;
+    subjects: Array<{ id: string; labelKey?: string; label?: string }>;
     statuses: Array<{ id: TeacherCourseStatus | "all"; labelKey: string }>;
   };
 }
 
 export interface TeacherCourseCurriculumItem {
   id: string;
-  titleKey: string;
+  title: string;
   type: "video" | "quiz" | "pdf" | "locked";
-  metaKey: string;
-  subMetaKey?: string;
+  metaLabel: string;
+  order: number;
   locked?: boolean;
 }
 
 export interface TeacherCourseCurriculumUnit {
   id: string;
-  titleKey: string;
+  title: string;
   items: TeacherCourseCurriculumItem[];
+  order: number;
+  status?: TeacherCourseStatus;
 }
 
 export interface TeacherCourseDetail {
   id: string;
-  titleKey: string;
-  subjectKey: string;
-  termKey: string;
-  gradeKey: string;
+  title: string;
+  description?: string | null;
+  subject: string;
+  subjectNameEn?: string;
+  term: number;
+  termLabel: string;
+  grade: string;
+  gradeId: number;
   status: TeacherCourseStatus;
-  instructorNameKey: string;
-  instructorAvatarUrl?: string;
-  coverImageUrl?: string;
-  subjectLabelKey: string;
-  gradeLabelKey: string;
+  instructorName: string;
+  instructorAvatarUrl?: string | null;
+  coverImageUrl?: string | null;
   lessonCount: number;
+  learningPathCount: number;
+  stationCount: number;
+  fileCount: number;
   priceLabel: string;
+  originalPrice?: number;
+  discountedPrice?: number;
+  accessType: TeacherCourseAccessType;
   registeredStudents: number;
-  totalRevenueLabel: string;
-  completionRate: number;
   curriculum: TeacherCourseCurriculumUnit[];
+  canEditContent: boolean;
+  canSendForReview: boolean;
+  isPublished: boolean;
+  rejectionNotes?: string | null;
+  draftPathCount?: number;
+  pendingPathCount?: number;
+  approvedPathCount?: number;
+  rejectedPathCount?: number;
 }
 
 export interface TeacherCourseStationPerformance {
@@ -288,7 +377,7 @@ export interface TeacherCourseStationPerformance {
 }
 
 export interface TeacherCourseWeeklyInteractionPoint {
-  dayKey: string;
+  dayLabel: string;
   interaction: number;
   reference: number;
 }
@@ -310,71 +399,79 @@ export interface TeacherCourseStudentProgressRow {
 }
 
 export interface TeacherCourseWeeklyPerformancePoint {
-  weekKey: string;
-  lessonCompletion: number;
-  testResults: number;
+  weekLabel: string;
+  weekStart?: string;
+  currentValue: number;
+  previousValue: number;
 }
 
-export interface TeacherCourseHighlightCard {
+export interface TeacherStationInsight {
+  stationId: string;
+  learningPathTitle: string;
+  stationName: string;
+  metricPercent: number;
+  metricType: string;
+  descriptionAr: string;
+}
+
+export interface TeacherInteractionBoost {
+  titleAr: string;
+  descriptionAr: string;
+  actionLabelAr: string;
+  suggestionType: string;
+}
+
+export interface TeacherCourseStatisticsHeader {
+  courseId: string;
+  title: string;
+  subjectNameAr: string;
+  gradeNameAr: string;
+  coverImageUrl?: string | null;
+  enrolledStudentCount: number;
+  learningPathCount: number;
+  averageCompletionPercent: number;
+}
+
+export interface TeacherCourseUpcomingLiveSession {
   id: string;
-  tone: "warning" | "danger";
-  titleKey: string;
-  descriptionKey: string;
-  actionKey: string;
+  title: string;
+  scheduledAtUtc: string;
+  relativeLabelAr: string;
 }
 
 export interface TeacherInteractiveStudent {
   id: string;
-  nameKey: string;
-  avatarInitials: string;
+  name: string;
+  profileImageUrl?: string | null;
   interactionPoints: number;
-  level: number;
-}
-
-export interface TeacherCourseUpcomingSessionCard {
-  id: string;
-  dateLabel: string;
-  titleKey: string;
-  timeLabel: string;
-  registeredCount: number;
 }
 
 export interface TeacherCourseStatisticsData {
   courseId: string;
-  titleKey: string;
-  subtitleMeta?: {
-    students: number;
-    learningPaths: number;
-    avgPerformance: string;
-  };
+  header: TeacherCourseStatisticsHeader;
   stats: TeacherKpiStat[];
-  weeklyInteraction: TeacherCourseWeeklyInteractionPoint[];
-  weeklyPerformance?: TeacherCourseWeeklyPerformancePoint[];
-  stationPerformance: TeacherCourseStationPerformance[];
-  highlightCards?: TeacherCourseHighlightCard[];
-  topStudents?: TeacherInteractiveStudent[];
-  upcomingSessions?: TeacherCourseUpcomingSessionCard[];
-  interactionTipKey?: string;
-  insightKey: string;
-  journeyStations: TeacherCourseJourneyStation[];
-  studentProgress: TeacherCourseStudentProgressRow[];
-  chatMessagesToday: number;
-  chatTags: string[];
-  aiPredictionKey: string;
+  performanceChart: TeacherCourseWeeklyPerformancePoint[];
+  topInteractingStudents: TeacherInteractiveStudent[];
+  upcomingLiveSessions: TeacherCourseUpcomingLiveSession[];
+  highestAchievement?: TeacherStationInsight | null;
+  hardestLesson?: TeacherStationInsight | null;
+  interactionBoost?: TeacherInteractionBoost | null;
 }
 
-export type TeacherChatMessageType = "text" | "file" | "voice" | "reply";
+export type TeacherChatMessageType = "text" | "file" | "voice" | "reply" | "image";
 
 export interface TeacherChatReaction {
   emoji: string;
   count: number;
+  reactedByCurrentUser?: boolean;
 }
 
 export interface TeacherChatMessageSender {
   id: string;
-  nameKey: string;
+  name: string;
   role: "teacher" | "student";
   avatarInitials: string;
+  profileImageUrl?: string | null;
 }
 
 export interface TeacherChatMessage {
@@ -383,28 +480,38 @@ export interface TeacherChatMessage {
   type: TeacherChatMessageType;
   content?: string;
   timestamp: string;
+  dateGroupLabel?: string;
   read?: boolean;
   fileName?: string;
   fileSize?: string;
+  fileUrl?: string | null;
   voiceDuration?: string;
   replyTo?: {
-    senderNameKey: string;
+    senderName: string;
     content: string;
   };
   reactions?: TeacherChatReaction[];
+  isPinned?: boolean;
 }
 
 export interface TeacherChatDateGroup {
-  dateKey: string;
+  dateLabel: string;
   messages: TeacherChatMessage[];
 }
 
 export interface TeacherChatConversationData {
   courseId: string;
-  titleKey: string;
-  statusKey: string;
-  lastSeenKey: string;
+  title: string;
+  subjectName: string;
+  isLocked: boolean;
+  isTeachersOnly: boolean;
   isActive: boolean;
+  isMuted: boolean;
+  isPinnedInList: boolean;
+  allowImages: boolean;
+  allowDocuments: boolean;
+  allowWebLinks: boolean;
+  allowParentView: boolean;
   dateGroups: TeacherChatDateGroup[];
 }
 
@@ -412,13 +519,14 @@ export type TeacherChatParticipantStatus = "online" | "offline" | "typing" | "aw
 
 export interface TeacherChatParticipant {
   id: string;
-  nameKey: string;
+  name: string;
   role: "teacher" | "student";
   avatarInitials: string;
+  profileImageUrl?: string | null;
   status: TeacherChatParticipantStatus;
-  lastSeenKey?: string;
   isMuted?: boolean;
   isCurrentUser?: boolean;
+  isGroupAdmin?: boolean;
 }
 
 export interface TeacherChatSharedFile {
@@ -427,6 +535,7 @@ export interface TeacherChatSharedFile {
   type: "pdf" | "doc" | "img";
   sizeLabel: string;
   dateLabel: string;
+  url?: string | null;
 }
 
 export interface TeacherChatGroupSettings {
@@ -437,9 +546,9 @@ export interface TeacherChatGroupSettings {
 
 export interface TeacherChatMembersData {
   courseId: string;
-  titleKey: string;
-  descriptionKey: string;
-  createdAtKey: string;
+  title: string;
+  description: string;
+  createdAtLabel: string;
   imageUrl?: string;
   participants: TeacherChatParticipant[];
   totalParticipants: number;
@@ -453,15 +562,19 @@ export interface TeacherChatMembersData {
 export interface TeacherCoursesStatisticsAlert {
   id: string;
   tone: "danger" | "warning" | "neutral";
-  titleKey: string;
-  descriptionKey: string;
+  title: string;
+  description: string;
+  count?: number | null;
 }
 
 export interface TeacherCoursePerformanceCard {
   id: string;
-  titleKey: string;
+  title: string;
+  subjectName?: string;
+  gradeName?: string;
+  coverImageUrl?: string | null;
   studentCount: number;
-  statusKey: string;
+  statusLabel: string;
   statusTone: "success" | "warning" | "neutral";
   achievementPercent: number;
   achievementTone: "primary" | "warning" | "success";
@@ -475,6 +588,11 @@ export interface TeacherCoursesStatisticsOverviewData {
   alerts: TeacherCoursesStatisticsAlert[];
   weeklyActivity: TeacherCourseWeeklyInteractionPoint[];
   coursePerformance: TeacherCoursePerformanceCard[];
+  filters?: {
+    periodDays: number;
+    subjectId?: number | null;
+    gradeId?: number | null;
+  };
 }
 
 export type TeacherCoursePricingType = "free" | "oneTime" | "monthly";

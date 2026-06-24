@@ -24,15 +24,21 @@ export function TeacherAttendanceBarChart({
   rows,
   weeklyLabel,
   monthlyLabel,
+  period = "weekly",
+  onPeriodChange,
+  isLoading = false,
 }: {
   title: string;
   subtitle: string;
   rows: TeacherAttendanceChartPoint[];
   weeklyLabel: string;
   monthlyLabel: string;
+  period?: Period;
+  onPeriodChange?: (period: Period) => void;
+  isLoading?: boolean;
 }) {
   const data = rows.map((row) => ({
-    label: row.dayKey,
+    label: row.dayLabel,
     attendance: row.attendance,
     isHighlighted: row.isHighlighted,
   }));
@@ -50,27 +56,33 @@ export function TeacherAttendanceBarChart({
               { id: "weekly", label: weeklyLabel },
               { id: "monthly", label: monthlyLabel },
             ]}
-            value="weekly"
-            onChange={() => {}}
+            value={period}
+            onChange={(value) => onPeriodChange?.(value)}
           />
         </div>
 
-        <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
-          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} />
-            <YAxis tickLine={false} axisLine={false} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="attendance" radius={[12, 12, 12, 12]} maxBarSize={48}>
-              {data.map((entry) => (
-                <Cell
-                  key={entry.label}
-                  fill={entry.isHighlighted ? "#C9A227" : "#2C4260"}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ChartContainer>
+        {isLoading ? (
+          <div className="flex h-72 items-center justify-center text-sm text-slate-400">…</div>
+        ) : data.length === 0 ? (
+          <div className="flex h-72 items-center justify-center text-sm text-slate-400">—</div>
+        ) : (
+          <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
+            <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="label" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar dataKey="attendance" radius={[12, 12, 12, 12]} maxBarSize={48}>
+                {data.map((entry) => (
+                  <Cell
+                    key={entry.label}
+                    fill={entry.isHighlighted ? "#C9A227" : "#2C4260"}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

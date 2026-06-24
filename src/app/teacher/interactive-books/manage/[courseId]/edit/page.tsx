@@ -1,4 +1,4 @@
-import { AdminInteractiveBookManagePage } from "@/modules/admin/presentation/pages/AdminInteractiveBookManagePage";
+import { TeacherInteractiveBookManagePage } from "@/modules/teacher/presentation/pages/TeacherInteractiveBookManagePage";
 
 export default async function Page({
   params,
@@ -6,5 +6,5 @@ export default async function Page({
   params: Promise<{ courseId: string }>;
 }) {
   const { courseId } = await params;
-  return <AdminInteractiveBookManagePage editCourseId={courseId} />;
+  return <TeacherInteractiveBookManagePage editCourseId={courseId} />;
 }

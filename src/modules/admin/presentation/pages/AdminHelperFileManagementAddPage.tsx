@@ -8,6 +8,7 @@ import {
   createResourceFile,
   getResourceFileCoursesDropdown,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
+import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
@@ -21,7 +22,7 @@ import {
   type SearchableSelectOption,
 } from "@/shared/presentation/components/ui/searchable-select";
 
-const RESOURCE_FILE_UPLOAD_FOLDER = "resource-files";
+const RESOURCE_FILE_UPLOAD_FOLDER = "courses";
 
 interface AdminHelperFileManagementAddPageProps {
   stationContext?: {
@@ -42,6 +43,7 @@ export function AdminHelperFileManagementAddPage({
   const t = useTranslations("admin.dashboard.contentManagement");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
   const fileInputRef = useRef<HTMLInputElement>(null);
   const routeConfig = routes.helperFileManagement;
 
@@ -62,27 +64,41 @@ export function AdminHelperFileManagementAddPage({
     let alive = true;
     const load = async () => {
       setLoading(true);
-      const coursesResult = await getResourceFileCoursesDropdown();
-      if (!alive) return;
-
-      if (coursesResult.errorMessage) {
-        notify.error(coursesResult.errorMessage);
-      } else if (coursesResult.data) {
-        setCourseOptions(
-          coursesResult.data.map((course) => ({
-            value: course.id,
-            label: course.courseName,
-          })),
-        );
+      try {
+        if (isTeacherScope) {
+          const courses = await fetchTeacherMyCoursesOptions({ pageSize: 100 });
+          if (!alive) return;
+          setCourseOptions(
+            courses.map((course) => ({
+              value: course.courseId,
+              label: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+            })),
+          );
+        } else {
+          const coursesResult = await getResourceFileCoursesDropdown();
+          if (!alive) return;
+          if (coursesResult.errorMessage) {
+            notify.error(coursesResult.errorMessage);
+          } else if (coursesResult.data) {
+            setCourseOptions(
+              coursesResult.data.map((course) => ({
+                value: course.id,
+                label: course.courseName,
+              })),
+            );
+          }
+        }
+      } catch (error) {
+        notify.error(error instanceof Error ? error.message : t("page.loadError"));
+      } finally {
+        if (alive) setLoading(false);
       }
-
-      setLoading(false);
     };
     void load();
     return () => {
       alive = false;
     };
-  }, []);
+  }, [isTeacherScope, t]);
 
   const courseSelectOptions = useMemo<SearchableSelectOption<string>[]>(
     () => courseOptions,

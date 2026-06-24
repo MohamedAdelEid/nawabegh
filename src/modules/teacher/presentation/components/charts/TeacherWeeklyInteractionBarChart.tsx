@@ -18,11 +18,13 @@ const chartConfig = {
 export function TeacherWeeklyInteractionBarChart({
   title,
   legendLabel,
+  previousLegendLabel,
   rows,
 }: {
   title: string;
   legendLabel: string;
-  rows: Array<TeacherCourseWeeklyInteractionPoint & { dayLabel: string }>;
+  previousLegendLabel?: string;
+  rows: TeacherCourseWeeklyInteractionPoint[];
 }) {
   const data = rows.map((row) => ({
     day: row.dayLabel,
@@ -35,9 +37,17 @@ export function TeacherWeeklyInteractionBarChart({
       <CardContent className="space-y-6 p-6">
         <div className="flex items-center justify-between gap-4">
           <h2 className="text-xl font-bold text-slate-800">{title}</h2>
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#2C4260]" />
-            {legendLabel}
+          <div className="flex items-center gap-4 text-xs text-slate-500">
+            <span className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#2C4260]" />
+              {legendLabel}
+            </span>
+            {previousLegendLabel ? (
+              <span className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#e2e8f0]" />
+                {previousLegendLabel}
+              </span>
+            ) : null}
           </div>
         </div>
 

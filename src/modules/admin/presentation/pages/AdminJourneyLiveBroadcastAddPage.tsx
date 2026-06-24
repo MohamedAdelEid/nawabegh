@@ -332,7 +332,7 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
                   type="button"
                   onClick={() => setActiveStep(step)}
                   className={cn(
-                    "flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200",
+                    "flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition-all duration-200",
                     isActive
                       ? "bg-[#2C4260] text-white shadow-sm"
                       : isDone
@@ -364,15 +364,15 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
               <CardContent className="space-y-5 p-5">
                 {/* Section header */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400">
-                    {stepIndex + 1} / {STEPS.length}
-                  </span>
                   <div className="flex items-center gap-2">
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#EEF2FB] text-[#2C4260]">
                       <Video className="h-4 w-4" />
                     </div>
                     <h2 className="font-bold text-slate-800">{t("sections.basicInfo")}</h2>
                   </div>
+                  <span className="text-xs font-semibold text-slate-400">
+                    {stepIndex + 1} / {STEPS.length}
+                  </span>
                 </div>
 
                 <LabeledInput
@@ -445,15 +445,15 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
             <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
               <CardContent className="space-y-5 p-5">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400">
-                    {stepIndex + 1} / {STEPS.length}
-                  </span>
                   <h2 className="flex items-center gap-2 font-bold text-slate-800">
                     <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#EEF2FB] text-[#2C4260]">
                       <Clock className="h-4 w-4" />
                     </div>
                     {t("sections.broadcastDetails")}
                   </h2>
+                  <span className="text-xs font-semibold text-slate-400">
+                    {stepIndex + 1} / {STEPS.length}
+                  </span>
                 </div>
 
                 {/* Presenter */}
@@ -529,15 +529,15 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
               <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">
                 <CardContent className="space-y-5 p-5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-slate-400">
-                      {stepIndex + 1} / {STEPS.length}
-                    </span>
                     <h2 className="flex items-center gap-2 font-bold text-slate-800">
                       <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
                         <FileUp className="h-4 w-4" />
                       </div>
                       {t("sections.educationalContent")}
                     </h2>
+                    <span className="text-xs font-semibold text-slate-400">
+                      {stepIndex + 1} / {STEPS.length}
+                    </span>
                   </div>
 
                   {/* Learning objectives */}

@@ -12,21 +12,18 @@ import {
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 350;
 
-export const STATIC_SUBJECT_OPTIONS = [
-  { id: "all", translationKey: "questionBank.filters.subject.all", subjectId: undefined },
-  { id: "arabic", translationKey: "questionBank.filters.subject.arabic", subjectId: 1 },
-  { id: "math", translationKey: "questionBank.filters.subject.math", subjectId: 3 },
-  { id: "science", translationKey: "questionBank.filters.subject.science", subjectId: 2 },
-] as const;
-
-type SubjectFilterId = (typeof STATIC_SUBJECT_OPTIONS)[number]["id"];
-
 type QuestionBankFilters = {
   status: string;
   difficultyLevel: string;
-  subject: SubjectFilterId;
+  subject: string;
   titleQuery: string;
 };
+
+function resolveSubjectId(subject: string): number | undefined {
+  if (subject === "all") return undefined;
+  const subjectId = Number(subject);
+  return Number.isNaN(subjectId) ? undefined : subjectId;
+}
 
 const INITIAL_FILTERS: QuestionBankFilters = {
   status: "all",
@@ -87,22 +84,20 @@ export function useQuestionBankPage() {
       pageNumber,
       DEFAULT_PAGE_SIZE,
     ],
-    queryFn: () =>
-      getQuestionBankPage({
+    queryFn: () => {
+      const subjectId = resolveSubjectId(filters.subject);
+
+      return getQuestionBankPage({
         keyword: debouncedSearch || undefined,
         pageNumber,
         pageSize: DEFAULT_PAGE_SIZE,
-        ...(filters.subject !== "all"
-          ? {
-              subjectId:
-                STATIC_SUBJECT_OPTIONS.find((subject) => subject.id === filters.subject)?.subjectId,
-            }
-          : {}),
+        ...(subjectId !== undefined ? { subjectId } : {}),
         ...(filters.difficultyLevel !== "all"
           ? { difficulty: Number(filters.difficultyLevel) }
           : {}),
         ...(filters.status !== "all" ? { status: Number(filters.status) } : {}),
-      }),
+      });
+    },
     placeholderData: (previousData) => previousData,
   });
 

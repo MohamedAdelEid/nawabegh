@@ -10,7 +10,6 @@ import {
   ChatGroupMediaToggles,
   ChatGroupSendPermissionSelector,
 } from "@/modules/admin/presentation/components/chat-groups";
-import { defaultChatGroupFormValues } from "@/modules/admin/domain/data/chatGroupFormData";
 import {
   mapChatGroupDetailToFormValues,
   mapChatGroupFormToUpdatePayload,
@@ -21,13 +20,11 @@ import type {
   ChatGroupMediaPermissions,
 } from "@/modules/admin/domain/types/chatGroups.types";
 import {
-  getChatGroupByCourseId,
-  updateChatGroupByCourseId,
-} from "@/modules/admin/infrastructure/api/chatGroupsApi";
+  getTeacherChatGroupByCourseId,
+  updateTeacherChatGroupByCourseId,
+} from "@/modules/teacher/infrastructure/api/teacherChatGroupsApi";
 import { SettingStar } from "@/modules/admin/presentation/assets/icons/SettingStar";
 import { EditList } from "@/modules/admin/presentation/assets/icons/EditList";
-import Relational from "@/modules/admin/presentation/assets/icons/relational.svg";
-import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -37,31 +34,22 @@ import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 
 interface TeacherEditChatGroupPageProps {
   courseId: string;
-  mode?: "edit" | "create";
 }
 
-export function TeacherEditChatGroupPage({
-  courseId,
-  mode = "edit",
-}: TeacherEditChatGroupPageProps) {
+export function TeacherEditChatGroupPage({ courseId }: TeacherEditChatGroupPageProps) {
   const t = useTranslations("teacher.dashboard.chatGroups.editPage");
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">(
-    mode === "create" ? "ready" : "loading",
-  );
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const [isSaving, setIsSaving] = useState(false);
-  const [form, setForm] = useState<ChatGroupFormValues | null>(
-    mode === "create" ? { ...defaultChatGroupFormValues } : null,
-  );
+  const [form, setForm] = useState<ChatGroupFormValues | null>(null);
+  const [studentsCount, setStudentsCount] = useState<number | null>(null);
 
   useEffect(() => {
-    if (mode === "create") return;
-
     let alive = true;
     const load = async () => {
       setLoadState("loading");
-      const result = await getChatGroupByCourseId(courseId);
+      const result = await getTeacherChatGroupByCourseId(courseId);
       if (!alive) return;
 
       if (!result.data) {
@@ -71,6 +59,7 @@ export function TeacherEditChatGroupPage({
       }
 
       setForm(mapChatGroupDetailToFormValues(result.data));
+      setStudentsCount(result.data.studentsCount);
       setLoadState("ready");
     };
 
@@ -78,7 +67,7 @@ export function TeacherEditChatGroupPage({
     return () => {
       alive = false;
     };
-  }, [courseId, mode, t]);
+  }, [courseId, t]);
 
   const handleFieldChange = useCallback(
     <K extends keyof ChatGroupFormValues>(field: K, value: ChatGroupFormValues[K]) => {
@@ -94,22 +83,10 @@ export function TeacherEditChatGroupPage({
   const handleSave = async () => {
     if (!form) return;
 
-    const displayName = form.groupName.trim();
-    if (!displayName) {
-      notify.error(t("states.nameRequired"));
-      return;
-    }
-
-    if (mode === "create") {
-      notify.success(t("states.createPending"));
-      router.push(ROUTES.USER.TEACHER.CHAT_GROUPS.LIST);
-      return;
-    }
-
     setIsSaving(true);
-    const result = await updateChatGroupByCourseId(
+    const result = await updateTeacherChatGroupByCourseId(
       courseId,
-      mapChatGroupFormToUpdatePayload({ ...form, groupName: displayName }),
+      mapChatGroupFormToUpdatePayload(form),
     );
     setIsSaving(false);
 
@@ -120,8 +97,8 @@ export function TeacherEditChatGroupPage({
 
     notify.success(result.message ?? t("states.saveSuccess"));
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups"] }),
-      queryClient.invalidateQueries({ queryKey: ["admin-chat-groups-statistics"] }),
+      queryClient.invalidateQueries({ queryKey: ["teacher-chat-groups"] }),
+      queryClient.invalidateQueries({ queryKey: ["teacher-chat-groups-statistics"] }),
     ]);
     router.push(ROUTES.USER.TEACHER.CHAT_GROUPS.LIST);
   };
@@ -146,12 +123,12 @@ export function TeacherEditChatGroupPage({
   return (
     <section className="space-y-8">
       <DashboardPageHeader
-        title={mode === "create" ? t("titleCreate") : t("titleWithName", { name: form.groupName })}
-        description={mode === "create" ? t("descriptionCreate") : t("descriptionEdit")}
+        title={t("titleWithName", { name: form.groupName })}
+        description={t("descriptionEdit")}
         breadcrumbs={[
           { label: t("breadcrumbs.home"), href: ROUTES.USER.TEACHER.HOME },
           { label: t("breadcrumbs.chatGroups"), href: ROUTES.USER.TEACHER.CHAT_GROUPS.LIST },
-          { label: mode === "create" ? t("breadcrumbs.create") : t("breadcrumbs.edit") },
+          { label: t("breadcrumbs.edit") },
         ]}
         action={
           <div className="flex items-center gap-4">
@@ -199,16 +176,13 @@ export function TeacherEditChatGroupPage({
               readOnly
               onChange={() => undefined}
             />
-            <div className="space-y-2 text-right">
-              <label className="text-sm text-[#64748B]">{t("fields.description.label")}</label>
-              <textarea
-                value={form.description}
-                placeholder={t("fields.description.placeholder")}
-                onChange={(event) => handleFieldChange("description", event.target.value)}
-                rows={4}
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-[#243B5A]"
-              />
-            </div>
+            <LabeledInput
+              label={t("fields.studentsCount.label")}
+              value={studentsCount !== null ? String(studentsCount) : "—"}
+              placeholder="—"
+              readOnly
+              onChange={() => undefined}
+            />
           </div>
         </ChatGroupFormSectionCard>
 

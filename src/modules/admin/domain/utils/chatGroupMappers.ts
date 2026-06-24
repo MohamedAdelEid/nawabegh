@@ -82,6 +82,7 @@ export function mapChatGroupListItemToRow(
     attachments: mapAttachments(item),
     allowParentView: item.allowParentView,
     statusId: mapStatus(item.status, item.isLocked),
+    apiStatus: item.status,
     isLocked: item.isLocked,
     lastActivityKey: "",
     lastActivityDisplay,

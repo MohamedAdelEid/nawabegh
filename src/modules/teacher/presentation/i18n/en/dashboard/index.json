@@ -36,11 +36,12 @@
         "courses": "My courses",
         "chatGroups": "Chat groups",
         "courseStatistics": "Course statistics",
-        "liveAnalytics": "Live broadcast stats",
+        "liveSessions": "Live sessions",
         "schedule": "Schedule",
         "interactiveBooks": "Interactive book management",
         "journeyEditor": "Journey editor",
         "helperFileManagement": "Help file management",
+        "knowledgeCommunity": "Knowledge community",
         "helper": "Help",
         "settings": "Settings",
         "logout": "Log out"
@@ -49,11 +50,69 @@
     "settingsPage": {
       "title": "Account settings",
       "description": "Manage your teacher account details.",
-      "mockNotice": "Temporary credentials until the account is provisioned by the server.",
+      "sections": {
+        "personal": "Personal & professional information",
+        "contact": "Contact information",
+        "security": "Account security"
+      },
+      "profile": {
+        "students": "Students",
+        "courses": "Courses",
+        "completion": "Profile completion",
+        "changePhoto": "Change photo"
+      },
+      "weeklyActivity": {
+        "recent": "Recent activity",
+        "title": "Student performance this week",
+        "attendanceUp": "Attendance rate increased by {percent}%",
+        "attendanceDown": "Attendance rate decreased by {percent}%",
+        "activeStudents": "{count} active students this week",
+        "empty": "No activity data for this week"
+      },
       "fields": {
-        "name": "Name",
+        "fullName": "Full name",
+        "schoolName": "Educational institution",
+        "jobTitle": "Job title",
+        "about": "Bio",
+        "phoneNumber": "Phone number",
+        "phoneCountryCode": "Country code",
         "email": "Email",
-        "password": "Password"
+        "country": "Country",
+        "countryCity": "Country / city",
+        "city": "City",
+        "address": "Detailed address",
+        "password": "Password",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password"
+      },
+      "placeholders": {
+        "fullName": "Enter full name",
+        "schoolName": "Enter educational institution",
+        "jobTitle": "Enter job title",
+        "about": "Write a short bio",
+        "phoneNumber": "Enter phone number",
+        "phoneCountryCode": "e.g. 20",
+        "city": "Enter city",
+        "address": "Enter detailed address",
+        "currentPassword": "Enter current password",
+        "newPassword": "Enter new password",
+        "confirmPassword": "Re-enter new password"
+      },
+      "actions": {
+        "edit": "Edit profile",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "changePassword": "Change",
+        "retry": "Retry"
+      },
+      "security": {
+        "defaultHint": "Use a strong password with at least 8 characters, mixing upper and lower case letters, numbers, and symbols."
+      },
+      "messages": {
+        "saveSuccess": "Account settings saved successfully",
+        "saveError": "Could not save account settings"
       }
     },
     "home": {
@@ -88,6 +147,7 @@
         "weeks": "{count} weeks",
         "students": "{count} students",
         "enterTrack": "Enter track",
+        "empty": "No managed courses yet.",
         "physics": "Physics: Advanced Quantum Mechanics",
         "biochem": "Principles of Biochemistry"
       },
@@ -96,11 +156,13 @@
         "activeNow": "Active now",
         "enter": "Enter",
         "remindMe": "Remind me",
+        "empty": "No live sessions scheduled for today.",
         "physicsNuclear": "Physics: Nuclear Energy",
         "chemistryReview": "Chemistry: Element Review"
       },
       "alerts": {
         "title": "Performance alerts",
+        "empty": "No performance alerts right now.",
         "intervention": {
           "title": "Students needing intervention",
           "description": "Interaction dropped 30% in Chemistry"
@@ -116,11 +178,23 @@
         "cta": "Talk to us now"
       }
     },
+    "liveSessionsHub": {
+      "title": "Live sessions",
+      "description": "Performance analytics and live session management in one place",
+      "tabs": {
+        "analytics": "Analytics",
+        "manage": "Manage sessions"
+      },
+      "actions": {
+        "schedule": "Schedule",
+        "journeyEditor": "Journey editor"
+      }
+    },
     "liveAnalytics": {
       "title": "Live session analytics",
       "description": "Track student performance and interaction during live sessions",
       "actions": {
-        "startSession": "Start a new session",
+        "manageSessions": "Manage live sessions",
         "exportReport": "Export report"
       },
       "stats": {
@@ -133,6 +207,7 @@
       "upcoming": {
         "title": "Upcoming sessions",
         "manageSchedule": "Manage schedule",
+        "empty": "No upcoming sessions.",
         "today": "Today",
         "tomorrow": "Tomorrow",
         "students": "{count} students",
@@ -143,7 +218,9 @@
         "title": "Instructor performance",
         "attendance": "Attendance rate",
         "absence": "Absence rate",
-        "newStudents": "New student attendance"
+        "newStudents": "New student attendance",
+        "sessionsTaught": "Sessions taught",
+        "totalAttended": "Total attended students"
       },
       "tip": {
         "title": "Teaching tip",
@@ -166,9 +243,15 @@
       },
       "absent": {
         "title": "Absent students",
+        "pageTitle": "Absent students list",
+        "pageDescription": "Track students who missed ended live sessions",
+        "search": "Search by name or session...",
+        "empty": "No absent students found.",
         "alertAll": "Alert all",
         "sendReminder": "Send reminder",
         "viewAll": "View all absent students ({count})",
+        "backToAnalytics": "Back to analytics",
+        "pagination": "Showing {from}-{to} of {total} students",
         "sessionTitle": "Quantum Physics: Part 3",
         "sessionTime": "Today, 2:00 PM",
         "lastSeen": {
@@ -198,6 +281,7 @@
       },
       "topics": {
         "title": "Upcoming important topics",
+        "empty": "No upcoming topics.",
         "clinical": "Clinical Safety Protocols",
         "dataStructures": "Introduction to Data Structures",
         "badges": {
@@ -207,6 +291,7 @@
       },
       "featured": {
         "liveNow": "Live now",
+        "viewDetails": "View details",
         "title": "Artificial Intelligence in Modern Medicine",
         "level": "Medicine - Level 4",
         "registered": "Registered",
@@ -222,6 +307,10 @@
       },
       "calendar": {
         "title": "Weekly schedule",
+        "titleMonthly": "Monthly schedule",
+        "rangeTitle": "{start} – {end}",
+        "previousPeriod": "Previous period",
+        "nextPeriod": "Next period",
         "noSessions": "No sessions",
         "days": {
           "saturday": "Saturday",
@@ -243,6 +332,7 @@
       },
       "sessions": {
         "title": "Sessions list",
+        "empty": "No sessions in this period.",
         "viewAll": "View all sessions",
         "viewLiveSessions": "Manage live sessions",
         "edit": "Edit",
@@ -257,6 +347,409 @@
         }
       }
     },
+    "journeyEditor": {
+      "page": {
+        "title": "Journey editor",
+        "description": "Select a course to organize learning paths and educational stations.",
+        "searchPlaceholder": "Search courses…",
+        "searchLabel": "Search",
+        "loadError": "Could not load courses. Please try again.",
+        "emptyTitle": "No courses yet",
+        "emptyDescription": "Create a course first, then return here to build its learning journey.",
+        "emptyHint": "Courses appear after they are created in My courses",
+        "courseCount": "{count, plural, one {# course} other {# courses}}"
+      },
+      "dashboard": {
+        "readyBadge": "{percent}% ready",
+        "paths": "{count, plural, one {# path} other {# paths}}",
+        "stations": "{count, plural, one {# station} other {# stations}}",
+        "students": "{count, plural, one {# student} other {# students}}",
+        "openEditor": "Open editor",
+        "loading": "Loading courses…"
+      }
+    },
+    "interactiveBooks": {
+      "page": {
+        "title": "Interactive book management",
+        "description": "Manage interactive PDF books and hotspots for your courses.",
+        "addBook": "Add interactive book"
+      },
+      "filterBar": {
+        "options": {
+          "yes": "Yes",
+          "no": "No"
+        },
+        "fields": {
+          "courseId": {
+            "label": "Course",
+            "placeholder": "All courses",
+            "loading": "Loading courses...",
+            "loadError": "Could not load courses"
+          },
+          "gradeId": {
+            "label": "Grade ID",
+            "placeholder": "gradeId"
+          },
+          "status": {
+            "label": "Status"
+          },
+          "hasHotspots": {
+            "label": "Has hotspots"
+          },
+          "fromDate": {
+            "label": "From date",
+            "placeholder": "fromDate"
+          },
+          "toDate": {
+            "label": "To date",
+            "placeholder": "toDate"
+          },
+          "keyword": {
+            "label": "Keyword",
+            "placeholder": "keyword"
+          },
+          "pageNumber": {
+            "label": "Page number",
+            "placeholder": "pageNumber"
+          },
+          "pageSize": {
+            "label": "Page size",
+            "placeholder": "pageSize"
+          },
+          "acceptLanguage": {
+            "label": "Accept-Language"
+          }
+        }
+      },
+      "stats": {
+        "totalBooks": {
+          "label": "Total interactive books",
+          "indicator": "+12%"
+        },
+        "activeReaders": {
+          "label": "Active readers today",
+          "indicator": "+24%"
+        },
+        "readingTime": {
+          "label": "Average reading time per student",
+          "indicator": "-2%",
+          "value": "{value} min/day"
+        },
+        "totalInteractiveBooks": {
+          "label": "Total interactive books"
+        },
+        "activeReadersToday": {
+          "label": "Active readers today"
+        },
+        "averageReadingMinutesPerStudent": {
+          "label": "Average reading time per student",
+          "value": "{value} min/day"
+        },
+        "trendPercent": "{value}%"
+      },
+      "table": {
+        "title": "Interactive books list",
+        "columns": {
+          "name": "Book name",
+          "subject": "Subject",
+          "grade": "Grade",
+          "pages": "Pages",
+          "hotspots": "Hotspots (active / total)",
+          "views": "Views",
+          "status": "Status",
+          "createdAt": "Created at",
+          "actions": "Actions"
+        },
+        "status": {
+          "published": "Published",
+          "draft": "Draft"
+        },
+        "actions": {
+          "openFilter": "Filter",
+          "view": "View book",
+          "edit": "Edit book",
+          "delete": "Delete book"
+        },
+        "pagination": {
+          "summary": "Showing {visible} of {total} books",
+          "previous": "Previous page",
+          "next": "Next page",
+          "pageSize": "Rows per page"
+        },
+        "loading": "Loading interactive books…",
+        "empty": "No interactive books yet.",
+        "loadError": "Could not load interactive books. Please try again.",
+        "deleteConfirm": "Delete “{title}”? This removes the book, hotspots, and index.",
+        "deleteSuccess": "Interactive book deleted.",
+        "deleteError": "Could not delete the interactive book."
+      },
+      "addModal": {
+        "title": "Add a new interactive book",
+        "close": "Close",
+        "fields": {
+          "bookName": {
+            "label": "Book name",
+            "placeholder": "Example: Advanced Mathematics — First semester"
+          },
+          "pdf": {
+            "label": "Upload PDF file",
+            "hint": "Click to upload or drag and drop",
+            "subhint": "Maximum file size 50 MB (PDF only)"
+          },
+          "subject": {
+            "label": "Subject",
+            "options": {
+              "math": "Mathematics",
+              "arabic": "Arabic language",
+              "science": "Science"
+            }
+          },
+          "grade": {
+            "label": "Grade level",
+            "options": {
+              "grade10": "Grade 10",
+              "grade11": "Grade 11",
+              "grade12": "Grade 12"
+            }
+          },
+          "courseLink": {
+            "label": "Link to course",
+            "badge": "Mandatory",
+            "placeholder": "Enter course link here..."
+          },
+          "status": {
+            "title": "Book status",
+            "description": "Choose whether the book is available to students immediately.",
+            "draft": "Draft",
+            "published": "Published"
+          }
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "submit": "Add book"
+        }
+      },
+      "filterModal": {
+        "title": "Filter interactive books",
+        "close": "Close",
+        "grades": {
+          "sec1": "1st secondary",
+          "sec2": "2nd secondary",
+          "sec3": "3rd secondary"
+        },
+        "subjects": {
+          "label": "Subject",
+          "placeholder": "Choose subjects...",
+          "removeTag": "Remove subject",
+          "tags": {
+            "math": "Mathematics",
+            "arabic": "Arabic language"
+          }
+        },
+        "grade": {
+          "label": "Academic grade"
+        },
+        "school": {
+          "label": "School",
+          "placeholder": "Search for a school...",
+          "removeTag": "Remove school",
+          "tags": {
+            "schoolA": "Excellence School",
+            "schoolB": "Nile School"
+          }
+        },
+        "bookStatus": {
+          "label": "Book status",
+          "options": {
+            "draft": "Draft",
+            "published": "Published",
+            "hidden": "Hidden",
+            "editing": "Under editing"
+          }
+        },
+        "interaction": {
+          "label": "Interaction inside the book",
+          "none": "No interactive points",
+          "hasPoints": "Contains interactive points",
+          "moreThan10": "More than 10 points"
+        },
+        "usage": {
+          "label": "Usage",
+          "mostReadWeek": "Most read this week",
+          "mostUsed": "Most used"
+        },
+        "dateRange": {
+          "label": "Date added",
+          "from": "From",
+          "to": "To"
+        },
+        "actions": {
+          "apply": "Apply filters",
+          "clear": "Clear filters"
+        }
+      },
+      "rows": {
+        "books": {
+          "advancedBiology": "Advanced Biology",
+          "advancedPhysics": "Advanced Physics",
+          "advancedChemistry": "Advanced Chemistry"
+        },
+        "subjects": {
+          "science": "Science"
+        },
+        "grades": {
+          "grade10": "Grade 10"
+        }
+      },
+      "managePage": {
+        "title": "Interactive book management",
+        "editTitle": "Edit interactive book",
+        "description": "Create and edit interactive books linked to your courses.",
+        "breadcrumbs": {
+          "dashboard": "Home",
+          "content": "Interactive books",
+          "editBook": "Edit book"
+        },
+        "edit": {
+          "description": "Editing “{title}” — manage PDF and interaction points.",
+          "loadError": "Could not load this book. Try again from the list.",
+          "notFound": "This book was not found.",
+          "courseContext": "{course} · {grade}"
+        },
+        "actions": {
+          "addBook": "Add new book",
+          "saveBook": "Save book"
+        },
+        "config": {
+          "sectionTitle": "Book settings",
+          "bookTitleLabel": "Book title",
+          "courseLabel": "Course",
+          "subjectLabel": "Select subject",
+          "subjectOptions": {
+            "chemistryGrade2": "Chemistry basics — Second secondary grade"
+          },
+          "pdfLabel": "Book file (PDF)",
+          "pdfPlaceholder": "No file selected",
+          "viewFile": "View PDF",
+          "changeFile": "Change file",
+          "uploadPdf": "Upload PDF",
+          "subjectPlaceholder": "Select a subject",
+          "subjectsLoading": "Loading subjects…",
+          "subjectsLoadError": "Could not load subjects",
+          "pdfUploading": "Uploading PDF…",
+          "pdfInvalidType": "Please choose a PDF file only.",
+          "pdfTooLarge": "PDF must be 50 MB or smaller.",
+          "coursePlaceholder": "Select a course",
+          "courseSearchPlaceholder": "Search courses…",
+          "coursesEmpty": "No courses match your search",
+          "coursesLoading": "Loading courses…",
+          "coursesLoadError": "Could not load courses",
+          "statusLabel": "Book status",
+          "statusDraft": "Draft",
+          "statusPublished": "Published"
+        },
+        "create": {
+          "titleRequired": "Book title is required.",
+          "subjectRequired": "Please select a subject.",
+          "courseRequired": "Please select a course.",
+          "pdfRequired": "Please upload a PDF file.",
+          "pdfStillUploading": "Wait for the PDF upload to finish.",
+          "success": "Interactive book created successfully.",
+          "error": "Could not create the interactive book."
+        },
+        "update": {
+          "noChanges": "No changes to save.",
+          "success": "Interactive book updated successfully.",
+          "error": "Could not update the interactive book."
+        },
+        "viewer": {
+          "pageOf": "Page {current} of {total}",
+          "zoomIn": "Zoom in",
+          "zoomOut": "Zoom out",
+          "addInteractionPoint": "Add interaction point",
+          "cancelPlacement": "Cancel placement",
+          "prevPage": "Previous page",
+          "nextPage": "Next page",
+          "noPdf": "Upload a PDF file to preview the book.",
+          "loading": "Loading PDF…",
+          "loadError": "Could not load the PDF file.",
+          "placementHint": "Click on the page to place an interaction point.",
+          "saveBookFirst": "Save the interactive book before adding hotspots.",
+          "chapterTitle": "Chapter three: Chemical bonds",
+          "overlayCaption": "Illustration of a methane molecule"
+        },
+        "points": {
+          "title": "Current interaction points",
+          "subtitle": "Interactive elements added to this page",
+          "badge": "{count} points",
+          "type": {
+            "video": "Video"
+          },
+          "items": {
+            "polarBond": {
+              "title": "Polar bond explanation",
+              "page": "Page 42"
+            }
+          },
+          "visibilityLabel": "Status:",
+          "visible": "Visible to students",
+          "hidden": "Hidden from students",
+          "deletePoint": "Delete point",
+          "editPoint": "Edit point",
+          "addNew": "Add new point",
+          "pageLabel": "Page {page}",
+          "empty": "No interaction points on this book yet.",
+          "activeLabel": "Active",
+          "deleteSuccess": "Interaction point deleted.",
+          "deleteError": "Could not delete interaction point.",
+          "toggleError": "Could not update interaction point status.",
+          "toggleSuccess": "Interaction point status updated."
+        },
+        "tip": {
+          "body": "Studies show that adding videos of no more than 3 minutes to interaction points increases student comprehension of difficult concepts by 40%."
+        }
+      },
+      "hotspotModal": {
+        "title": "Add interaction point",
+        "close": "Close",
+        "positionHint": "Page {page} · position {x}%, {y}% · size {size}%",
+        "fields": {
+          "title": {
+            "label": "Point title",
+            "placeholder": "Example: Polar bond explanation"
+          },
+          "videoUrl": {
+            "label": "Video URL",
+            "placeholder": "https://..."
+          },
+          "active": {
+            "label": "Active",
+            "on": "Active",
+            "off": "Inactive"
+          },
+          "visibility": {
+            "label": "Student visibility",
+            "visible": "Visible",
+            "hidden": "Hidden"
+          }
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "save": "Save point",
+          "saving": "Saving…"
+        },
+        "messages": {
+          "createSuccess": "Interaction point added.",
+          "createError": "Could not add interaction point."
+        }
+      }
+    },
+    "helperFileManagement": {
+      "page": {
+        "title": "Help file management",
+        "description": "Upload and manage helper resource files linked to your courses."
+      }
+    },
     "liveSessions": {
       "title": "Live sessions management",
       "description": "Track and manage all your live stream sessions",
@@ -264,10 +757,23 @@
         "startNew": "Start a new live session"
       },
       "filters": {
+        "statusLabel": "Status",
+        "searchLabel": "Search",
+        "searchPlaceholder": "Search by session name...",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Search by subject...",
         "search": "Search by session name...",
+        "subject": "Search by subject...",
         "allSubjects": "All subjects",
         "allStatuses": "All statuses",
-        "advanced": "Advanced filter"
+        "advanced": "Advanced filter",
+        "status": {
+          "all": "All statuses",
+          "live": "Live",
+          "upcoming": "Upcoming",
+          "ended": "Ended",
+          "recorded": "Recording available"
+        }
       },
       "stats": {
         "totalStreaming": "Total streaming",
@@ -287,12 +793,21 @@
         "empty": "No live sessions found",
         "view": "View",
         "edit": "Edit",
+        "end": "End session",
         "delete": "Delete"
+      },
+      "endModal": {
+        "title": "End live session",
+        "description": "End session \"{title}\"? The broadcast will close and attendance will be finalized.",
+        "confirm": "End session",
+        "cancel": "Cancel",
+        "success": "Session ended successfully"
       },
       "status": {
         "live": "Live now",
         "upcoming": "Upcoming",
-        "ended": "Ended"
+        "ended": "Ended",
+        "recorded": "Recording available"
       },
       "pagination": {
         "showing": "Showing {from}-{to} of {total} live sessions",
@@ -318,9 +833,11 @@
       }
     },
     "sessionDetails": {
+      "breadcrumbLiveSessions": "Live sessions",
       "breadcrumbSchedule": "Weekly schedule",
       "breadcrumbDetails": "Lesson details",
-      "joinLive": "Join live lesson",
+      "editSession": "Edit session",
+      "joinLive": "Start broadcast",
       "liveNow": "Live now",
       "upcoming": "Upcoming",
       "ended": "Ended",
@@ -340,7 +857,9 @@
       },
       "resources": {
         "title": "Learning resources",
-        "download": "Download"
+        "download": "Download",
+        "openInHelperFiles": "Open in help files",
+        "unavailable": "Preview is not available for this file."
       },
       "related": {
         "title": "Related lessons",
@@ -410,14 +929,24 @@
           "exportReport": "Export report",
           "view": "View course",
           "edit": "Edit course",
-          "delete": "Delete course"
+          "delete": "Delete course",
+          "deleteDraftOnly": "Only draft courses can be deleted.",
+          "deleteConfirm": "Delete \"{title}\"? This cannot be undone.",
+          "deleteSuccess": "Course deleted successfully."
+        },
+        "deleteModal": {
+          "title": "Delete course?",
+          "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+          "confirm": "Yes, delete",
+          "cancel": "Cancel"
         },
         "stats": {
           "totalTracks": "Total tracks",
           "pendingApproval": "Awaiting approval",
           "activeLearners": "Active learners",
           "totalCourses": "Total courses",
-          "important": "Important"
+          "important": "Important",
+          "pendingOnPage": "on this page"
         },
         "filters": {
           "searchLabel": "Search",
@@ -442,7 +971,8 @@
           "pending": "Pending",
           "approved": "Approved",
           "rejected": "Rejected",
-          "draft": "Draft"
+          "draft": "Draft",
+          "archived": "Archived"
         },
         "access": {
           "free": "Free",
@@ -470,8 +1000,11 @@
         "actions": {
           "viewJourney": "View educational journey",
           "editCourse": "Edit course",
-          "viewStatistics": "View course statistics"
+          "viewStatistics": "View course statistics",
+          "sendForReview": "Submit for review",
+          "sendForReviewSuccess": "Course submitted for review."
         },
+        "published": "Published",
         "labels": {
           "subject": "Subject",
           "grade": "Grade"
@@ -484,8 +1017,8 @@
         "managementStats": {
           "title": "Management statistics",
           "registered": "Currently registered students",
-          "revenue": "Total revenue (SAR)",
-          "completion": "Student completion rate"
+          "learningPaths": "Learning paths",
+          "files": "Course files"
         },
         "samples": {
           "organicChemistry": {
@@ -506,6 +1039,7 @@
         "curriculum": {
           "title": "Educational path",
           "viewPath": "View educational path",
+          "empty": "No learning paths yet. Add paths from the journey editor.",
           "unit1": {
             "title": "Unit one: Introduction to carbon bonds",
             "lesson1": {
@@ -551,8 +1085,14 @@
           "exportReport": "Export report",
           "sendAlert": "Send alert"
         },
+        "header": {
+          "enrolledStudents": "Enrolled students",
+          "learningPaths": "Learning paths",
+          "avgCompletion": "Average completion"
+        },
         "stats": {
           "totalStudents": "Total students",
+          "enrolledStudents": "Enrolled students",
           "completionRate": "Completion rate",
           "avgTestScores": "Average test scores",
           "avgGrades": "Average grades",
@@ -572,7 +1112,17 @@
         "weeklyPerformance": {
           "title": "Student performance development",
           "lessonCompletion": "Lesson completion",
-          "testResults": "Test results"
+          "testResults": "Test results",
+          "currentPeriod": "Current period",
+          "previousPeriod": "Previous period",
+          "empty": "No performance data for this period."
+        },
+        "insights": {
+          "highestAchievement": "Highest achievement",
+          "hardestLesson": "Hardest lesson",
+          "viewStation": "View station",
+          "reviewContent": "Review content",
+          "byStation": "Insights by learning station"
         },
         "highlights": {
           "stuck": {
@@ -589,6 +1139,7 @@
         "topStudents": {
           "title": "Most interactive students",
           "points": "{count} interaction points",
+          "empty": "No interaction data for this period.",
           "student1": "Ahmed Al-Mansouri",
           "student2": "Sara Khaled",
           "student3": "Khaled Abdullah"
@@ -596,6 +1147,7 @@
         "upcoming": {
           "title": "Upcoming live sessions",
           "soon": "Soon",
+          "empty": "No upcoming live sessions.",
           "session1": "Alkene reactions review",
           "session2": "Organic chemistry Q&A",
           "registered": "{count} registered"
@@ -644,6 +1196,7 @@
           "filter": "Filter students",
           "student": "Student name",
           "completion": "Completion",
+          "interaction": "Interaction points",
           "lastActivity": "Last activity",
           "status": "Status",
           "empty": "No students found."
@@ -663,6 +1216,8 @@
         "chat": {
           "title": "Chat interaction",
           "messagesToday": "messages today",
+          "volumeLabel": "Interaction volume",
+          "aiPredictions": "AI predictions",
           "openDiscussion": "Open discussion room"
         },
         "aiPrediction": "AI predicts an increase in inquiries about cyclic chemistry tomorrow."
@@ -696,6 +1251,8 @@
           "subjectPlaceholder": "Select subject",
           "cover": "Course cover",
           "coverHint": "Drag the image here or browse files",
+          "coverUploading": "Uploading cover...",
+          "coverUploaded": "Cover uploaded",
           "coverRequirements": "JPG, PNG — 16:9 ratio — max 5 MB",
           "basePrice": "Original price (SAR)",
           "offerPrice": "Price after discount (SAR)"
@@ -718,7 +1275,14 @@
         },
         "actions": {
           "saveDraft": "Save as draft",
-          "saveCourse": "Save educational course"
+          "saveCourse": "Save educational course",
+          "submitForReview": "Submit for review"
+        },
+        "validation": {
+          "required": "Please fill in title, grade, and subject.",
+          "basePriceRequired": "Please enter a valid original price.",
+          "offerPriceRequired": "Please enter a valid discounted price.",
+          "discountedPriceLessThanOriginal": "The discounted price must be less than the original price."
         },
         "preview": {
           "title": "Summary preview",
@@ -747,23 +1311,52 @@
       }
     },
     "chatGroups": {
+      "common": {
+        "cancel": "Cancel"
+      },
       "title": "Chat groups",
-      "description": "Create, edit, and monitor chat groups for your platform.",
+      "description": "Monitor and manage chat groups for your courses.",
       "breadcrumbs": {
         "home": "Home",
         "chatGroups": "Chat groups"
       },
       "stats": {
-        "totalGroups": { "label": "Total groups", "indicator": "+12%" },
-        "activeMessages": { "label": "Active messages today", "indicator": "Active" },
-        "interactionRate": { "label": "Interaction rate", "indicator": "High" },
-        "activeNow": { "label": "Groups active now", "indicator": "Live" }
+        "totalGroups": {
+          "label": "Total groups",
+          "indicator": "Courses"
+        },
+        "dailyMessages": {
+          "label": "Messages today",
+          "indicator": "Today"
+        },
+        "interactionRate": {
+          "label": "Interaction rate",
+          "indicator": "Last 7 days"
+        },
+        "activeNow": {
+          "label": "Groups active now",
+          "indicator": "Live"
+        }
       },
       "filters": {
-        "statuses": { "label": "Status", "all": "All", "active": "Active", "paused": "Paused" },
-        "grades": { "label": "Grade", "all": "All" },
-        "subjects": { "label": "Course", "all": "All" },
-        "search": { "label": "Quick search" }
+        "statuses": {
+          "label": "Status",
+          "all": "All",
+          "active": "Active",
+          "locked": "Locked",
+          "activeNow": "Active now"
+        },
+        "grades": {
+          "label": "Grade",
+          "all": "All"
+        },
+        "subjects": {
+          "label": "Subject",
+          "all": "All"
+        },
+        "search": {
+          "label": "Quick search"
+        }
       },
       "table": {
         "title": "Chat groups",
@@ -778,11 +1371,25 @@
           "lastActivity": "Last activity",
           "actions": "Actions"
         },
-        "pagination": { "summary": "Showing {visible} of {total} groups", "previous": "Previous", "next": "Next" },
-        "states": { "empty": "No chat groups match your filters.", "error": "Failed to load chat groups." }
+        "pagination": {
+          "summary": "Showing {visible} of {total} groups",
+          "previous": "Previous",
+          "next": "Next"
+        },
+        "states": {
+          "empty": "No chat groups match your filters.",
+          "error": "Failed to load chat groups."
+        }
       },
-      "chatModes": { "everyone": "Open to all", "teacherOnly": "Teacher only" },
-      "statuses": { "active": "Active now", "paused": "Temporarily disabled" },
+      "chatModes": {
+        "everyone": "Open to all",
+        "teacherOnly": "Teacher only"
+      },
+      "statuses": {
+        "activeNow": "Active now",
+        "locked": "Locked",
+        "inactive": "Inactive"
+      },
       "actions": {
         "view": "View chat",
         "settings": "Settings",
@@ -800,12 +1407,62 @@
       },
       "conversation": {
         "error": "Failed to load conversation",
+        "sendError": "Failed to send message",
+        "empty": "No messages yet. Start the conversation with your students.",
+        "locked": "Locked",
+        "teachersOnly": "Teachers only",
         "inputPlaceholder": "Type your message...",
-        "dates": { "today": "Today, October 23" },
-        "status": { "activeNow": "Active now" },
-        "lastSeen": { "fiveMinutes": "Last seen 5 minutes ago" },
+        "moderation": {
+          "lock": "Lock chat",
+          "unlock": "Unlock chat",
+          "locked": "Chat locked",
+          "unlocked": "Chat unlocked",
+          "lockError": "Failed to change lock state",
+          "teachersOnly": "Teachers only",
+          "teachersOnlyEnabled": "Teachers-only mode enabled",
+          "everyoneEnabled": "Everyone can send messages",
+          "settingsError": "Failed to update chat settings",
+          "mute": "Mute notifications",
+          "unmute": "Unmute notifications",
+          "muteError": "Failed to update mute preference"
+        },
+        "attachments": {
+          "image": "Attach image",
+          "file": "Attach file",
+          "voice": "Attach voice message"
+        },
+        "actions": {
+          "menu": "Message actions",
+          "reply": "Reply",
+          "replyingTo": "Replying to {name}",
+          "pin": "Pin",
+          "unpin": "Unpin",
+          "pinned": "Message pinned",
+          "unpinned": "Message unpinned",
+          "pinnedLabel": "Pinned",
+          "pinError": "Failed to pin message",
+          "delete": "Delete",
+          "deleteTitle": "Delete message",
+          "deleteDescription": "Are you sure you want to delete this message? It will be hidden from the chat history.",
+          "deleted": "Message deleted",
+          "deleteError": "Failed to delete message",
+          "cancel": "Cancel",
+          "react": "React with {emoji}",
+          "reactionError": "Failed to update reaction"
+        },
+        "dates": {
+          "today": "Today, October 23"
+        },
+        "status": {
+          "activeNow": "Active now"
+        },
+        "lastSeen": {
+          "fiveMinutes": "Last seen 5 minutes ago"
+        },
         "samples": {
-          "physics": { "title": "Physics — Quantum Mechanics" },
+          "physics": {
+            "title": "Physics — Quantum Mechanics"
+          },
           "teacherName": "Mr. Mohamed Ali",
           "studentSara": "Sara Khaled",
           "studentAhmed": "Ahmed Al-Otaibi",
@@ -817,14 +1474,26 @@
       },
       "members": {
         "error": "Failed to load members",
+        "settingsError": "Failed to update group settings",
+        "noDescription": "No group description",
+        "noStudents": "No enrolled students yet",
+        "groupAdmin": "Admin",
+        "createdAt": "Created on {date}",
         "participantsTitle": "Participants ({count})",
         "searchPlaceholder": "Search for student name...",
         "youTeacher": "You / Teacher",
         "connectedStudents": "Connected students",
         "muted": "Muted",
         "loadMore": "Load more students ({count} more)",
-        "status": { "online": "Online", "typing": "Typing...", "offline": "Offline" },
-        "lastSeen": { "oneHour": "Last seen an hour ago", "yesterday": "Last seen yesterday" },
+        "status": {
+          "online": "Online",
+          "typing": "Typing...",
+          "offline": "Offline"
+        },
+        "lastSeen": {
+          "oneHour": "Last seen an hour ago",
+          "yesterday": "Last seen yesterday"
+        },
         "settings": {
           "title": "Group settings",
           "mute": "Mute notifications",
@@ -833,7 +1502,29 @@
           "open": "Open",
           "closed": "Closed"
         },
-        "media": { "title": "Media and files", "viewAll": "View all" },
+        "media": {
+          "title": "Media and files",
+          "viewAll": "View all",
+          "empty": "No shared media yet"
+        },
+        "files": {
+          "empty": "No shared files yet"
+        },
+        "actions": {
+          "ban": "Ban from chat",
+          "violation": "Log violation",
+          "banTitle": "Ban {name}",
+          "violationTitle": "Log violation — {name}",
+          "banDescription": "The student will not be able to send messages in this group.",
+          "violationDescription": "The violation will be recorded without an automatic ban.",
+          "banConfirm": "Confirm ban",
+          "violationConfirm": "Log violation",
+          "reasonPlaceholder": "Reason for action",
+          "banSuccess": "{name} has been banned",
+          "violationSuccess": "Violation logged for {name}",
+          "banError": "Failed to ban student",
+          "violationError": "Failed to log violation"
+        },
         "samples": {
           "physics": {
             "title": "Physics — Quantum Mechanics",
@@ -852,17 +1543,40 @@
         "titleWithName": "Edit {name} group",
         "descriptionCreate": "Set up a new chat group for your students.",
         "descriptionEdit": "Update group identity, permissions, and privacy settings.",
-        "breadcrumbs": { "home": "Home", "chatGroups": "Chat groups", "create": "Add group", "edit": "Edit group" },
-        "buttons": { "save": "Save", "cancel": "Cancel" },
+        "breadcrumbs": {
+          "home": "Home",
+          "chatGroups": "Chat groups",
+          "create": "Add group",
+          "edit": "Edit group"
+        },
+        "buttons": {
+          "save": "Save",
+          "cancel": "Cancel"
+        },
         "sections": {
-          "identity": { "title": "Group identity", "subtitle": "Name and basic details" },
-          "controlPrivacy": { "title": "Control and privacy", "subtitle": "Messaging permissions and media" }
+          "identity": {
+            "title": "Group identity",
+            "subtitle": "Name and basic details"
+          },
+          "controlPrivacy": {
+            "title": "Control and privacy",
+            "subtitle": "Messaging permissions and media"
+          }
         },
         "fields": {
-          "groupName": { "label": "Group name", "placeholder": "Chemistry — Grade 12 (A)" },
-          "subject": { "label": "Subject" },
-          "grade": { "label": "Grade" },
-          "description": { "label": "Description and instructions", "placeholder": "Describe the group purpose and rules..." },
+          "groupName": {
+            "label": "Group name",
+            "placeholder": "Chemistry — Grade 12 (A)"
+          },
+          "subject": {
+            "label": "Subject"
+          },
+          "grade": {
+            "label": "Grade"
+          },
+          "studentsCount": {
+            "label": "Students count"
+          },
           "chatMode": {
             "everyone": "Everyone",
             "everyoneDesc": "All members can send messages",
@@ -898,50 +1612,273 @@
     "coursesStatisticsOverview": {
       "title": "My course statistics",
       "description": "Overview of performance across all your courses.",
-      "actions": { "exportReport": "Export report", "sendAlert": "Send alert" },
+      "actions": {
+        "exportReport": "Export report",
+        "sendAlert": "Send alert"
+      },
       "filters": {
         "days7": "7 days",
         "days30": "30 days",
+        "days90": "90 days",
         "custom": "Custom",
         "allCourses": "All courses",
         "allClasses": "All classes",
+        "subject": "Subject",
+        "grade": "Grade level",
         "advanced": "Advanced filter"
       },
       "stats": {
         "totalStudents": "Total students",
-        "avgAchievement": "Average achievement",
+        "engagementRate": "Engagement rate",
         "attendanceRate": "Attendance rate",
+        "averageGrade": "Average grade",
+        "outstandingStudents": "Outstanding students",
+        "activeStudents": "Active students",
+        "avgAchievement": "Average achievement",
         "testAverage": "Test average",
-        "strugglingStudents": "Struggling students",
-        "activeStudents": "Active students"
+        "strugglingStudents": "Struggling students"
       },
       "alerts": {
         "title": "Critical alerts",
         "badge": "{count} tasks",
-        "inactive": { "title": "Inactive students", "description": "12 students have not logged in for 7 days." },
-        "repeatedFailure": { "title": "Repeated failure", "description": "8 students failed the same test twice." },
-        "dropout": { "title": "Drop-out points", "description": "Interaction decreased in the Logic lesson." }
+        "empty": "No critical alerts for this period.",
+        "inactive": {
+          "title": "Inactive students",
+          "description": "12 students have not logged in for 7 days."
+        },
+        "repeatedFailure": {
+          "title": "Repeated failure",
+          "description": "8 students failed the same test twice."
+        },
+        "dropout": {
+          "title": "Drop-out points",
+          "description": "Interaction decreased in the Logic lesson."
+        }
       },
-      "activityChart": { "title": "Student activity development", "current": "Current week" },
+      "activityChart": {
+        "title": "Student activity development",
+        "current": "Current week",
+        "previous": "Previous week"
+      },
       "coursePerformance": {
         "title": "Training course performance",
         "viewAll": "View all",
+        "viewDetails": "View details",
         "students": "{count} students",
         "achievement": "Achievement percentage",
+        "averageGrade": "Average grade",
         "interaction": "Interaction",
         "attendance": "Attendance",
         "struggling": "Struggling"
       },
       "courses": {
-        "status": { "veryActive": "Very active", "average": "Average", "excellent": "Excellent" },
-        "programming": { "title": "Introduction to programming" },
-        "math": { "title": "Advanced mathematics" },
-        "chemistry": { "title": "Analytical chemistry basics" }
+        "status": {
+          "veryActive": "Very active",
+          "average": "Average",
+          "excellent": "Excellent"
+        },
+        "programming": {
+          "title": "Introduction to programming"
+        },
+        "math": {
+          "title": "Advanced mathematics"
+        },
+        "chemistry": {
+          "title": "Analytical chemistry basics"
+        }
+      }
+    },
+    "knowledgeCommunity": {
+      "title": "Knowledge community",
+      "subtitle": "Connect with colleagues and teachers in one place",
+      "searchPlaceholder": "Search for a group...",
+      "feedTitle": "Recent posts",
+      "loadError": "Could not load the community feed",
+      "empty": "No posts match your search yet.",
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page"
+      },
+      "filters": {
+        "latest": "Latest",
+        "mostActive": "Most active",
+        "unanswered": "Unanswered"
+      },
+      "composer": {
+        "you": "You",
+        "placeholder": "Write a question or educational idea here...",
+        "image": "Image",
+        "file": "File",
+        "link": "Link",
+        "publish": "Post"
+      },
+      "feed": {
+        "attachment": "Attachment",
+        "pdfAttachment": "PDF file"
+      },
+      "sidebar": {
+        "topArticles": {
+          "title": "Top articles this week",
+          "readTime": "{minutes} min read"
+        },
+        "topAuthors": {
+          "title": "Top authors",
+          "stats": "{articles} articles • {followers} followers",
+          "follow": "Follow"
+        },
+        "badges": {
+          "title": "Community badges",
+          "viewAll": "View all badges"
+        },
+        "newsletter": {
+          "title": "Knowledge newsletter",
+          "description": "Subscribe to receive the latest articles and educational ideas.",
+          "emailPlaceholder": "Email address",
+          "submit": "Subscribe now",
+          "success": "You are subscribed to the newsletter."
+        }
+      },
+      "article": {
+        "pageTitle": "Article details",
+        "notFound": "Article not found",
+        "followSuccess": "You are now following this author.",
+        "readTime": "{minutes} min read",
+        "breadcrumbs": {
+          "home": "Home",
+          "category": "Category",
+          "current": "Article details"
+        },
+        "authorCard": {
+          "title": "About the author",
+          "follow": "Follow author"
+        },
+        "interactions": {
+          "save": "Save",
+          "saved": "Saved",
+          "share": "Share",
+          "yourRating": "Your rating",
+          "rated": "Thanks for your rating.",
+          "bookmarkSaved": "Article saved to your bookmarks.",
+          "bookmarkRemoved": "Bookmark removed."
+        },
+        "comments": {
+          "title": "Comments",
+          "count": "{count} comments",
+          "you": "You",
+          "placeholder": "Add your comment here...",
+          "submit": "Post comment",
+          "success": "Comment posted.",
+          "error": "Could not post your comment.",
+          "like": "Like ({count})",
+          "reply": "Reply"
+        }
+      },
+      "create": {
+        "title": "Create a new post",
+        "subtitle": "Share your ideas, ask a question, or publish knowledge with your colleagues",
+        "validation": {
+          "required": "Title, category, and content are required."
+        },
+        "fields": {
+          "title": "Post title",
+          "titlePlaceholder": "Enter an attractive title for your topic...",
+          "category": "Specialization or category",
+          "categoryPlaceholder": "Choose a specialization...",
+          "content": "Post content",
+          "contentPlaceholder": "Write your question or share your idea here in detail..."
+        },
+        "actions": {
+          "addImage": "Add image",
+          "uploadFile": "Upload file",
+          "preview": "Preview post",
+          "publish": "Publish now"
+        },
+        "attachments": {
+          "imageReady": "Cover image uploaded.",
+          "fileReady": "Attachment ready: {name}"
+        },
+        "publishSuccess": "Your post was submitted for review.",
+        "publishError": "Could not publish your post.",
+        "rules": {
+          "title": "Publishing rules",
+          "items": {
+            "one": "Write a clear title that reflects the topic.",
+            "two": "Choose the closest specialization or category.",
+            "three": "Use respectful language and cite sources when needed.",
+            "four": "Avoid sharing private student data in public posts."
+          },
+          "tip": "Start with a clear question or idea so colleagues can help faster."
+        },
+        "smartTip": {
+          "title": "Smart tip",
+          "body": "Use headings, lists, and short paragraphs to make your post easier to read and more engaging."
+        }
+      },
+      "preview": {
+        "title": "Post preview",
+        "subtitle": "Review your post before publishing",
+        "missingDraft": "No draft found. Go back to the editor and try again.",
+        "uncategorized": "Uncategorized",
+        "attachment": "Attachment: {name}",
+        "backToEdit": "Back to edit",
+        "continueEditing": "Continue editing"
+      },
+      "author": {
+        "pageTitle": "Author profile",
+        "notFound": "Author not found",
+        "articlesTitle": "Published articles",
+        "emptyArticles": "This author has not published any articles yet.",
+        "joined": "Joined {date}",
+        "follow": "Follow",
+        "unfollow": "Unfollow",
+        "followSuccess": "You are now following this author.",
+        "unfollowSuccess": "You unfollowed this author.",
+        "goToAccount": "Go to Nawabegh account",
+        "points": "{count} points",
+        "readTime": "{minutes} min read",
+        "loadMore": "Load more articles",
+        "breadcrumbs": {
+          "home": "Home",
+          "current": "Author profile"
+        },
+        "tabs": {
+          "mostRead": "Most read",
+          "topRated": "Highest rated",
+          "all": "All articles"
+        },
+        "stats": {
+          "title": "Overview",
+          "articles": "Published articles",
+          "followers": "Followers",
+          "following": "Following",
+          "interactions": "Interactions"
+        },
+        "badges": {
+          "title": "Earned badges",
+          "empty": "No badges earned yet."
+        },
+        "skills": {
+          "title": "Skills"
+        },
+        "connect": {
+          "title": "Connect with the author",
+          "website": "Personal website",
+          "twitter": "Twitter / X",
+          "linkedin": "LinkedIn"
+        }
       }
     },
     "common": {
       "loading": "Loading...",
       "error": "Failed to load data"
+    },
+    "tabs": {
+      "home": {
+        "title": "Home"
+      },
+      "interactiveBooks": {
+        "title": "Interactive book management"
+      }
     }
   }
 }

@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpenText, Clock3, NotebookText, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter } from "next-intl";
 import { motion } from "framer-motion";
 import { interactiveBooksDashboardData } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import type { InteractiveBookTableRow } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
-import { getInteractiveBooks } from "@/modules/admin/infrastructure/api/interactiveBooksApi";
+import { getInteractiveBooks, deleteInteractiveBook } from "@/modules/admin/infrastructure/api/interactiveBooksApi";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import { notify } from "@/shared/application/lib/toast";
 import {
   InteractiveBooksFilterBar,
@@ -78,10 +79,11 @@ function statusTone(statusId: "published" | "draft") {
 }
 
 export function InteractiveBooksDashboard() {
-  const t = useTranslations("admin.dashboard");
+  const t = useScopedDashboardTranslations();
   const formatter = useFormatter();
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(INTERACTIVE_BOOKS_PAGE_SIZE);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -94,6 +96,7 @@ export function InteractiveBooksDashboard() {
   });
   const [loadState, setLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
   const [apiFilters, setApiFilters] = useState<InteractiveBooksApiFilterState>({
     courseId: "",
     gradeId: "",
@@ -262,6 +265,30 @@ export function InteractiveBooksDashboard() {
     return formatter.dateTime(d, { dateStyle: "medium", timeStyle: "short" });
   };
 
+  const handleDeleteBook = async (row: InteractiveBookTableRow) => {
+    if (deletingBookId) return;
+    const confirmed = window.confirm(
+      t("interactiveBooks.table.deleteConfirm", { title: row.title }),
+    );
+    if (!confirmed) return;
+
+    setDeletingBookId(row.id);
+    const result = await deleteInteractiveBook(row.id);
+    setDeletingBookId(null);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("interactiveBooks.table.deleteError"));
+      return;
+    }
+
+    notify.success(result.message ?? t("interactiveBooks.table.deleteSuccess"));
+    setRows((current) => current.filter((book) => book.id !== row.id));
+    setPagination((current) => ({
+      ...current,
+      totalItems: Math.max(0, current.totalItems - 1),
+    }));
+  };
+
   const tableColumns = useMemo<Array<DashboardDataTableColumn<InteractiveBookTableRow>>>(
     () => [
       {
@@ -306,7 +333,7 @@ export function InteractiveBooksDashboard() {
         id: "views",
         header: t("interactiveBooks.table.columns.views"),
         cellClassName: "font-semibold text-slate-400",
-        renderCell: () => "—",
+        renderCell: (row) => row.viewCount,
       },
       {
         id: "status",
@@ -332,8 +359,15 @@ export function InteractiveBooksDashboard() {
       <DashboardPageHeader
         title={t("interactiveBooks.page.title")}
         breadcrumbs={[
-          { label: t("tabs.home.title"), href: routes.home },
-          { label: t("tabs.interactiveBooks.title") },
+          {
+            label: isTeacherScope ? t("sidebar.nav.home") : t("tabs.home.title"),
+            href: routes.home,
+          },
+          {
+            label: isTeacherScope
+              ? t("sidebar.nav.interactiveBooks")
+              : t("tabs.interactiveBooks.title"),
+          },
         ]}
         description={t("interactiveBooks.page.description")}
         action={
@@ -439,6 +473,8 @@ export function InteractiveBooksDashboard() {
                         type="button"
                         className="dashboard-icon-btn dashboard-icon-btn--danger"
                         aria-label={t("interactiveBooks.table.actions.delete")}
+                        disabled={deletingBookId === row.id}
+                        onClick={() => void handleDeleteBook(row)}
                       >
                         <Trash2 className="h-4 w-4" aria-hidden />
                       </button>

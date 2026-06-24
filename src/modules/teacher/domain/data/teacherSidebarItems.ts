@@ -9,6 +9,7 @@ import {
   FileStack,
   Layers,
   LogOut,
+  Newspaper,
   Radio,
   Settings,
 } from "lucide-react";
@@ -43,20 +44,17 @@ export const teacherSidebarItems: SidebarItems = {
       icon: BarChart3,
     },
     {
-      id: "liveAnalytics",
-      labelKey: "sidebar.nav.liveAnalytics",
-      href: ROUTES.USER.TEACHER.LIVE_ANALYTICS,
-      activePathPrefixes: [ROUTES.USER.TEACHER.LIVE_ANALYTICS],
+      id: "liveSessions",
+      labelKey: "sidebar.nav.liveSessions",
+      href: ROUTES.USER.TEACHER.LIVE_SESSIONS,
+      activePathPrefixes: [ROUTES.USER.TEACHER.LIVE_SESSIONS],
       icon: Radio,
     },
     {
       id: "schedule",
       labelKey: "sidebar.nav.schedule",
       href: ROUTES.USER.TEACHER.SCHEDULE,
-      activePathPrefixes: [
-        ROUTES.USER.TEACHER.SCHEDULE,
-        ROUTES.USER.TEACHER.LIVE_SESSIONS,
-      ],
+      activePathPrefixes: [ROUTES.USER.TEACHER.SCHEDULE],
       icon: CalendarDays,
     },
     {
@@ -79,6 +77,13 @@ export const teacherSidebarItems: SidebarItems = {
       href: ROUTES.USER.TEACHER.HELPER_FILE_MANAGEMENT.LIST,
       activePathPrefixes: [ROUTES.USER.TEACHER.HELPER_FILE_MANAGEMENT.LIST],
       icon: FileStack,
+    },
+    {
+      id: "knowledgeCommunity",
+      labelKey: "sidebar.nav.knowledgeCommunity",
+      href: ROUTES.USER.TEACHER.KNOWLEDGE_COMMUNITY.LIST,
+      activePathPrefixes: [ROUTES.USER.TEACHER.KNOWLEDGE_COMMUNITY.LIST],
+      icon: Newspaper,
     },
   ],
   secondary: [

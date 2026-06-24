@@ -43,6 +43,19 @@ export type CreateHotspotPayload = {
   visibility: number;
 };
 
+export type UpdateHotspotPayload = {
+  id: string;
+  title?: string;
+  pageNumber?: number;
+  xPosition?: number;
+  yPosition?: number;
+  width?: number;
+  height?: number;
+  videoUrl?: string;
+  isActive?: boolean;
+  visibility?: number;
+};
+
 function asRecord(value: unknown): UnknownRecord | null {
   return value !== null && typeof value === "object" ? (value as UnknownRecord) : null;
 }
@@ -286,6 +299,45 @@ export async function createHotspot(
     };
   } catch (error) {
     return buildErrorResult<InteractiveBookHotspot>(error, "Failed to create hotspot");
+  }
+}
+
+/**
+ * Updates a hotspot (`PUT /api/v1/Hotspot/{id}`).
+ */
+export async function updateHotspot(
+  hotspotId: string,
+  payload: UpdateHotspotPayload,
+): Promise<HotspotApiResult<InteractiveBookHotspot>> {
+  const trimmed = hotspotId.trim();
+  if (!trimmed) {
+    return { status: "Error", errorMessage: "Hotspot id is required", data: null };
+  }
+
+  try {
+    const response = await httpClient.put<unknown>({
+      url: `/api/v1/Hotspot/${encodeURIComponent(trimmed)}`,
+      data: { ...payload, id: payload.id.trim() || trimmed },
+    });
+    const hotspot = mapHotspot(unwrapHotspotRecord(response.data));
+
+    if (!hotspot) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: response.error?.message ?? "Failed to update hotspot",
+        data: null,
+      };
+    }
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: hotspot,
+    };
+  } catch (error) {
+    return buildErrorResult<InteractiveBookHotspot>(error, "Failed to update hotspot");
   }
 }
 

@@ -36,11 +36,12 @@
         "courses": "دوراتي",
         "chatGroups": "مجموعات الدردشة",
         "courseStatistics": "إحصائيات الدورات",
-        "liveAnalytics": "إحصائيات البث المباشر",
+        "liveSessions": "الحصص المباشرة",
         "schedule": "الجدول الزمني",
         "interactiveBooks": "إدارة الكتاب التفاعلي",
         "journeyEditor": "محرر الرحلة التعليمية",
         "helperFileManagement": "إدارة ملفات المساعدة",
+        "knowledgeCommunity": "مجتمع المعرفة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
@@ -49,11 +50,69 @@
     "settingsPage": {
       "title": "إعدادات الحساب",
       "description": "إدارة بيانات حساب المعلّم.",
-      "mockNotice": "بيانات مؤقتة حتى يتم ربط الحساب من الخادم.",
+      "sections": {
+        "personal": "المعلومات الشخصية والمهنية",
+        "contact": "معلومات التواصل",
+        "security": "أمان الحساب"
+      },
+      "profile": {
+        "students": "طالب",
+        "courses": "الكورسات",
+        "completion": "اكتمال الملف",
+        "changePhoto": "تغيير الصورة"
+      },
+      "weeklyActivity": {
+        "recent": "النشاط الأخير",
+        "title": "أداء الطلاب هذا الأسبوع",
+        "attendanceUp": "ارتفاع معدل الحضور بنسبة {percent}%",
+        "attendanceDown": "انخفاض معدل الحضور بنسبة {percent}%",
+        "activeStudents": "{count} طالب نشط هذا الأسبوع",
+        "empty": "لا توجد بيانات نشاط لهذا الأسبوع"
+      },
       "fields": {
-        "name": "الاسم",
+        "fullName": "الاسم الكامل",
+        "schoolName": "المؤسسة التعليمية",
+        "jobTitle": "المسمى الوظيفي",
+        "about": "نبذة تعريفية",
+        "phoneNumber": "رقم الهاتف",
+        "phoneCountryCode": "رمز الدولة",
         "email": "البريد الإلكتروني",
-        "password": "كلمة المرور"
+        "country": "الدولة",
+        "countryCity": "الدولة / المدينة",
+        "city": "المدينة",
+        "address": "العنوان بالتفصيل",
+        "password": "كلمة المرور",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور"
+      },
+      "placeholders": {
+        "fullName": "أدخل الاسم الكامل",
+        "schoolName": "أدخل المؤسسة التعليمية",
+        "jobTitle": "أدخل المسمى الوظيفي",
+        "about": "اكتب نبذة تعريفية عنك",
+        "phoneNumber": "أدخل رقم الهاتف",
+        "phoneCountryCode": "مثال: 20",
+        "city": "أدخل المدينة",
+        "address": "أدخل العنوان بالتفصيل",
+        "currentPassword": "أدخل كلمة المرور الحالية",
+        "newPassword": "أدخل كلمة المرور الجديدة",
+        "confirmPassword": "أعد إدخال كلمة المرور الجديدة"
+      },
+      "actions": {
+        "edit": "تعديل الملف",
+        "save": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "cancel": "إلغاء",
+        "changePassword": "تغيير",
+        "retry": "إعادة المحاولة"
+      },
+      "security": {
+        "defaultHint": "لحماية حسابك، استخدم كلمة مرور قوية تتضمن 8 أحرف على الأقل مع مزيج من الأحرف الكبيرة والصغيرة والأرقام والرموز."
+      },
+      "messages": {
+        "saveSuccess": "تم حفظ إعدادات الحساب بنجاح",
+        "saveError": "تعذر حفظ إعدادات الحساب"
       }
     },
     "home": {
@@ -88,6 +147,7 @@
         "weeks": "{count} أسابيع",
         "students": "{count} طالب",
         "enterTrack": "دخول المسار",
+        "empty": "لا توجد مساقات مُدارة حالياً.",
         "physics": "الفيزياء: ميكانيكا الكم المتقدمة",
         "biochem": "مبادئ الكيمياء الحيوية"
       },
@@ -96,11 +156,13 @@
         "activeNow": "مباشر الآن",
         "enter": "دخول",
         "remindMe": "ذكّرني",
+        "empty": "لا توجد حصص مباشرة مجدولة لليوم.",
         "physicsNuclear": "الفيزياء: الطاقة النووية",
         "chemistryReview": "الكيمياء: مراجعة العناصر"
       },
       "alerts": {
         "title": "تنبيهات الأداء",
+        "empty": "لا توجد تنبيهات أداء حالياً.",
         "intervention": {
           "title": "طلاب يحتاجون تدخلاً",
           "description": "انخفض التفاعل بنسبة 30% في مادة الكيمياء"
@@ -116,11 +178,23 @@
         "cta": "تحدث معنا الآن"
       }
     },
+    "liveSessionsHub": {
+      "title": "الحصص المباشرة",
+      "description": "تحليلات الأداء وإدارة جلسات البث المباشر في مكان واحد",
+      "tabs": {
+        "analytics": "التحليلات",
+        "manage": "إدارة الحصص"
+      },
+      "actions": {
+        "schedule": "الجدول الزمني",
+        "journeyEditor": "محرر الرحلة"
+      }
+    },
     "liveAnalytics": {
       "title": "تحليلات الجلسات المباشرة",
       "description": "متابعة أداء الطلاب والتفاعل خلال الجلسات التعليمية",
       "actions": {
-        "startSession": "بدء جلسة جديدة",
+        "manageSessions": "إدارة الحصص المباشرة",
         "exportReport": "تصدير التقرير"
       },
       "stats": {
@@ -133,6 +207,7 @@
       "upcoming": {
         "title": "الجلسات القادمة",
         "manageSchedule": "إدارة الجدول الزمني",
+        "empty": "لا توجد جلسات قادمة.",
         "today": "اليوم",
         "tomorrow": "غداً",
         "students": "{count} طالب",
@@ -143,7 +218,9 @@
         "title": "أداء المحاضر",
         "attendance": "نسبة الحضور",
         "absence": "نسبة الغياب",
-        "newStudents": "نسبة حضور الطلاب الجدد"
+        "newStudents": "نسبة حضور الطلاب الجدد",
+        "sessionsTaught": "الجلسات التي قُدمت",
+        "totalAttended": "إجمالي الطلاب الحاضرين"
       },
       "tip": {
         "title": "نصيحة تعليمية",
@@ -166,9 +243,15 @@
       },
       "absent": {
         "title": "الطلاب المتغيبون",
+        "pageTitle": "قائمة الطلاب المتغيبين",
+        "pageDescription": "متابعة الطلاب الذين لم يحضروا الجلسات المباشرة المنتهية",
+        "search": "بحث بالاسم أو الحصة...",
+        "empty": "لا يوجد طلاب متغيبون.",
         "alertAll": "تنبيه الكل",
         "sendReminder": "إرسال تذكير",
         "viewAll": "عرض كل المتغيبين ({count})",
+        "backToAnalytics": "العودة إلى التحليلات",
+        "pagination": "عرض {from}-{to} من {total} طالب",
         "sessionTitle": "الفيزياء الكمية: الجزء 3",
         "sessionTime": "اليوم، 02:00 م",
         "lastSeen": {
@@ -198,6 +281,7 @@
       },
       "topics": {
         "title": "مواضيع هامة قادمة",
+        "empty": "لا توجد مواضيع قادمة.",
         "clinical": "بروتوكولات السلامة السريرية",
         "dataStructures": "مقدمة في هياكل البيانات",
         "badges": {
@@ -207,6 +291,7 @@
       },
       "featured": {
         "liveNow": "مباشر الآن",
+        "viewDetails": "عرض التفاصيل",
         "title": "الذكاء الاصطناعي في الطب الحديث",
         "level": "الطب - المستوى 4",
         "registered": "مسجّل",
@@ -222,6 +307,10 @@
       },
       "calendar": {
         "title": "الجدول الأسبوعي",
+        "titleMonthly": "الجدول الشهري",
+        "rangeTitle": "{start} – {end}",
+        "previousPeriod": "الفترة السابقة",
+        "nextPeriod": "الفترة التالية",
         "noSessions": "لا جلسات",
         "days": {
           "saturday": "السبت",
@@ -243,6 +332,7 @@
       },
       "sessions": {
         "title": "قائمة الجلسات",
+        "empty": "لا توجد جلسات في هذه الفترة.",
         "viewAll": "عرض كل الجلسات",
         "viewLiveSessions": "إدارة الحصص المباشرة",
         "edit": "تعديل",
@@ -257,6 +347,409 @@
         }
       }
     },
+    "journeyEditor": {
+      "page": {
+        "title": "محرر الرحلة التعليمية",
+        "description": "اختر دورة لتنظيم مسارات التعلم والمحطات التعليمية.",
+        "searchPlaceholder": "ابحث في الدورات…",
+        "searchLabel": "بحث",
+        "loadError": "تعذّر تحميل الدورات. حاول مرة أخرى.",
+        "emptyTitle": "لا توجد دورات بعد",
+        "emptyDescription": "أنشئ دورة أولاً ثم عد هنا لبناء رحلتها التعليمية.",
+        "emptyHint": "تظهر الدورات بعد إنشائها في «دوراتي»",
+        "courseCount": "{count, plural, one {دورة واحدة} two {دورتان} few {# دورات} many {# دورة} other {# دورة}}"
+      },
+      "dashboard": {
+        "readyBadge": "{percent}% جاهز",
+        "paths": "{count, plural, one {مسار واحد} two {مساران} few {# مسارات} many {# مسار} other {# مسار}}",
+        "stations": "{count, plural, one {محطة واحدة} two {محطتان} few {# محطات} many {# محطة} other {# محطة}}",
+        "students": "{count, plural, one {طالب واحد} two {طالبان} few {# طلاب} many {# طالب} other {# طالب}}",
+        "openEditor": "فتح المحرر",
+        "loading": "جاري تحميل الدورات…"
+      }
+    },
+    "interactiveBooks": {
+      "page": {
+        "title": "إدارة الكتاب التفاعلي",
+        "description": "إدارة كتب PDF التفاعلية ونقاط التفاعل لدوراتك.",
+        "addBook": "إضافة كتاب تفاعلي"
+      },
+      "filterBar": {
+        "options": {
+          "yes": "نعم",
+          "no": "لا"
+        },
+        "fields": {
+          "courseId": {
+            "label": "الدورة",
+            "placeholder": "كل الدورات",
+            "loading": "جاري تحميل الدورات...",
+            "loadError": "تعذر تحميل الدورات"
+          },
+          "gradeId": {
+            "label": "معرف الصف",
+            "placeholder": "gradeId"
+          },
+          "status": {
+            "label": "الحالة"
+          },
+          "hasHotspots": {
+            "label": "يحتوي نقاط تفاعلية"
+          },
+          "fromDate": {
+            "label": "من تاريخ",
+            "placeholder": "fromDate"
+          },
+          "toDate": {
+            "label": "إلى تاريخ",
+            "placeholder": "toDate"
+          },
+          "keyword": {
+            "label": "الكلمة المفتاحية",
+            "placeholder": "keyword"
+          },
+          "pageNumber": {
+            "label": "رقم الصفحة",
+            "placeholder": "pageNumber"
+          },
+          "pageSize": {
+            "label": "حجم الصفحة",
+            "placeholder": "pageSize"
+          },
+          "acceptLanguage": {
+            "label": "لغة الطلب"
+          }
+        }
+      },
+      "stats": {
+        "totalBooks": {
+          "label": "إجمالي الكتب التفاعلية",
+          "indicator": "+12%"
+        },
+        "activeReaders": {
+          "label": "قراء نشطون اليوم",
+          "indicator": "+24%"
+        },
+        "readingTime": {
+          "label": "متوسط القراءة لكل طالب",
+          "indicator": "-2%",
+          "value": "{value} دقيقة/يوم"
+        },
+        "totalInteractiveBooks": {
+          "label": "إجمالي الكتب التفاعلية"
+        },
+        "activeReadersToday": {
+          "label": "قراء نشطون اليوم"
+        },
+        "averageReadingMinutesPerStudent": {
+          "label": "متوسط القراءة لكل طالب",
+          "value": "{value} دقيقة/يوم"
+        },
+        "trendPercent": "{value}%"
+      },
+      "table": {
+        "title": "قائمة الكتب التفاعلية",
+        "columns": {
+          "name": "اسم الكتاب",
+          "subject": "المادة",
+          "grade": "الصف",
+          "pages": "الصفحات",
+          "hotspots": "النقاط التفاعلية (نشط / الإجمالي)",
+          "views": "المشاهدات",
+          "status": "الحالة",
+          "createdAt": "تاريخ الإضافة",
+          "actions": "الإجراءات"
+        },
+        "status": {
+          "published": "منشور",
+          "draft": "مسودة"
+        },
+        "actions": {
+          "openFilter": "تصفية",
+          "view": "عرض الكتاب",
+          "edit": "تعديل الكتاب",
+          "delete": "حذف الكتاب"
+        },
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} كتاباً",
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية",
+          "pageSize": "عدد الصفوف في الصفحة"
+        },
+        "loading": "جاري تحميل الكتب التفاعلية…",
+        "empty": "لا توجد كتب تفاعلية بعد.",
+        "loadError": "تعذر تحميل الكتب التفاعلية. حاول مرة أخرى.",
+        "deleteConfirm": "حذف «{title}»؟ سيؤدي ذلك إلى حذف الكتاب ونقاط التفاعل والفهرس.",
+        "deleteSuccess": "تم حذف الكتاب التفاعلي.",
+        "deleteError": "تعذر حذف الكتاب التفاعلي."
+      },
+      "addModal": {
+        "title": "إضافة كتاب تفاعلي جديد",
+        "close": "إغلاق",
+        "fields": {
+          "bookName": {
+            "label": "اسم الكتاب",
+            "placeholder": "مثال: الرياضيات المتقدمة - الفصل الأول"
+          },
+          "pdf": {
+            "label": "رفع ملف PDF",
+            "hint": "اضغط لرفع الملف أو اسحب وأفلت",
+            "subhint": "الحد الأقصى لحجم الملف 50 ميجابايت (PDF فقط)"
+          },
+          "subject": {
+            "label": "اختيار المادة",
+            "options": {
+              "math": "الرياضيات",
+              "arabic": "لغة عربية",
+              "science": "العلوم"
+            }
+          },
+          "grade": {
+            "label": "اختيار الصف الدراسي",
+            "options": {
+              "grade10": "الصف العاشر",
+              "grade11": "الصف الحادي عشر",
+              "grade12": "الصف الثاني عشر"
+            }
+          },
+          "courseLink": {
+            "label": "ربط بكورس",
+            "badge": "إجباري",
+            "placeholder": "...أدخل رابط الكورس هنا"
+          },
+          "status": {
+            "title": "حالة الكتاب",
+            "description": "حدد ما إذا كان الكتاب متاحاً للطلاب فوراً",
+            "draft": "مسودة",
+            "published": "منشور"
+          }
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "submit": "إضافة الكتاب"
+        }
+      },
+      "filterModal": {
+        "title": "فلترة الكتب التفاعلية",
+        "close": "إغلاق",
+        "grades": {
+          "sec1": "أولى ثانوي",
+          "sec2": "ثانية ثانوي",
+          "sec3": "ثالثة ثانوي"
+        },
+        "subjects": {
+          "label": "المادة",
+          "placeholder": "اختر المواد...",
+          "removeTag": "إزالة المادة",
+          "tags": {
+            "math": "رياضيات",
+            "arabic": "لغة عربية"
+          }
+        },
+        "grade": {
+          "label": "الصف الدراسي"
+        },
+        "school": {
+          "label": "المدرسة",
+          "placeholder": "ابحث عن مدرسة...",
+          "removeTag": "إزالة المدرسة",
+          "tags": {
+            "schoolA": "مدرسة المتفوقين",
+            "schoolB": "مدرسة النيل"
+          }
+        },
+        "bookStatus": {
+          "label": "حالة الكتاب",
+          "options": {
+            "draft": "مسودة",
+            "published": "منشور",
+            "hidden": "مخفي",
+            "editing": "قيد التعديل"
+          }
+        },
+        "interaction": {
+          "label": "التفاعل داخل الكتاب",
+          "none": "بدون نقاط تفاعلية",
+          "hasPoints": "يحتوي على نقاط تفاعلية",
+          "moreThan10": "أكثر من 10 نقاط"
+        },
+        "usage": {
+          "label": "الاستخدام",
+          "mostReadWeek": "الأكثر قراءة هذا الأسبوع",
+          "mostUsed": "الأكثر استخداماً"
+        },
+        "dateRange": {
+          "label": "تاريخ الإضافة",
+          "from": "من تاريخ",
+          "to": "إلى تاريخ"
+        },
+        "actions": {
+          "apply": "تطبيق الفلترة",
+          "clear": "مسح الفلاتر"
+        }
+      },
+      "rows": {
+        "books": {
+          "advancedBiology": "الأحياء المتقدمة",
+          "advancedPhysics": "الفيزياء المتقدمة",
+          "advancedChemistry": "الكيمياء المتقدمة"
+        },
+        "subjects": {
+          "science": "العلوم"
+        },
+        "grades": {
+          "grade10": "العاشر"
+        }
+      },
+      "managePage": {
+        "title": "إدارة الكتاب التفاعلي",
+        "editTitle": "تعديل الكتاب التفاعلي",
+        "description": "إنشاء وتحرير الكتب التفاعلية المرتبطة بدوراتك.",
+        "breadcrumbs": {
+          "dashboard": "الرئيسية",
+          "content": "الكتب التفاعلية",
+          "editBook": "تعديل الكتاب"
+        },
+        "edit": {
+          "description": "تعديل «{title}» — إدارة ملف PDF ونقاط التفاعل.",
+          "loadError": "تعذر تحميل هذا الكتاب. أعد المحاولة من القائمة.",
+          "notFound": "لم يتم العثور على هذا الكتاب.",
+          "courseContext": "{course} · {grade}"
+        },
+        "actions": {
+          "addBook": "إضافة كتاب جديد",
+          "saveBook": "حفظ الكتاب"
+        },
+        "config": {
+          "sectionTitle": "إعدادات الكتاب",
+          "bookTitleLabel": "عنوان الكتاب",
+          "courseLabel": "المادة / الدورة",
+          "subjectLabel": "اختر المادة الدراسية",
+          "subjectOptions": {
+            "chemistryGrade2": "أساسيات الكيمياء - الصف الثاني الثانوي"
+          },
+          "pdfLabel": "ملف الكتاب (PDF)",
+          "pdfPlaceholder": "لم يتم اختيار ملف",
+          "viewFile": "عرض PDF",
+          "changeFile": "تغيير الملف",
+          "uploadPdf": "رفع ملف PDF",
+          "subjectPlaceholder": "اختر المادة",
+          "subjectsLoading": "جاري تحميل المواد…",
+          "subjectsLoadError": "تعذر تحميل المواد",
+          "pdfUploading": "جاري رفع ملف PDF…",
+          "pdfInvalidType": "يرجى اختيار ملف PDF فقط.",
+          "pdfTooLarge": "يجب ألا يتجاوز حجم ملف PDF 50 ميجابايت.",
+          "coursePlaceholder": "اختر الدورة",
+          "courseSearchPlaceholder": "ابحث عن دورة…",
+          "coursesEmpty": "لا توجد دورات مطابقة للبحث",
+          "coursesLoading": "جاري تحميل الدورات…",
+          "coursesLoadError": "تعذر تحميل الدورات",
+          "statusLabel": "حالة الكتاب",
+          "statusDraft": "مسودة",
+          "statusPublished": "منشور"
+        },
+        "create": {
+          "titleRequired": "عنوان الكتاب مطلوب.",
+          "subjectRequired": "يرجى اختيار المادة.",
+          "courseRequired": "يرجى اختيار الدورة.",
+          "pdfRequired": "يرجى رفع ملف PDF.",
+          "pdfStillUploading": "انتظر حتى يكتمل رفع ملف PDF.",
+          "success": "تم إنشاء الكتاب التفاعلي بنجاح.",
+          "error": "تعذر إنشاء الكتاب التفاعلي."
+        },
+        "update": {
+          "noChanges": "لا توجد تغييرات للحفظ.",
+          "success": "تم تحديث الكتاب التفاعلي بنجاح.",
+          "error": "تعذر تحديث الكتاب التفاعلي."
+        },
+        "viewer": {
+          "pageOf": "الصفحة {current} من {total}",
+          "zoomIn": "تكبير",
+          "zoomOut": "تصغير",
+          "addInteractionPoint": "إضافة نقطة تفاعل",
+          "cancelPlacement": "إلغاء التحديد",
+          "prevPage": "الصفحة السابقة",
+          "nextPage": "الصفحة التالية",
+          "noPdf": "ارفع ملف PDF لمعاينة الكتاب.",
+          "loading": "جاري تحميل PDF…",
+          "loadError": "تعذر تحميل ملف PDF.",
+          "placementHint": "انقر على الصفحة لوضع نقطة تفاعل.",
+          "saveBookFirst": "احفظ الكتاب التفاعلي قبل إضافة نقاط التفاعل.",
+          "chapterTitle": "الفصل الثالث: الروابط الكيميائية",
+          "overlayCaption": "رسم توضيحي لجزيء الميثان"
+        },
+        "points": {
+          "title": "نقاط التفاعل الحالية",
+          "subtitle": "قائمة العناصر التفاعلية المضافة لهذه الصفحة",
+          "badge": "{count} نقطة",
+          "type": {
+            "video": "فيديو"
+          },
+          "items": {
+            "polarBond": {
+              "title": "شرح الرابطة القطبية",
+              "page": "صفحة 42"
+            }
+          },
+          "visibilityLabel": "الحالة:",
+          "visible": "مرئي للطلاب",
+          "hidden": "مخفي عن الطلاب",
+          "deletePoint": "حذف النقطة",
+          "editPoint": "تعديل النقطة",
+          "addNew": "إضافة نقطة جديدة",
+          "pageLabel": "صفحة {page}",
+          "empty": "لا توجد نقاط تفاعل على هذا الكتاب بعد.",
+          "activeLabel": "نشط",
+          "deleteSuccess": "تم حذف نقطة التفاعل.",
+          "deleteError": "تعذر حذف نقطة التفاعل.",
+          "toggleError": "تعذر تحديث حالة نقطة التفاعل.",
+          "toggleSuccess": "تم تحديث حالة نقطة التفاعل."
+        },
+        "tip": {
+          "body": "أثبتت الدراسات أن إضافة فيديوهات لا تتجاوز 3 دقائق على نقاط التفاعل تزيد من استيعاب الطالب للمفاهيم الصعبة بنسبة 40%."
+        }
+      },
+      "hotspotModal": {
+        "title": "إضافة نقطة تفاعل",
+        "close": "إغلاق",
+        "positionHint": "صفحة {page} · الموضع {x}% ، {y}% · الحجم {size}%",
+        "fields": {
+          "title": {
+            "label": "عنوان النقطة",
+            "placeholder": "مثال: شرح الرابطة القطبية"
+          },
+          "videoUrl": {
+            "label": "رابط الفيديو",
+            "placeholder": "https://..."
+          },
+          "active": {
+            "label": "نشط",
+            "on": "نشط",
+            "off": "غير نشط"
+          },
+          "visibility": {
+            "label": "ظهور للطلاب",
+            "visible": "مرئي",
+            "hidden": "مخفي"
+          }
+        },
+        "actions": {
+          "cancel": "إلغاء",
+          "save": "حفظ النقطة",
+          "saving": "جاري الحفظ…"
+        },
+        "messages": {
+          "createSuccess": "تمت إضافة نقطة التفاعل.",
+          "createError": "تعذر إضافة نقطة التفاعل."
+        }
+      }
+    },
+    "helperFileManagement": {
+      "page": {
+        "title": "إدارة ملفات المساعدة",
+        "description": "رفع وإدارة ملفات الموارد المساعدة المرتبطة بدوراتك."
+      }
+    },
     "liveSessions": {
       "title": "إدارة الحصص المباشرة",
       "description": "تتبع وإدارة جميع جلسات البث المباشر",
@@ -264,10 +757,23 @@
         "startNew": "بدء حصة مباشرة جديدة"
       },
       "filters": {
+        "statusLabel": "الحالة",
+        "searchLabel": "بحث",
+        "searchPlaceholder": "بحث باسم الحصة...",
+        "subjectLabel": "المادة",
+        "subjectPlaceholder": "بحث بالمادة...",
         "search": "بحث باسم الحصة...",
+        "subject": "بحث بالمادة...",
         "allSubjects": "كل المواد",
         "allStatuses": "كل الحالات",
-        "advanced": "تصفية متقدمة"
+        "advanced": "تصفية متقدمة",
+        "status": {
+          "all": "كل الحالات",
+          "live": "مباشر",
+          "upcoming": "قادمة",
+          "ended": "منتهية",
+          "recorded": "التسجيل متاح"
+        }
       },
       "stats": {
         "totalStreaming": "إجمالي البث",
@@ -287,12 +793,21 @@
         "empty": "لا توجد حصص مباشرة",
         "view": "عرض",
         "edit": "تعديل",
+        "end": "إنهاء الحصة",
         "delete": "حذف"
+      },
+      "endModal": {
+        "title": "إنهاء الحصة المباشرة",
+        "description": "هل تريد إنهاء الحصة «{title}»؟ سيتم إغلاق البث وحساب الحضور.",
+        "confirm": "إنهاء الحصة",
+        "cancel": "إلغاء",
+        "success": "تم إنهاء الحصة بنجاح"
       },
       "status": {
         "live": "مباشر الآن",
         "upcoming": "قادمة",
-        "ended": "منتهية"
+        "ended": "منتهية",
+        "recorded": "التسجيل متاح"
       },
       "pagination": {
         "showing": "عرض {from}-{to} من {total} حصة مباشرة",
@@ -318,9 +833,11 @@
       }
     },
     "sessionDetails": {
+      "breadcrumbLiveSessions": "الحصص المباشرة",
       "breadcrumbSchedule": "الجدول الأسبوعي",
       "breadcrumbDetails": "تفاصيل الحصة",
-      "joinLive": "انضم إلى الحصة المباشرة",
+      "editSession": "تعديل الحصة",
+      "joinLive": "ابدأ البث المباشر",
       "liveNow": "مباشر الآن",
       "upcoming": "قادمة",
       "ended": "منتهية",
@@ -340,7 +857,9 @@
       },
       "resources": {
         "title": "مصادر التعلم",
-        "download": "تحميل"
+        "download": "تحميل",
+        "openInHelperFiles": "فتح في ملفات المساعدة",
+        "unavailable": "المعاينة غير متاحة لهذا الملف."
       },
       "related": {
         "title": "حصص ذات صلة",
@@ -410,14 +929,24 @@
           "exportReport": "تصدير التقرير",
           "view": "عرض الدورة",
           "edit": "تعديل الدورة",
-          "delete": "حذف الدورة"
+          "delete": "حذف الدورة",
+          "deleteDraftOnly": "يمكن حذف الدورات في حالة المسودة فقط.",
+          "deleteConfirm": "حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+          "deleteSuccess": "تم حذف الدورة بنجاح."
+        },
+        "deleteModal": {
+          "title": "حذف الدورة؟",
+          "description": "هل أنت متأكد من حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirm": "نعم، احذف",
+          "cancel": "إلغاء"
         },
         "stats": {
           "totalTracks": "إجمالي المسارات",
           "pendingApproval": "بانتظار الموافقة",
           "activeLearners": "المتعلمون النشطون",
           "totalCourses": "إجمالي الدورات",
-          "important": "هام"
+          "important": "هام",
+          "pendingOnPage": "في هذه الصفحة"
         },
         "filters": {
           "searchLabel": "بحث",
@@ -442,7 +971,8 @@
           "pending": "قيد الانتظار",
           "approved": "معتمد",
           "rejected": "مرفوض",
-          "draft": "مسودة"
+          "draft": "مسودة",
+          "archived": "مؤرشف"
         },
         "access": {
           "free": "مجاني",
@@ -470,8 +1000,11 @@
         "actions": {
           "viewJourney": "عرض الرحلة التعليمية",
           "editCourse": "تعديل الدورة",
-          "viewStatistics": "عرض إحصائيات الدورة"
+          "viewStatistics": "عرض إحصائيات الدورة",
+          "sendForReview": "إرسال للمراجعة",
+          "sendForReviewSuccess": "تم إرسال الدورة للمراجعة."
         },
+        "published": "منشور",
         "labels": {
           "subject": "المادة",
           "grade": "المرحلة"
@@ -484,8 +1017,8 @@
         "managementStats": {
           "title": "إحصائيات الإدارة",
           "registered": "طالب مسجل حالياً",
-          "revenue": "إجمالي الإيرادات (ر.س)",
-          "completion": "معدل إكمال الطلاب"
+          "learningPaths": "المسارات التعليمية",
+          "files": "ملفات الدورة"
         },
         "samples": {
           "organicChemistry": {
@@ -506,6 +1039,7 @@
         "curriculum": {
           "title": "المسار التعليمي",
           "viewPath": "عرض المسار التعليمي",
+          "empty": "لا توجد مسارات تعليمية بعد. أضف المسارات من محرر الرحلة.",
           "unit1": {
             "title": "الوحدة الأولى: مدخل إلى الروابط الكربونية",
             "lesson1": {
@@ -551,8 +1085,14 @@
           "exportReport": "تصدير التقرير",
           "sendAlert": "إرسال تنبيه"
         },
+        "header": {
+          "enrolledStudents": "الطلاب المسجلون",
+          "learningPaths": "مسارات التعلم",
+          "avgCompletion": "متوسط الإكمال"
+        },
         "stats": {
           "totalStudents": "إجمالي الطلاب",
+          "enrolledStudents": "الطلاب المسجلون",
           "completionRate": "معدل الإكمال",
           "avgTestScores": "متوسط درجات الاختبارات",
           "avgGrades": "متوسط الدرجات",
@@ -572,7 +1112,17 @@
         "weeklyPerformance": {
           "title": "تطور أداء الطلاب",
           "lessonCompletion": "إكمال الدروس",
-          "testResults": "نتائج الاختبارات"
+          "testResults": "نتائج الاختبارات",
+          "currentPeriod": "الفترة الحالية",
+          "previousPeriod": "الفترة السابقة",
+          "empty": "لا توجد بيانات أداء لهذه الفترة."
+        },
+        "insights": {
+          "highestAchievement": "أعلى إنجاز",
+          "hardestLesson": "أصعب درس",
+          "viewStation": "عرض المحطة",
+          "reviewContent": "مراجعة المحتوى",
+          "byStation": "رؤى حسب محطة التعلم"
         },
         "highlights": {
           "stuck": {
@@ -589,6 +1139,7 @@
         "topStudents": {
           "title": "الطلاب الأكثر تفاعلاً",
           "points": "{count} نقطة تفاعل",
+          "empty": "لا توجد بيانات تفاعل لهذه الفترة.",
           "student1": "أحمد المنصوري",
           "student2": "سارة خالد",
           "student3": "خالد عبدالله"
@@ -596,6 +1147,7 @@
         "upcoming": {
           "title": "الجلسات المباشرة القادمة",
           "soon": "قريباً",
+          "empty": "لا توجد جلسات مباشرة قادمة.",
           "session1": "مراجعة تفاعلات الألكينات",
           "session2": "أسئلة وأجوبة الكيمياء العضوية",
           "registered": "{count} مسجل"
@@ -644,6 +1196,7 @@
           "filter": "تصفية الطلاب",
           "student": "اسم الطالب",
           "completion": "نسبة الإكمال",
+          "interaction": "نقاط التفاعل",
           "lastActivity": "آخر نشاط",
           "status": "الحالة",
           "empty": "لا يوجد طلاب."
@@ -663,6 +1216,8 @@
         "chat": {
           "title": "تفاعل الدردشة",
           "messagesToday": "رسالة اليوم",
+          "volumeLabel": "حجم التفاعل",
+          "aiPredictions": "توقعات الذكاء الاصطناعي",
           "openDiscussion": "فتح غرفة النقاش"
         },
         "aiPrediction": "تتوقع الذكاء الاصطناعي زيادة في الاستفسارات حول الكيمياء الحلقية غداً."
@@ -696,6 +1251,8 @@
           "subjectPlaceholder": "اختر المادة",
           "cover": "غلاف الدورة",
           "coverHint": "اسحب الصورة هنا أو تصفح الملفات",
+          "coverUploading": "جاري رفع الغلاف...",
+          "coverUploaded": "تم رفع الغلاف",
           "coverRequirements": "JPG, PNG — نسبة 16:9 — الحد الأقصى 5 ميجابايت",
           "basePrice": "السعر الأصلي (ر.س)",
           "offerPrice": "السعر بعد الخصم (ر.س)"
@@ -718,7 +1275,14 @@
         },
         "actions": {
           "saveDraft": "حفظ كمسودة",
-          "saveCourse": "حفظ الدورة التعليمية"
+          "saveCourse": "حفظ الدورة التعليمية",
+          "submitForReview": "إرسال للمراجعة"
+        },
+        "validation": {
+          "required": "يرجى تعبئة العنوان والصف والمادة.",
+          "basePriceRequired": "يرجى إدخال سعر أصلي صحيح.",
+          "offerPriceRequired": "يرجى إدخال سعر بعد الخصم صحيح.",
+          "discountedPriceLessThanOriginal": "يجب أن يكون السعر بعد الخصم أقل من السعر الأصلي."
         },
         "preview": {
           "title": "معاينة الملخص",
@@ -747,23 +1311,52 @@
       }
     },
     "chatGroups": {
+      "common": {
+        "cancel": "إلغاء"
+      },
       "title": "مجموعات الدردشة",
-      "description": "قم بإنشاء وتعديل ومراقبة مجموعات الدردشة الخاصة بمنصتك",
+      "description": "راقب وأدر مجموعات الدردشة الخاصة بدوراتك التعليمية.",
       "breadcrumbs": {
         "home": "الرئيسية",
         "chatGroups": "مجموعات الدردشة"
       },
       "stats": {
-        "totalGroups": { "label": "إجمالي المجموعات", "indicator": "+12%" },
-        "activeMessages": { "label": "الرسائل النشطة اليوم", "indicator": "نشط" },
-        "interactionRate": { "label": "نسبة التفاعل", "indicator": "مرتفع" },
-        "activeNow": { "label": "المجموعات النشطة الآن", "indicator": "مباشر" }
+        "totalGroups": {
+          "label": "إجمالي المجموعات",
+          "indicator": "الدورات"
+        },
+        "dailyMessages": {
+          "label": "الرسائل اليوم",
+          "indicator": "اليوم"
+        },
+        "interactionRate": {
+          "label": "نسبة التفاعل",
+          "indicator": "آخر ٧ أيام"
+        },
+        "activeNow": {
+          "label": "المجموعات النشطة الآن",
+          "indicator": "مباشر"
+        }
       },
       "filters": {
-        "statuses": { "label": "الحالة", "all": "الكل", "active": "نشط", "paused": "معطل" },
-        "grades": { "label": "الصف", "all": "الكل" },
-        "subjects": { "label": "الدورة", "all": "الكل" },
-        "search": { "label": "بحث سريع" }
+        "statuses": {
+          "label": "الحالة",
+          "all": "الكل",
+          "active": "نشط",
+          "locked": "مقفل",
+          "activeNow": "نشط الآن"
+        },
+        "grades": {
+          "label": "الصف",
+          "all": "الكل"
+        },
+        "subjects": {
+          "label": "المادة",
+          "all": "الكل"
+        },
+        "search": {
+          "label": "بحث سريع"
+        }
       },
       "table": {
         "title": "مجموعات الدردشة",
@@ -778,11 +1371,25 @@
           "lastActivity": "آخر نشاط",
           "actions": "الإجراءات"
         },
-        "pagination": { "summary": "عرض {visible} من أصل {total} مجموعة", "previous": "السابق", "next": "التالي" },
-        "states": { "empty": "لا توجد مجموعات مطابقة.", "error": "فشل تحميل مجموعات الدردشة." }
+        "pagination": {
+          "summary": "عرض {visible} من أصل {total} مجموعة",
+          "previous": "السابق",
+          "next": "التالي"
+        },
+        "states": {
+          "empty": "لا توجد مجموعات مطابقة.",
+          "error": "فشل تحميل مجموعات الدردشة."
+        }
       },
-      "chatModes": { "everyone": "مفتوح للجميع", "teacherOnly": "المعلم فقط" },
-      "statuses": { "active": "نشط الآن", "paused": "معطل مؤقتاً" },
+      "chatModes": {
+        "everyone": "مفتوح للجميع",
+        "teacherOnly": "المعلم فقط"
+      },
+      "statuses": {
+        "activeNow": "نشط الآن",
+        "locked": "مقفل",
+        "inactive": "غير نشط"
+      },
       "actions": {
         "view": "عرض الدردشة",
         "settings": "الإعدادات",
@@ -800,12 +1407,62 @@
       },
       "conversation": {
         "error": "فشل تحميل المحادثة",
+        "sendError": "فشل إرسال الرسالة",
+        "empty": "لا توجد رسائل بعد. ابدأ المحادثة مع طلابك.",
+        "locked": "مقفل",
+        "teachersOnly": "المعلمون فقط",
         "inputPlaceholder": "اكتب رسالتك...",
-        "dates": { "today": "اليوم، ٢٣ أكتوبر" },
-        "status": { "activeNow": "نشط الآن" },
-        "lastSeen": { "fiveMinutes": "آخر ظهور منذ ٥ دقائق" },
+        "moderation": {
+          "lock": "قفل الدردشة",
+          "unlock": "فتح الدردشة",
+          "locked": "تم قفل الدردشة",
+          "unlocked": "تم فتح الدردشة",
+          "lockError": "فشل تغيير حالة القفل",
+          "teachersOnly": "المعلمون فقط",
+          "teachersOnlyEnabled": "تم تفعيل وضع المعلمين فقط",
+          "everyoneEnabled": "تم تفعيل وضع الجميع",
+          "settingsError": "فشل تحديث إعدادات الدردشة",
+          "mute": "كتم التنبيهات",
+          "unmute": "إلغاء كتم التنبيهات",
+          "muteError": "فشل تحديث كتم التنبيهات"
+        },
+        "attachments": {
+          "image": "إرفاق صورة",
+          "file": "إرفاق ملف",
+          "voice": "إرفاق رسالة صوتية"
+        },
+        "actions": {
+          "menu": "إجراءات الرسالة",
+          "reply": "رد",
+          "replyingTo": "الرد على {name}",
+          "pin": "تثبيت",
+          "unpin": "إلغاء التثبيت",
+          "pinned": "تم تثبيت الرسالة",
+          "unpinned": "تم إلغاء تثبيت الرسالة",
+          "pinnedLabel": "مثبتة",
+          "pinError": "فشل تثبيت الرسالة",
+          "delete": "حذف",
+          "deleteTitle": "حذف الرسالة",
+          "deleteDescription": "هل أنت متأكد من حذف هذه الرسالة؟ لن تظهر في سجل المحادثة.",
+          "deleted": "تم حذف الرسالة",
+          "deleteError": "فشل حذف الرسالة",
+          "cancel": "إلغاء",
+          "react": "تفاعل {emoji}",
+          "reactionError": "فشل تحديث التفاعل"
+        },
+        "dates": {
+          "today": "اليوم، ٢٣ أكتوبر"
+        },
+        "status": {
+          "activeNow": "نشط الآن"
+        },
+        "lastSeen": {
+          "fiveMinutes": "آخر ظهور منذ ٥ دقائق"
+        },
         "samples": {
-          "physics": { "title": "الفيزياء - ميكانيكا الكم" },
+          "physics": {
+            "title": "الفيزياء - ميكانيكا الكم"
+          },
           "teacherName": "أ. محمد علي",
           "studentSara": "سارة خالد",
           "studentAhmed": "أحمد العتيبي",
@@ -817,14 +1474,26 @@
       },
       "members": {
         "error": "فشل تحميل المشاركين",
+        "settingsError": "فشل تحديث إعدادات المجموعة",
+        "noDescription": "لا يوجد وصف للمجموعة",
+        "noStudents": "لا يوجد طلاب مسجلون بعد",
+        "groupAdmin": "مدير",
+        "createdAt": "تم الإنشاء في {date}",
         "participantsTitle": "المشاركون ({count})",
         "searchPlaceholder": "البحث عن اسم الطالب...",
         "youTeacher": "أنت / المعلم",
         "connectedStudents": "الطلاب المتصلون",
         "muted": "مكتوم",
         "loadMore": "تحميل المزيد من الطلاب ({count} إضافي)",
-        "status": { "online": "متصل", "typing": "تكتب الآن...", "offline": "غير متصل" },
-        "lastSeen": { "oneHour": "آخر ظهور منذ ساعة", "yesterday": "آخر ظهور أمس" },
+        "status": {
+          "online": "متصل",
+          "typing": "تكتب الآن...",
+          "offline": "غير متصل"
+        },
+        "lastSeen": {
+          "oneHour": "آخر ظهور منذ ساعة",
+          "yesterday": "آخر ظهور أمس"
+        },
         "settings": {
           "title": "إعدادات المجموعة",
           "mute": "كتم التنبيهات",
@@ -833,7 +1502,29 @@
           "open": "مفتوح",
           "closed": "مغلق"
         },
-        "media": { "title": "الوسائط والملفات", "viewAll": "عرض الكل" },
+        "media": {
+          "title": "الوسائط والملفات",
+          "viewAll": "عرض الكل",
+          "empty": "لا توجد وسائط مشتركة بعد"
+        },
+        "files": {
+          "empty": "لا توجد ملفات مشتركة بعد"
+        },
+        "actions": {
+          "ban": "حظر من الدردشة",
+          "violation": "تسجيل مخالفة",
+          "banTitle": "حظر {name}",
+          "violationTitle": "تسجيل مخالفة — {name}",
+          "banDescription": "لن يتمكن الطالب من إرسال رسائل في هذه المجموعة.",
+          "violationDescription": "سيتم تسجيل المخالفة دون حظر تلقائي.",
+          "banConfirm": "تأكيد الحظر",
+          "violationConfirm": "تسجيل المخالفة",
+          "reasonPlaceholder": "سبب الإجراء",
+          "banSuccess": "تم حظر {name}",
+          "violationSuccess": "تم تسجيل مخالفة {name}",
+          "banError": "فشل حظر الطالب",
+          "violationError": "فشل تسجيل المخالفة"
+        },
         "samples": {
           "physics": {
             "title": "الفيزياء - ميكانيكا الكم",
@@ -852,17 +1543,40 @@
         "titleWithName": "تعديل مجموعة {name}",
         "descriptionCreate": "أنشئ مجموعة دردشة جديدة لطلابك.",
         "descriptionEdit": "تعديل هوية المجموعة والصلاحيات وإعدادات الخصوصية.",
-        "breadcrumbs": { "home": "الرئيسية", "chatGroups": "مجموعات الدردشة", "create": "إضافة مجموعة", "edit": "تعديل المجموعة" },
-        "buttons": { "save": "حفظ", "cancel": "إلغاء" },
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "chatGroups": "مجموعات الدردشة",
+          "create": "إضافة مجموعة",
+          "edit": "تعديل المجموعة"
+        },
+        "buttons": {
+          "save": "حفظ",
+          "cancel": "إلغاء"
+        },
         "sections": {
-          "identity": { "title": "هوية المجموعة", "subtitle": "الاسم والمعلومات الأساسية" },
-          "controlPrivacy": { "title": "إعدادات التحكم والخصوصية", "subtitle": "صلاحيات الإرسال والوسائط" }
+          "identity": {
+            "title": "هوية المجموعة",
+            "subtitle": "الاسم والمعلومات الأساسية"
+          },
+          "controlPrivacy": {
+            "title": "إعدادات التحكم والخصوصية",
+            "subtitle": "صلاحيات الإرسال والوسائط"
+          }
         },
         "fields": {
-          "groupName": { "label": "اسم المجموعة", "placeholder": "كيمياء - الصف الثاني عشر (أ)" },
-          "subject": { "label": "المادة الدراسية" },
-          "grade": { "label": "الصف الدراسي" },
-          "description": { "label": "الوصف والتعليمات", "placeholder": "اكتب وصف المجموعة والقواعد..." },
+          "groupName": {
+            "label": "اسم المجموعة",
+            "placeholder": "كيمياء - الصف الثاني عشر (أ)"
+          },
+          "subject": {
+            "label": "المادة الدراسية"
+          },
+          "grade": {
+            "label": "الصف الدراسي"
+          },
+          "studentsCount": {
+            "label": "عدد الطلاب"
+          },
           "chatMode": {
             "everyone": "الجميع",
             "everyoneDesc": "يمكن لجميع الأعضاء إرسال الرسائل",
@@ -898,50 +1612,273 @@
     "coursesStatisticsOverview": {
       "title": "إحصائيات دوراتي",
       "description": "نظرة شاملة على الأداء عبر جميع دوراتك.",
-      "actions": { "exportReport": "تصدير تقرير", "sendAlert": "إرسال تنبيه" },
+      "actions": {
+        "exportReport": "تصدير تقرير",
+        "sendAlert": "إرسال تنبيه"
+      },
       "filters": {
         "days7": "7 أيام",
         "days30": "30 يوماً",
+        "days90": "90 يوماً",
         "custom": "مخصص",
         "allCourses": "جميع الدورات",
         "allClasses": "جميع الصفوف",
+        "subject": "المادة",
+        "grade": "المرحلة الدراسية",
         "advanced": "تصفية متقدمة"
       },
       "stats": {
         "totalStudents": "إجمالي الطلاب",
-        "avgAchievement": "متوسط الإنجاز",
+        "engagementRate": "معدل التفاعل",
         "attendanceRate": "نسبة الحضور",
+        "averageGrade": "متوسط الدرجات",
+        "outstandingStudents": "الطلاب المتميزون",
+        "activeStudents": "الطلاب النشطون",
+        "avgAchievement": "متوسط الإنجاز",
         "testAverage": "متوسط الاختبارات",
-        "strugglingStudents": "الطلاب المتعثرون",
-        "activeStudents": "الطلاب النشطون"
+        "strugglingStudents": "الطلاب المتعثرون"
       },
       "alerts": {
         "title": "تنبيهات حرجة",
         "badge": "{count} مهام",
-        "inactive": { "title": "طلاب غير نشطين", "description": "12 طالب لم يسجلوا دخولاً منذ 7 أيام." },
-        "repeatedFailure": { "title": "رسوب متكرر", "description": "8 طلاب رسبوا في نفس الاختبار مرتين." },
-        "dropout": { "title": "نقاط انسحاب", "description": "انخفض التفاعل في درس المنطق." }
+        "empty": "لا توجد تنبيهات حرجة لهذه الفترة.",
+        "inactive": {
+          "title": "طلاب غير نشطين",
+          "description": "12 طالب لم يسجلوا دخولاً منذ 7 أيام."
+        },
+        "repeatedFailure": {
+          "title": "رسوب متكرر",
+          "description": "8 طلاب رسبوا في نفس الاختبار مرتين."
+        },
+        "dropout": {
+          "title": "نقاط انسحاب",
+          "description": "انخفض التفاعل في درس المنطق."
+        }
       },
-      "activityChart": { "title": "تطور نشاط الطلاب", "current": "الأسبوع الحالي" },
+      "activityChart": {
+        "title": "تطور نشاط الطلاب",
+        "current": "الأسبوع الحالي",
+        "previous": "الأسبوع السابق"
+      },
       "coursePerformance": {
         "title": "أداء الدورات التدريبية",
         "viewAll": "عرض الكل",
+        "viewDetails": "عرض التفاصيل",
         "students": "{count} طالب",
         "achievement": "نسبة الإنجاز",
+        "averageGrade": "متوسط الدرجات",
         "interaction": "التفاعل",
         "attendance": "الحضور",
         "struggling": "المتعثرون"
       },
       "courses": {
-        "status": { "veryActive": "نشط جداً", "average": "متوسط", "excellent": "ممتاز" },
-        "programming": { "title": "مقدمة في البرمجة" },
-        "math": { "title": "الرياضيات المتقدمة" },
-        "chemistry": { "title": "أساسيات الكيمياء التحليلية" }
+        "status": {
+          "veryActive": "نشط جداً",
+          "average": "متوسط",
+          "excellent": "ممتاز"
+        },
+        "programming": {
+          "title": "مقدمة في البرمجة"
+        },
+        "math": {
+          "title": "الرياضيات المتقدمة"
+        },
+        "chemistry": {
+          "title": "أساسيات الكيمياء التحليلية"
+        }
+      }
+    },
+    "knowledgeCommunity": {
+      "title": "مجتمع المعرفة",
+      "subtitle": "تواصل مع زملائك ومعلميك في مكان واحد",
+      "searchPlaceholder": "البحث عن مجموعة...",
+      "feedTitle": "المشاركات الأخيرة",
+      "loadError": "تعذر تحميل خلاصة المجتمع",
+      "empty": "لا توجد مشاركات مطابقة لبحثك حالياً.",
+      "pagination": {
+        "previous": "الصفحة السابقة",
+        "next": "الصفحة التالية"
+      },
+      "filters": {
+        "latest": "الأحدث",
+        "mostActive": "الأكثر تفاعلاً",
+        "unanswered": "غير المجاب عنها"
+      },
+      "composer": {
+        "you": "أنت",
+        "placeholder": "اكتب سؤالاً أو فكرة تعليمية هنا...",
+        "image": "صورة",
+        "file": "ملف",
+        "link": "رابط",
+        "publish": "نشر"
+      },
+      "feed": {
+        "attachment": "مرفق",
+        "pdfAttachment": "ملف PDF"
+      },
+      "sidebar": {
+        "topArticles": {
+          "title": "أفضل مقالات الأسبوع",
+          "readTime": "{minutes} دقائق قراءة"
+        },
+        "topAuthors": {
+          "title": "أبرز الكتاب",
+          "stats": "{articles} مقال • {followers} متابع",
+          "follow": "متابعة"
+        },
+        "badges": {
+          "title": "أوسمة المجتمع",
+          "viewAll": "عرض كل الأوسمة"
+        },
+        "newsletter": {
+          "title": "نشرة المعرفة",
+          "description": "اشترك لتصلك أحدث المقالات والأفكار التعليمية.",
+          "emailPlaceholder": "البريد الإلكتروني",
+          "submit": "اشتراك الآن",
+          "success": "تم الاشتراك في النشرة بنجاح."
+        }
+      },
+      "article": {
+        "pageTitle": "تفاصيل المقال",
+        "notFound": "المقال غير موجود",
+        "followSuccess": "أصبحت تتابع هذا الكاتب.",
+        "readTime": "{minutes} دقائق قراءة",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "category": "التصنيف",
+          "current": "تفاصيل المقال"
+        },
+        "authorCard": {
+          "title": "عن الكاتب",
+          "follow": "متابعة الكاتب"
+        },
+        "interactions": {
+          "save": "حفظ",
+          "saved": "محفوظ",
+          "share": "مشاركة",
+          "yourRating": "تقييمك",
+          "rated": "شكراً لتقييمك.",
+          "bookmarkSaved": "تم حفظ المقال في المفضلة.",
+          "bookmarkRemoved": "تمت إزالة المقال من المفضلة."
+        },
+        "comments": {
+          "title": "التعليقات",
+          "count": "{count} تعليق",
+          "you": "أنت",
+          "placeholder": "أضف تعليقك هنا...",
+          "submit": "نشر التعليق",
+          "success": "تم نشر التعليق.",
+          "error": "تعذر نشر التعليق.",
+          "like": "إعجاب ({count})",
+          "reply": "رد"
+        }
+      },
+      "create": {
+        "title": "إنشاء منشور جديد",
+        "subtitle": "شارك أفكارك، اسأل سؤالاً، أو انشر للمعرفة مع زملائك",
+        "validation": {
+          "required": "العنوان والتصنيف والمحتوى مطلوبة."
+        },
+        "fields": {
+          "title": "عنوان المنشور",
+          "titlePlaceholder": "أدخل عنواناً جذاباً لموضوعك...",
+          "category": "تخصص أو تصنيف الموضوع",
+          "categoryPlaceholder": "اختر التخصص...",
+          "content": "محتوى المنشور",
+          "contentPlaceholder": "اكتب سؤالك أو شارك فكرتك هنا بالتفصيل..."
+        },
+        "actions": {
+          "addImage": "إضافة صورة",
+          "uploadFile": "رفع ملف",
+          "preview": "معاينة المنشور",
+          "publish": "نشر الآن"
+        },
+        "attachments": {
+          "imageReady": "تم رفع صورة الغلاف.",
+          "fileReady": "المرفق جاهز: {name}"
+        },
+        "publishSuccess": "تم إرسال منشورك للمراجعة.",
+        "publishError": "تعذر نشر المنشور.",
+        "rules": {
+          "title": "قواعد النشر",
+          "items": {
+            "one": "اكتب عنواناً واضحاً يعكس موضوع المشاركة.",
+            "two": "اختر أقرب تخصص أو تصنيف للموضوع.",
+            "three": "استخدم لغة محترمة واذكر المصادر عند الحاجة.",
+            "four": "تجنب مشاركة بيانات طلاب خاصة في المنشورات العامة."
+          },
+          "tip": "ابدأ بسؤال أو فكرة واضحة ليتمكن زملاؤك من المساعدة بسرعة."
+        },
+        "smartTip": {
+          "title": "نصيحة ذكية",
+          "body": "استخدم العناوين والقوائم والفقرات القصيرة لجعل منشورك أسهل في القراءة وأكثر تفاعلاً."
+        }
+      },
+      "preview": {
+        "title": "معاينة المنشور",
+        "subtitle": "راجع منشورك قبل النشر",
+        "missingDraft": "لا يوجد مسودة. ارجع إلى المحرر وحاول مرة أخرى.",
+        "uncategorized": "بدون تصنيف",
+        "attachment": "مرفق: {name}",
+        "backToEdit": "العودة للتعديل",
+        "continueEditing": "متابعة التعديل"
+      },
+      "author": {
+        "pageTitle": "ملف الكاتب",
+        "notFound": "الكاتب غير موجود",
+        "articlesTitle": "المقالات المنشورة",
+        "emptyArticles": "لم ينشر هذا الكاتب أي مقالات بعد.",
+        "joined": "انضم {date}",
+        "follow": "متابعة",
+        "unfollow": "إلغاء المتابعة",
+        "followSuccess": "أصبحت تتابع هذا الكاتب.",
+        "unfollowSuccess": "تم إلغاء متابعة هذا الكاتب.",
+        "goToAccount": "الذهاب للحساب على نوابغ",
+        "points": "{count} نقطة",
+        "readTime": "{minutes} دقائق قراءة",
+        "loadMore": "تحميل المزيد من المقالات",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "current": "ملف الكاتب"
+        },
+        "tabs": {
+          "mostRead": "الأكثر قراءة",
+          "topRated": "الأعلى تقييماً",
+          "all": "كل المقالات"
+        },
+        "stats": {
+          "title": "نظرة عامة",
+          "articles": "مقالاً منشوراً",
+          "followers": "متابع",
+          "following": "يتابع",
+          "interactions": "تفاعل"
+        },
+        "badges": {
+          "title": "الشارات المحققة",
+          "empty": "لا توجد شارات محققة بعد."
+        },
+        "skills": {
+          "title": "المهارات"
+        },
+        "connect": {
+          "title": "تواصل مع المؤلف",
+          "website": "الموقع الشخصي",
+          "twitter": "تويتر / X",
+          "linkedin": "لينكدإن"
+        }
       }
     },
     "common": {
       "loading": "جاري التحميل...",
       "error": "حدث خطأ أثناء تحميل البيانات"
+    },
+    "tabs": {
+      "home": {
+        "title": "الرئيسية"
+      },
+      "interactiveBooks": {
+        "title": "إدارة الكتاب التفاعلي"
+      }
     }
   }
 }

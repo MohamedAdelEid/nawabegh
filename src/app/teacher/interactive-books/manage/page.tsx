@@ -1,1 +1,1 @@
-export { AdminInteractiveBookManagePage as default } from "@/modules/admin/presentation/pages/AdminInteractiveBookManagePage";
+export { TeacherInteractiveBookManagePage as default } from "@/modules/teacher/presentation/pages/TeacherInteractiveBookManagePage";

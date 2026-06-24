@@ -25,8 +25,8 @@ import {
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { notify } from "@/shared/application/lib/toast";
-import { STATIC_SUBJECT_OPTIONS } from "@/modules/admin/application/hooks/useQuestionBankPage";
 import { useQuestionBankInfiniteList } from "@/modules/admin/application/hooks/useQuestionBankInfiniteList";
+import { useQuestionBankSubjects } from "@/modules/admin/application/hooks/useQuestionBankSubjects";
 import {
   deleteQuestionBankQuestion,
   type QuestionBankEnumOption,
@@ -86,6 +86,7 @@ export function AdminQuestionBankPreviewAllPage() {
   const locale = useLocale();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const subjectsQuery = useQuestionBankSubjects();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; snippet: string } | null>(null);
   const [hasLoadedShell, setHasLoadedShell] = useState(false);
@@ -131,12 +132,16 @@ export function AdminQuestionBankPreviewAllPage() {
   }, [enums?.questionTypes, locale]);
 
   const subjectOptions = useMemo(
-    () =>
-      STATIC_SUBJECT_OPTIONS.map((item) => ({
-        id: item.id,
-        label: t(item.translationKey),
+    () => [
+      { id: "all", label: t("questionBank.filters.subject.all") },
+      ...(subjectsQuery.data?.data?.rows ?? []).map((subject) => ({
+        id: String(subject.id),
+        label: locale.startsWith("ar")
+          ? subject.nameAr || subject.nameEn
+          : subject.nameEn || subject.nameAr,
       })),
-    [t],
+    ],
+    [locale, subjectsQuery.data?.data?.rows, t],
   );
 
   const difficultyOptions = useMemo(
@@ -361,6 +366,7 @@ export function AdminQuestionBankPreviewAllPage() {
                     label={t("questionBank.filters.subject.label")}
                     value={filters.subject}
                     options={subjectOptions}
+                    disabled={subjectsQuery.isLoading}
                     onChange={(value) =>
                       setFilters((current) => ({ ...current, subject: value }))
                     }

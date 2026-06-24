@@ -188,10 +188,12 @@ export const ROUTES = {
     TEACHER: {
       HOME: "/teacher/dashboard",
       SETTINGS: "/teacher/settings",
-      LIVE_ANALYTICS: "/teacher/live-analytics",
+      /** @deprecated Use LIVE_SESSIONS with ?tab=analytics */
+      LIVE_ANALYTICS: "/teacher/live-sessions?tab=analytics",
       SCHEDULE: "/teacher/schedule",
       LIVE_SESSIONS: "/teacher/live-sessions",
-      SESSION_DETAILS: (sessionId: string) => `/teacher/schedule/${sessionId}`,
+      LIVE_SESSIONS_ABSENT_STUDENTS: "/teacher/live-sessions/absent-students",
+      SESSION_DETAILS: (sessionId: string) => `/teacher/live-sessions/${sessionId}`,
       COURSES: {
         LIST: "/teacher/courses",
         CREATE: "/teacher/courses/create",
@@ -222,6 +224,15 @@ export const ROUTES = {
           `/teacher/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
         MANAGE_EDIT: (courseId: string) =>
           `/teacher/interactive-books/manage/${encodeURIComponent(courseId)}/edit`,
+      },
+      KNOWLEDGE_COMMUNITY: {
+        LIST: "/teacher/knowledge-community",
+        CREATE: "/teacher/knowledge-community/create",
+        PREVIEW: "/teacher/knowledge-community/create/preview",
+        ARTICLE: (articleId: string) =>
+          `/teacher/knowledge-community/articles/${encodeURIComponent(articleId)}`,
+        AUTHOR: (authorId: string) =>
+          `/teacher/knowledge-community/authors/${encodeURIComponent(authorId)}`,
       },
       JOURNEY_EDITOR: {
         LIST: "/teacher/journey-editor",

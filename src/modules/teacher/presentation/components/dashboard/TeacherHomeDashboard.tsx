@@ -79,33 +79,43 @@ export function TeacherHomeDashboard() {
           <TeacherPerformanceLineChart
             title={t("home.chart.title")}
             subtitle={t("home.chart.subtitle")}
-            rows={data.performanceChart.map((row) => ({
-              ...row,
-              dayKey: t(row.dayKey),
-            }))}
+            currentWeekRows={data.performanceChart.currentWeek}
+            previousWeekRows={data.performanceChart.previousWeek}
             currentWeekLabel={t("home.chart.currentWeek")}
             previousWeekLabel={t("home.chart.previousWeek")}
+            interactionRateLabel={t("home.chart.interactionRate")}
+            referenceAverageLabel={t("home.chart.referenceAverage")}
           />
 
-          <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
+          <Card className="border-none bg-transparent shadow-none">
             <CardContent className="space-y-6 p-6">
               <div className="flex items-center justify-between gap-4">
-                <h2 className="text-2xl font-bold text-slate-800">{t("home.courses.title")}</h2>
+                <h2 className="text-2xl font-bold text-slate-800 border-r-6 border-r-[#C7AF6D] pr-4">{t("home.courses.title")}</h2>
                 <Button variant="ghost" className="text-[#2C4260]" asChild>
                   <Link href={ROUTES.USER.TEACHER.COURSES.LIST}>
                     {t("home.courses.viewAll")}
                   </Link>
                 </Button>
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                {data.courses.map((course) => (
+              <div className="grid gap-6 md:grid-cols-2">
+                {data.courses.length === 0 ? (
+                  <p className="col-span-full text-sm text-slate-500">{t("home.courses.empty")}</p>
+                ) : (
+                  data.courses.map((course) => (
                   <div
                     key={course.id}
-                    className="overflow-hidden rounded-[1.5rem] border border-slate-100 bg-slate-50"
+                    className="overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white shadow-[var(--dashboard-shadow-soft)]"
                   >
-                    <div className="h-28 bg-gradient-to-br from-[#2C4260] to-[#4A6280]" />
+                    <div
+                      className="h-28 bg-gradient-to-br from-[#2C4260] to-[#4A6280] bg-cover bg-center"
+                      style={
+                        course.imageUrl
+                          ? { backgroundImage: `url(${course.imageUrl})` }
+                          : undefined
+                      }
+                    />
                     <div className="space-y-4 p-4 text-right">
-                      <h3 className="font-bold text-slate-800">{t(course.titleKey)}</h3>
+                      <h3 className="font-bold text-slate-800">{course.title}</h3>
                       <div className="flex flex-wrap gap-3 text-xs text-slate-500">
                         <span>{t("home.courses.weeks", { count: course.durationWeeks })}</span>
                         <span>{t("home.courses.students", { count: course.studentCount })}</span>
@@ -119,14 +129,15 @@ export function TeacherHomeDashboard() {
                         </div>
                         <p className="text-xs text-slate-500">{course.progressPercent}%</p>
                       </div>
-                      <Button className="w-full rounded-xl bg-[#2C4260]" asChild>
+                      <Button className="w-full rounded-xl bg-[#2C4260] hover:bg-[#2C4260]/90 hover:shadow-none" asChild>
                         <Link href={ROUTES.USER.TEACHER.COURSES.DETAILS(course.id)}>
                           {t("home.courses.enterTrack")}
                         </Link>
                       </Button>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
@@ -138,12 +149,18 @@ export function TeacherHomeDashboard() {
               <h2 className="text-right text-lg font-bold text-slate-800">
                 {t("home.liveClasses.title")}
               </h2>
-              {data.liveClasses.map((item) => (
+              {data.liveClasses.length === 0 ? (
+                <p className="text-sm text-slate-500">{t("home.liveClasses.empty")}</p>
+              ) : (
+                data.liveClasses.map((item) => (
                 <div
                   key={item.id}
                   className="rounded-2xl border border-slate-100 p-4 text-right"
                 >
-                  <p className="font-semibold text-slate-800">{t(item.titleKey)}</p>
+                  <p className="font-semibold text-slate-800">{item.title}</p>
+                  {item.courseTitle ? (
+                    <p className="mt-0.5 text-xs text-slate-400">{item.courseTitle}</p>
+                  ) : null}
                   <p className="mt-1 text-sm text-slate-500">{item.timeLabel}</p>
                   {item.status === "active" ? (
                     <div className="mt-3 flex items-center justify-between gap-2">
@@ -162,7 +179,8 @@ export function TeacherHomeDashboard() {
                     </Button>
                   )}
                 </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -171,7 +189,10 @@ export function TeacherHomeDashboard() {
               <h2 className="text-right text-lg font-bold text-slate-800">
                 {t("home.alerts.title")}
               </h2>
-              {data.alerts.map((alert) => (
+              {data.alerts.length === 0 ? (
+                <p className="text-sm text-slate-500">{t("home.alerts.empty")}</p>
+              ) : (
+                data.alerts.map((alert) => (
                 <div
                   key={alert.id}
                   className={`rounded-2xl border p-4 text-right ${
@@ -180,10 +201,11 @@ export function TeacherHomeDashboard() {
                       : "border-amber-100 bg-amber-50"
                   }`}
                 >
-                  <p className="font-semibold text-slate-800">{t(alert.titleKey)}</p>
-                  <p className="mt-1 text-sm text-slate-600">{t(alert.descriptionKey)}</p>
+                  <p className="font-semibold text-slate-800">{alert.title}</p>
+                  <p className="mt-1 text-sm text-slate-600">{alert.description}</p>
                 </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 

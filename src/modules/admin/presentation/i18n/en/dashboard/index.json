@@ -1259,7 +1259,10 @@
         },
         "loading": "Loading interactive books…",
         "empty": "No interactive books yet.",
-        "loadError": "Could not load interactive books. Please try again."
+        "loadError": "Could not load interactive books. Please try again.",
+        "deleteConfirm": "Delete “{title}”? This removes the book, hotspots, and index.",
+        "deleteSuccess": "Interactive book deleted.",
+        "deleteError": "Could not delete the interactive book."
       },
       "addModal": {
         "title": "Add a new interactive book",
@@ -1434,6 +1437,11 @@
           "pdfStillUploading": "Wait for the PDF upload to finish.",
           "success": "Interactive book created successfully.",
           "error": "Could not create the interactive book."
+        },
+        "update": {
+          "noChanges": "No changes to save.",
+          "success": "Interactive book updated successfully.",
+          "error": "Could not update the interactive book."
         },
         "viewer": {
           "pageOf": "Page {current} of {total}",
@@ -2658,6 +2666,7 @@
         "stationCreateError": "Failed to create station.",
         "stationDeleteError": "Failed to delete station.",
         "pathDeleteError": "Failed to delete learning path.",
+        "loadFailed": "Failed to load journey editor.",
         "stationAdded": "Station created successfully.",
         "stationReorderError": "Failed to reorder stations."
       },
@@ -2928,6 +2937,7 @@
           "scheduleTimeRequired": "Start and end times are required",
           "scheduleInvalid": "Invalid schedule date or time",
           "scheduleEndBeforeStart": "End must be after the start date and time",
+          "scheduleInPast": "The challenge cannot be scheduled in the past. Choose a future start date and time.",
           "timezoneRequired": "Please select a timezone",
           "generateQuestionsSuccess": "Question generation started",
           "generateQuestionsError": "Failed to generate questions",

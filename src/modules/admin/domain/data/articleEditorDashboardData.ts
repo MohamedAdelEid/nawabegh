@@ -21,6 +21,7 @@ export type ArticleRow = {
   authorName: string;
   /** Author profile image URL when provided by the API */
   authorAvatarImageUrl: string | null;
+  authorUserId?: string;
   authorRole: string;
   schoolName: string;
   likesCount: number;

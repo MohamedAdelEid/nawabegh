@@ -79,13 +79,13 @@ export const adminSidebarItems: SidebarItems = {
       activePathPrefixes: [ROUTES.ADMIN.HELPER_FILE_MANAGEMENT.LIST],
       icon: FileStack,
     },
-    {
-      id: "pricingManagement",
-      labelKey: "sidebar.nav.pricingManagement",
-      href: ROUTES.ADMIN.PRICING_MANAGEMENT.LIST,
-      activePathPrefixes: [ROUTES.ADMIN.PRICING_MANAGEMENT.LIST],
-      icon: CreditCard,
-    },
+    // {
+    //   id: "pricingManagement",
+    //   labelKey: "sidebar.nav.pricingManagement",
+    //   href: ROUTES.ADMIN.PRICING_MANAGEMENT.LIST,
+    //   activePathPrefixes: [ROUTES.ADMIN.PRICING_MANAGEMENT.LIST],
+    //   icon: CreditCard,
+    // },
     {
       id: "articleEditor",
       labelKey: "sidebar.nav.articleEditor",

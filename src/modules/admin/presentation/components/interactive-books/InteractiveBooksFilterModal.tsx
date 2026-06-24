@@ -16,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useScopedInteractiveBooksTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import { cn } from "@/shared/application/lib/cn";
 import {
   DashboardSegmentedControl,
@@ -45,7 +45,7 @@ export function InteractiveBooksFilterModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const t = useTranslations("admin.dashboard.interactiveBooks.filterModal");
+  const t = useScopedInteractiveBooksTranslations("filterModal");
   const [grade, setGrade] = useState<GradeSeg>("sec1");
   const [subjectTags, setSubjectTags] = useState<string[]>(["math", "arabic"]);
   const [schoolTags, setSchoolTags] = useState<string[]>(["schoolA", "schoolB"]);

@@ -20,7 +20,7 @@ export function TeacherCourseFormStepper({
   const t = useTranslations("teacher.dashboard");
 
   return (
-    <nav aria-label={t("courses.create.stepper.ariaLabel")} className="w-full">
+    <nav aria-label={t("courses.create.stepper.ariaLabel")} className="w-full flex justify-center items-center">
       <ol className="flex w-full items-center justify-between gap-2">
         {steps.map((step, index) => {
           const isActive = step.id === activeStep;
@@ -28,7 +28,7 @@ export function TeacherCourseFormStepper({
           const Icon = step.icon;
 
           return (
-            <li key={step.id} className="flex flex-1 items-center gap-2">
+            <li key={step.id} className={cn("flex items-center gap-2", index < steps.length - 1 ? "flex-1" : "")}>
               <div className="flex flex-col items-center gap-2 text-center">
                 <span
                   className={cn(

@@ -30,12 +30,21 @@ export type JourneyEditorRoutes = {
   HELPER_RESOURCE_EDITOR: (journeyId: string, stationId: string) => string;
 };
 
+export type KnowledgeCommunityRoutes = {
+  LIST: string;
+  CREATE: string;
+  PREVIEW: string;
+  ARTICLE: (articleId: string) => string;
+  AUTHOR: (authorId: string) => string;
+};
+
 export type ScopedDashboardRoutes = {
   scope: DashboardScope;
   home: string;
   helperFileManagement: HelperFileManagementRoutes;
   interactiveBooks: InteractiveBooksRoutes;
   journeyEditor: JourneyEditorRoutes;
+  knowledgeCommunity: KnowledgeCommunityRoutes;
   interactiveBooksListHref: string;
   journeyEditorListHref: string;
 };
@@ -105,6 +114,7 @@ export function getScopedDashboardRoutes(scope: DashboardScope): ScopedDashboard
       helperFileManagement: createHelperFileRoutes(TEACHER_HELPER_BASE),
       interactiveBooks: createInteractiveBooksRoutes(TEACHER_INTERACTIVE_BASE),
       journeyEditor: ROUTES.USER.TEACHER.JOURNEY_EDITOR,
+      knowledgeCommunity: ROUTES.USER.TEACHER.KNOWLEDGE_COMMUNITY,
       interactiveBooksListHref: TEACHER_INTERACTIVE_BASE,
       journeyEditorListHref: TEACHER_JOURNEY_BASE,
     };
@@ -116,6 +126,13 @@ export function getScopedDashboardRoutes(scope: DashboardScope): ScopedDashboard
     helperFileManagement: ROUTES.ADMIN.HELPER_FILE_MANAGEMENT,
     interactiveBooks: ROUTES.ADMIN.INTERACTIVE_BOOKS,
     journeyEditor: ROUTES.ADMIN.JOURNEY_EDITOR,
+    knowledgeCommunity: {
+      LIST: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
+      CREATE: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
+      PREVIEW: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
+      ARTICLE: ROUTES.ADMIN.ARTICLE_EDITOR.VIEW,
+      AUTHOR: (_authorId: string) => ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
+    },
     interactiveBooksListHref: `${ROUTES.ADMIN.HOME}?tab=interactiveBooks`,
     journeyEditorListHref: `${ROUTES.ADMIN.HOME}?tab=journeyEditor`,
   };

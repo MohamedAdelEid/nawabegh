@@ -85,6 +85,57 @@ export function ChatMessageBubble({
           </div>
         ) : null}
 
+        {message.type === "image" && message.fileUrl ? (
+          <div className="space-y-2">
+            <div
+              className={cn(
+                "overflow-hidden rounded-2xl",
+                isTeacher ? "bg-[#243B5A]" : "bg-[#F2EFE9]",
+              )}
+            >
+              <a href={message.fileUrl} target="_blank" rel="noreferrer" className="block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={message.fileUrl}
+                  alt={fileName ?? content ?? "image"}
+                  className="max-h-72 w-full object-cover"
+                />
+              </a>
+              {content ? (
+                <p
+                  className={cn(
+                    "px-4 py-2 text-sm",
+                    isTeacher ? "text-white" : "text-slate-800",
+                  )}
+                >
+                  {content}
+                </p>
+              ) : null}
+              <div
+                className={cn(
+                  "flex items-center justify-between gap-4 px-4 pb-3 text-[11px] opacity-70",
+                  isTeacher ? "text-white" : "text-slate-600",
+                )}
+              >
+                <span>{message.timestamp}</span>
+                {!isTeacher && message.read ? <CheckCheck className="h-3.5 w-3.5 text-sky-500" /> : null}
+              </div>
+            </div>
+            {message.reactions && message.reactions.length > 0 ? (
+              <div className="flex flex-wrap justify-end gap-1">
+                {message.reactions.map((reaction) => (
+                  <span
+                    key={reaction.emoji}
+                    className="rounded-full bg-white px-2 py-0.5 text-xs shadow-sm"
+                  >
+                    {reaction.emoji} {reaction.count}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
         {message.type === "file" ? (
           <div className="space-y-2">
             <div
@@ -98,7 +149,14 @@ export function ChatMessageBubble({
                 <p className="truncate text-sm font-medium">{fileName}</p>
                 <p className="text-xs opacity-70">{message.fileSize}</p>
               </div>
-              <button type="button" className="rounded-full p-2 hover:bg-white/10" aria-label="Download">
+              <button
+                type="button"
+                className="rounded-full p-2 hover:bg-white/10"
+                aria-label="Download"
+                onClick={() => {
+                  if (message.fileUrl) window.open(message.fileUrl, "_blank", "noopener,noreferrer");
+                }}
+              >
                 <Download className="h-4 w-4" />
               </button>
             </div>

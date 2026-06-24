@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -27,21 +28,34 @@ type Period = "current" | "previous";
 export function TeacherPerformanceLineChart({
   title,
   subtitle,
-  rows,
+  currentWeekRows,
+  previousWeekRows,
   currentWeekLabel,
   previousWeekLabel,
+  interactionRateLabel,
+  referenceAverageLabel,
 }: {
   title: string;
   subtitle: string;
-  rows: TeacherPerformanceChartPoint[];
+  currentWeekRows: TeacherPerformanceChartPoint[];
+  previousWeekRows: TeacherPerformanceChartPoint[];
   currentWeekLabel: string;
   previousWeekLabel: string;
+  interactionRateLabel: string;
+  referenceAverageLabel: string;
 }) {
-  const data = rows.map((row) => ({
-    label: row.dayKey,
-    interactionRate: row.interactionRate,
-    referenceAverage: row.referenceAverage,
-  }));
+  const [period, setPeriod] = useState<Period>("current");
+
+  const data = useMemo(() => {
+    const rows = period === "current" ? currentWeekRows : previousWeekRows;
+    return rows.map((row) => ({
+      label: row.dayLabel,
+      interactionRate: row.interactionRate,
+      referenceAverage: row.referenceAverage,
+    }));
+  }, [currentWeekRows, previousWeekRows, period]);
+
+  const showReferenceLine = period === "current";
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
@@ -56,20 +70,22 @@ export function TeacherPerformanceLineChart({
               { id: "current", label: currentWeekLabel },
               { id: "previous", label: previousWeekLabel },
             ]}
-            value="current"
-            onChange={() => {}}
+            value={period}
+            onChange={setPeriod}
           />
         </div>
 
         <div className="flex flex-wrap justify-end gap-4 text-xs text-slate-500">
           <span className="inline-flex items-center gap-2">
             <span className="h-0.5 w-6 bg-[#C9A227]" />
-            {chartConfig.interactionRate.label}
+            {interactionRateLabel}
           </span>
-          <span className="inline-flex items-center gap-2">
-            <span className="h-3 w-6 rounded bg-slate-200" />
-            {chartConfig.referenceAverage.label}
-          </span>
+          {showReferenceLine ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-3 w-6 rounded bg-slate-200" />
+              {referenceAverageLabel}
+            </span>
+          ) : null}
         </div>
 
         <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
@@ -85,14 +101,16 @@ export function TeacherPerformanceLineChart({
               strokeWidth={2.5}
               dot={false}
             />
-            <Line
-              type="monotone"
-              dataKey="referenceAverage"
-              stroke="var(--color-referenceAverage)"
-              strokeWidth={2}
-              strokeDasharray="4 4"
-              dot={false}
-            />
+            {showReferenceLine ? (
+              <Line
+                type="monotone"
+                dataKey="referenceAverage"
+                stroke="var(--color-referenceAverage)"
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={false}
+              />
+            ) : null}
           </LineChart>
         </ChartContainer>
       </CardContent>

@@ -6,6 +6,8 @@ import {
   getResourceFileCoursesDropdown,
   getStationsList,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
+import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { ResourceFileType } from "@/shared/domain/enums/cms.enums";
 import {
   DashboardFilterSelect,
@@ -34,6 +36,8 @@ export function HelperFileManagementFilterBar({
   onChange,
 }: HelperFileManagementFilterBarProps) {
   const t = useTranslations("admin.dashboard.contentManagement");
+  const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
   const [stationOptions, setStationOptions] = useState<DashboardFilterOption<string>[]>([]);
   const [courseOptions, setCourseOptions] = useState<DashboardFilterOption<string>[]>([]);
   const [courseSearchQuery, setCourseSearchQuery] = useState("");
@@ -44,46 +48,57 @@ export function HelperFileManagementFilterBar({
 
     const loadOptions = async () => {
       setOptionsLoading(true);
-      const [stationsResult, coursesResult] = await Promise.all([
-        getStationsList(),
-        getResourceFileCoursesDropdown(),
-      ]);
-      if (!alive) return;
 
-      if (stationsResult.data) {
-        setStationOptions(
-          stationsResult.data.map((station) => ({
-            id: station.id,
-            label: station.learningPathTitle
-              ? `${station.name} — ${station.learningPathTitle}`
-              : station.name,
-          })),
-        );
-      } else {
-        setStationOptions([]);
+      try {
+        if (isTeacherScope) {
+          const courses = await fetchTeacherMyCoursesOptions({ pageSize: 100 });
+          if (!alive) return;
+          setStationOptions([]);
+          setCourseOptions(
+            courses.map((course) => ({
+              id: course.courseId,
+              label: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+            })),
+          );
+        } else {
+          const [stationsResult, coursesResult] = await Promise.all([
+            getStationsList(),
+            getResourceFileCoursesDropdown(),
+          ]);
+          if (!alive) return;
+
+          setStationOptions(
+            stationsResult.data
+              ? stationsResult.data.map((station) => ({
+                  id: station.id,
+                  label: station.learningPathTitle
+                    ? `${station.name} — ${station.learningPathTitle}`
+                    : station.name,
+                }))
+              : [],
+          );
+
+          setCourseOptions(
+            coursesResult.data
+              ? coursesResult.data.map((course) => ({
+                  id: course.id,
+                  label: course.teacherName
+                    ? `${course.courseName} — ${course.teacherName}`
+                    : course.courseName,
+                }))
+              : [],
+          );
+        }
+      } finally {
+        if (alive) setOptionsLoading(false);
       }
-
-      if (coursesResult.data) {
-        setCourseOptions(
-          coursesResult.data.map((course) => ({
-            id: course.id,
-            label: course.teacherName
-              ? `${course.courseName} — ${course.teacherName}`
-              : course.courseName,
-          })),
-        );
-      } else {
-        setCourseOptions([]);
-      }
-
-      setOptionsLoading(false);
     };
 
     void loadOptions();
     return () => {
       alive = false;
     };
-  }, []);
+  }, [isTeacherScope]);
 
   const stationSelectOptions = useMemo<DashboardFilterOption<string>[]>(() => {
     if (optionsLoading) {

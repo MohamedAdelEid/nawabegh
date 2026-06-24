@@ -161,6 +161,54 @@ function parseScheduleDateTime(date: string, time: string) {
   return new Date(`${date}T${toApiTime(time)}`);
 }
 
+function readZonedDateTimeParts(date: Date, timeZoneId: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: timeZoneId,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(date);
+}
+
+function partValue(parts: Intl.DateTimeFormatPart[], type: Intl.DateTimeFormatPartTypes) {
+  const value = parts.find((part) => part.type === type)?.value ?? "0";
+  return Number(value);
+}
+
+function isScheduleStartInPast(date: string, time: string, timeZoneId: string) {
+  if (!date || !time || !timeZoneId) return false;
+
+  const dateParts = date.split("-").map(Number);
+  const timeParts = time.split(":").map(Number);
+  if (dateParts.length < 3 || timeParts.length < 2) return false;
+
+  const year = dateParts[0] ?? Number.NaN;
+  const month = dateParts[1] ?? Number.NaN;
+  const day = dateParts[2] ?? Number.NaN;
+  const hours = timeParts[0] ?? Number.NaN;
+  const minutes = timeParts[1] ?? Number.NaN;
+
+  if ([year, month, day, hours, minutes].some((value) => Number.isNaN(value))) {
+    return false;
+  }
+
+  const nowParts = readZonedDateTimeParts(new Date(), timeZoneId);
+  const nowYear = partValue(nowParts, "year");
+  const nowMonth = partValue(nowParts, "month");
+  const nowDay = partValue(nowParts, "day");
+  const nowHour = partValue(nowParts, "hour");
+  const nowMinute = partValue(nowParts, "minute");
+
+  if (year !== nowYear) return year < nowYear;
+  if (month !== nowMonth) return month < nowMonth;
+  if (day !== nowDay) return day < nowDay;
+  if (hours !== nowHour) return hours < nowHour;
+  return minutes < nowMinute;
+}
+
 function pickDefaultTimeZone(timezones: string[]) {
   if (!timezones.length) return "";
   try {
@@ -398,6 +446,10 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
     }
     if (scheduleEnd <= scheduleStart) {
       notify.error(t("messages.scheduleEndBeforeStart"));
+      return;
+    }
+    if (isScheduleStartInPast(startDate, startTime, timeZoneId)) {
+      notify.error(t("messages.scheduleInPast"));
       return;
     }
 

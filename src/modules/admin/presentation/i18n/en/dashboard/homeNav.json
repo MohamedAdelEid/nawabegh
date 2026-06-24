@@ -13,6 +13,12 @@
       "courseManagement": {
         "description": "Review submitted courses, approve or reject content, and track publishing status. Keep the learning catalog organized and up to date."
       },
+      "bundleManagement": {
+        "description": "Create and manage discounted course bundles for students. Group courses, set bundle pricing, and control availability across the catalog."
+      },
+      "invoiceManagement": {
+        "description": "Track invoices, payment transactions, and active enrollments. Review revenue, monitor billing activity, and manage gateway settings."
+      },
       "helperFileManagement": {
         "description": "Upload, organize, and maintain helper documents that support lessons and exams. Preview files and keep shared resources accessible."
       },

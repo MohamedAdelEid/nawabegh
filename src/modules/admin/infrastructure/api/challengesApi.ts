@@ -1,4 +1,5 @@
 import type { BackendStatus } from "@/shared/domain/types/api.types";
+import { getApiErrorMessage } from "@/shared/infrastructure/api/apiResponse.utils";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -110,9 +111,32 @@ function extractEnvelopeData(data: unknown): unknown {
 }
 
 function mapSupportedTimezones(data: unknown): string[] {
+  const toTimezoneStrings = (items: unknown[]): string[] =>
+    items.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+
+  if (Array.isArray(data)) {
+    return toTimezoneStrings(data);
+  }
+
   const envelope = extractEnvelopeData(data);
-  if (!Array.isArray(envelope)) return [];
-  return envelope.filter((item): item is string => typeof item === "string" && item.trim() !== "");
+  if (Array.isArray(envelope)) {
+    return toTimezoneStrings(envelope);
+  }
+
+  // httpClient spreads bare array responses into { 0: "Asia/Riyadh", 1: "...", headers: "..." }
+  const record = asRecord(data);
+  if (record) {
+    const numericKeys = Object.keys(record).filter((key) => /^\d+$/.test(key));
+    if (numericKeys.length > 0) {
+      return toTimezoneStrings(
+        numericKeys
+          .sort((a, b) => Number(a) - Number(b))
+          .map((key) => record[key]),
+      );
+    }
+  }
+
+  return [];
 }
 
 function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
@@ -204,13 +228,18 @@ function mapCreatedChallenge(data: unknown): CreatedChallenge | null {
 function buildErrorResult<T>(error: unknown, fallbackMessage: string): ChallengeApiResult<T> {
   const axiosError = asRecord(error);
   const response = asRecord(axiosError?.response);
-  const responseData = asRecord(response?.data);
+  const responseData = response?.data;
   const httpStatusCode = response ? readNumber(response, ["status"], 0) : null;
 
   const detailMessage =
-    readString(responseData, ["detail", "title", "message"], "") ||
-    readString(asRecord(responseData?.error), ["message"], "") ||
-    (typeof axiosError?.message === "string" ? axiosError.message : fallbackMessage);
+    responseData !== null && typeof responseData === "object"
+      ? getApiErrorMessage(
+          responseData as Parameters<typeof getApiErrorMessage>[0],
+          fallbackMessage,
+        )
+      : typeof axiosError?.message === "string"
+        ? axiosError.message
+        : fallbackMessage;
 
   return {
     status: mapHttpStatus(httpStatusCode),
@@ -225,11 +254,14 @@ export async function getSupportedTimezones(): Promise<ChallengeApiResult<string
       url: "/api/v1/challenges/supported-timezones",
     });
 
+    // API returns a bare string[]; httpClient spreads it to { 0: "...", 1: "...", headers }
+    const timezones = mapSupportedTimezones(response.data ?? response);
+
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
-      data: mapSupportedTimezones(response.data),
+      data: timezones,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load supported timezones");
@@ -302,11 +334,13 @@ export async function createChallenge(
       data: payload,
     });
 
+    const data = mapCreatedChallenge(response.data);
+
     return {
       status: response.status,
       message: response.message,
-      errorMessage: response.error?.message,
-      data: mapCreatedChallenge(response.data),
+      errorMessage: data ? undefined : getApiErrorMessage(response, "Failed to create challenge"),
+      data,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to create challenge");

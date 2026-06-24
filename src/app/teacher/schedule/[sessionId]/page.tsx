@@ -1,10 +1,11 @@
-import { TeacherSessionDetailsPage } from "@/modules/teacher/presentation/pages/TeacherSessionDetailsPage";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 interface PageProps {
   params: Promise<{ sessionId: string }>;
 }
 
-export default async function TeacherSessionDetailsRoutePage({ params }: PageProps) {
+export default async function TeacherScheduleSessionRedirectPage({ params }: PageProps) {
   const { sessionId } = await params;
-  return <TeacherSessionDetailsPage sessionId={sessionId} />;
+  redirect(ROUTES.USER.TEACHER.SESSION_DETAILS(sessionId));
 }

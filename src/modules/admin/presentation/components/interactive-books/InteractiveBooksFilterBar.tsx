@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
 import {
   DashboardFilterSelect,
   DashboardSearchFilter,
   type DashboardFilterOption,
 } from "@/shared/presentation/components/dashboard";
-import { getCoursesPage, type CourseListItemDto } from "@/modules/admin/infrastructure/api/courseApi";
+import { getCoursesPage } from "@/modules/admin/infrastructure/api/courseApi";
+import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
+import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Label } from "@/shared/presentation/components/ui/label";
 
@@ -79,28 +81,54 @@ function FilterInput({
 }
 
 export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksFilterBarProps) {
-  const t = useTranslations("admin.dashboard");
-  const [courses, setCourses] = useState<CourseListItemDto[]>([]);
+  const t = useScopedDashboardTranslations();
+  const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
+  const [courses, setCourses] = useState<Array<{ id: string; title: string }>>([]);
   const [coursesLoadState, setCoursesLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   useEffect(() => {
     let alive = true;
     (async () => {
       setCoursesLoadState("loading");
-      const result = await getCoursesPage({ pageNumber: 1, pageSize: 240 });
-      if (!alive) return;
-      if (result.errorMessage || !result.data) {
+      try {
+        if (isTeacherScope) {
+          const teacherCourses = await fetchTeacherMyCoursesOptions({ pageSize: 240 });
+          if (!alive) return;
+          setCourses(
+            teacherCourses.map((course) => ({
+              id: course.courseId,
+              title: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+            })),
+          );
+          setCoursesLoadState("success");
+          return;
+        }
+
+        const result = await getCoursesPage({ pageNumber: 1, pageSize: 240 });
+        if (!alive) return;
+        if (result.errorMessage || !result.data) {
+          setCourses([]);
+          setCoursesLoadState("error");
+          return;
+        }
+        setCourses(
+          result.data.rows.map((course) => ({
+            id: course.id,
+            title: course.title,
+          })),
+        );
+        setCoursesLoadState("success");
+      } catch {
+        if (!alive) return;
         setCourses([]);
         setCoursesLoadState("error");
-        return;
       }
-      setCourses(result.data.rows);
-      setCoursesLoadState("success");
     })();
     return () => {
       alive = false;
     };
-  }, []);
+  }, [isTeacherScope]);
 
   const courseOptions = useMemo<Array<DashboardFilterOption<string>>>(() => {
     const placeholder = {
@@ -108,15 +136,13 @@ export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksF
       label: t("interactiveBooks.filterBar.fields.courseId.placeholder"),
     };
     if (coursesLoadState === "loading") {
-      return [{ id: "", label: t("interactiveBooks.filterBar.fields.courseId.loading") }];
+      return [{ id: "__loading__", label: t("interactiveBooks.filterBar.fields.courseId.loading") }];
     }
-    if (coursesLoadState === "error" || courses.length === 0) {
-      return [
-        placeholder,
-        ...(coursesLoadState === "error"
-          ? [{ id: "", label: t("interactiveBooks.filterBar.fields.courseId.loadError") }]
-          : []),
-      ];
+    if (coursesLoadState === "error") {
+      return [{ id: "", label: t("interactiveBooks.filterBar.fields.courseId.loadError") }];
+    }
+    if (courses.length === 0) {
+      return [placeholder];
     }
     return [
       placeholder,

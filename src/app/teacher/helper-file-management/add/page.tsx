@@ -1,1 +1,1 @@
-export { AdminHelperFileManagementAddPage as default } from "@/modules/admin/presentation/pages/AdminHelperFileManagementAddPage";
+export { TeacherHelperFileManagementAddPage as default } from "@/modules/teacher/presentation/pages/TeacherHelperFileManagementAddPage";

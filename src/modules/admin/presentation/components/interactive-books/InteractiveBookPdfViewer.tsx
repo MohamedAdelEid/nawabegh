@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, X } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useScopedInteractiveBooksTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import {
   getHotspotsByPage,
   type InteractiveBookHotspot,
@@ -158,7 +158,7 @@ export function InteractiveBookPdfViewer({
   onDocumentLoadSuccess,
   onPageClick,
 }: InteractiveBookPdfViewerProps) {
-  const t = useTranslations("admin.dashboard.interactiveBooks.managePage.viewer");
+  const t = useScopedInteractiveBooksTranslations("managePage.viewer");
   const [loadError, setLoadError] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
   const [documentFile, setDocumentFile] = useState<string | ArrayBuffer | null>(null);

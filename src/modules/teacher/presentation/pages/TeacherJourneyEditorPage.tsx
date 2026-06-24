@@ -1,7 +1,7 @@
 "use client";
 
-import { JourneyEditorDashboard } from "@/modules/admin/presentation/components/dashboard/JourneyEditorDashboard";
+import { TeacherJourneyEditorDashboard } from "@/modules/teacher/presentation/components/journey-editor/TeacherJourneyEditorDashboard";
 
 export function TeacherJourneyEditorPage() {
-  return <JourneyEditorDashboard />;
+  return <TeacherJourneyEditorDashboard />;
 }

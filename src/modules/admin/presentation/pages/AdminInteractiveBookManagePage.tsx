@@ -19,7 +19,6 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
 import type { InteractiveBookDetail } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import { emptyInteractiveBookManagePageData } from "@/modules/admin/domain/data/interactiveBookManagePageData";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
@@ -33,8 +32,10 @@ import {
 import {
   createInteractiveBook,
   getInteractiveBookByCourseId,
+  updateInteractiveBook,
 } from "@/modules/admin/infrastructure/api/interactiveBooksApi";
-import { getCoursesPage, type CourseListItemDto } from "@/modules/admin/infrastructure/api/courseApi";
+import { getCoursesPage } from "@/modules/admin/infrastructure/api/courseApi";
+import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
 import { getSubjectsPage, type SubjectListItem } from "@/modules/admin/infrastructure/api/subjectApi";
 import { AddHotspotModal } from "@/modules/admin/presentation/components/interactive-books/AddHotspotModal";
 import {
@@ -58,6 +59,7 @@ import {
 } from "@/shared/presentation/components/ui/searchable-select";
 import { resolveFileUrl, resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
@@ -98,10 +100,17 @@ export type AdminInteractiveBookManagePageProps = {
   editCourseId?: string;
 };
 
+type InteractiveBookCourseOption = {
+  id: string;
+  title: string;
+  gradeId: number;
+};
+
 export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiveBookManagePageProps) {
-  const t = useTranslations("admin.dashboard");
+  const t = useScopedDashboardTranslations();
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
   const createDefaults = emptyInteractiveBookManagePageData;
   const pdfInputRef = useRef<HTMLInputElement>(null);
   const [bookTitle, setBookTitle] = useState("");
@@ -109,7 +118,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   const [courseSelectValue, setCourseSelectValue] = useState("");
   const [courseSearchQuery, setCourseSearchQuery] = useState("");
   const [bookStatus, setBookStatus] = useState<0 | 1>(0);
-  const [courses, setCourses] = useState<CourseListItemDto[]>([]);
+  const [courses, setCourses] = useState<InteractiveBookCourseOption[]>([]);
   const [coursesLoadState, setCoursesLoadState] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [savingBook, setSavingBook] = useState(false);
   const [hotspots, setHotspots] = useState<InteractiveBookHotspot[]>([]);
@@ -175,7 +184,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
   }, [book?.pageCount]);
 
   useEffect(() => {
-    if (isEditMode) return;
+    if (isEditMode || isTeacherScope) return;
     let alive = true;
     (async () => {
       setSubjectsLoadState("loading");
@@ -192,7 +201,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     return () => {
       alive = false;
     };
-  }, [isEditMode]);
+  }, [isEditMode, isTeacherScope]);
 
   useEffect(() => {
     if (isEditMode) {
@@ -208,24 +217,50 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     let alive = true;
     (async () => {
       setCoursesLoadState("loading");
-      const result = await getCoursesPage({
-        pageNumber: 1,
-        pageSize: 240,
-      });
-      if (!alive) return;
-      if (result.errorMessage || !result.data) {
+      try {
+        if (isTeacherScope) {
+          const teacherCourses = await fetchTeacherMyCoursesOptions({ pageSize: 240 });
+          if (!alive) return;
+          setCourses(
+            teacherCourses.map((course) => ({
+              id: course.courseId,
+              title: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+              gradeId: course.gradeId,
+            })),
+          );
+          setCoursesLoadState("success");
+          return;
+        }
+
+        const result = await getCoursesPage({
+          pageNumber: 1,
+          pageSize: 240,
+        });
+        if (!alive) return;
+        if (result.errorMessage || !result.data) {
+          setCourses([]);
+          setCoursesLoadState("error");
+          return;
+        }
+        setCourses(
+          result.data.rows.map((course) => ({
+            id: course.id,
+            title: course.title,
+            gradeId: course.gradeId,
+          })),
+        );
+        setCoursesLoadState("success");
+      } catch {
+        if (!alive) return;
         setCourses([]);
         setCoursesLoadState("error");
-        return;
       }
-      setCourses(result.data.rows);
-      setCoursesLoadState("success");
     })();
 
     return () => {
       alive = false;
     };
-  }, [isEditMode]);
+  }, [isEditMode, isTeacherScope]);
 
   useEffect(() => {
     return () => {
@@ -250,6 +285,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
         return;
       }
       setBook(res.data);
+      setBookStatus(res.data.statusId === "published" ? 1 : 0);
       setBookLoadState("success");
       if (res.data.pageCount > 0) {
         setTotalPages(res.data.pageCount);
@@ -498,10 +534,6 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
       notify.error(t("interactiveBooks.managePage.create.titleRequired"));
       return;
     }
-    if (!subjectSelectValue.trim()) {
-      notify.error(t("interactiveBooks.managePage.create.subjectRequired"));
-      return;
-    }
     if (!courseId || !selectedCourse) {
       notify.error(t("interactiveBooks.managePage.create.courseRequired"));
       return;
@@ -543,6 +575,54 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     router.push(routes.interactiveBooks.MANAGE_BY_COURSE(result.data.courseId));
   };
 
+  const handleUpdateBook = async () => {
+    if (!isEditMode || !book || savingBook) return;
+
+    if (pdfUploadState === "uploading") {
+      notify.error(t("interactiveBooks.managePage.create.pdfStillUploading"));
+      return;
+    }
+
+    const updates: {
+      status?: number;
+      pdfUrl?: string;
+      pdfFileName?: string;
+      pageCount?: number;
+    } = {};
+
+    const currentStatus = book.statusId === "published" ? 1 : 0;
+    if (bookStatus !== currentStatus) {
+      updates.status = bookStatus;
+    }
+
+    const pdfUrl = await ensurePdfUploaded();
+    if (pdfUrl && pdfUrl !== book.pdfUrl.trim()) {
+      updates.pdfUrl = pdfUrl;
+      updates.pdfFileName = pdfFileName.trim() || pdfFile?.name || book.pdfFileName || "book.pdf";
+      updates.pageCount = totalPages;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      notify.error(t("interactiveBooks.managePage.update.noChanges"));
+      return;
+    }
+
+    setSavingBook(true);
+    const result = await updateInteractiveBook(book.id, updates);
+    setSavingBook(false);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("interactiveBooks.managePage.update.error"));
+      return;
+    }
+
+    setBook(result.data);
+    setBookStatus(result.data.statusId === "published" ? 1 : 0);
+    setPdfFile(null);
+    setPdfUploadedPath(null);
+    notify.success(result.message ?? t("interactiveBooks.managePage.update.success"));
+  };
+
   if (isEditMode && bookLoadState === "loading") {
     return <InteractiveBookManagePageSkeleton />;
   }
@@ -571,8 +651,14 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
 
   const breadcrumbs = isEditMode
     ? [
-        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: routes.home },
-        { label: t("tabs.interactiveBooks.title"), href: routes.interactiveBooksListHref },
+        {
+          label: isTeacherScope ? t("sidebar.nav.home") : t("interactiveBooks.managePage.breadcrumbs.dashboard"),
+          href: routes.home,
+        },
+        {
+          label: isTeacherScope ? t("sidebar.nav.interactiveBooks") : t("tabs.interactiveBooks.title"),
+          href: routes.interactiveBooksListHref,
+        },
         {
           label: t("interactiveBooks.managePage.breadcrumbs.content"),
           href: routes.interactiveBooks.MANAGE,
@@ -580,8 +666,14 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
         { label: t("interactiveBooks.managePage.breadcrumbs.editBook") },
       ]
     : [
-        { label: t("interactiveBooks.managePage.breadcrumbs.dashboard"), href: routes.home },
-        { label: t("tabs.interactiveBooks.title"), href: routes.interactiveBooksListHref },
+        {
+          label: isTeacherScope ? t("sidebar.nav.home") : t("interactiveBooks.managePage.breadcrumbs.dashboard"),
+          href: routes.home,
+        },
+        {
+          label: isTeacherScope ? t("sidebar.nav.interactiveBooks") : t("tabs.interactiveBooks.title"),
+          href: routes.interactiveBooksListHref,
+        },
         { label: t("interactiveBooks.managePage.breadcrumbs.content") },
       ];
 
@@ -605,8 +697,8 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
             type="button"
             className="dashboard-raised-button h-14 cursor-pointer rounded-2xl bg-[var(--dashboard-primary)] px-6 text-base font-semibold text-white hover:bg-[var(--dashboard-primary)] disabled:cursor-not-allowed disabled:opacity-60"
             style={{ boxShadow: "var(--dashboard-shadow-button)" }}
-            disabled={isEditMode ? true : savingBook || pdfUploadState === "uploading"}
-            onClick={() => void handleSaveBook()}
+            disabled={savingBook || pdfUploadState === "uploading"}
+            onClick={() => void (isEditMode ? handleUpdateBook() : handleSaveBook())}
           >
             <Plus className="h-5 w-5" aria-hidden />
             {savingBook

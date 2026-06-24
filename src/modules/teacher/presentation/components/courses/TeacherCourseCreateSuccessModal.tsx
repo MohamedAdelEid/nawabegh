@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ModalDescription, ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
+import { useRouter } from "next/navigation";
 
 export function TeacherCourseCreateSuccessModal({
   open,
@@ -17,7 +18,7 @@ export function TeacherCourseCreateSuccessModal({
   courseId: string | null;
 }) {
   const t = useTranslations("teacher.dashboard");
-
+  const router = useRouter();
   return (
     <ModalShell open={open} onOpenChange={onOpenChange}>
       <div className="space-y-6 p-2 text-center">
@@ -42,21 +43,26 @@ export function TeacherCourseCreateSuccessModal({
 
         <div className="flex flex-col gap-3 sm:flex-row-reverse">
           {courseId ? (
-            <Button className="rounded-xl bg-[#C9A227] text-[#2C4260] hover:bg-[#C9A227]/90" asChild>
-              <Link href={ROUTES.USER.TEACHER.COURSES.DETAILS(courseId)}>
-                {t("courses.create.success.startPaths")}
-                <ArrowLeft className="mr-2 h-4 w-4" />
-              </Link>
+            <Button 
+              className="h-14 rounded-2xl bg-[#2C4260] px-6 text-base font-semibold text-white hover:bg-[#243751] cursor-pointer shadow-[var(--dashboard-shadow-button)]"
+              onClick={() => router.push(ROUTES.USER.TEACHER.COURSES.DETAILS(courseId))}
+            >
+              {t("courses.create.success.startPaths")}
+              <ArrowLeft className="mr-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button className="rounded-xl bg-[#C9A227] text-[#2C4260] hover:bg-[#C9A227]/90">
+            <Button className="h-14 rounded-2xl bg-[#2C4260] px-6 text-base font-semibold text-white hover:bg-[#243751] cursor-pointer shadow-[var(--dashboard-shadow-button)]">
               {t("courses.create.success.startPaths")}
             </Button>
           )}
-          <Button variant="outline" className="rounded-xl" onClick={() => onOpenChange(false)} asChild>
-            <Link href={ROUTES.USER.TEACHER.COURSES.LIST}>
-              {t("courses.create.success.continueLater")}
-            </Link>
+          <Button variant="outline" className="h-14 rounded-2xl border-slate-200 bg-white px-6 text-slate-700 hover:bg-slate-50 shadow-[var(--dashboard-shadow-button)]" onClick={() => 
+           {
+             router.push(ROUTES.USER.TEACHER.COURSES.LIST)
+             router.refresh()
+             onOpenChange(false)
+          }
+          }>
+            {t("courses.create.success.continueLater")}
           </Button>
         </div>
       </div>

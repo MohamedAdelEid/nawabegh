@@ -11,30 +11,30 @@ import {
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 const chartConfig = {
-  lessonCompletion: { label: "Lesson completion", color: "#C9A227" },
-  testResults: { label: "Test results", color: "#2C4260" },
+  currentValue: { label: "Current period", color: "#C9A227" },
+  previousValue: { label: "Previous period", color: "#2C4260" },
 } satisfies ChartConfig;
 
 export function TeacherCourseWeeklyPerformanceChart({
   title,
-  lessonLabel,
-  testLabel,
+  currentLabel,
+  previousLabel,
   rows,
 }: {
   title: string;
-  lessonLabel: string;
-  testLabel: string;
+  currentLabel: string;
+  previousLabel: string;
   rows: Array<TeacherCourseWeeklyPerformancePoint & { weekLabel: string }>;
 }) {
   const data = rows.map((row) => ({
     week: row.weekLabel,
-    lessonCompletion: row.lessonCompletion,
-    testResults: row.testResults,
+    currentValue: row.currentValue,
+    previousValue: row.previousValue,
   }));
 
   const config = {
-    lessonCompletion: { ...chartConfig.lessonCompletion, label: lessonLabel },
-    testResults: { ...chartConfig.testResults, label: testLabel },
+    currentValue: { ...chartConfig.currentValue, label: currentLabel },
+    previousValue: { ...chartConfig.previousValue, label: previousLabel },
   } satisfies ChartConfig;
 
   return (
@@ -45,11 +45,11 @@ export function TeacherCourseWeeklyPerformanceChart({
           <div className="flex items-center gap-4 text-xs text-slate-500">
             <span className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-[#C9A227]" />
-              {lessonLabel}
+              {currentLabel}
             </span>
             <span className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-[#2C4260]" />
-              {testLabel}
+              {previousLabel}
             </span>
           </div>
         </div>
@@ -59,8 +59,8 @@ export function TeacherCourseWeeklyPerformanceChart({
             <XAxis dataKey="week" tickLine={false} axisLine={false} />
             <YAxis tickLine={false} axisLine={false} />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="lessonCompletion" fill="#C9A227" radius={[8, 8, 0, 0]} maxBarSize={36} />
-            <Bar dataKey="testResults" fill="#2C4260" radius={[8, 8, 0, 0]} maxBarSize={36} />
+            <Bar dataKey="currentValue" fill="#C9A227" radius={[8, 8, 0, 0]} maxBarSize={36} />
+            <Bar dataKey="previousValue" fill="#2C4260" radius={[8, 8, 0, 0]} maxBarSize={36} />
           </BarChart>
         </ChartContainer>
       </CardContent>

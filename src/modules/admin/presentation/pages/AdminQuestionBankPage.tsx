@@ -19,7 +19,8 @@ import {
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { BookOpen, CheckCircle2, RotateCcw, FileQuestion, Trash2, Eye } from "lucide-react";
-import { useQuestionBankPage, STATIC_SUBJECT_OPTIONS } from "@/modules/admin/application/hooks/useQuestionBankPage";
+import { useQuestionBankPage } from "@/modules/admin/application/hooks/useQuestionBankPage";
+import { useQuestionBankSubjects } from "@/modules/admin/application/hooks/useQuestionBankSubjects";
 import { deleteQuestionBankQuestion, type QuestionBankEnumOption } from "@/modules/admin/infrastructure/api/questionBankApi";
 import { ChatGroupDeleteModal } from "@/modules/admin/presentation/components/chat-groups";
 import {
@@ -47,6 +48,7 @@ export function AdminQuestionBankPage() {
     page,
     setPageNumber,
   } = useQuestionBankPage();
+  const subjectsQuery = useQuestionBankSubjects();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; snippet: string } | null>(null);
   const summary = summaryQuery.data?.data;
@@ -100,12 +102,16 @@ export function AdminQuestionBankPage() {
   );
 
   const subjectOptions = useMemo(
-    () =>
-      STATIC_SUBJECT_OPTIONS.map((item) => ({
-        id: item.id,
-        label: t(item.translationKey),
+    () => [
+      { id: "all", label: t("questionBank.filters.subject.all") },
+      ...(subjectsQuery.data?.data?.rows ?? []).map((subject) => ({
+        id: String(subject.id),
+        label: locale.startsWith("ar")
+          ? subject.nameAr || subject.nameEn
+          : subject.nameEn || subject.nameAr,
       })),
-    [t],
+    ],
+    [locale, subjectsQuery.data?.data?.rows, t],
   );
 
   const columns: Array<DashboardDataTableColumn<(typeof rows)[number]>> = [
@@ -258,6 +264,7 @@ export function AdminQuestionBankPage() {
                 label={t("questionBank.filters.subject.label")}
                 value={filters.subject}
                 options={subjectOptions}
+                disabled={subjectsQuery.isLoading}
                 onChange={(value) =>
                   setFilters((current) => ({ ...current, subject: value }))
                 }

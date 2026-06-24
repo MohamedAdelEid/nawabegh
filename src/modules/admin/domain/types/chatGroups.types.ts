@@ -66,6 +66,8 @@ export type ChatGroupRow = {
   attachments: ChatGroupAttachment[];
   allowParentView: boolean;
   statusId: ChatGroupStatusId;
+  /** Raw API status: ActiveNow, Locked, or Inactive. */
+  apiStatus?: string;
   isLocked: boolean;
   lastActivityKey: string;
   /** Pre-formatted last activity when loaded from API. */

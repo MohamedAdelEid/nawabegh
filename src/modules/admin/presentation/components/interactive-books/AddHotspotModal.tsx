@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import { MapPin, Video, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useScopedInteractiveBooksTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import {
   DEFAULT_HOTSPOT_SIZE,
   type HotspotPlacement,
@@ -34,7 +34,7 @@ export function AddHotspotModal({
   submitting = false,
   onSubmit,
 }: AddHotspotModalProps) {
-  const t = useTranslations("admin.dashboard.interactiveBooks.hotspotModal");
+  const t = useScopedInteractiveBooksTranslations("hotspotModal");
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [isActive, setIsActive] = useState(true);

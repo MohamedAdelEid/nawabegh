@@ -1,4 +1,4 @@
-import { AdminHelperFileManagementEditPage } from "@/modules/admin/presentation/pages/AdminHelperFileManagementEditPage";
+import { TeacherHelperFileManagementEditPage } from "@/modules/teacher/presentation/pages/TeacherHelperFileManagementEditPage";
 
 export default async function Page({
   params,
@@ -6,5 +6,5 @@ export default async function Page({
   params: Promise<{ fileId: string }>;
 }) {
   const { fileId } = await params;
-  return <AdminHelperFileManagementEditPage fileId={fileId} />;
+  return <TeacherHelperFileManagementEditPage fileId={fileId} />;
 }

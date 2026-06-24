@@ -1,7 +1,6 @@
-"use client";
-
-import { TeacherLiveAnalyticsDashboard } from "@/modules/teacher/presentation/components/live-analytics/TeacherLiveAnalyticsDashboard";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 export function TeacherLiveAnalyticsPage() {
-  return <TeacherLiveAnalyticsDashboard />;
+  redirect(`${ROUTES.USER.TEACHER.LIVE_SESSIONS}?tab=analytics`);
 }

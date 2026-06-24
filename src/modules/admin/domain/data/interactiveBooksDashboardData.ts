@@ -36,6 +36,7 @@ export type InteractiveBookTableRow = {
   pageCount: number;
   hotspotCount: number;
   activeHotspotCount: number;
+  viewCount: number;
   statusId: InteractiveBookStatusId;
   createdAt: string;
   /** Original PDF filename when the API returns it (optional). */

@@ -37,6 +37,7 @@ import {
   saveJourneyChanges,
 } from "@/modules/admin/infrastructure/api/journeyEditorApi";
 import { getCourse } from "@/modules/admin/infrastructure/api/courseApi";
+import { fetchTeacherCourseWorkspace } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
 import {
   createLearningPath,
   deleteLearningPath,
@@ -65,6 +66,7 @@ import {
   StationType,
 } from "@/shared/domain/enums/cms.enums";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useLocale } from "next-intl";
 import type { JourneyEditorRoutes } from "@/shared/infrastructure/config/scopedDashboardRoutes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -263,6 +265,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const locale = useLocale();
 
   const [data, setData] = useState<JourneyEditorData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -278,8 +281,17 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   useEffect(() => {
     void (async () => {
+      const isTeacherScope = routes.scope === "teacher";
+
       const [courseResult, learningPathsResult] = await Promise.all([
-        getCourse(journeyId),
+        isTeacherScope
+          ? fetchTeacherCourseWorkspace(journeyId, locale)
+              .then((course) => ({ data: course, errorMessage: null as string | null }))
+              .catch((error: unknown) => ({
+                data: null,
+                errorMessage: error instanceof Error ? error.message : "Failed to load course",
+              }))
+          : getCourse(journeyId),
         getCourseLearningPathsForEditor(journeyId),
       ]);
 
@@ -288,10 +300,20 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
           journeyId,
           learningPathsResult.data,
           courseResult.data?.title,
-          courseResult.data?.description,
+          courseResult.data?.description ?? "",
         );
         setData(mappedData);
         setDraft((prev) => ({ ...prev, pathId: mappedData.paths[0]?.id ?? prev.pathId }));
+        setLoading(false);
+        return;
+      }
+
+      if (isTeacherScope) {
+        notify.error(
+          courseResult.errorMessage ??
+            learningPathsResult.errorMessage ??
+            t("messages.loadFailed"),
+        );
         setLoading(false);
         return;
       }
@@ -303,7 +325,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
       }
       setLoading(false);
     })();
-  }, [journeyId]);
+  }, [journeyId, locale, routes.scope, t]);
 
   const updateDraft = <K extends keyof AddStationDraft>(
     key: K,

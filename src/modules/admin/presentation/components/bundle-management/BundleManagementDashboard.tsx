@@ -357,8 +357,9 @@ export function BundleManagementDashboard() {
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => (
-          <div key={stat.id} className="space-y-3">
+          <div key={stat.id} className="flex h-full flex-col gap-3">
             <DashboardStatCard
+              className="h-full flex-1"
               label={t(stat.labelKey)}
               value={loadingStats ? "…" : stat.value}
               indicator={stat.indicator}
@@ -366,14 +367,14 @@ export function BundleManagementDashboard() {
               icon={stat.icon}
               iconTone={stat.iconTone}
             />
-            {"showProgress" in stat && stat.showProgress && stats ? (
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-2 shrink-0 overflow-hidden rounded-full bg-slate-100">
+              {"showProgress" in stat && stat.showProgress && stats ? (
                 <div
                   className="h-full rounded-full bg-[#C7AF6E] transition-all"
                   style={{ width: `${Math.min(100, Math.max(0, stats.averageCompletionPercent))}%` }}
                 />
-              </div>
-            ) : null}
+              ) : null}
+            </div>
           </div>
         ))}
       </div>

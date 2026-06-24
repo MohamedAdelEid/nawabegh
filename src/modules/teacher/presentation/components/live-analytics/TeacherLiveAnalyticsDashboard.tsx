@@ -1,15 +1,17 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import {
   Clock,
   Download,
   Eye,
   Lightbulb,
-  Plus,
+  List,
   Users,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useTeacherLiveAnalytics } from "@/modules/teacher/application/hooks/useTeacherLiveAnalytics";
 import { TeacherAttendanceBarChart } from "@/modules/teacher/presentation/components/charts/TeacherAttendanceBarChart";
@@ -17,6 +19,7 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard/
 import { DashboardStatCard } from "@/shared/presentation/components/dashboard/DashboardStatCard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { Input } from "@/shared/presentation/components/ui/input";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
@@ -33,11 +36,57 @@ const metricColors = {
   primary: "bg-[#2C4260]",
 } as const;
 
-export function TeacherLiveAnalyticsDashboard() {
-  const t = useTranslations("teacher.dashboard");
-  const { data, isLoading, isError } = useTeacherLiveAnalytics();
+const SEARCH_DEBOUNCE_MS = 350;
 
-  if (isLoading) {
+type TeacherLiveAnalyticsDashboardProps = {
+  embedded?: boolean;
+  onManageSessions?: () => void;
+};
+
+export function TeacherLiveAnalyticsDashboard({
+  embedded = false,
+  onManageSessions,
+}: TeacherLiveAnalyticsDashboardProps) {
+  const t = useTranslations("teacher.dashboard");
+  const router = useRouter();
+  const [chartPeriod, setChartPeriod] = useState<"weekly" | "monthly">("weekly");
+  const [absentKeyword, setAbsentKeyword] = useState("");
+  const [debouncedAbsentKeyword, setDebouncedAbsentKeyword] = useState("");
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setDebouncedAbsentKeyword(absentKeyword.trim());
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timeoutId);
+  }, [absentKeyword]);
+
+  const { data, isPending, isFetching, isError } = useTeacherLiveAnalytics({
+    chartPeriod,
+    absentKeyword: debouncedAbsentKeyword,
+    absentPage: 1,
+    absentPageSize: 5,
+  });
+
+  const manageSessionsAction = useMemo(() => {
+    if (onManageSessions) {
+      return (
+        <Button className="rounded-xl bg-[#2C4260] hover:bg-[#2C4260]/90" onClick={onManageSessions}>
+          <List className="ml-2 h-4 w-4" />
+          {t("liveAnalytics.actions.manageSessions")}
+        </Button>
+      );
+    }
+    return (
+      <Button className="rounded-xl bg-[#2C4260] hover:bg-[#2C4260]/90" asChild>
+        <Link href={`${ROUTES.USER.TEACHER.LIVE_SESSIONS}?tab=manage`}>
+          <List className="ml-2 h-4 w-4" />
+          {t("liveAnalytics.actions.manageSessions")}
+        </Link>
+      </Button>
+    );
+  }, [onManageSessions, t]);
+
+  if (isPending && !data) {
     return <Skeleton className="h-96 w-full rounded-[2rem]" />;
   }
 
@@ -52,14 +101,8 @@ export function TeacherLiveAnalyticsDashboard() {
         description={t("liveAnalytics.description")}
         action={
           <div className="flex flex-wrap gap-3">
-            <Button className="rounded-xl bg-[#2C4260]">
-              <Plus className="ml-2 h-4 w-4" />
-              {t("liveAnalytics.actions.startSession")}
-            </Button>
-            <Button variant="outline" className="rounded-xl">
-              <Download className="ml-2 h-4 w-4" />
-              {t("liveAnalytics.actions.exportReport")}
-            </Button>
+            {manageSessionsAction}
+            
           </div>
         }
       />
@@ -90,28 +133,123 @@ export function TeacherLiveAnalyticsDashboard() {
         })}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[320px_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+
+      <div className="space-y-6">
+          <TeacherAttendanceBarChart
+            title={t("liveAnalytics.chart.title")}
+            subtitle={t("liveAnalytics.chart.subtitle")}
+            rows={data.attendanceChart}
+            weeklyLabel={t("liveAnalytics.chart.weekly")}
+            monthlyLabel={t("liveAnalytics.chart.monthly")}
+            period={chartPeriod}
+            onPeriodChange={setChartPeriod}
+            isLoading={isFetching && !isPending}
+          />
+
+          <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
+            <CardContent className="space-y-4 p-6">
+              <div className="flex flex-col gap-3 text-right sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-800">
+                    {t("liveAnalytics.absent.title")}
+                  </h2>
+                  {data.absentSessionTitle ? (
+                    <p className="text-sm text-slate-500">{data.absentSessionTitle}</p>
+                  ) : null}
+                  {data.absentSessionTime ? (
+                    <p className="text-xs text-slate-400">{data.absentSessionTime}</p>
+                  ) : null}
+                </div>
+                <Button variant="outline" className="border-none border-b border-[#2C4260] text-[#2C4260]">
+                  {t("liveAnalytics.absent.alertAll")}
+                </Button>
+              </div>
+
+              <Input
+                placeholder={t("liveAnalytics.absent.search")}
+                className="rounded-xl text-right"
+                value={absentKeyword}
+                onChange={(event) => setAbsentKeyword(event.target.value)}
+              />
+
+              {data.absentStudents.length === 0 ? (
+                <p className="text-right text-sm text-slate-500">{t("liveAnalytics.absent.empty")}</p>
+              ) : (
+                data.absentStudents.map((student) => (
+                  <div
+                    key={student.id}
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 p-4"
+                  >
+                    <div className="flex items-center gap-3 text-right">
+                      {student.profileImageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={student.profileImageUrl}
+                          alt={student.fullName}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2C4260] text-xs font-bold text-white">
+                          {student.avatarInitials}
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-semibold text-slate-800">{student.fullName}</p>
+                        <p className="text-xs text-slate-500">{student.lastSeenLabel}</p>
+                        {student.sessionTitle ? (
+                          <p className="text-xs text-slate-400">{student.sessionTitle}</p>
+                        ) : null}
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" className="rounded-xl">
+                      {t("liveAnalytics.absent.sendReminder")}
+                    </Button>
+                  </div>
+                ))
+              )}
+              {data.totalAbsentCount > data.absentStudents.length ? (
+                <Button variant="link" className="w-full text-[#2C4260]" asChild>
+                  <Link href={ROUTES.USER.TEACHER.LIVE_SESSIONS_ABSENT_STUDENTS}>
+                    {t("liveAnalytics.absent.viewAll", { count: data.totalAbsentCount })}
+                  </Link>
+                </Button>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
         <div className="space-y-6">
           <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
             <CardContent className="space-y-4 p-6">
               <h2 className="text-right text-lg font-bold text-slate-800">
                 {t("liveAnalytics.upcoming.title")}
               </h2>
-              {data.upcomingSessions.map((session) => (
-                <div
-                  key={session.id}
-                  className="rounded-2xl border border-slate-100 p-4 text-right"
-                >
-                  <p className="font-semibold text-slate-800">{t(session.titleKey)}</p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {t(session.dateLabelKey)} · {session.timeLabel}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    {t("liveAnalytics.upcoming.students", { count: session.studentCount })}
-                  </p>
-                </div>
-              ))}
-              <Button className="w-full rounded-xl bg-[#C9A227] text-[#2C4260]" asChild>
+              {data.upcomingSessions.length === 0 ? (
+                <p className="text-right text-sm text-slate-500">
+                  {t("liveAnalytics.upcoming.empty")}
+                </p>
+              ) : (
+                data.upcomingSessions.map((session) => (
+                  <button
+                    key={session.id}
+                    type="button"
+                    onClick={() => router.push(ROUTES.USER.TEACHER.SESSION_DETAILS(session.id))}
+                    className="w-full rounded-2xl border border-slate-100 p-4 text-right transition-colors hover:border-[#2C4260]/20 hover:bg-slate-50"
+                  >
+                    <p className="font-semibold text-slate-800">{session.title}</p>
+                    {session.courseTitle ? (
+                      <p className="mt-1 text-xs text-slate-400">{session.courseTitle}</p>
+                    ) : null}
+                    <p className="mt-1 text-sm text-slate-500">
+                      {session.dateLabel} · {session.timeLabel}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {t("liveAnalytics.upcoming.students", { count: session.studentCount })}
+                    </p>
+                  </button>
+                ))
+              )}
+              <Button className="w-full rounded-xl bg-[#C9A227] text-[#2C4260] hover:bg-[#C9A227]/90" asChild>
                 <Link href={ROUTES.USER.TEACHER.SCHEDULE}>
                   {t("liveAnalytics.upcoming.manageSchedule")}
                 </Link>
@@ -127,7 +265,9 @@ export function TeacherLiveAnalyticsDashboard() {
               {data.instructorMetrics.map((metric) => (
                 <div key={metric.id} className="space-y-2 text-right">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-slate-700">{metric.percent}%</span>
+                    <span className="font-semibold text-slate-700">
+                      {metric.value ?? `${metric.percent}%`}
+                    </span>
                     <span className="text-slate-500">{t(metric.labelKey)}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-slate-100">
@@ -148,64 +288,10 @@ export function TeacherLiveAnalyticsDashboard() {
                 <Lightbulb className="h-5 w-5 text-amber-600" />
               </div>
               <p className="text-sm text-slate-600">{t(data.tipKey)}</p>
-              <Button variant="link" className="h-auto p-0 text-[#2C4260]">
-                {t("liveAnalytics.tip.readMore")} →
-              </Button>
             </CardContent>
           </Card>
         </div>
 
-        <div className="space-y-6">
-          <TeacherAttendanceBarChart
-            title={t("liveAnalytics.chart.title")}
-            subtitle={t("liveAnalytics.chart.subtitle")}
-            rows={data.attendanceChart.map((row) => ({
-              ...row,
-              dayKey: t(row.dayKey),
-            }))}
-            weeklyLabel={t("liveAnalytics.chart.weekly")}
-            monthlyLabel={t("liveAnalytics.chart.monthly")}
-          />
-
-          <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-            <CardContent className="space-y-4 p-6">
-              <div className="flex flex-col gap-3 text-right sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-lg font-bold text-slate-800">
-                    {t("liveAnalytics.absent.title")}
-                  </h2>
-                  <p className="text-sm text-slate-500">{t(data.absentSessionTitleKey)}</p>
-                  <p className="text-xs text-slate-400">{t(data.absentSessionTimeKey)}</p>
-                </div>
-                <Button variant="outline" className="rounded-xl border-[#2C4260] text-[#2C4260]">
-                  {t("liveAnalytics.absent.alertAll")}
-                </Button>
-              </div>
-              {data.absentStudents.map((student) => (
-                <div
-                  key={student.id}
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 p-4"
-                >
-                  <Button size="sm" variant="outline" className="rounded-xl">
-                    {t("liveAnalytics.absent.sendReminder")}
-                  </Button>
-                  <div className="flex items-center gap-3 text-right">
-                    <div>
-                      <p className="font-semibold text-slate-800">{t(student.nameKey)}</p>
-                      <p className="text-xs text-slate-500">{t(student.lastSeenKey)}</p>
-                    </div>
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#2C4260] text-xs font-bold text-white">
-                      {student.avatarInitials}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <Button variant="link" className="w-full text-[#2C4260]">
-                {t("liveAnalytics.absent.viewAll", { count: data.totalAbsentCount })}
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );

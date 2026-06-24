@@ -41,9 +41,11 @@ const DEFAULT_FILTERS: HelperFileManagementFilterState = {
 
 export function HelperFileManagementDashboard() {
   const t = useTranslations("admin.dashboard.contentManagement");
+  const tTeacher = useTranslations("teacher.dashboard");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const routeConfig = routes.helperFileManagement;
+  const isTeacherScope = routes.scope === "teacher";
   const [rows, setRows] = useState<ResourceFileListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<HelperFileManagementFilterState>(DEFAULT_FILTERS);
@@ -197,11 +199,20 @@ export function HelperFileManagementDashboard() {
 
   const header = (
     <DashboardPageHeader
-      title={t("page.title")}
-      description={t("page.description")}
+      title={isTeacherScope ? tTeacher("helperFileManagement.page.title") : t("page.title")}
+      description={
+        isTeacherScope ? tTeacher("helperFileManagement.page.description") : t("page.description")
+      }
       breadcrumbs={[
-        { label: t("breadcrumbs.home"), href: routes.home },
-        { label: t("breadcrumbs.content") },
+        {
+          label: isTeacherScope ? tTeacher("sidebar.nav.home") : t("breadcrumbs.home"),
+          href: routes.home,
+        },
+        {
+          label: isTeacherScope
+            ? tTeacher("sidebar.nav.helperFileManagement")
+            : t("breadcrumbs.content"),
+        },
       ]}
       action={
         <Button

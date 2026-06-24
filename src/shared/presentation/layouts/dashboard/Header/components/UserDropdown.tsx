@@ -2,15 +2,12 @@
 
 import type React from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/application/lib/cn";
 import { useAuth } from "@/shared/application/hooks/useAuth";
 import { useDropdown } from "../hooks";
-import { dropdownVariants } from "../constants/animations";
-import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSession";
 
 function getInitials(name: string): string {
   return name
@@ -35,24 +32,30 @@ function roleLabel(role: string | undefined, t: ReturnType<typeof useTranslation
 export const UserDropdown: React.FC<UserDropdownProps> = ({
   translationNamespace,
 }) => {
+  const router = useRouter();
   const { user } = useAuth();
   const t = useTranslations(translationNamespace);
-  const { isOpen, toggle, dropdownRef } = useDropdown();
+  const { dropdownRef } = useDropdown();
   const displayName = user?.name || t("header.user.guestName");
   const displayRole = roleLabel(user?.role, t);
+  const settingsHref = getSettingsPathForRole(user?.role);
+
+  const handleNavigateToAccount = () => {
+    if (settingsHref) {
+      router.push(settingsHref);
+    }
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        onClick={toggle}
+        onClick={handleNavigateToAccount}
         className={cn(
           "flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 sm:px-3.5",
-          "transition-colors duration-200 focus-visible:outline-none",
+          "cursor-pointer transition-colors duration-200 focus-visible:outline-none",
           "focus-visible:ring-2 focus-visible:ring-primary/25"
         )}
-        aria-expanded={isOpen}
-        aria-haspopup="true"
         aria-label={t("header.user.menuLabel")}
       >
         <div className="relative h-11 w-11 shrink-0">
