@@ -2921,6 +2921,7 @@
         "actions": {
           "saveChallenge": "Save Challenge",
           "createChallenge": "Create Challenge",
+          "updateChallenge": "Update Challenge",
           "generateQuestions": "Generate Questions",
           "previewChallenge": "Preview Challenge",
           "saveAndPublish": "Save and Publish Challenge"
@@ -2932,6 +2933,8 @@
         "messages": {
           "saveSuccess": "Challenge created successfully",
           "saveError": "Failed to create challenge",
+          "updateSuccess": "Challenge updated successfully",
+          "updateError": "Failed to update challenge",
           "stationNameRequired": "Station name is required. Create or rename the station in the journey editor first.",
           "scheduleRequired": "Start and end dates are required",
           "scheduleTimeRequired": "Start and end times are required",

@@ -53,12 +53,12 @@ export function useTeacherChatMessageActions(courseId: string) {
     mutationFn: ({
       messageId,
       emoji,
-      reactedByCurrentUser,
+      reactions,
     }: {
       messageId: string;
       emoji: string;
-      reactedByCurrentUser: boolean;
-    }) => teacherApi.toggleChatReaction(messageId, emoji, reactedByCurrentUser),
+      reactions: Array<{ emoji: string; reactedByCurrentUser?: boolean }>;
+    }) => teacherApi.toggleChatReaction(messageId, emoji, reactions),
     onSuccess: invalidate,
   });
 

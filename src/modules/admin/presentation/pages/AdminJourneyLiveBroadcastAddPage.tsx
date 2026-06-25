@@ -84,6 +84,7 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const isTeacherScope = routes.scope === "teacher";
 
   const [activeStep, setActiveStep] = useState<StepId>("basicInfo");
   const [saving, setSaving] = useState(false);
@@ -457,26 +458,28 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
                 </div>
 
                 {/* Presenter */}
-                <div className="space-y-2 text-right">
-                  <Label className="text-[#64748B]">{t("fields.presenter")}</Label>
-                  <div
-                    className={cn(
-                      "flex items-center justify-end gap-2 rounded-2xl border px-4 py-3 text-sm",
-                      responsibleTeacherId
-                        ? "border-emerald-100 bg-emerald-50 text-emerald-700"
-                        : "border-amber-100 bg-amber-50 text-amber-600",
-                    )}
-                  >
-                    {responsibleTeacherId ? (
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-                    ) : (
-                      <MapPin className="h-4 w-4 shrink-0 text-amber-400" />
-                    )}
-                    {responsibleTeacherId
-                      ? t("fields.presenterFromCourse")
-                      : t("fields.presenterMissing")}
+                {!isTeacherScope ? (
+                  <div className="space-y-2 text-right">
+                    <Label className="text-[#64748B]">{t("fields.presenter")}</Label>
+                    <div
+                      className={cn(
+                        "flex items-center justify-end gap-2 rounded-2xl border px-4 py-3 text-sm",
+                        responsibleTeacherId
+                          ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+                          : "border-amber-100 bg-amber-50 text-amber-600",
+                      )}
+                    >
+                      {responsibleTeacherId ? (
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
+                      ) : (
+                        <MapPin className="h-4 w-4 shrink-0 text-amber-400" />
+                      )}
+                      {responsibleTeacherId
+                        ? t("fields.presenterFromCourse")
+                        : t("fields.presenterMissing")}
+                    </div>
                   </div>
-                </div>
+                ) : null}
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <LabeledSelect

@@ -33,6 +33,10 @@ export type CreateChallengePayload = {
   attachments: ChallengeAttachmentPayload[];
 };
 
+export type UpdateChallengePayload = CreateChallengePayload & {
+  id: string;
+};
+
 export type CreatedChallenge = {
   id: string;
   stationId: string;
@@ -344,5 +348,32 @@ export async function createChallenge(
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to create challenge");
+  }
+}
+
+export async function updateChallenge(
+  challengeId: string,
+  payload: UpdateChallengePayload,
+): Promise<ChallengeApiResult<CreatedChallenge>> {
+  try {
+    const response = await httpClient.put<unknown>({
+      url: `/api/v1/challenges/${encodeURIComponent(challengeId)}`,
+      data: { ...payload, id: challengeId, challengeId },
+    });
+
+    const data = mapCreatedChallenge(response.data) ?? {
+      id: challengeId,
+      stationId: "",
+      title: payload.title,
+    };
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to update challenge");
   }
 }

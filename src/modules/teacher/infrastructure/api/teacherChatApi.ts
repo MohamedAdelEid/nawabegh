@@ -251,7 +251,12 @@ function mapMessage(record: UnknownRecord): ChatMessageDto | null {
         return {
           emoji,
           count: readNumber(row, ["count"]) ?? 0,
-          reactedByCurrentUser: readBoolean(row, ["reactedByCurrentUser"]),
+          reactedByCurrentUser: readBoolean(row, [
+            "reactedByCurrentUser",
+            "isReactedByCurrentUser",
+            "reactedByMe",
+            "hasReacted",
+          ]),
         };
       })
       .filter((item): item is ChatMessageDto["reactions"][number] => item !== null),

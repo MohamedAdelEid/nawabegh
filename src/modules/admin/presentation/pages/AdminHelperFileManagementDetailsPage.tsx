@@ -19,6 +19,10 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 interface AdminHelperFileManagementDetailsPageProps {
   fileId: string;
+  journeyContext?: {
+    journeyId: string;
+    returnHref: string;
+  };
 }
 
 function formatDate(iso: string) {
@@ -36,9 +40,11 @@ function formatDate(iso: string) {
 
 export function AdminHelperFileManagementDetailsPage({
   fileId,
+  journeyContext,
 }: AdminHelperFileManagementDetailsPageProps) {
   const t = useTranslations("admin.dashboard.contentManagement.details");
   const tRoot = useTranslations("admin.dashboard.contentManagement");
+  const tJourneyBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const routeConfig = routes.helperFileManagement;
@@ -95,7 +101,7 @@ export function AdminHelperFileManagementDetailsPage({
     }
     notify.success(t("deleteSuccess"));
     setDeleteOpen(false);
-    router.push(routeConfig.LIST);
+    router.push(journeyContext?.returnHref ?? routeConfig.LIST);
   };
 
   if (loading) {
@@ -111,7 +117,11 @@ export function AdminHelperFileManagementDetailsPage({
       <div className="space-y-4 rounded-2xl border border-red-100 bg-red-50 p-6 text-right">
         <p className="text-lg font-bold text-red-600">{t("notFound.title")}</p>
         <p className="text-sm text-red-500">{t("notFound.description")}</p>
-        <Button type="button" variant="outline" onClick={() => router.push(routeConfig.LIST)}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.push(journeyContext?.returnHref ?? routeConfig.LIST)}
+        >
           {t("notFound.back")}
         </Button>
       </div>
@@ -123,11 +133,22 @@ export function AdminHelperFileManagementDetailsPage({
       <DashboardPageHeader
         title={detail.fileName}
         description={t("description")}
-        breadcrumbs={[
-          { label: t("breadcrumbs.home"), href: routes.home },
-          { label: t("breadcrumbs.content"), href: routeConfig.LIST },
-          { label: detail.fileName },
-        ]}
+        breadcrumbs={
+          journeyContext
+            ? [
+                { label: tJourneyBc("home"), href: routes.home },
+                {
+                  label: tJourneyBc("journeyEditor"),
+                  href: journeyContext.returnHref,
+                },
+                { label: tJourneyBc("helperResourceEditor") },
+              ]
+            : [
+                { label: t("breadcrumbs.home"), href: routes.home },
+                { label: t("breadcrumbs.content"), href: routeConfig.LIST },
+                { label: detail.fileName },
+              ]
+        }
         action={
           <Button
             type="button"

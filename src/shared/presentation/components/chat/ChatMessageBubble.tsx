@@ -1,8 +1,9 @@
 "use client";
 
-import { CheckCheck, Download, FileText, Mic, Play } from "lucide-react";
+import { CheckCheck, Download, FileText } from "lucide-react";
 import type { TeacherChatMessage } from "@/modules/teacher/domain/types/teacher.types";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
+import { ChatVoiceMessage } from "@/shared/presentation/components/chat/ChatVoiceMessage";
 import { cn } from "@/shared/application/lib/cn";
 
 interface ChatMessageBubbleProps {
@@ -12,6 +13,48 @@ interface ChatMessageBubbleProps {
   replyToName?: string;
   replyToContent?: string;
   fileName?: string;
+  onReact?: (emoji: string) => void;
+}
+
+function MessageReactions({
+  reactions,
+  onReact,
+}: {
+  reactions: NonNullable<TeacherChatMessage["reactions"]>;
+  onReact?: (emoji: string) => void;
+}) {
+  if (reactions.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap justify-end gap-1">
+      {reactions.map((reaction) => {
+        const className = cn(
+          "rounded-full bg-white px-2 py-0.5 text-xs shadow-sm transition-colors",
+          onReact && "cursor-pointer hover:bg-sky-50",
+          reaction.reactedByCurrentUser && "ring-1 ring-sky-200",
+        );
+
+        if (!onReact) {
+          return (
+            <span key={reaction.emoji} className={className}>
+              {reaction.emoji} {reaction.count}
+            </span>
+          );
+        }
+
+        return (
+          <button
+            key={reaction.emoji}
+            type="button"
+            className={className}
+            onClick={() => onReact(reaction.emoji)}
+          >
+            {reaction.emoji} {reaction.count}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export function ChatMessageBubble({
@@ -21,6 +64,7 @@ export function ChatMessageBubble({
   replyToName,
   replyToContent,
   fileName,
+  onReact,
 }: ChatMessageBubbleProps) {
   const isTeacher = message.sender.role === "teacher";
 
@@ -67,21 +111,29 @@ export function ChatMessageBubble({
               <span>{message.timestamp}</span>
               {!isTeacher && message.read ? <CheckCheck className="h-3.5 w-3.5 text-sky-500" /> : null}
             </div>
+            {message.reactions ? (
+              <MessageReactions reactions={message.reactions} onReact={onReact} />
+            ) : null}
           </div>
         ) : null}
 
         {message.type === "text" ? (
-          <div
-            className={cn(
-              "rounded-2xl px-4 py-3 text-sm",
-              isTeacher ? "bg-[#243B5A] text-white" : "bg-[#F2EFE9] text-slate-800",
-            )}
-          >
-            <p>{content}</p>
-            <div className="mt-2 flex items-center justify-between gap-4 text-[11px] opacity-70">
-              <span>{message.timestamp}</span>
-              {!isTeacher && message.read ? <CheckCheck className="h-3.5 w-3.5 text-sky-500" /> : null}
+          <div className="space-y-2">
+            <div
+              className={cn(
+                "rounded-2xl px-4 py-3 text-sm",
+                isTeacher ? "bg-[#243B5A] text-white" : "bg-[#F2EFE9] text-slate-800",
+              )}
+            >
+              <p>{content}</p>
+              <div className="mt-2 flex items-center justify-between gap-4 text-[11px] opacity-70">
+                <span>{message.timestamp}</span>
+                {!isTeacher && message.read ? <CheckCheck className="h-3.5 w-3.5 text-sky-500" /> : null}
+              </div>
             </div>
+            {message.reactions ? (
+              <MessageReactions reactions={message.reactions} onReact={onReact} />
+            ) : null}
           </div>
         ) : null}
 
@@ -121,17 +173,8 @@ export function ChatMessageBubble({
                 {!isTeacher && message.read ? <CheckCheck className="h-3.5 w-3.5 text-sky-500" /> : null}
               </div>
             </div>
-            {message.reactions && message.reactions.length > 0 ? (
-              <div className="flex flex-wrap justify-end gap-1">
-                {message.reactions.map((reaction) => (
-                  <span
-                    key={reaction.emoji}
-                    className="rounded-full bg-white px-2 py-0.5 text-xs shadow-sm"
-                  >
-                    {reaction.emoji} {reaction.count}
-                  </span>
-                ))}
-              </div>
+            {message.reactions ? (
+              <MessageReactions reactions={message.reactions} onReact={onReact} />
             ) : null}
           </div>
         ) : null}
@@ -160,36 +203,22 @@ export function ChatMessageBubble({
                 <Download className="h-4 w-4" />
               </button>
             </div>
-            {message.reactions && message.reactions.length > 0 ? (
-              <div className="flex flex-wrap justify-end gap-1">
-                {message.reactions.map((reaction) => (
-                  <span
-                    key={reaction.emoji}
-                    className="rounded-full bg-white px-2 py-0.5 text-xs shadow-sm"
-                  >
-                    {reaction.emoji} {reaction.count}
-                  </span>
-                ))}
-              </div>
+            {message.reactions ? (
+              <MessageReactions reactions={message.reactions} onReact={onReact} />
             ) : null}
           </div>
         ) : null}
 
-        {message.type === "voice" ? (
-          <div
-            className={cn(
-              "flex items-center gap-3 rounded-2xl px-4 py-3",
-              isTeacher ? "bg-[#243B5A] text-white" : "bg-[#F2EFE9] text-slate-800",
-            )}
-          >
-            <button type="button" className="rounded-full bg-white/20 p-2">
-              <Play className="h-4 w-4" />
-            </button>
-            <div className="h-1.5 flex-1 rounded-full bg-white/30">
-              <div className="h-full w-1/3 rounded-full bg-current" />
-            </div>
-            <Mic className="h-4 w-4 opacity-70" />
-            <span className="text-xs">{message.voiceDuration}</span>
+        {message.type === "voice" && message.fileUrl ? (
+          <div className="space-y-2">
+            <ChatVoiceMessage
+              fileUrl={message.fileUrl}
+              durationLabel={message.voiceDuration}
+              isTeacher={isTeacher}
+            />
+            {message.reactions ? (
+              <MessageReactions reactions={message.reactions} onReact={onReact} />
+            ) : null}
           </div>
         ) : null}
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -40,6 +40,10 @@ import {
   ModalTitle,
 } from "@/shared/presentation/components/ui/modal-shell";
 import { cn } from "@/shared/application/lib/cn";
+import {
+  formatVoiceDuration,
+  useVoiceRecorder,
+} from "@/shared/application/hooks/useVoiceRecorder";
 
 const CHAT_UPLOAD_FOLDER = "chat";
 
@@ -49,6 +53,17 @@ function resolveAttachmentType(file: File): number {
   if (/\.pptx?$/i.test(file.name)) return 3;
   if (file.type.startsWith("audio/")) return 4;
   return 2;
+}
+
+function voiceBlobToFile(blob: Blob): File {
+  const extension = blob.type.includes("mp4")
+    ? "m4a"
+    : blob.type.includes("ogg")
+      ? "ogg"
+      : "webm";
+  return new File([blob], `voice-${Date.now()}.${extension}`, {
+    type: blob.type || "audio/webm",
+  });
 }
 
 export function TeacherChatConversationView({ courseId }: { courseId: string }) {
@@ -63,7 +78,16 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
   const [deleteTarget, setDeleteTarget] = useState<TeacherChatMessage | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const voiceInputRef = useRef<HTMLInputElement>(null);
+  const voiceRecorder = useVoiceRecorder();
+  const {
+    isRecording: isVoiceRecording,
+    duration: voiceDuration,
+    error: voiceRecorderError,
+    start: startVoiceRecord,
+    stop: stopVoiceRecord,
+    cancel: cancelVoiceRecord,
+    reset: resetVoiceRecorder,
+  } = voiceRecorder;
 
   const isBusy =
     sendMutation.isPending ||
@@ -72,7 +96,8 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
     reactionMutation.isPending ||
     lockMutation.isPending ||
     settingsMutation.isPending ||
-    muteMutation.isPending;
+    muteMutation.isPending ||
+    isVoiceRecording;
 
   const handleSend = async () => {
     const content = draft.trim();
@@ -89,6 +114,16 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
       notify.error(error instanceof Error ? error.message : t("sendError"));
     }
   };
+
+  useEffect(() => {
+    if (!voiceRecorderError) return;
+    if (voiceRecorderError === "permission_denied") {
+      notify.error(t("attachments.recordPermissionError"));
+    } else {
+      notify.error(t("attachments.recordUnsupported"));
+    }
+    resetVoiceRecorder();
+  }, [voiceRecorderError, resetVoiceRecorder, t]);
 
   const handleAttachmentUpload = async (file: File) => {
     try {
@@ -113,6 +148,28 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
       });
       setDraft("");
       setReplyTo(null);
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("sendError"));
+    }
+  };
+
+  const handleStartVoiceRecord = () => {
+    if (isBusy || isVoiceRecording) return;
+    void startVoiceRecord();
+  };
+
+  const handleCancelVoiceRecord = () => {
+    cancelVoiceRecord();
+  };
+
+  const handleSendVoiceRecord = async () => {
+    if (!isVoiceRecording || sendMutation.isPending) return;
+
+    try {
+      const blob = await stopVoiceRecord();
+      if (!blob) return;
+
+      await handleAttachmentUpload(voiceBlobToFile(blob));
     } catch (error) {
       notify.error(error instanceof Error ? error.message : t("sendError"));
     }
@@ -180,12 +237,11 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
   };
 
   const handleReact = async (message: TeacherChatMessage, emoji: string) => {
-    const reaction = message.reactions?.find((item) => item.emoji === emoji);
     try {
       await reactionMutation.mutateAsync({
         messageId: message.id,
         emoji,
-        reactedByCurrentUser: Boolean(reaction?.reactedByCurrentUser),
+        reactions: message.reactions ?? [],
       });
     } catch (error) {
       notify.error(error instanceof Error ? error.message : t("actions.reactionError"));
@@ -319,6 +375,7 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                             replyToName={message.replyTo?.senderName}
                             replyToContent={message.replyTo?.content}
                             fileName={message.fileName}
+                            onReact={(emoji) => void handleReact(message, emoji)}
                           />
                         </div>
                         <div className="shrink-0 self-center">
@@ -360,13 +417,47 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
           ) : null}
 
           <div className="flex items-end gap-3">
-            <Button
-              className="h-12 w-12 shrink-0 rounded-full bg-[#243B5A] p-0"
-              disabled={(!draft.trim() && !replyTo) || sendMutation.isPending}
-              onClick={() => void handleSend()}
-            >
-              <Send className="h-5 w-5" />
-            </Button>
+            {isVoiceRecording ? (
+              <>
+                <Button
+                  type="button"
+                  className="h-12 w-12 shrink-0 rounded-full bg-[#243B5A] p-0"
+                  disabled={sendMutation.isPending}
+                  onClick={() => void handleSendVoiceRecord()}
+                  aria-label={t("attachments.recordSend")}
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
+                <div className="flex min-h-12 flex-1 items-center justify-end gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3">
+                  <span className="text-sm font-medium text-red-700">
+                    {formatVoiceDuration(voiceDuration)}
+                  </span>
+                  <span className="text-sm text-red-600">{t("attachments.recording")}</span>
+                  <span className="relative flex h-3 w-3">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-12 w-12 shrink-0 rounded-full"
+                  onClick={handleCancelVoiceRecord}
+                  aria-label={t("attachments.recordCancel")}
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  className="h-12 w-12 shrink-0 rounded-full bg-[#243B5A] p-0"
+                  disabled={(!draft.trim() && !replyTo) || sendMutation.isPending}
+                  onClick={() => void handleSend()}
+                >
+                  <Send className="h-5 w-5" />
+                </Button>
 
             {data.allowImages ? (
               <>
@@ -408,24 +499,13 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                     event.target.value = "";
                   }}
                 />
-                <input
-                  ref={voiceInputRef}
-                  type="file"
-                  accept="audio/*"
-                  className="hidden"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) void handleAttachmentUpload(file);
-                    event.target.value = "";
-                  }}
-                />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
                   className="h-12 w-12 shrink-0 rounded-full"
                   disabled={isBusy}
-                  onClick={() => voiceInputRef.current?.click()}
+                  onClick={handleStartVoiceRecord}
                   aria-label={t("attachments.voice")}
                 >
                   <Mic className="h-5 w-5" />
@@ -460,6 +540,8 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                 sendMutation.isPending && "opacity-70",
               )}
             />
+              </>
+            )}
           </div>
         </footer>
       </div>

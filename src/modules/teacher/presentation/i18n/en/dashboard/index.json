@@ -1429,7 +1429,12 @@
         "attachments": {
           "image": "Attach image",
           "file": "Attach file",
-          "voice": "Attach voice message"
+          "voice": "Record voice message",
+          "recording": "Recording...",
+          "recordCancel": "Cancel recording",
+          "recordSend": "Send voice message",
+          "recordPermissionError": "Microphone access is required to record voice messages",
+          "recordUnsupported": "Voice recording is not supported in this browser"
         },
         "actions": {
           "menu": "Message actions",

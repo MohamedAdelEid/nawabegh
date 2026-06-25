@@ -194,11 +194,23 @@ export const teacherApi = {
     return deleteChatMessage(messageId);
   },
 
-  async toggleChatReaction(messageId: string, emoji: string, added: boolean): Promise<void> {
-    if (added) {
+  async toggleChatReaction(
+    messageId: string,
+    emoji: string,
+    reactions: Array<{ emoji: string; reactedByCurrentUser?: boolean }> = [],
+  ): Promise<void> {
+    const selectedReaction = reactions.find((item) => item.emoji === emoji);
+
+    if (selectedReaction?.reactedByCurrentUser) {
       await removeChatMessageReaction(messageId, emoji);
       return;
     }
+
+    const existingUserReaction = reactions.find((item) => item.reactedByCurrentUser);
+    if (existingUserReaction && existingUserReaction.emoji !== emoji) {
+      await removeChatMessageReaction(messageId, existingUserReaction.emoji);
+    }
+
     await addChatMessageReaction(messageId, emoji);
   },
 

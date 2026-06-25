@@ -32,6 +32,18 @@ export type StationDetails = {
   name: string;
 };
 
+export type StationResourceFileRef = {
+  id: string;
+};
+
+export type StationContentSnapshot = {
+  id: string;
+  name: string;
+  learningPathId: string;
+  learningPathTitle: string;
+  resourceFiles: StationResourceFileRef[];
+};
+
 export type CreatedStation = {
   id: string;
   learningPathId: string;
@@ -100,6 +112,15 @@ function readBoolean(record: UnknownRecord | null, keys: string[], fallback = fa
   return fallback;
 }
 
+function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
+  if (!record) return [];
+  for (const key of keys) {
+    const value = record[key];
+    if (Array.isArray(value)) return value;
+  }
+  return [];
+}
+
 function mapHttpStatus(statusCode: number | null): BackendStatus | "Error" {
   switch (statusCode) {
     case 400:
@@ -142,6 +163,42 @@ function buildErrorResult<T>(error: unknown, fallbackMessage: string): StationAp
 function extractEnvelopeData(data: unknown): unknown {
   const record = asRecord(data);
   return record?.data ?? data;
+}
+
+function mapStationResourceFileRef(data: unknown): StationResourceFileRef | null {
+  if (typeof data === "string") {
+    const id = data.trim();
+    return id ? { id } : null;
+  }
+
+  const record = asRecord(data);
+  if (!record) return null;
+
+  const directId = readString(record, ["id", "resourceFileId", "fileId"], "").trim();
+  if (directId) return { id: directId };
+
+  const nestedResourceFile = asRecord(record.resourceFile);
+  const nestedId = readString(nestedResourceFile, ["id", "resourceFileId", "fileId"], "").trim();
+  if (nestedId) return { id: nestedId };
+
+  return null;
+}
+
+function mapStationContentSnapshot(data: unknown): StationContentSnapshot | null {
+  const record = asRecord(extractEnvelopeData(data));
+  if (!record) return null;
+  const id = readString(record, ["id", "stationId"], "").trim();
+  if (!id) return null;
+
+  return {
+    id,
+    name: readString(record, ["name"], ""),
+    learningPathId: readString(record, ["learningPathId"], ""),
+    learningPathTitle: readString(record, ["learningPathTitle"], ""),
+    resourceFiles: readArray(record, ["resourceFiles"])
+      .map(mapStationResourceFileRef)
+      .filter((file): file is StationResourceFileRef => Boolean(file)),
+  };
 }
 
 function mapStationDetails(data: unknown): StationDetails | null {
@@ -192,6 +249,36 @@ export async function getStation(stationId: string): Promise<StationApiResult<St
   } catch (error) {
     return buildErrorResult(error, "Failed to load station");
   }
+}
+
+export async function getStationContentSnapshot(
+  stationId: string,
+): Promise<StationApiResult<StationContentSnapshot>> {
+  try {
+    const response = await httpClient.get<unknown>({
+      url: `/api/v1/Station/${encodeURIComponent(stationId)}`,
+    });
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: mapStationContentSnapshot(response.data),
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to load station content");
+  }
+}
+
+export async function getStationResourceFileId(
+  stationId: string,
+): Promise<StationApiResult<string>> {
+  const result = await getStationContentSnapshot(stationId);
+  return {
+    status: result.status,
+    message: result.message,
+    errorMessage: result.errorMessage,
+    data: result.data?.resourceFiles[0]?.id ?? null,
+  };
 }
 
 export async function createStation(

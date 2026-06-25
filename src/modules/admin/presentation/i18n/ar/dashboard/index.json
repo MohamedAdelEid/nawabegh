@@ -2924,6 +2924,7 @@
         "actions": {
           "saveChallenge": "حفظ التحدي",
           "createChallenge": "إنشاء التحدي",
+          "updateChallenge": "تحديث التحدي",
           "generateQuestions": "إنشاء الأسئلة",
           "previewChallenge": "معاينة التحدي",
           "saveAndPublish": "حفظ ونشر التحدي"
@@ -2935,6 +2936,8 @@
         "messages": {
           "saveSuccess": "تم إنشاء التحدي بنجاح",
           "saveError": "فشل إنشاء التحدي",
+          "updateSuccess": "تم تحديث التحدي بنجاح",
+          "updateError": "فشل تحديث التحدي",
           "stationNameRequired": "اسم المحطة مطلوب. أنشئ المحطة أو عدّل اسمها من محرر الرحلة أولاً.",
           "scheduleRequired": "تاريخ البداية والنهاية مطلوبان",
           "scheduleTimeRequired": "وقت البداية والنهاية مطلوبان",

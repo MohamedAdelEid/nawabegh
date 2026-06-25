@@ -7,6 +7,7 @@ import {
   Globe,
   Lock,
   Plus,
+  Save,
   Sparkles,
   Swords,
   Timer,
@@ -28,8 +29,11 @@ import {
   getChallenge,
   getChallengeIdForStation,
   getSupportedTimezones,
+  updateChallenge,
   type Challenge,
   type ChallengeAttachmentPayload,
+  type CreateChallengePayload,
+  type UpdateChallengePayload,
 } from "@/modules/admin/infrastructure/api/challengesApi";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { getStation } from "@/modules/admin/infrastructure/api/stationsApi";
@@ -420,61 +424,14 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
   const handleSave = async () => {
     if (!station) return;
 
-    const title = stationName.trim();
-    if (!title) {
-      notify.error(t("messages.stationNameRequired"));
-      return;
-    }
-    if (!startDate || !endDate) {
-      notify.error(t("messages.scheduleRequired"));
-      return;
-    }
-    if (!startTime || !endTime) {
-      notify.error(t("messages.scheduleTimeRequired"));
-      return;
-    }
-    if (!timeZoneId) {
-      notify.error(t("messages.timezoneRequired"));
-      return;
-    }
-
-    const scheduleStart = parseScheduleDateTime(startDate, startTime);
-    const scheduleEnd = parseScheduleDateTime(endDate, endTime);
-    if (Number.isNaN(scheduleStart.getTime()) || Number.isNaN(scheduleEnd.getTime())) {
-      notify.error(t("messages.scheduleInvalid"));
-      return;
-    }
-    if (scheduleEnd <= scheduleStart) {
-      notify.error(t("messages.scheduleEndBeforeStart"));
-      return;
-    }
-    if (isScheduleStartInPast(startDate, startTime, timeZoneId)) {
-      notify.error(t("messages.scheduleInPast"));
-      return;
-    }
-
     setSaving(true);
-    const attachments = await uploadSourceFiles();
-    if (attachments === null) {
+    const payload = await buildChallengePayload({ allowPastSchedule: false });
+    if (!payload) {
       setSaving(false);
       return;
     }
 
-    const aiSourceFileUrl = attachments[0]?.fileUrl ?? "";
-    const result = await createChallenge({
-      stationId,
-      title,
-      type: CHALLENGE_TYPE_TO_API[station.challengeType],
-      durationMinutes: station.durationMin,
-      questionCount: station.questionsCount,
-      difficulty: DIFFICULTY_TO_API[station.difficulty],
-      challengeDate: startDate,
-      startTime: toApiTime(startTime),
-      endTime: toApiTime(endTime),
-      timeZoneId,
-      aiSourceFileUrl,
-      attachments,
-    });
+    const result = await createChallenge(payload);
     setSaving(false);
 
     if (result.errorMessage || !result.data) {
@@ -486,6 +443,112 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
     setChallengeId(result.data.id);
     setHasChallenge(true);
     setStation((prev) => (prev ? { ...prev, id: result.data!.id } : prev));
+    syncUploadedSourceFiles(payload.attachments);
+    notify.success(t("messages.saveSuccess"));
+  };
+
+  const handleUpdate = async () => {
+    if (!station || !challengeId) return;
+
+    setSaving(true);
+    const payload = await buildChallengePayload({ allowPastSchedule: true });
+    if (!payload) {
+      setSaving(false);
+      return;
+    }
+
+    const updatePayload: UpdateChallengePayload = {
+      id: challengeId,
+      stationId: payload.stationId,
+      title: payload.title,
+      type: payload.type,
+      durationMinutes: payload.durationMinutes,
+      questionCount: payload.questionCount,
+      difficulty: payload.difficulty,
+      challengeDate: payload.challengeDate,
+      startTime: payload.startTime,
+      endTime: payload.endTime,
+      timeZoneId: payload.timeZoneId,
+      aiSourceFileUrl: payload.aiSourceFileUrl,
+      attachments: payload.attachments,
+    };
+
+    const result = await updateChallenge(challengeId, updatePayload);
+    setSaving(false);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.updateError"));
+      return;
+    }
+
+    setStation((prev) => (prev ? { ...prev, id: result.data!.id } : prev));
+    syncUploadedSourceFiles(payload.attachments);
+    notify.success(t("messages.updateSuccess"));
+  };
+
+  async function buildChallengePayload(options: {
+    allowPastSchedule: boolean;
+  }): Promise<CreateChallengePayload | null> {
+    if (!station) return null;
+
+    const title = stationName.trim();
+    if (!title) {
+      notify.error(t("messages.stationNameRequired"));
+      return null;
+    }
+    if (!startDate || !endDate) {
+      notify.error(t("messages.scheduleRequired"));
+      return null;
+    }
+    if (!startTime || !endTime) {
+      notify.error(t("messages.scheduleTimeRequired"));
+      return null;
+    }
+    if (!timeZoneId) {
+      notify.error(t("messages.timezoneRequired"));
+      return null;
+    }
+
+    const scheduleStart = parseScheduleDateTime(startDate, startTime);
+    const scheduleEnd = parseScheduleDateTime(endDate, endTime);
+    if (Number.isNaN(scheduleStart.getTime()) || Number.isNaN(scheduleEnd.getTime())) {
+      notify.error(t("messages.scheduleInvalid"));
+      return null;
+    }
+    if (scheduleEnd <= scheduleStart) {
+      notify.error(t("messages.scheduleEndBeforeStart"));
+      return null;
+    }
+    if (
+      !options.allowPastSchedule &&
+      isScheduleStartInPast(startDate, startTime, timeZoneId)
+    ) {
+      notify.error(t("messages.scheduleInPast"));
+      return null;
+    }
+
+    const attachments = await uploadSourceFiles();
+    if (attachments === null) {
+      return null;
+    }
+
+    return {
+      stationId,
+      title,
+      type: CHALLENGE_TYPE_TO_API[station.challengeType],
+      durationMinutes: station.durationMin,
+      questionCount: station.questionsCount,
+      difficulty: DIFFICULTY_TO_API[station.difficulty],
+      challengeDate: startDate,
+      startTime: toApiTime(startTime),
+      endTime: toApiTime(endTime),
+      timeZoneId,
+      aiSourceFileUrl: attachments[0]?.fileUrl ?? "",
+      attachments,
+    };
+  }
+
+  function syncUploadedSourceFiles(attachments: ChallengeAttachmentPayload[]) {
     setSourceFiles((prev) =>
       prev.map((file, index) => ({
         ...file,
@@ -494,8 +557,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         fileSizeBytes: attachments[index]?.fileSizeBytes ?? file.fileSizeBytes,
       })),
     );
-    notify.success(t("messages.saveSuccess"));
-  };
+  }
 
   const handleGenerateQuestions = async () => {
     if (!challengeId) {
@@ -542,14 +604,24 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         ]}
         action={
           hasChallenge ? (
-            <Button
-              className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
-              onClick={() => void handleGenerateQuestions()}
-              disabled={generatingQuestions}
-            >
-              <Sparkles className="h-4 w-4" />
-              {t("actions.generateQuestions")}
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
+                onClick={() => void handleUpdate()}
+                disabled={saving || generatingQuestions}
+              >
+                <Save className="h-4 w-4" />
+                {t("actions.updateChallenge")}
+              </Button>
+              <Button
+                className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
+                onClick={() => void handleGenerateQuestions()}
+                disabled={generatingQuestions || saving}
+              >
+                <Sparkles className="h-4 w-4" />
+                {t("actions.generateQuestions")}
+              </Button>
+            </div>
           ) : (
             <Button
               className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
@@ -884,14 +956,24 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
               </div>
 
               {hasChallenge ? (
-                <Button
-                  className="h-11 w-full gap-2 rounded-2xl bg-[#2C4260] text-white hover:bg-[#243652]"
-                  onClick={() => void handleGenerateQuestions()}
-                  disabled={generatingQuestions}
-                >
-                  <Sparkles className="h-4 w-4" />
-                  {t("actions.generateQuestions")}
-                </Button>
+                <>
+                  <Button
+                    className="h-11 w-full gap-2 rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46]"
+                    onClick={() => void handleUpdate()}
+                    disabled={saving || generatingQuestions}
+                  >
+                    <Save className="h-4 w-4" />
+                    {t("actions.updateChallenge")}
+                  </Button>
+                  <Button
+                    className="h-11 w-full gap-2 rounded-2xl bg-[#2C4260] text-white hover:bg-[#243652]"
+                    onClick={() => void handleGenerateQuestions()}
+                    disabled={generatingQuestions || saving}
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    {t("actions.generateQuestions")}
+                  </Button>
+                </>
               ) : (
                 <Button
                   className="h-11 w-full gap-2 rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46]"

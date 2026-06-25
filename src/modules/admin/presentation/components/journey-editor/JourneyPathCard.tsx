@@ -23,6 +23,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import type { JourneyPath, JourneyStation } from "@/modules/admin/domain/data/journeyEditorData";
 import { getStationEditorHref } from "@/modules/admin/domain/utils/journeyEditorRoutes";
+import { resolveStationNavigationHref } from "@/modules/admin/domain/utils/resolveStationNavigationHref";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { cn } from "@/shared/application/lib/cn";
 import { JourneyStationCard } from "./JourneyStationCard";
@@ -193,6 +194,7 @@ interface SortableStationCardProps {
 function SortableStationCard({ journeyId, station, onDelete }: SortableStationCardProps) {
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const [navigating, setNavigating] = useState(false);
   const {
     attributes,
     listeners,
@@ -204,6 +206,22 @@ function SortableStationCard({ journeyId, station, onDelete }: SortableStationCa
   } = useSortable({ id: station.id });
 
   const editorHref = getStationEditorHref(routes.journeyEditor, journeyId, station);
+
+  const handleNavigate = async () => {
+    if (navigating) return;
+    setNavigating(true);
+    try {
+      const href = await resolveStationNavigationHref(
+        routes.journeyEditor,
+        routes.helperFileManagement,
+        journeyId,
+        station,
+      );
+      if (href) router.push(href);
+    } finally {
+      setNavigating(false);
+    }
+  };
 
   return (
     <div
@@ -217,9 +235,7 @@ function SortableStationCard({ journeyId, station, onDelete }: SortableStationCa
       <JourneyStationCard
         station={station}
         editorHref={editorHref}
-        onNavigate={
-          editorHref ? () => router.push(editorHref) : undefined
-        }
+        onNavigate={editorHref ? () => void handleNavigate() : undefined}
         dragActivatorRef={setActivatorNodeRef}
         dragHandleAttributes={attributes}
         dragHandleListeners={listeners}

@@ -31,7 +31,7 @@ import {
   STATION_ICON_OPTIONS,
   defaultAddStationDraft,
 } from "@/modules/admin/domain/data/journeyEditorData";
-import { getStationEditorHref } from "@/modules/admin/domain/utils/journeyEditorRoutes";
+import { getStationCreateHref } from "@/modules/admin/domain/utils/resolveStationNavigationHref";
 import {
   getJourneyEditor,
   saveJourneyChanges,
@@ -67,7 +67,6 @@ import {
 } from "@/shared/domain/enums/cms.enums";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { useLocale } from "next-intl";
-import type { JourneyEditorRoutes } from "@/shared/infrastructure/config/scopedDashboardRoutes";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -148,20 +147,6 @@ function getDefaultCompletionRule(stationType: JourneyStationTypeId): JourneySta
     default:
       return "allTasks";
   }
-}
-
-function getCreatedStationHref(
-  journeyEditorRoutes: JourneyEditorRoutes,
-  journeyId: string,
-  station: JourneyStation,
-): string | null {
-  if (station.type === "flashcard") {
-    return journeyEditorRoutes.FLASHCARD_GROUP(journeyId, station.id);
-  }
-  if (station.type === "liveBroadcast") {
-    return journeyEditorRoutes.LIVE_BROADCAST_ADD(journeyId, station.id);
-  }
-  return getStationEditorHref(journeyEditorRoutes, journeyId, station);
 }
 
 function journeyCompletionRuleToApi(completionRule: JourneyStationCompletionRuleId): CompletionRuleType {
@@ -389,7 +374,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     const createdStation = await createStationFromDraft(draft);
     if (createdStation) {
       setDraft((prev) => ({ ...prev, name: "" }));
-      const editorHref = getCreatedStationHref(routes.journeyEditor, journeyId, createdStation);
+      const editorHref = getStationCreateHref(routes.journeyEditor, journeyId, createdStation);
       if (editorHref) {
         router.push(editorHref);
       }
@@ -401,7 +386,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     if (!createdStation) return false;
 
     setModalOpen(false);
-    const editorHref = getCreatedStationHref(routes.journeyEditor, journeyId, createdStation);
+    const editorHref = getStationCreateHref(routes.journeyEditor, journeyId, createdStation);
     if (editorHref) {
       router.push(editorHref);
     }

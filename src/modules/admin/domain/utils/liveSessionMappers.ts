@@ -36,6 +36,22 @@ function computeCountdown(scheduledAt: string) {
   };
 }
 
+function formatTimeFromIso(iso: string) {
+  if (!iso.trim()) return "";
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const hours = parsed.getHours();
+  const minutes = String(parsed.getMinutes()).padStart(2, "0");
+  const period = hours >= 12 ? "م" : "ص";
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${minutes} ${period}`;
+}
+
+function isLiveSessionStatus(status: string) {
+  const normalized = status.trim().toLowerCase();
+  return normalized === "live" || normalized === "running";
+}
+
 export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStation {
   const scheduledAt = session.scheduledAt || `${session.scheduledDate}T${session.scheduledTime}`;
   const teacher = session.responsibleTeacher;
@@ -55,10 +71,10 @@ export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStat
     presenterTitle: teacher?.jobTitle || undefined,
     durationMin: session.durationMinutes,
     date: formatDisplayDate(session.scheduledDate || scheduledAt),
-    time: formatDisplayTime(session.scheduledTime),
+    time: formatDisplayTime(session.scheduledTime) || formatTimeFromIso(scheduledAt),
     broadcastLink: session.roomUrl || session.zoomJoinUrl,
     registeredCount: session.activeEnrollmentCount,
-    isLive: session.status.toLowerCase() === "live",
+    isLive: isLiveSessionStatus(session.status),
     countdown: computeCountdown(scheduledAt),
     objectives: session.goals.map((goal) => ({
       id: String(goal.id || goal.order),

@@ -15,8 +15,8 @@ import { useEffect, useState } from "react";
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
 import { mapLiveSessionToStation } from "@/modules/admin/domain/utils/liveSessionMappers";
 import {
-  getLiveSession,
-  getLiveSessionIdForStation,
+  getLiveSessionWorkspace,
+  getLiveStationInfo,
 } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
@@ -33,11 +33,6 @@ interface Props {
 }
 
 const STATION_SESSION_STORAGE_KEY_PREFIX = "admin.liveSession.station.";
-
-function getStoredSessionId(stationId: string) {
-  if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`);
-}
 
 function storeSessionId(stationId: string, sessionId: string) {
   window.localStorage.setItem(`${STATION_SESSION_STORAGE_KEY_PREFIX}${stationId}`, sessionId);
@@ -59,18 +54,20 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   useEffect(() => {
     void (async () => {
       setLoading(true);
-      let sessionId = getStoredSessionId(stationId);
-      if (!sessionId) {
-        const stationSessionResult = await getLiveSessionIdForStation(stationId);
-        sessionId = stationSessionResult.data;
+
+      const stationInfoResult = await getLiveStationInfo(stationId);
+      if (stationInfoResult.errorMessage && stationInfoResult.status !== "NotFound") {
+        notify.error(stationInfoResult.errorMessage);
       }
 
+      const sessionId = stationInfoResult.data?.liveSessionId ?? null;
       if (!sessionId) {
+        clearStoredSessionId(stationId);
         router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
         return;
       }
 
-      const result = await getLiveSession(sessionId);
+      const result = await getLiveSessionWorkspace(sessionId);
       if (result.data) {
         storeSessionId(stationId, result.data.id);
         setStation(mapLiveSessionToStation(result.data));
@@ -89,7 +86,7 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
       }
       setLoading(false);
     })();
-  }, [journeyId, router, stationId]);
+  }, [journeyId, router, routes.journeyEditor, stationId]);
 
   if (loading) {
     return <JourneyEditorStationPageSkeleton showSidebar />;
