@@ -5,7 +5,8 @@ import { EllipsisVertical, Eye, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getTransactionsData, type TransactionRow } from "@/modules/admin/domain/data/pricingBillingData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardBadge, DashboardPageHeader, DashboardPagination, DashboardTableCard } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader, DashboardPagination, DashboardTableCard,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Button } from "@/shared/presentation/components/ui/button";
 
@@ -22,15 +23,17 @@ export function AdminPricingTransactionsPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("pricingManagement.transactions.title")}
-        description={t("pricingManagement.transactions.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("sidebar.nav.pricingManagement"), href: ROUTES.ADMIN.PRICING_MANAGEMENT.LIST },
           { label: t("pricingManagement.transactions.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("pricingManagement.transactions.title")}
+        description={t("pricingManagement.transactions.description")}
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <MiniCard title={t("pricingManagement.transactions.cards.total")} value="124,500 ر.ع." />

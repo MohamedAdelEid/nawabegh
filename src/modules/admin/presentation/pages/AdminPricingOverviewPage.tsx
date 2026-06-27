@@ -4,7 +4,8 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { DashboardPageHeader, DashboardBadge } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader, DashboardBadge,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 const REVENUE_BARS = [90, 72, 58, 77, 69, 50, 56, 43];
@@ -21,13 +22,14 @@ export function AdminPricingOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("pricingManagement.overview.title")}
-        description={t("pricingManagement.overview.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("sidebar.nav.pricingManagement") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("pricingManagement.overview.title")}
+        description={t("pricingManagement.overview.description")}
         action={
           <div className="flex items-center gap-2">
             <Button
@@ -57,6 +59,7 @@ export function AdminPricingOverviewPage() {
           </div>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <StatCard title={t("pricingManagement.overview.cards.totalRevenue")} value="45,280 ر.ع." badge="+12%" />

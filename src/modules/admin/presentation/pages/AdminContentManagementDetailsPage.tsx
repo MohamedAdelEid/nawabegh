@@ -11,7 +11,8 @@ import {
 } from "@/modules/admin/domain/data/contentManagementData";
 import { ContentFileDeleteModal } from "@/modules/admin/presentation/components/content-management/ContentFileDeleteModal";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardBadge, DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
@@ -92,14 +93,15 @@ export function AdminContentManagementDetailsPage({
 
   return (
     <div className="space-y-6">
-      <DashboardPageHeader
-        title={detail.title}
-        description={t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.content"), href: routeConfig.LIST },
           { label: detail.title },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={detail.title}
+        description={t("description")}
         action={
           <div className="flex gap-2">
             <Button
@@ -121,6 +123,7 @@ export function AdminContentManagementDetailsPage({
           </div>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[20rem_minmax(0,1fr)]">
         <aside className="space-y-6">

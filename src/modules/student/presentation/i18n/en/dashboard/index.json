@@ -34,8 +34,9 @@
       "toggleCollapse": "Collapse sidebar",
       "nav": {
         "home": "Home",
-        "journey": "Journey to Excellence",
+        "journey": "Excellence Journey",
         "studyMaterials": "Study materials",
+        "allCourses": "All Courses",
         "interactiveBook": "Interactive book",
         "helpFiles": "Help files",
         "helper": "Help",
@@ -72,6 +73,292 @@
     "settingsPage": {
       "title": "Settings",
       "description": "Manage your profile and preferences."
+    },
+    "exploreCourses": {
+      "page": {
+        "title": "Available Nawabegh Courses",
+        "description": "Browse all courses available on the Nawabegh platform",
+        "breadcrumbHome": "Home",
+        "breadcrumbCurrent": "All Courses",
+        "myCoursesAction": "View My Courses"
+      },
+      "filters": {
+        "searchPlaceholder": "What do you want to learn today? Search courses, teachers...",
+        "teacher": "Teacher",
+        "teacherPlaceholder": "Select a teacher",
+        "teacherSearch": "Search teachers...",
+        "allTeachers": "All teachers",
+        "allSubjects": "All",
+        "noTeachers": "No teachers found",
+        "teachersError": "Could not load teachers"
+      },
+      "section": {
+        "title": "Available Courses",
+        "filter": "Filter",
+        "gridView": "Grid view",
+        "listView": "List view"
+      },
+      "card": {
+        "free": "Free",
+        "bestSeller": "Best Seller",
+        "students": "{count} students",
+        "progress": "Progress: {value}%",
+        "cta": {
+          "continue": "Continue Learning",
+          "enrollFree": "Enroll For Free",
+          "startNow": "Start Now"
+        }
+      },
+      "empty": {
+        "courses": {
+          "title": "No courses found",
+          "description": "Try changing your filters or searching with different keywords."
+        },
+        "subjects": {
+          "title": "No subjects found",
+          "description": "Subjects could not be loaded right now."
+        },
+        "teachers": {
+          "title": "No teachers found",
+          "description": "Teachers could not be loaded right now."
+        }
+      },
+      "errors": {
+        "courses": "Could not load courses. Please try again.",
+        "retry": "Retry"
+      }
+    },
+    "courseDetails": {
+      "page": {
+        "breadcrumbHome": "Home",
+        "breadcrumbCourses": "All Courses",
+        "description": "Browse all courses available on the Nawabegh platform"
+      },
+      "hero": {
+        "enrolledBadge": "You are enrolled in this course",
+        "welcomeTitle": "Welcome to the course! Continue your journey",
+        "welcomeSubtitle": "Keep learning and reach your goals step by step",
+        "progressLabel": "Your course progress",
+        "progressValue": "{value}% complete",
+        "nextLesson": "Next lesson: {title}",
+        "nextPath": "Next path: {title}",
+        "students": "{count} enrolled students",
+        "duration": "Duration",
+        "rating": "Rating",
+        "durationPlaceholder": "Coming soon",
+        "ratingPlaceholder": "Coming soon"
+      },
+      "sections": {
+        "learningOutcomes": "What will you learn in this course?",
+        "learningOutcomesEnrolled": "Overview of acquired skills",
+        "teacher": "Course Instructor",
+        "curriculum": "Course Content",
+        "curriculumMeta": "{paths} units • {stations} lessons",
+        "faq": "Frequently Asked Questions"
+      },
+      "teacher": {
+        "expert": "Expert",
+        "years": "{count}+ years experience",
+        "courses": "{count} courses",
+        "students": "{count} students",
+        "rating": "{value} rating",
+        "messageCta": "Message instructor",
+        "empty": "Instructor information is not available yet"
+      },
+      "curriculum": {
+        "completed": "Completed ({completed}/{total})",
+        "notStarted": "Not started • {count} lessons",
+        "inProgress": "{value}%",
+        "locked": "Locked",
+        "empty": "No course content is available yet",
+        "watched": "Watched",
+        "subscribersOnly": "Subscribers only"
+      },
+      "stationTypes": {
+        "liveStream": "Live stream",
+        "flashcards": "Flashcards",
+        "shortQuiz": "Short quiz",
+        "challenge": "Challenge",
+        "helperResource": "Helper resource",
+        "recordedLecture": "Recorded lecture"
+      },
+      "sidebar": {
+        "instructorTitle": "Your instructor",
+        "communityTitle": "Learner community",
+        "communityDescription": "Join the group and discuss with fellow learners",
+        "enterChat": "Enter chat now",
+        "enterChatDisabled": "Enter chat",
+        "benefitsTitle": "This course includes",
+        "benefitCertificate": "Accredited completion certificate",
+        "benefitAccess": "Access on mobile and desktop",
+        "benefitCommunity": "Exclusive subscriber community",
+        "discount": "{value}% off",
+        "discountOffer": "Limited-time offer",
+        "promoVideo": "Promo video"
+      },
+      "cta": {
+        "continue": "Continue Learning",
+        "enrollFree": "Enroll For Free",
+        "subscribeNow": "Subscribe Now",
+        "enrolling": "Enrolling..."
+      },
+      "errors": {
+        "load": "Could not load course details. Please try again.",
+        "retry": "Retry",
+        "notFound": "Course not found"
+      }
+    },
+    "checkout": {
+      "page": {
+        "title": "Complete Your Subscription",
+        "description": "Choose your payment method and complete enrollment"
+      },
+      "result": {
+        "title": "Payment Result"
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "courses": "All Courses",
+        "checkout": "Checkout"
+      },
+      "stepper": {
+        "dataEntry": "Payment details",
+        "bankVerification": "Bank verification",
+        "paymentConfirm": "Payment confirmation",
+        "courseActivation": "Course activation"
+      },
+      "summary": {
+        "title": "Order Summary",
+        "coursePrice": "Course price",
+        "discount": "Discount",
+        "vat": "VAT ({rate}%)",
+        "subscriptionPrice": "Subscription price",
+        "activationMethod": "Activation code — no payment required",
+        "amountRequired": "Amount due",
+        "total": "Total",
+        "reference": "Reference: {value}",
+        "activationNote": "Enter your activation code to unlock the course instantly without payment.",
+        "guarantee": "Secure payment protected by Nawabegh. Your data is encrypted."
+      },
+      "payment": {
+        "visaTitle": "Pay with Visa / Mastercard",
+        "activationTitle": "Activate with Code",
+        "tabVisa": "Visa / Card",
+        "tabActivation": "Activation Code",
+        "visaDescription": "You will be redirected to our secure payment partner to complete your purchase.",
+        "securePaymentTitle": "Secure payment",
+        "securePaymentDescription": "Payments are processed by Tap Payments. Nawabegh never stores your card details.",
+        "couponLabel": "Discount coupon (optional)",
+        "couponPlaceholder": "Enter coupon code",
+        "couponApply": "Apply",
+        "payNow": "Pay securely now",
+        "redirecting": "Redirecting to payment...",
+        "activationDescription": "If you have an activation code from your school or institution, enter it below.",
+        "activationCodeLabel": "Activation code",
+        "activationCodePlaceholder": "XXXX-XXXX-XXXX",
+        "activationCodeHint": "Codes are case-insensitive and will be uppercased automatically.",
+        "verifyAndActivate": "Verify & activate",
+        "verifying": "Verifying code...",
+        "noCodeSupport": "Don't have a code? Use Visa payment or contact support."
+      },
+      "processing": {
+        "title": "Verifying your payment",
+        "subtitle": "Please wait while we confirm your transaction with the bank. This usually takes a few seconds.",
+        "cardHolder": "CARD HOLDER",
+        "processingTime": "Processing may take up to 2 minutes",
+        "support": "Need help? Contact support anytime"
+      },
+      "success": {
+        "title": "Subscription activated successfully!",
+        "subtitle": "Welcome aboard! You now have full access to the course.",
+        "currentCourse": "Your course",
+        "progress": "Progress: {value}%",
+        "teacherLabel": "Instructor",
+        "reference": "Reference: {value}",
+        "downloadInvoice": "Download invoice",
+        "benefitsTitle": "What you get",
+        "benefitContent": "Full course content",
+        "benefitContentDesc": "Access all lessons, paths, and resources",
+        "benefitCommunity": "Learner community",
+        "benefitCommunityDesc": "Join discussions with fellow students",
+        "startLearning": "Start learning now",
+        "myDashboard": "My dashboard",
+        "support": "Questions? Our support team is here to help."
+      },
+      "failed": {
+        "title": "Payment failed",
+        "subtitle": "We couldn't process your payment. No amount was charged.",
+        "errorDetails": "Error details",
+        "cardRejected": "Card declined",
+        "cardRejectedDesc": "Your bank declined the transaction. Please try another card or payment method.",
+        "securityTitle": "Your payment is secure",
+        "securityDesc": "No charges were made. You can safely retry or choose a different method.",
+        "retryPayment": "Retry payment",
+        "retrying": "Preparing retry...",
+        "changeMethod": "Change payment method",
+        "backToCourses": "Back to courses"
+      },
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "coupon": "Invalid coupon code.",
+        "activationCode": "Invalid activation code.",
+        "session": "Could not start checkout. Please try again.",
+        "invoice": "Invoice is not available yet.",
+        "retry": "Retry"
+      }
+    },
+    "progressPath": {
+      "page": {
+        "title": "Excellence Journey",
+        "subtitle": "Continue your exciting learning journey today",
+        "enrolledBadge": "Enrolled student"
+      },
+      "tabs": {
+        "courses": "Courses",
+        "paths": "Learning paths"
+      },
+      "banner": {
+        "progress": "{value}% complete",
+        "defaultPath": "Learning path",
+        "unit": "Unit {index}"
+      },
+      "empty": {
+        "noCourses": "You are not enrolled in any courses yet.",
+        "exploreCourses": "Explore courses"
+      },
+      "errors": {
+        "load": "Could not load your learning path. Please try again.",
+        "retry": "Retry"
+      }
+    },
+    "subscriptions": {
+      "title": "My Subscriptions",
+      "welcome": "Welcome back, {name}",
+      "weeklyProgress": "You have completed {percent}% of your learning goals this week.",
+      "stats": {
+        "totalCourses": "Total courses",
+        "thisMonth": "this month",
+        "overallProgress": "Overall progress",
+        "learningHours": "Learning hours",
+        "completedCourses": "Completed courses"
+      },
+      "actions": {
+        "leaderboard": "Leaderboard",
+        "explore": "Explore more"
+      },
+      "courses": {
+        "title": "Your current courses",
+        "count": "{count} courses",
+        "empty": "You are not enrolled in any courses yet.",
+        "continue": "Continue learning",
+        "certificate": "View certificate",
+        "completed": "Completed",
+        "progress": "Progress"
+      },
+      "errors": {
+        "load": "Could not load your subscriptions. Please try again.",
+        "retry": "Retry"
+      }
     }
   }
 }

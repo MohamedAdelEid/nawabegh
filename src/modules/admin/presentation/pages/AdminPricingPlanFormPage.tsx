@@ -10,7 +10,8 @@ import {
   type PricingPlanTypeId,
 } from "@/modules/admin/domain/data/pricingManagementData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -86,15 +87,17 @@ export function AdminPricingPlanFormPage({
 
   return (
     <div className="space-y-6">
-      <DashboardPageHeader
-        title={mode === "edit" ? t("pricingManagement.form.editTitle") : t("pricingManagement.form.addTitle")}
-        description={t("pricingManagement.form.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("pricingManagement.breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("pricingManagement.breadcrumbs.list"), href: ROUTES.ADMIN.PRICING_MANAGEMENT.PLANS.LIST },
           { label: mode === "edit" ? t("pricingManagement.breadcrumbs.edit") : t("pricingManagement.breadcrumbs.add") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={mode === "edit" ? t("pricingManagement.form.editTitle") : t("pricingManagement.form.addTitle")}
+        description={t("pricingManagement.form.description")}
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
         <aside className="space-y-4">

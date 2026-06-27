@@ -10,15 +10,14 @@ import {
   type PricingPlanRow,
 } from "@/modules/admin/domain/data/pricingManagementData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardPageHeader,
   DashboardPagination,
   DashboardStatCard,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -131,13 +130,14 @@ export function PricingManagementDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("pricingManagement.page.title")}
-        description={t("pricingManagement.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("pricingManagement.page.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("pricingManagement.page.title")}
+        description={t("pricingManagement.page.description")}
         action={
           <div className="flex items-center gap-2">
             <Button
@@ -160,6 +160,7 @@ export function PricingManagementDashboard() {
           </div>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {data.stats.map((stat) => (

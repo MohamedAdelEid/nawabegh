@@ -1,9 +1,9 @@
 import {
   CourseAccessType,
-  CourseStatus,
   CourseRejectionReasons,
-  LearningPathStatus,
-} from "@/shared/domain/enums/cms.enums";
+  CourseStatus,
+} from "@/shared/domain/enums/course.enums";
+import { LearningPathStatus } from "@/shared/domain/enums/learning-path.enums";
 
 /** Dashboard filter / badge keys for course & learning-path moderation rows. */
 export type CourseStatusId = "draft" | "pending" | "approved" | "rejected" | "archived";

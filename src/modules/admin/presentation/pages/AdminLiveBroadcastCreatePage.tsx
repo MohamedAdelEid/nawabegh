@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { DashboardBadge, DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -34,17 +35,18 @@ export function AdminLiveBroadcastCreatePage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("liveBroadcast.create.page.title")}
-        description={t("liveBroadcast.create.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           {
             label: t("liveBroadcast.list.page.breadcrumb"),
             href: `${ROUTES.ADMIN.HOME}?tab=liveBroadcast`,
           },
           { label: t("liveBroadcast.create.page.breadcrumb") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("liveBroadcast.create.page.title")}
+        description={t("liveBroadcast.create.page.description")}
         action={
           <Button
             type="button"
@@ -56,6 +58,7 @@ export function AdminLiveBroadcastCreatePage() {
           </Button>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
         <Card className="border-[var(--dashboard-border-soft)] shadow-[var(--dashboard-shadow-soft)]">

@@ -17,15 +17,14 @@ import {
   type LiveSessionRecordingId,
   type LiveSessionStatusId,
 } from "@/modules/admin/domain/data/liveBroadcastDashboardData";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardPageHeader,
   DashboardPagination,
   DashboardStatCard,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { cn } from "@/shared/application/lib/cn";
@@ -121,13 +120,14 @@ export function LiveBroadcastDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("liveBroadcast.list.page.title")}
-        description={t("liveBroadcast.list.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("liveBroadcast.list.page.breadcrumb") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("liveBroadcast.list.page.title")}
+        description={t("liveBroadcast.list.page.description")}
         action={
           <Button
             type="button"
@@ -140,6 +140,7 @@ export function LiveBroadcastDashboard() {
           </Button>
         }
       />
+      </div>
 
       <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {data.stats.map((stat) => (
