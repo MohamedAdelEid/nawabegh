@@ -11,7 +11,8 @@ import { getCourseDetails, rejectCourse } from "@/modules/admin/infrastructure/a
 import { CourseCoverPreview, CourseSectionCard } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
@@ -75,15 +76,17 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("reject.title")}
-        description={t("reject.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.courseManagement"), href: ROUTES.ADMIN.COURSE_MANAGEMENT.LIST },
           { label: t("breadcrumbs.reject") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("reject.title")}
+        description={t("reject.description")}
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-5">

@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { getSubscriptionsData, type SubscriptionRow } from "@/modules/admin/domain/data/pricingBillingData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardBadge, DashboardPageHeader, DashboardPagination, DashboardTableCard } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader, DashboardPagination, DashboardTableCard,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 export function AdminPricingSubscriptionsPage() {
@@ -20,15 +21,17 @@ export function AdminPricingSubscriptionsPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("pricingManagement.subscriptions.page.title")}
-        description={t("pricingManagement.subscriptions.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("sidebar.nav.pricingManagement"), href: ROUTES.ADMIN.PRICING_MANAGEMENT.LIST },
           { label: t("pricingManagement.subscriptions.page.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("pricingManagement.subscriptions.page.title")}
+        description={t("pricingManagement.subscriptions.page.description")}
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-3">
         <MiniStat title={t("pricingManagement.subscriptions.stats.total")} value="1,284" tone="blue" />

@@ -12,7 +12,8 @@ import {
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -117,10 +118,8 @@ export function AdminArticleEditorRequestAmendmentsPage({
 
   return (
     <div className="space-y-8 text-right">
-      <DashboardPageHeader
-        title={t("header.title")}
-        description={t("header.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("header.breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("header.breadcrumbs.articleEditor"), href: `${ROUTES.ADMIN.HOME}?tab=articleEditor` },
           {
@@ -128,8 +127,12 @@ export function AdminArticleEditorRequestAmendmentsPage({
             href: ROUTES.ADMIN.ARTICLE_EDITOR.VIEW(articleId),
           },
           { label: t("header.breadcrumbs.current") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("header.title")}
+        description={t("header.description")}
       />
+      </div>
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <Card

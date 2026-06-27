@@ -16,7 +16,7 @@ export type SearchableSelectOption<TValue extends string | number = number> = {
 };
 
 type SearchableSelectProps<TValue extends string | number> = {
-  label: string;
+  label?: string;
   required?: boolean;
   icon?: ReactNode;
   value: TValue | null;
@@ -73,8 +73,8 @@ export function SearchableSelect<TValue extends string | number>({
   );
 
   return (
-    <Field invalid={Boolean(error)} disabled={disabled} className="gap-0 space-y-1">
-      <FieldLabel required={required} icon={icon} className="flex items-center gap-2">{label}</FieldLabel>
+    <Field invalid={Boolean(error)} disabled={disabled} className="gap-3">
+      {label ? <FieldLabel required={required} icon={icon} className="flex items-center gap-2">{label}</FieldLabel> : null}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { DashboardBadge, DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -25,17 +26,18 @@ export function AdminLiveBroadcastWatchPage() {
 
   return (
     <div className="space-y-6">
-      <DashboardPageHeader
-        title={t("liveBroadcast.watch.page.title")}
-        description={t("liveBroadcast.watch.page.subtitle")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           {
             label: t("liveBroadcast.list.page.breadcrumb"),
             href: `${ROUTES.ADMIN.HOME}?tab=liveBroadcast`,
           },
           { label: t("liveBroadcast.watch.page.breadcrumb") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("liveBroadcast.watch.page.title")}
+        description={t("liveBroadcast.watch.page.subtitle")}
         action={
           <Button
             type="button"
@@ -48,6 +50,7 @@ export function AdminLiveBroadcastWatchPage() {
           </Button>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
         <div className="space-y-6 lg:col-span-2">

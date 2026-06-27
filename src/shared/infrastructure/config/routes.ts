@@ -183,6 +183,11 @@ export const ROUTES = {
     SETTINGS: "/student/settings",
     STUDENT: {
       HOME: "/student/dashboard",
+      COURSES: "/student/courses",
+      COURSE_DETAIL: (courseId: string) => `/student/courses/${courseId}`,
+      COURSE_CHECKOUT: (courseId: string) => `/student/courses/${courseId}/checkout`,
+      CHECKOUT_RESULT: "/student/checkout/result",
+      JOURNEY: "/student/journey",
       SETTINGS: "/student/settings",
     },
     TEACHER: {

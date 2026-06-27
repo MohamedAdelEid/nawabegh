@@ -5,7 +5,8 @@ import { Lock, PlusCircle, Settings2, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { cn } from "@/shared/application/lib/cn";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
@@ -30,15 +31,17 @@ export function AdminCommunitySettingsPage() {
 
   return (
     <div className="space-y-8 text-right">
-      <DashboardPageHeader
-        title={t("page.title")}
-        description={t("page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("page.breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("page.breadcrumbs.articleEditor"), href: ROUTES.ADMIN.ARTICLE_EDITOR.LIST },
           { label: t("page.breadcrumbs.current") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("page.title")}
+        description={t("page.description")}
       />
+      </div>
 
       <div className="rounded-[1.75rem] border border-[#E8ECF2] bg-[#F8F9FB] p-4 sm:p-6 lg:p-8">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_30rem] lg:items-stretch">

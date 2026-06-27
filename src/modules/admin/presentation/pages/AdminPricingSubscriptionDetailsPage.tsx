@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { getSubscriptionDetails, type SubscriptionDetails } from "@/modules/admin/domain/data/pricingBillingData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardBadge, DashboardPageHeader, DashboardTableCard } from "@/shared/presentation/components/dashboard";
+import {DashboardBadge, DashboardPageHeader, DashboardTableCard,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
 interface AdminPricingSubscriptionDetailsPageProps {
@@ -27,16 +28,18 @@ export function AdminPricingSubscriptionDetailsPage({
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("pricingManagement.subscriptionDetails.title")}
-        description={t("pricingManagement.subscriptionDetails.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("sidebar.nav.pricingManagement"), href: ROUTES.ADMIN.PRICING_MANAGEMENT.LIST },
           { label: t("pricingManagement.subscriptions.page.title"), href: ROUTES.ADMIN.PRICING_MANAGEMENT.SUBSCRIPTIONS.LIST },
           { label: details.id },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("pricingManagement.subscriptionDetails.title")}
+        description={t("pricingManagement.subscriptionDetails.description")}
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-3">
         <Card className="rounded-[1.5rem] bg-[#243B5A] text-white"><CardContent className="p-5 text-right"><p className="text-sm">{t("pricingManagement.subscriptionDetails.cards.paid")}</p><p className="text-4xl font-extrabold">{details.totalPaid}</p></CardContent></Card>

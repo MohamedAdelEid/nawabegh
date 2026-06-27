@@ -30,7 +30,8 @@ import {
 } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
@@ -98,15 +99,17 @@ export function AdminCourseReviewPage({ courseId }: { courseId: string }) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("review.title")}
-        description={t("review.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.courseManagement"), href: ROUTES.ADMIN.COURSE_MANAGEMENT.LIST },
           { label: detail.title },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("review.title")}
+        description={t("review.description")}
       />
+      </div>
 
       <Card className="overflow-hidden rounded-[2rem] border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
         <div className="relative min-h-48 bg-[#203A5A] p-8 text-right text-white">

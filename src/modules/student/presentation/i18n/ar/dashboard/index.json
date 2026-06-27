@@ -34,8 +34,9 @@
       "toggleCollapse": "طي الشريط الجانبي",
       "nav": {
         "home": "الرئيسية",
-        "journey": "رحلة التميز",
+        "journey": "رحلة التفوق",
         "studyMaterials": "المواد الدراسية",
+        "allCourses": "كافة الدورات",
         "interactiveBook": "كتاب تفاعلي",
         "helpFiles": "ملفات المساعدة",
         "helper": "مساعدة",
@@ -93,6 +94,292 @@
     "settingsPage": {
       "title": "الإعدادات",
       "description": "إدارة ملفك الشخصي وتفضيلاتك."
+    },
+    "exploreCourses": {
+      "page": {
+        "title": "دورات نوابغ المتاحة",
+        "description": "استعراض كافة الدورات المتاحة في منصة نوابغ",
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbCurrent": "كافة الدورات",
+        "myCoursesAction": "عرض دوراتي"
+      },
+      "filters": {
+        "searchPlaceholder": "ماذا تريد أن تتعلم اليوم؟ ابحث عن الدورات، المعلمين...",
+        "teacher": "المعلم",
+        "teacherPlaceholder": "اختر المعلم",
+        "teacherSearch": "ابحث عن معلم...",
+        "allTeachers": "كل المعلمين",
+        "allSubjects": "الكل",
+        "noTeachers": "لا يوجد معلمون",
+        "teachersError": "تعذر تحميل المعلمين"
+      },
+      "section": {
+        "title": "الدورات المتاحة",
+        "filter": "تصفية",
+        "gridView": "عرض شبكي",
+        "listView": "عرض قائمة"
+      },
+      "card": {
+        "free": "مجاني",
+        "bestSeller": "الأكثر شراءً",
+        "students": "{count} طالب",
+        "progress": "التقدم: {value}%",
+        "cta": {
+          "continue": "استكمل التعلم",
+          "enrollFree": "سجل مجاناً",
+          "startNow": "ابدأ الآن"
+        }
+      },
+      "empty": {
+        "courses": {
+          "title": "لا توجد دورات",
+          "description": "جرّب تغيير عوامل التصفية أو البحث بكلمات مختلفة."
+        },
+        "subjects": {
+          "title": "لا توجد مواد",
+          "description": "تعذر تحميل المواد الدراسية حالياً."
+        },
+        "teachers": {
+          "title": "لا يوجد معلمون",
+          "description": "تعذر تحميل قائمة المعلمين حالياً."
+        }
+      },
+      "errors": {
+        "courses": "تعذر تحميل الدورات. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      }
+    },
+    "courseDetails": {
+      "page": {
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbCourses": "كافة الدورات",
+        "description": "استعرض كافة الدورات المتاحة في منصة نوابغ"
+      },
+      "hero": {
+        "enrolledBadge": "أنت مشترك في هذه الدورة",
+        "welcomeTitle": "أهلاً بك في الدورة! استكمل رحلة تميزك",
+        "welcomeSubtitle": "استمر في التعلم وحقق أهدافك خطوة بخطوة",
+        "progressLabel": "تقدمك في الدورة",
+        "progressValue": "{value}% مكتمل",
+        "nextLesson": "الدرس القادم: {title}",
+        "nextPath": "المسار القادم: {title}",
+        "students": "{count} طالب مشترك",
+        "duration": "المدة",
+        "rating": "التقييم",
+        "durationPlaceholder": "قريباً",
+        "ratingPlaceholder": "قريباً"
+      },
+      "sections": {
+        "learningOutcomes": "ماذا ستتعلم في هذه الدورة؟",
+        "learningOutcomesEnrolled": "نظرة عامة على المهارات المكتسبة",
+        "teacher": "مدرب الدورة",
+        "curriculum": "محتوى الدورة",
+        "curriculumMeta": "{paths} وحدة • {stations} درس",
+        "faq": "الأسئلة الشائعة"
+      },
+      "teacher": {
+        "expert": "خبير",
+        "years": "{count}+ سنوات خبرة",
+        "courses": "{count} دورة",
+        "students": "{count} طالب",
+        "rating": "{value} تقييم",
+        "messageCta": "إرسال رسالة للمدرب",
+        "empty": "لا تتوفر معلومات المدرب حالياً"
+      },
+      "curriculum": {
+        "completed": "مكتملة ({completed}/{total})",
+        "notStarted": "لم يتم البدء • {count} دروس",
+        "inProgress": "{value}%",
+        "locked": "مقفل",
+        "empty": "لا يوجد محتوى متاح لهذه الدورة بعد",
+        "watched": "تمت المشاهدة",
+        "subscribersOnly": "للمشتركين فقط"
+      },
+      "stationTypes": {
+        "liveStream": "بث مباشر",
+        "flashcards": "بطاقات تعليمية",
+        "shortQuiz": "اختبار قصير",
+        "challenge": "تحدي",
+        "helperResource": "ملف مساعد",
+        "recordedLecture": "درس مسجل"
+      },
+      "sidebar": {
+        "instructorTitle": "معلمك المباشر",
+        "communityTitle": "مجتمع المشتركين",
+        "communityDescription": "انضم إلى مجموعة المشتركين وناقش مع زملائك",
+        "enterChat": "دخول الدردشة الآن",
+        "enterChatDisabled": "دخول الدردشة",
+        "benefitsTitle": "تتضمن هذه الدورة",
+        "benefitCertificate": "شهادة إتمام معتمدة",
+        "benefitAccess": "وصول عبر الجوال والكمبيوتر",
+        "benefitCommunity": "مجتمع حصري للمشتركين",
+        "discount": "خصم {value}%",
+        "discountOffer": "العرض ساري لفترة محدودة",
+        "promoVideo": "فيديو تعريفي"
+      },
+      "cta": {
+        "continue": "استكمال التعلم",
+        "enrollFree": "سجل مجاناً",
+        "subscribeNow": "اشترك الآن",
+        "enrolling": "جاري التسجيل..."
+      },
+      "errors": {
+        "load": "تعذر تحميل تفاصيل الدورة. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "notFound": "الدورة غير موجودة"
+      }
+    },
+    "checkout": {
+      "page": {
+        "title": "إتمام الاشتراك",
+        "description": "اختر طريقة الدفع وأكمل عملية الاشتراك"
+      },
+      "result": {
+        "title": "نتيجة الدفع"
+      },
+      "breadcrumb": {
+        "home": "الرئيسية",
+        "courses": "كافة الدورات",
+        "checkout": "الدفع"
+      },
+      "stepper": {
+        "dataEntry": "بيانات الدفع",
+        "bankVerification": "التحقق البنكي",
+        "paymentConfirm": "تأكيد الدفع",
+        "courseActivation": "تفعيل الدورة"
+      },
+      "summary": {
+        "title": "ملخص الطلب",
+        "coursePrice": "سعر الدورة",
+        "discount": "الخصم",
+        "vat": "ضريبة القيمة المضافة ({rate}%)",
+        "subscriptionPrice": "سعر الاشتراك",
+        "activationMethod": "كود التفعيل — بدون دفع",
+        "amountRequired": "المبلغ المطلوب",
+        "total": "الإجمالي",
+        "reference": "المرجع: {value}",
+        "activationNote": "أدخل كود التفعيل لتفعيل الدورة فوراً دون الحاجة للدفع.",
+        "guarantee": "دفع آمن ومحمي عبر منصة نوابغ. بياناتك مشفرة بالكامل."
+      },
+      "payment": {
+        "visaTitle": "الدفع ببطاقة فيزا / ماستركارد",
+        "activationTitle": "التفعيل بكود",
+        "tabVisa": "فيزا / بطاقة",
+        "tabActivation": "كود التفعيل",
+        "visaDescription": "سيتم توجيهك إلى بوابة الدفع الآمنة لإتمام عملية الشراء.",
+        "securePaymentTitle": "دفع آمن",
+        "securePaymentDescription": "تتم معالجة المدفوعات عبر Tap Payments. نوابغ لا تحتفظ ببيانات بطاقتك.",
+        "couponLabel": "كوبون خصم (اختياري)",
+        "couponPlaceholder": "أدخل كود الخصم",
+        "couponApply": "تطبيق",
+        "payNow": "ادفع الآن بأمان",
+        "redirecting": "جاري التوجيه للدفع...",
+        "activationDescription": "إذا كان لديك كود تفعيل من مدرستك أو مؤسستك، أدخله أدناه.",
+        "activationCodeLabel": "كود التفعيل",
+        "activationCodePlaceholder": "XXXX-XXXX-XXXX",
+        "activationCodeHint": "الأكواد غير حساسة لحالة الأحرف ويتم تحويلها تلقائياً.",
+        "verifyAndActivate": "تحقق وفعّل",
+        "verifying": "جاري التحقق...",
+        "noCodeSupport": "ليس لديك كود؟ استخدم الدفع بالبطاقة أو تواصل مع الدعم."
+      },
+      "processing": {
+        "title": "جاري التحقق من الدفع",
+        "subtitle": "يرجى الانتظار بينما نؤكد معاملتك مع البنك. عادةً يستغرق ذلك بضع ثوانٍ.",
+        "cardHolder": "حامل البطاقة",
+        "processingTime": "قد تستغرق المعالجة حتى دقيقتين",
+        "support": "تحتاج مساعدة؟ تواصل مع الدعم في أي وقت"
+      },
+      "success": {
+        "title": "تم تفعيل الاشتراك بنجاح!",
+        "subtitle": "أهلاً بك! لديك الآن وصول كامل للدورة.",
+        "currentCourse": "دورتك",
+        "progress": "التقدم: {value}%",
+        "teacherLabel": "المدرب",
+        "reference": "المرجع: {value}",
+        "downloadInvoice": "تحميل الفاتورة",
+        "benefitsTitle": "ما ستحصل عليه",
+        "benefitContent": "محتوى الدورة الكامل",
+        "benefitContentDesc": "وصول لجميع الدروس والمسارات والموارد",
+        "benefitCommunity": "مجتمع المتعلمين",
+        "benefitCommunityDesc": "انضم للنقاشات مع زملائك",
+        "startLearning": "ابدأ التعلم الآن",
+        "myDashboard": "لوحتي",
+        "support": "أسئلة؟ فريق الدعم جاهز لمساعدتك."
+      },
+      "failed": {
+        "title": "فشل الدفع",
+        "subtitle": "لم نتمكن من معالجة دفعتك. لم يتم خصم أي مبلغ.",
+        "errorDetails": "تفاصيل الخطأ",
+        "cardRejected": "تم رفض البطاقة",
+        "cardRejectedDesc": "رفض البنك المعاملة. جرّب بطاقة أخرى أو طريقة دفع مختلفة.",
+        "securityTitle": "دفعتك آمنة",
+        "securityDesc": "لم يتم خصم أي مبلغ. يمكنك إعادة المحاولة بأمان أو اختيار طريقة أخرى.",
+        "retryPayment": "إعادة محاولة الدفع",
+        "retrying": "جاري التحضير...",
+        "changeMethod": "تغيير طريقة الدفع",
+        "backToCourses": "العودة للدورات"
+      },
+      "errors": {
+        "generic": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+        "coupon": "الكوبون غير صالح",
+        "activationCode": "كود التفعيل غير صالح",
+        "session": "تعذر بدء عملية الدفع. يرجى المحاولة مرة أخرى.",
+        "invoice": "الفاتورة غير متاحة بعد.",
+        "retry": "إعادة المحاولة"
+      }
+    },
+    "progressPath": {
+      "page": {
+        "title": "رحلة التفوق",
+        "subtitle": "استكمل رحلتك التعليمية الممتعة اليوم",
+        "enrolledBadge": "طالب مشترك"
+      },
+      "tabs": {
+        "courses": "الدورات",
+        "paths": "مسارات التعلم"
+      },
+      "banner": {
+        "progress": "{value}% مكتمل",
+        "defaultPath": "مسار التعلم",
+        "unit": "الوحدة {index}"
+      },
+      "empty": {
+        "noCourses": "لم تُسجَّل في أي دورة بعد.",
+        "exploreCourses": "استكشف الدورات"
+      },
+      "errors": {
+        "load": "تعذر تحميل رحلة التفوق. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      }
+    },
+    "subscriptions": {
+      "title": "اشتراكاتي",
+      "welcome": "مرحباً بك مجدداً يا {name}",
+      "weeklyProgress": "لقد أكملت {percent}% من أهدافك التعليمية لهذا الأسبوع.",
+      "stats": {
+        "totalCourses": "إجمالي الكورسات",
+        "thisMonth": "هذا الشهر",
+        "overallProgress": "التقدم العام",
+        "learningHours": "ساعات التعلم",
+        "completedCourses": "كورسات مكتملة"
+      },
+      "actions": {
+        "leaderboard": "المتصدرين",
+        "explore": "استكشف المزيد"
+      },
+      "courses": {
+        "title": "كورساتك الحالية",
+        "count": "{count} كورسات",
+        "empty": "لم تُسجَّل في أي دورة بعد.",
+        "continue": "متابعة التعلم",
+        "certificate": "عرض الشهادة",
+        "completed": "مكتمل",
+        "progress": "التقدم"
+      },
+      "errors": {
+        "load": "تعذر تحميل الاشتراكات. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      }
     }
   }
 }

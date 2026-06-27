@@ -1,23 +1,35 @@
-export { DashboardBadge } from "./DashboardBadge";
-export type { DashboardBadgeTone } from "./DashboardBadge";
+// Layout - page shell, headers, tabs
+export { DashboardBreadcrumb } from "./layout/DashboardBreadcrumb";
+export type { DashboardBreadcrumbItem } from "./layout/DashboardBreadcrumb";
+export { DashboardPageHeader } from "./layout/DashboardPageHeader";
+export { DashboardSectionHeader } from "./layout/DashboardSectionHeader";
+export { DashboardTabPage } from "./layout/DashboardTabPage";
+export { DashboardTabPlaceholder } from "./layout/DashboardTabPlaceholder";
+export { DashboardNotImplementedState } from "./DashboardNotImplementedState";
+
+// Filters - search, selects, segmented controls
 export {
   DashboardFilterSelect,
   DashboardSearchFilter,
-} from "./DashboardFilters";
-export type { DashboardFilterOption } from "./DashboardFilters";
-export { DashboardFiltersPanel } from "./DashboardFiltersPanel";
-export { DashboardInsightCard } from "./DashboardInsightCard";
-export { DashboardPageHeader } from "./DashboardPageHeader";
-export { DashboardPagination } from "./DashboardPagination";
-export { DashboardTableFooterPagination } from "./DashboardTableFooterPagination";
-export { DashboardDataTable } from "./DashboardDataTable";
-export type { DashboardDataTableColumn } from "./DashboardDataTable";
-export { DashboardStatCard } from "./DashboardStatCard";
-export { DashboardTabPage } from "./DashboardTabPage";
-export { DashboardTabPlaceholder } from "./DashboardTabPlaceholder";
-export { DashboardNotImplementedState } from "./DashboardNotImplementedState";
-export { DashboardTableCard } from "./DashboardTableCard";
-export {
-  DashboardSegmentedControl,
-} from "./DashboardSegmentedControl";
-export type { DashboardSegmentOption } from "./DashboardSegmentedControl";
+} from "./filters/DashboardFilters";
+export type { DashboardFilterOption } from "./filters/DashboardFilters";
+export { DashboardFiltersPanel } from "./filters/DashboardFiltersPanel";
+export { DashboardSegmentedControl } from "./filters/DashboardSegmentedControl";
+export type { DashboardSegmentOption } from "./filters/DashboardSegmentedControl";
+
+// Table - data tables, pagination
+export { DashboardDataTable } from "./table/DashboardDataTable";
+export type { DashboardDataTableColumn } from "./table/DashboardDataTable";
+export { DashboardTableCard } from "./table/DashboardTableCard";
+export { DashboardPagination } from "./table/DashboardPagination";
+export { DashboardTableFooterPagination } from "./table/DashboardTableFooterPagination";
+
+// Cards - stats, insights, badges
+export { DashboardBadge } from "./cards/DashboardBadge";
+export type { DashboardBadgeTone } from "./cards/DashboardBadge";
+export { DashboardStatCard } from "./cards/DashboardStatCard";
+export { DashboardInsightCard } from "./cards/DashboardInsightCard";
+
+// Controls - view toggles and similar actions
+export { DashboardViewToggle } from "./controls/DashboardViewToggle";
+export type { DashboardViewMode } from "./controls/DashboardViewToggle";

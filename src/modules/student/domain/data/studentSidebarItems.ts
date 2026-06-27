@@ -20,13 +20,15 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
       {
         id: "journey",
         labelKey: "sidebar.nav.journey",
-        href: `${dashboardBase}?tab=journey`,
+        href: "/student/journey",
+        activePathPrefixes: ["/student/journey"],
         icon: SidebarMapIcon,
       },
       {
-        id: "studyMaterials",
-        labelKey: "sidebar.nav.studyMaterials",
-        href: `${dashboardBase}?tab=studyMaterials`,
+        id: "allCourses",
+        labelKey: "sidebar.nav.allCourses",
+        href: "/student/courses",
+        activePathPrefixes: ["/student/courses"],
         icon: SidebarMessageIcon,
       },
       {
