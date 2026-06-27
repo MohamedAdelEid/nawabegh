@@ -19,7 +19,8 @@ import {
   QUESTION_BANK_UPLOAD_FOLDER,
   uploadAdminFile,
 } from "@/modules/admin/infrastructure/api/fileUploadApi";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -274,13 +275,14 @@ export function AdminQuestionBankAddPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankAdd.title")}
-        description={t("questionBankAdd.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
           { label: t("questionBankAdd.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("questionBankAdd.title")}
+        description={t("questionBankAdd.description")}
         action={
           <Button
             type="button"
@@ -294,6 +296,7 @@ export function AdminQuestionBankAddPage() {
           </Button>
         }
       />
+      </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_25rem]">
         <div className="space-y-6">

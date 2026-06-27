@@ -12,7 +12,8 @@ import {
 } from "@/modules/admin/infrastructure/api/learningPathsModerationApi";
 import { CourseCoverPreview, CourseSectionCard, CourseStatusBadge } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
@@ -48,13 +49,14 @@ export function AdminCourseRejectionDetailsPage({ courseId }: { courseId: string
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("rejectionDetails.title")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.courseManagement"), href: ROUTES.ADMIN.COURSE_MANAGEMENT.LIST },
           { label: t("breadcrumbs.rejectionDetails") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("rejectionDetails.title")}
         action={
           <div className="flex gap-3">
             <Button className="h-12 rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46]">
@@ -67,6 +69,7 @@ export function AdminCourseRejectionDetailsPage({ courseId }: { courseId: string
           </div>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">

@@ -16,13 +16,12 @@ import {
 } from "lucide-react";
 
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardFilterSelect,
+import {DashboardFilterSelect,
   DashboardFiltersPanel,
   DashboardPageHeader,
   DashboardSearchFilter,
   DashboardStatCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { notify } from "@/shared/application/lib/toast";
 import { STATIC_SUBJECT_OPTIONS } from "@/modules/admin/application/hooks/useQuestionBankPage";
@@ -207,13 +206,14 @@ export function AdminQuestionBankPreviewAllPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankPreviewAll.title")}
-        description={t("questionBankPreviewAll.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
           { label: t("questionBankPreviewAll.breadcrumbs.addNewQuestion") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("questionBankPreviewAll.title")}
+        description={t("questionBankPreviewAll.description")}
         action={
           <Button
             type="button"
@@ -226,6 +226,7 @@ export function AdminQuestionBankPreviewAllPage() {
           </Button>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard

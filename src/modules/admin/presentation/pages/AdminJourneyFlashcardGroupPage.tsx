@@ -27,7 +27,8 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import {
@@ -242,17 +243,18 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("flashcardGroup.title", { title: activeGroup.title })}
-        description={t("flashcardGroup.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           {
             label: t("breadcrumbs.journeyEditor"),
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
           },
           { label: t("breadcrumbs.flashcardGroup") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("flashcardGroup.title", { title: activeGroup.title })}
+        description={t("flashcardGroup.description")}
         action={
           <div className="flex gap-3">
             {/* <Button
@@ -272,6 +274,7 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
           </div>
         }
       />
+      </div>
 
       {/* Stats row */}
       <div className="grid gap-4 sm:grid-cols-3">

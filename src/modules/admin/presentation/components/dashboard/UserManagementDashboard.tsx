@@ -35,8 +35,7 @@ import { cn } from "@/shared/application/lib/cn";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardFilterSelect,
@@ -46,7 +45,7 @@ import {
   DashboardSearchFilter,
   DashboardTableCard,
   DashboardTableFooterPagination,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { AddUserSelectionModal as AddUserModal } from "@/modules/admin/presentation/components/add-user";
@@ -713,12 +712,13 @@ export function UserManagementDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("userManagement.page.title")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title") },
           { label: t("userManagement.page.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("userManagement.page.title")}
         description={t("userManagement.page.description")}
         action={
           <Button
@@ -734,6 +734,7 @@ export function UserManagementDashboard() {
           </Button>
         }
       />
+      </div>
 
       <AddUserModal
         open={isAddUserModalOpen}

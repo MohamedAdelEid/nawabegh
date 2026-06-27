@@ -21,7 +21,8 @@ import { CourseSectionCard } from "@/modules/admin/presentation/components/cours
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { CourseAccessType, CourseTerm } from "@/shared/domain/enums/cms.enums";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -406,10 +407,8 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={isEditMode ? t("create.edit.title") : t("create.title")}
-        description={isEditMode ? t("create.edit.description") : t("create.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.courseManagement"), href: ROUTES.ADMIN.COURSE_MANAGEMENT.LIST },
           ...(isEditMode && courseId
@@ -421,7 +420,10 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                 { label: t("breadcrumbs.edit") },
               ]
             : [{ label: t("breadcrumbs.create") }]),
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={isEditMode ? t("create.edit.title") : t("create.title")}
+        description={isEditMode ? t("create.edit.description") : t("create.description")}
         action={
           <div className="flex gap-3">
             <Button
@@ -445,6 +447,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
           </div>
         }
       />
+      </div>
       <div className="rounded-[1.75rem] border border-white/80 bg-white p-5 shadow-[0px_8px_0px_0px_#0000000D]">
         <div className="flex justify-between">
           {[{

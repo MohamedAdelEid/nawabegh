@@ -11,7 +11,8 @@ import {
   type ContentFileAccessId,
 } from "@/modules/admin/domain/data/contentManagementData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -96,18 +97,8 @@ export function AdminContentManagementAddPage({
 
   return (
     <div className="space-y-6">
-      <DashboardPageHeader
-        title={
-          stationContext
-            ? t("form.stationContext.addTitle")
-            : mode === "edit"
-              ? t("form.editTitle")
-              : t("form.addTitle")
-        }
-        description={
-          stationContext ? t("form.stationContext.pageDescription") : t("form.pageDescription")
-        }
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           ...(stationContext
             ? [
@@ -118,8 +109,20 @@ export function AdminContentManagementAddPage({
               ]
             : [{ label: t("breadcrumbs.content"), href: routeConfig.LIST }]),
           { label: mode === "edit" ? t("breadcrumbs.edit") : t("breadcrumbs.add") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={
+          stationContext
+            ? t("form.stationContext.addTitle")
+            : mode === "edit"
+              ? t("form.editTitle")
+              : t("form.addTitle")
+        }
+        description={
+          stationContext ? t("form.stationContext.pageDescription") : t("form.pageDescription")
+        }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
         <aside className="space-y-4">

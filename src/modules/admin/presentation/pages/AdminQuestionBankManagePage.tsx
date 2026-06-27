@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader, DashboardStatCard, DashboardBadge } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader, DashboardStatCard, DashboardBadge,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ModalShell, ModalDescription, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
@@ -16,15 +17,17 @@ export function AdminQuestionBankManagePage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankManage.title")}
-        description={t("questionBankManage.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
           { label: t("questionBankManage.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("questionBankManage.title")}
+        description={t("questionBankManage.description")}
         action={<Button onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.ADD)}>{t("questionBankManage.actions.addQuestion")}</Button>}
       />
+      </div>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard label={t("questionBankManage.stats.total")} value="1,284" indicator="" icon={BookOpen} iconTone="info" />
         <DashboardStatCard label={t("questionBankManage.stats.mcq")} value="842" indicator="" icon={ListChecks} iconTone="success" />

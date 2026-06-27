@@ -24,7 +24,8 @@ import { AddExamQuestionModal } from "@/modules/admin/presentation/components/jo
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
@@ -150,10 +151,8 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("title", { name: exam.name })}
-        description={t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
             label: tBc("journeyEditor"),
@@ -164,7 +163,10 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDITOR(journeyId, stationId),
           },
           { label: tBc("examEditQuestions") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("title", { name: exam.name })}
+        description={t("description")}
         action={
           <div className="flex gap-3">
             <Button
@@ -186,6 +188,7 @@ export function AdminJourneyExamEditQuestionsPage({ journeyId, stationId }: Prop
           </div>
         }
       />
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         {[

@@ -7,7 +7,8 @@ import { motion } from "framer-motion";
 import { Save, Loader2, LockIcon } from "lucide-react";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
@@ -132,13 +133,14 @@ export function AdminEditChatGroupPage({ courseId }: AdminEditChatGroupPageProps
 
   return (
     <section className="space-y-8">
-      <DashboardPageHeader
-        title={t("titleWithName", { name: form.groupName })}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.chatGroups"), href: `${ROUTES.ADMIN.HOME}?tab=chatGroups` },
           { label: t("breadcrumbs.edit") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("titleWithName", { name: form.groupName })}
         action={
           <motion.div
             initial="hidden"
@@ -171,6 +173,7 @@ export function AdminEditChatGroupPage({ courseId }: AdminEditChatGroupPageProps
           </motion.div>
         }
       />
+      </div>
 
       <div className="space-y-10">
         <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,1fr)]">

@@ -10,15 +10,14 @@ import {
   type ContentManagementRow,
 } from "@/modules/admin/domain/data/contentManagementData";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardPageHeader,
   DashboardPagination,
   DashboardStatCard,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/presentation/components/ui/card";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
@@ -170,13 +169,14 @@ export function ContentManagementDashboard({
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("contentManagement.page.title")}
-        description={t("contentManagement.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("tabs.contentManagement.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("contentManagement.page.title")}
+        description={t("contentManagement.page.description")}
         action={
           <Button
             type="button"
@@ -189,6 +189,7 @@ export function ContentManagementDashboard({
           </Button>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {data.stats.map((stat) => (

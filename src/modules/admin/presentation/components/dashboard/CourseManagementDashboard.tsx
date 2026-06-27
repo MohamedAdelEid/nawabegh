@@ -48,8 +48,7 @@ import {
   courseStatusFromApi,
   courseStatusIdToApi,
 } from "@/shared/domain/enums/cms.mappers";
-import {
-  DashboardDataTable,
+import {DashboardDataTable,
   DashboardFilterSelect,
   DashboardFiltersPanel,
   DashboardPageHeader,
@@ -59,7 +58,7 @@ import {
   DashboardTableCard,
   type DashboardDataTableColumn,
   type DashboardFilterOption,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
@@ -559,13 +558,14 @@ export function CourseManagementDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("courseManagement.page.title")}
-        description={t("courseManagement.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("tabs.courseManagement.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("courseManagement.page.title")}
+        description={t("courseManagement.page.description")}
         action={
           <div className="flex flex-wrap gap-3">
             <Button
@@ -586,6 +586,7 @@ export function CourseManagementDashboard() {
           </div>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {statCards.map((stat) => (

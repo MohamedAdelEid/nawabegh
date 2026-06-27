@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { BookOpen, GraduationCap, BarChart3, WandSparkles, Save } from "lucide-react";
@@ -114,13 +115,14 @@ export function AdminQuestionBankPreviewPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("questionBankPreview.title")}
-        description={t("questionBankPreview.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("questionBank.title"), href: ROUTES.ADMIN.QUESTION_BANK.LIST },
           { label: t("questionBankPreview.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("questionBankPreview.title")}
+        description={t("questionBankPreview.description")}
         action={
           <Button
             type="button"
@@ -135,6 +137,7 @@ export function AdminQuestionBankPreviewPage() {
           </Button>
         }
       />
+      </div>
       <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_28rem]">
         <Card className="rounded-2xl border border-slate-200 bg-white shadow-[0px_6px_0px_0px_#0000000A]">
           <CardContent className="space-y-6 p-6">

@@ -22,7 +22,8 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
@@ -115,18 +116,20 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={station.title}
-        description={contextLine || t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
             label: tBc("journeyEditor"),
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
           },
           { label: tBc("liveBroadcastView") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={station.title}
+        description={contextLine || t("description")}
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
         {/* Left sidebar */}

@@ -5,14 +5,13 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardFilterSelect,
+import {DashboardFilterSelect,
   DashboardPageHeader,
   DashboardSearchFilter,
   DashboardStatCard,
   DashboardTableCard,
   type DashboardFilterOption,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { chatGroupsDashboardData } from "@/modules/admin/domain/data/chatGroupsDashboardData";
 import type {
@@ -256,13 +255,15 @@ export function ChatGroupsDashboard() {
 
   return (
     <section className="space-y-8">
-      <DashboardPageHeader
-        title={t("title")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.chatGroups") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("title")}
       />
+      </div>
 
       <motion.div
         className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"

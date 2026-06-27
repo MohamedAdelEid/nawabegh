@@ -37,7 +37,8 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
@@ -343,17 +344,18 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("title")}
-        description={t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
             label: tBc("journeyEditor"),
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
           },
           { label: tBc("examEditor") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("title")}
+        description={t("description")}
         action={
           hasQuiz ? (
             <Button
@@ -375,6 +377,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
           )
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">

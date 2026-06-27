@@ -27,8 +27,7 @@ import { ArticleDeleteModal, ArticleRejectModal, type RejectReason } from "@/mod
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardFilterSelect,
@@ -38,7 +37,7 @@ import {
   DashboardSearchFilter,
   DashboardStatCard,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
@@ -412,13 +411,14 @@ export function ArticleEditorDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("articleEditor.page.title")}
-        description={t("articleEditor.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("tabs.articleEditor.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("articleEditor.page.title")}
+        description={t("articleEditor.page.description")}
         action={<Button
           type="button"
           variant="outline"
@@ -428,6 +428,7 @@ export function ArticleEditorDashboard() {
           {t("articleEditor.communitySettings.entry.button")}
         </Button>}
       />
+      </div>
 
       <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {computedStats.map((stat) => (

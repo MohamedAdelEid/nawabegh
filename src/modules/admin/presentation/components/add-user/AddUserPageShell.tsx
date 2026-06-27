@@ -2,7 +2,10 @@
 
 import type React from "react";
 import { useRouter } from "next/navigation";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {
+  DashboardBreadcrumb,
+  DashboardPageHeader,
+} from "@/shared/presentation/components/dashboard";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { AddUserAnimatedSection } from "./AddUserAnimatedSection";
 import { AddUserFormActions } from "./AddUserFormActions";
@@ -29,19 +32,21 @@ export function AddUserPageShell({
   return (
     <div className="space-y-8">
       <AddUserAnimatedSection>
-        <DashboardPageHeader
-          title={title}
-          breadcrumbs={breadcrumbs}
-          description={description}
-          action={
-            <AddUserFormActions
-              cancelLabel={cancelLabel}
-              submitLabel={submitLabel}
-              onCancel={() => router.back()}
-              onSubmit={onSubmit}
-            />
-          }
-        />
+        <div className="space-y-2">
+          <DashboardBreadcrumb items={breadcrumbs} />
+          <DashboardPageHeader
+            title={title}
+            description={description}
+            action={
+              <AddUserFormActions
+                cancelLabel={cancelLabel}
+                submitLabel={submitLabel}
+                onCancel={() => router.back()}
+                onSubmit={onSubmit}
+              />
+            }
+          />
+        </div>
       </AddUserAnimatedSection>
 
       {children}

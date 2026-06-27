@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { DashboardBreadcrumb } from "./DashboardBreadcrumb";
 import { DashboardPageHeader } from "./DashboardPageHeader";
 import { DashboardTabPlaceholder } from "./DashboardTabPlaceholder";
 
@@ -28,11 +29,10 @@ export function DashboardTabPage({
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={title}
-        breadcrumbs={labels.map((label) => ({ label }))}
-        description={description}
-      />
+      <div className="space-y-2">
+        <DashboardBreadcrumb items={labels.map((label) => ({ label }))} />
+        <DashboardPageHeader title={title} description={description} />
+      </div>
       {children ?? <DashboardTabPlaceholder title={title} description={description} />}
     </div>
   );

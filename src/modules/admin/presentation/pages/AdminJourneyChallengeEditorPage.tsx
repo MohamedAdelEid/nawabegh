@@ -38,7 +38,8 @@ import { cn } from "@/shared/application/lib/cn";
 import { ChallengeType, DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { ChallengeScheduleDateField } from "@/modules/admin/presentation/components/journey-editor/ChallengeScheduleDateField";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 
@@ -473,17 +474,18 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("title")}
-        description={t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
             label: tBc("journeyEditor"),
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EDITOR(journeyId),
           },
           { label: tBc("challengeEditor") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("title")}
+        description={t("description")}
         action={
           hasChallenge ? (
             <Button
@@ -506,6 +508,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
           )
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">

@@ -6,8 +6,7 @@ import AddSchoolIcon from "@/modules/admin/presentation/assets/icons/AddSchool.s
 import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardDataTable,
   type DashboardDataTableColumn,
   DashboardInsightCard,
@@ -15,7 +14,7 @@ import {
   DashboardPagination,
   DashboardStatCard,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { useSchoolsTable } from "@/modules/admin/application/hooks/useSchoolsTable";
@@ -209,12 +208,13 @@ export function SchoolManagementDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("schoolManagement.page.title")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title") },
           { label: t("schoolManagement.page.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("schoolManagement.page.title")}
         description={t("schoolManagement.page.description")}
         action={
           <Button
@@ -229,6 +229,7 @@ export function SchoolManagementDashboard() {
           </Button>
         }
       />
+      </div>
 
       <section className="grid gap-5 lg:grid-cols-4">
         {statCards.map((stat) => (

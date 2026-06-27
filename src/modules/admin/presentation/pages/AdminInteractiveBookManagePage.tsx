@@ -44,6 +44,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import {
   DashboardBadge,
+  DashboardBreadcrumb,
   DashboardFilterSelect,
   DashboardPageHeader,
 } from "@/shared/presentation/components/dashboard";
@@ -584,10 +585,11 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={breadcrumbs} />
+        <DashboardPageHeader
         title={pageTitle}
         description={pageDescription}
-        breadcrumbs={breadcrumbs}
         action={
           <Button
             type="button"
@@ -603,6 +605,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
           </Button>
         }
       />
+      </div>
 
       <Card className="border-[var(--dashboard-border-soft)] shadow-[var(--dashboard-shadow-soft)]">
         <CardContent className="space-y-6 p-6">

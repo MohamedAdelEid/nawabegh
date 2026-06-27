@@ -4,8 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import {
-  DashboardPageHeader,
+import {DashboardPageHeader,
   DashboardStatCard,
   DashboardTableCard,
   DashboardBadge,
@@ -15,7 +14,7 @@ import {
   DashboardFilterSelect,
   DashboardFiltersPanel,
   DashboardSearchFilter,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { BookOpen, CheckCircle2, RotateCcw, FileQuestion, Trash2, Eye } from "lucide-react";
 import { useQuestionBankPage, STATIC_SUBJECT_OPTIONS } from "@/modules/admin/application/hooks/useQuestionBankPage";
@@ -159,10 +158,11 @@ export function AdminQuestionBankPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[{ label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME }, { label: t("questionBank.title") }]} />
+        <DashboardPageHeader
         title={t("questionBank.title")}
         description={t("questionBank.description")}
-        breadcrumbs={[{ label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME }, { label: t("questionBank.title") }]}
         action={
           <Button
           type="button"
@@ -176,6 +176,7 @@ export function AdminQuestionBankPage() {
           </Button>
         }
       />
+      </div>
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard
           label={t("questionBank.stats.total")}

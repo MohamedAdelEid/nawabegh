@@ -1,4 +1,6 @@
 import type { AxiosInstance } from "axios";
+import { getApiErrorMessage } from "@/shared/infrastructure/api/apiResponse.utils";
+import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 
 export function applyRequestInterceptor(
   client: AxiosInstance,
@@ -23,6 +25,13 @@ export function applyResponseInterceptor(
     (res) => res,
     (error) => {
       if (error.response?.status === 401) onUnauthorized();
+
+      const body = error.response?.data;
+      if (body && typeof body === "object") {
+        const apiMessage = getApiErrorMessage(body as BackendApiResponse<unknown>, "");
+        if (apiMessage) return Promise.reject(new Error(apiMessage));
+      }
+
       return Promise.reject(error);
     },
   );

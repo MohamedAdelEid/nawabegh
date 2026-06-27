@@ -4,7 +4,8 @@ import { useState } from "react";
 import { ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -40,14 +41,16 @@ export function AdminPaymentGatewaySettingsPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("paymentGatewaySettings.page.title")}
-        description={t("paymentGatewaySettings.page.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME },
           { label: t("paymentGatewaySettings.page.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("paymentGatewaySettings.page.title")}
+        description={t("paymentGatewaySettings.page.description")}
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <GatewayCard

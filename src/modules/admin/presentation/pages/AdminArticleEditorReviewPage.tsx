@@ -39,10 +39,9 @@ import type { ArticleStatusId } from "@/modules/admin/domain/data/articleEditorD
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { cn } from "@/shared/application/lib/cn";
 import { notify } from "@/shared/application/lib/toast";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardPageHeader,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
@@ -268,14 +267,15 @@ export function AdminArticleEditorReviewPage({
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("header.title")}
-        description={t("header.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("header.breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("header.breadcrumbs.articleEditor"), href: `${ROUTES.ADMIN.HOME}?tab=articleEditor` },
           { label: t("header.breadcrumbs.review") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("header.title")}
+        description={t("header.description")}
         action={
           canReviewArticle ? 
           <div className="flex gap-2">
@@ -300,6 +300,7 @@ export function AdminArticleEditorReviewPage({
           </div>
         : null}
       />
+      </div>
 
       <div className="grid gap-10 xl:grid-cols-[minmax(0,1fr)_25rem]">
         <Card className="overflow-hidden rounded-[1.75rem] border-white/80 bg-white" style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}>

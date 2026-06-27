@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { MapPinned } from "lucide-react";
 import { SchoolIcon } from "@/modules/admin/presentation/assets/icons/school";
 import { SubscriptionIcon } from "@/modules/admin/presentation/assets/icons/subscraption";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
   defaultSchoolFormValues,
@@ -192,13 +193,14 @@ export function AdminAddSchoolPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={t("schoolManagement.addPage.title")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title") },
           { label: t("schoolManagement.page.title") },
           { label: t("schoolManagement.addPage.title") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("schoolManagement.addPage.title")}
         description={t("schoolManagement.addPage.description")}
         action={
           <SchoolFormActions
@@ -209,6 +211,7 @@ export function AdminAddSchoolPage() {
           />
         }
       />
+      </div>
 
       <div className="space-y-6">
         {submitError ? (

@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader, DashboardStatCard, DashboardTableCard, DashboardBadge, DashboardDataTable, type DashboardDataTableColumn } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader, DashboardStatCard, DashboardTableCard, DashboardBadge, DashboardDataTable, type DashboardDataTableColumn,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Award, BookOpen, FileText, Users } from "lucide-react";
@@ -46,10 +47,11 @@ export function HomeOverviewDashboard() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[{ label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME }]} />
+        <DashboardPageHeader
         title={t("homeOverview.title")}
         description={t("homeOverview.description")}
-        breadcrumbs={[{ label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME }]}
         action={
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => router.push(ROUTES.ADMIN.OVERVIEW_INSIGHTS.LIST)}>
@@ -61,6 +63,7 @@ export function HomeOverviewDashboard() {
           </div>
         }
       />
+      </div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard label={t("homeOverview.stats.totalTests")} value="1,284" indicator="+12%" icon={FileText} iconTone="info" />

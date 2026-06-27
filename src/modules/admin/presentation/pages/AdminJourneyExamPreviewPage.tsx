@@ -25,7 +25,8 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
@@ -116,10 +117,8 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("title", { name: exam.name })}
-        description={t("description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: tBc("home"), href: ROUTES.ADMIN.HOME },
           {
             label: tBc("journeyEditor"),
@@ -130,7 +129,10 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
             href: ROUTES.ADMIN.JOURNEY_EDITOR.EXAM_EDITOR(journeyId, stationId),
           },
           { label: tBc("examPreview") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("title", { name: exam.name })}
+        description={t("description")}
         action={
           <div className="flex gap-3">
             <Button
@@ -155,6 +157,7 @@ export function AdminJourneyExamPreviewPage({ journeyId, stationId }: Props) {
           </div>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">

@@ -18,7 +18,8 @@ import { useTranslations } from "next-intl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
@@ -62,10 +63,8 @@ export function AdminCommunityBadgeAddPage() {
   return (
     <div className="bg-[#F8F9FB]">
       <div className="mx-auto space-y-8 text-right">
-        <DashboardPageHeader
-          title={t("page.title")}
-          description={t("page.description")}
-          breadcrumbs={[
+                <div className="space-y-2">
+          <DashboardBreadcrumb items={[
             { label: t("page.breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
             { label: t("page.breadcrumbs.articleEditor"), href: ROUTES.ADMIN.ARTICLE_EDITOR.LIST },
             {
@@ -73,7 +72,10 @@ export function AdminCommunityBadgeAddPage() {
               href: ROUTES.ADMIN.ARTICLE_EDITOR.COMMUNITY_SETTINGS,
             },
             { label: t("page.breadcrumbs.current") },
-          ]}
+          ]} />
+          <DashboardPageHeader
+          title={t("page.title")}
+          description={t("page.description")}
           action={
             <Button
               type="button"
@@ -88,6 +90,7 @@ export function AdminCommunityBadgeAddPage() {
             </Button>
           }
         />
+        </div>
 
         <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_25rem]">
           <div className="space-y-6">

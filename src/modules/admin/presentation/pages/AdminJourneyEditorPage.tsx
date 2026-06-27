@@ -58,7 +58,8 @@ import {
   StationType,
 } from "@/shared/domain/enums/cms.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
@@ -468,13 +469,14 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("editor.title")}
-        description={t("editor.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           { label: t("breadcrumbs.journeyEditor") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("editor.title")}
+        description={t("editor.description")}
         action={
           <div className="flex gap-3">
             {/* <Button
@@ -496,6 +498,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
           </div>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-5">

@@ -1,4 +1,36 @@
+import axios from "axios";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
+
+const AXIOS_STATUS_MESSAGE = /^Request failed with status code \d+$/;
+
+export function getApiErrorMessage(
+  response: Pick<BackendApiResponse<unknown>, "error" | "message"> | null | undefined,
+  fallback: string,
+): string {
+  const message = response?.error?.message ?? response?.message;
+  if (typeof message === "string" && message.trim()) return message.trim();
+  return fallback;
+}
+
+export function extractApiErrorMessage(error: unknown, fallback = "Request failed"): string {
+  if (axios.isAxiosError(error)) {
+    const body = error.response?.data;
+    if (body && typeof body === "object") {
+      const apiMessage = getApiErrorMessage(body as BackendApiResponse<unknown>, "");
+      if (apiMessage) return apiMessage;
+    }
+
+    const status = error.response?.status;
+    if (status === 404) return fallback;
+  }
+
+  if (error instanceof Error) {
+    const msg = error.message.trim();
+    if (msg && !AXIOS_STATUS_MESSAGE.test(msg)) return msg;
+  }
+
+  return fallback;
+}
 
 export function isApiSuccess(response: BackendApiResponse<unknown>): boolean {
   if (response.isSuccess === false) return false;
@@ -30,4 +62,16 @@ export function resolveApiList<T>(response: BackendApiResponse<unknown>): T[] {
     );
   }
   return extractApiList<T>(response.data);
+}
+
+export function resolveApiData<T>(response: BackendApiResponse<unknown>): T {
+  if (!isApiSuccess(response)) {
+    throw new Error(
+      response.error?.message ?? response.message ?? "Request failed",
+    );
+  }
+  if (response.data == null) {
+    throw new Error("No data returned");
+  }
+  return response.data as T;
 }

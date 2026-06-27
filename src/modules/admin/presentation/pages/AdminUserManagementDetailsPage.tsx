@@ -30,11 +30,10 @@ import {
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { cn } from "@/shared/application/lib/cn";
 import { notify } from "@/shared/application/lib/toast";
-import {
-  DashboardBadge,
+import {DashboardBadge,
   DashboardPageHeader,
   DashboardTableCard,
-} from "@/shared/presentation/components/dashboard";
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import verify from "@/modules/admin/presentation/assets/icons/verify.svg";
@@ -609,15 +608,17 @@ export function AdminUserManagementDetailsPage({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader
-        title={profileView.fullName}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("tabs.home.title") },
           { label: t("userManagement.page.title") },
           { label: profileView.fullName },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={profileView.fullName}
         description={t("userManagement.details.page.description")}
       />
+      </div>
 
       {isLoading ? (
         <div className="flex min-h-[12rem] items-center justify-center rounded-[2rem] bg-white shadow-[0_8px_0px_0px_#0000000D]">

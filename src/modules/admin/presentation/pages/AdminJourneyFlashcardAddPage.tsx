@@ -20,7 +20,8 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
-import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
+import {DashboardPageHeader,
+  DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import {
@@ -311,10 +312,8 @@ export function AdminJourneyFlashcardAddPage({
 
   return (
     <div className="space-y-7">
-      <DashboardPageHeader
-        title={t("flashcardAdd.title")}
-        description={t("flashcardAdd.description")}
-        breadcrumbs={[
+            <div className="space-y-2">
+        <DashboardBreadcrumb items={[
           { label: t("breadcrumbs.home"), href: ROUTES.ADMIN.HOME },
           {
             label: t("breadcrumbs.journeyEditor"),
@@ -329,7 +328,10 @@ export function AdminJourneyFlashcardAddPage({
             ),
           },
           { label: t("breadcrumbs.addFlashcard") },
-        ]}
+        ]} />
+        <DashboardPageHeader
+        title={t("flashcardAdd.title")}
+        description={t("flashcardAdd.description")}
         action={
           <Button
             className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
@@ -340,6 +342,7 @@ export function AdminJourneyFlashcardAddPage({
           </Button>
         }
       />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <main className="space-y-6">
