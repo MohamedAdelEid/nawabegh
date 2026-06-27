@@ -1254,8 +1254,8 @@
           "coverUploading": "Uploading cover...",
           "coverUploaded": "Cover uploaded",
           "coverRequirements": "JPG, PNG — 16:9 ratio — max 5 MB",
-          "basePrice": "Original price (SAR)",
-          "offerPrice": "Price after discount (SAR)"
+          "basePrice": "Original price (OMR)",
+          "offerPrice": "Price after discount (OMR)"
         },
         "options": {
           "grade1": "First secondary",
@@ -1289,7 +1289,7 @@
           "fallbackTitle": "Advanced mathematics for second secondary",
           "fallbackSubject": "Mathematics",
           "fallbackGrade": "Second secondary",
-          "currency": "SAR",
+          "currency": "OMR",
           "accessType": "Access type",
           "lessons": "{count} lessons",
           "paths": "{count} paths",

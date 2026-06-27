@@ -132,7 +132,7 @@ function mapTransactionListItem(record: UnknownRecord): AdminPaymentTransactionL
     productType: (readString(record, ["productType"], "course") as "course" | "bundle"),
     productName: readString(record, ["productName"], ""),
     amount: readNumber(record, ["amount"]) ?? 0,
-    currency: readString(record, ["currency"], "SAR"),
+    currency: readString(record, ["currency"], "OMR"),
     paymentMethod: readString(record, ["paymentMethod"], ""),
     paymentMethodLabelAr: readString(record, ["paymentMethodLabelAr"], ""),
     providerKey: readString(record, ["providerKey"], ""),
@@ -148,7 +148,7 @@ function mapMonthlyRevenue(record: UnknownRecord) {
     year: readNumber(record, ["year"]) ?? new Date().getUTCFullYear(),
     month: readNumber(record, ["month"]) ?? 1,
     amount: readNumber(record, ["amount"]) ?? 0,
-    currency: readString(record, ["currency"], "SAR"),
+    currency: readString(record, ["currency"], "OMR"),
   };
 }
 
@@ -164,7 +164,7 @@ function mapOverview(record: UnknownRecord): AdminPaymentsOverview {
   return {
     summary: {
       totalRevenue: readNumber(summaryRecord, ["totalRevenue"]) ?? 0,
-      currency: readString(summaryRecord, ["currency"], "SAR"),
+      currency: readString(summaryRecord, ["currency"], "OMR"),
       revenueChangePercent: readNumber(summaryRecord, ["revenueChangePercent"]) ?? 0,
       activeEnrollments: readNumber(summaryRecord, ["activeEnrollments"]) ?? 0,
       activeEnrollmentsChangePercent:
@@ -180,7 +180,7 @@ function mapOverview(record: UnknownRecord): AdminPaymentsOverview {
 function mapTransactionsSummary(record: UnknownRecord) {
   return {
     totalRevenue: readNumber(record, ["totalRevenue"]) ?? 0,
-    currency: readString(record, ["currency"], "SAR"),
+    currency: readString(record, ["currency"], "OMR"),
     revenueChangePercent: readNumber(record, ["revenueChangePercent"]) ?? 0,
     succeededCount: readNumber(record, ["succeededCount"]) ?? 0,
     successRatePercent: readNumber(record, ["successRatePercent"]) ?? 0,
@@ -252,7 +252,7 @@ function mapTransactionDetail(record: UnknownRecord): AdminPaymentTransactionDet
     id,
     referenceNumber: readString(record, ["referenceNumber"], ""),
     amount: readNumber(record, ["amount"]) ?? 0,
-    currency: readString(record, ["currency"], "SAR"),
+    currency: readString(record, ["currency"], "OMR"),
     status: readString(record, ["status"], ""),
     statusLabelAr: readString(record, ["statusLabelAr"], ""),
     occurredAt: readNullableString(record, ["occurredAt"]),
@@ -269,7 +269,7 @@ function mapTransactionDetail(record: UnknownRecord): AdminPaymentTransactionDet
           referenceNumber: readString(invoiceRecord, ["referenceNumber"], ""),
           studentName: readString(invoiceRecord, ["studentName"], ""),
           productName: readString(invoiceRecord, ["productName"], ""),
-          currency: readString(invoiceRecord, ["currency"], "SAR"),
+          currency: readString(invoiceRecord, ["currency"], "OMR"),
           originalPrice: readNumber(invoiceRecord, ["originalPrice"]) ?? 0,
           discountAmount: readNumber(invoiceRecord, ["discountAmount"]) ?? 0,
           vatRate: readNumber(invoiceRecord, ["vatRate"]) ?? 0,
@@ -347,7 +347,7 @@ function mapEnrollmentDetail(record: UnknownRecord): AdminStudentEnrollmentDetai
         paidAt: readNullableString(row, ["paidAt"]),
         description: readString(row, ["description"], ""),
         amount: readNumber(row, ["amount"]) ?? 0,
-        currency: readString(row, ["currency"], "SAR"),
+        currency: readString(row, ["currency"], "OMR"),
         status: readString(row, ["status"], ""),
         statusLabelAr: readString(row, ["statusLabelAr"], ""),
         paymentMethod: readString(row, ["paymentMethod"], ""),
@@ -359,7 +359,7 @@ function mapEnrollmentDetail(record: UnknownRecord): AdminStudentEnrollmentDetai
     enrollmentId,
     paymentSummary: {
       totalPaid: readNumber(paymentSummaryRecord, ["totalPaid"]) ?? 0,
-      currency: readString(paymentSummaryRecord, ["currency"], "SAR"),
+      currency: readString(paymentSummaryRecord, ["currency"], "OMR"),
       paymentCount: readNumber(paymentSummaryRecord, ["paymentCount"]) ?? 0,
       summaryLabelAr: readString(paymentSummaryRecord, ["summaryLabelAr"], ""),
     },

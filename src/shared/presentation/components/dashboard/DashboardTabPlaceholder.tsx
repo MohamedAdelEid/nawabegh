@@ -13,11 +13,11 @@ export function DashboardTabPlaceholder({
 }: DashboardTabPlaceholderProps) {
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[0_14px_36px_rgba(15,23,42,0.08)]">
-      <CardHeader className="text-right">
+      <CardHeader className="text-start">
         <CardTitle className="text-2xl font-bold text-slate-800">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-right text-sm leading-7 text-slate-500">{description}</p>
+        <p className="text-start text-sm leading-7 text-slate-500">{description}</p>
       </CardContent>
     </Card>
   );

@@ -31,7 +31,7 @@ import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { DashboardBadge } from "@/shared/presentation/components/dashboard/DashboardBadge";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCourseDetailsSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCourseDetailsSkeleton";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
 function CurriculumItemIcon({ type }: { type: TeacherCourseCurriculumItem["type"] }) {
@@ -58,7 +58,7 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
   };
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherCourseDetailsSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

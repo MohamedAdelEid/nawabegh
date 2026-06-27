@@ -1,0 +1,27 @@
+{
+  "liveBroadcastRoom": {
+    "startBroadcast": "Start broadcast",
+    "connecting": "Connecting…",
+    "endSession": "End session",
+    "endingSession": "Ending session…",
+    "sessionEnded": "Live session ended successfully",
+    "upcomingMessage": "This session has not started yet. You can go live when the scheduled time arrives.",
+    "liveReadyMessage": "The session is live. Start broadcasting from here — students can join from the app.",
+    "liveViewerMessage": "The session is live. Waiting for the host to start broadcasting.",
+    "endedWithoutRecording": "This session has ended. The recording is not available yet.",
+    "registered": "{count} students registered",
+    "status": {
+      "live": "LIVE",
+      "upcoming": "Upcoming",
+      "ended": "Ended"
+    },
+    "countdown": {
+      "hours": "hrs",
+      "minutes": "min",
+      "seconds": "sec"
+    },
+    "errors": {
+      "hostToken": "Could not load broadcast credentials. Check your permissions and try again."
+    }
+  }
+}

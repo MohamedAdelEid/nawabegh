@@ -4,6 +4,7 @@ import type React from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { cn } from "@/shared/application/lib/cn";
+import { useDirection } from "@/shared/application/hooks/useDirection";
 
 interface DashboardPaginationProps {
   pages: number[];
@@ -22,10 +23,15 @@ export function DashboardPagination({
   nextLabel,
   className,
 }: DashboardPaginationProps) {
+  const { isRtl } = useDirection();
   const firstPage = pages[0];
   const lastPage = pages.at(-1);
   const isPreviousDisabled = !firstPage || currentPage <= firstPage;
   const isNextDisabled = !lastPage || currentPage >= lastPage;
+
+  // "Previous" points toward the inline-start edge: right in RTL, left in LTR.
+  const PreviousIcon = isRtl ? ChevronRight : ChevronLeft;
+  const NextIcon = isRtl ? ChevronLeft : ChevronRight;
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
@@ -38,7 +44,7 @@ export function DashboardPagination({
         disabled={isPreviousDisabled}
         onClick={() => firstPage && onPageChange?.(Math.max(firstPage, currentPage - 1))}
       >
-        <ChevronRight className="h-4 w-4" aria-hidden />
+        <PreviousIcon className="h-4 w-4" aria-hidden />
       </Button>
       {pages.map((page) => (
         <Button
@@ -65,7 +71,7 @@ export function DashboardPagination({
         disabled={isNextDisabled}
         onClick={() => lastPage && onPageChange?.(Math.min(lastPage, currentPage + 1))}
       >
-        <ChevronLeft className="h-4 w-4" aria-hidden />
+        <NextIcon className="h-4 w-4" aria-hidden />
       </Button>
     </div>
   );

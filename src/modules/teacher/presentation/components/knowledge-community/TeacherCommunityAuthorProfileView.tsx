@@ -19,12 +19,13 @@ import {
 } from "@/shared/presentation/components/community/CommunityPageShell";
 import { CommunityNewsletterWidget } from "@/shared/presentation/components/community/CommunitySidebarWidgets";
 import { cn } from "@/shared/application/lib/cn";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCommunityAuthorProfileSkeleton } from "@/modules/teacher/presentation/components/knowledge-community/TeacherCommunityAuthorProfileSkeleton";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 
 export function TeacherCommunityAuthorProfileView({ authorId }: { authorId: string }) {
   const t = useTranslations("teacher.dashboard.knowledgeCommunity.author");
+  const tCommon = useTranslations("teacher.dashboard");
   const locale = useLocale();
   const routes = useScopedDashboardRoutes();
   const [tab, setTab] = useState<CommunityAuthorTab>("all");
@@ -42,7 +43,7 @@ export function TeacherCommunityAuthorProfileView({ authorId }: { authorId: stri
   }, [articles, profile]);
 
   if (loading) {
-    return <Skeleton className="h-[40rem] w-full rounded-[1.5rem]" />;
+    return <TeacherCommunityAuthorProfileSkeleton label={tCommon("common.loading")} />;
   }
 
   if (error || !profile) {

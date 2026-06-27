@@ -11,7 +11,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherAbsentStudentsDashboardSkeleton } from "@/modules/teacher/presentation/components/live-analytics/TeacherAbsentStudentsDashboardSkeleton";
 
 const SEARCH_DEBOUNCE_MS = 350;
 const PAGE_SIZE = 10;
@@ -47,7 +47,7 @@ export function TeacherAbsentStudentsDashboard() {
   }, [data]);
 
   if (isPending && !data) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherAbsentStudentsDashboardSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

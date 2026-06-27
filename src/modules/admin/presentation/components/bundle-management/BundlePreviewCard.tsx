@@ -71,7 +71,7 @@ export function BundlePreviewCard({
             <div className="text-left">
               <p className="text-lg font-bold">
                 {bundlePrice !== null && bundlePrice > 0
-                  ? `${formatPrice(bundlePrice)} ر.س`
+                  ? `${formatPrice(bundlePrice)} ر.ع.`
                   : t("fields.previewPricePlaceholder")}
               </p>
               {savings > 0 ? (

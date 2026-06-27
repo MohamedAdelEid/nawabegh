@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/application/lib/cn";
 import { useAuth } from "@/shared/application/hooks/useAuth";
+import { useDirection } from "@/shared/application/hooks/useDirection";
 import type { SidebarItem, SidebarItems } from "@/shared/domain/types/sidebar.types";
-import { SidebarHeader, SidebarNavSection } from "./components";
+import { SidebarHeader, SidebarLanguageToggle, SidebarNavSection } from "./components";
 import { useActiveItem } from "./hooks";
 import {
-  sidebarVariants,
-  mobileSidebarVariants,
+  createSidebarVariants,
+  createMobileSidebarVariants,
   SIDEBAR_DURATION,
   SIDEBAR_EASE,
 } from "./constants/animations";
@@ -34,6 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const router = useRouter();
   const t = useTranslations(translationNamespace);
   const { logout } = useAuth();
+  const { isRtl } = useDirection();
   const activeItem = useActiveItem(items);
 
   const resolveLabel = (item: SidebarItem) =>
@@ -52,7 +54,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const variants = isMobile ? mobileSidebarVariants : sidebarVariants;
+  const variants = isMobile
+    ? createMobileSidebarVariants(isRtl)
+    : createSidebarVariants(isRtl);
   const animateState = isMobile
     ? "visible"
     : isCollapsed
@@ -72,11 +76,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           : { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE }
       }
       className={cn(
-        "fixed right-0 top-0 h-screen bg-sidebar overflow-hidden",
-        "flex flex-col border-l border-sidebar-border text-sidebar-foreground",
+        "fixed start-0 top-0 h-screen bg-sidebar overflow-hidden",
+        "flex flex-col border-s border-sidebar-border text-sidebar-foreground",
         !isCollapsed ? "px-4 sm:px-5" : "px-3 sm:px-4",
         isMobile
-          ? "z-50 w-[min(100vw-1rem,var(--dashboard-sidebar-expanded))] max-w-[var(--dashboard-sidebar-expanded)] shadow-[-8px_0_30px_rgba(0,0,0,0.2)]"
+          ? cn(
+              "z-50 w-[min(100vw-1rem,var(--dashboard-sidebar-expanded))] max-w-[var(--dashboard-sidebar-expanded)]",
+              isRtl
+                ? "shadow-[-8px_0_30px_rgba(0,0,0,0.2)]"
+                : "shadow-[8px_0_30px_rgba(0,0,0,0.2)]"
+            )
           : "z-40"
       )}
     >
@@ -98,6 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <div className="mt-auto space-y-2 pt-4">
           <div className="my-2 border-t border-sidebar-border" />
+          <SidebarLanguageToggle isCollapsed={isCollapsed} />
           <SidebarNavSection
             items={items.secondary}
             startIndex={items.main.length}

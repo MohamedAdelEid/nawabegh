@@ -31,7 +31,7 @@ export function DashboardPageHeader({
         className,
       )}
     >
-      <div className="space-y-2 text-right">
+      <div className="space-y-2 text-start">
         {breadcrumbs.length > 0 ? (
           <p className="text-sm font-medium text-slate-400">
             {breadcrumbs.map((item, index) => (

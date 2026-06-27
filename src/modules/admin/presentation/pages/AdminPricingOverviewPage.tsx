@@ -59,7 +59,7 @@ export function AdminPricingOverviewPage() {
       />
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard title={t("pricingManagement.overview.cards.totalRevenue")} value="45,280 ريال" badge="+12%" />
+        <StatCard title={t("pricingManagement.overview.cards.totalRevenue")} value="45,280 ر.ع." badge="+12%" />
         <StatCard title={t("pricingManagement.overview.cards.activeSubscriptions")} value="1,240" badge="+5.4%" />
         <StatCard title={t("pricingManagement.overview.cards.failedPayments")} value="12" badge="-2%" tone="danger" />
         <StatCard title={t("pricingManagement.overview.cards.pendingTasks")} value="28" badge={t("pricingManagement.overview.pending")} tone="warning" />
@@ -98,9 +98,9 @@ export function AdminPricingOverviewPage() {
               </thead>
               <tbody>
                 {[
-                  ["أحمد علي", "سارة أحمد", "450 ريال", "success", "24 أكتوبر 2024"],
-                  ["مي محمد", "ياسر محمد", "450 ريال", "failed", "23 أكتوبر 2024"],
-                  ["خالد سعيد", "عمر خالد", "450 ريال", "success", "22 أكتوبر 2024"],
+                  ["أحمد علي", "سارة أحمد", "450 ر.ع.", "success", "24 أكتوبر 2024"],
+                  ["مي محمد", "ياسر محمد", "450 ر.ع.", "failed", "23 أكتوبر 2024"],
+                  ["خالد سعيد", "عمر خالد", "450 ر.ع.", "success", "22 أكتوبر 2024"],
                 ].map((row, idx) => (
                   <tr key={idx} className="border-b border-slate-100 text-sm text-slate-700">
                     <td className="px-6 py-5 font-semibold">{row[0]}</td>

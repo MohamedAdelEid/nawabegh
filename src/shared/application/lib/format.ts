@@ -8,7 +8,25 @@ export function formatNumber(n: number, locale = "ar-EG"): string {
   return new Intl.NumberFormat(locale).format(n);
 }
 
-export function formatCurrency(amount: number, currency = "EGP", locale = "ar-EG"): string {
+/**
+ * Groups smaller values with thousands separators and switches to compact
+ * notation (e.g. 12.5K) once the value reaches `compactFrom`.
+ */
+export function formatCompactNumber(
+  n: number,
+  locale = "ar-EG",
+  compactFrom = 10000,
+): string {
+  if (Math.abs(n) >= compactFrom) {
+    return new Intl.NumberFormat(locale, {
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(n);
+  }
+  return formatNumber(n, locale);
+}
+
+export function formatCurrency(amount: number, currency = "OMR", locale = "ar-EG"): string {
   return new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
 }
 

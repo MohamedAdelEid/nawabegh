@@ -33,7 +33,7 @@ import { DashboardSegmentedControl } from "@/shared/presentation/components/dash
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCourseStatisticsSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCourseStatisticsSkeleton";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
 const statIcons = {
@@ -319,7 +319,7 @@ export function TeacherCourseStatisticsDashboard({ courseId }: { courseId: strin
   const { data, isLoading, isError } = useTeacherCourseStatistics(courseId, { periodDays });
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherCourseStatisticsSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

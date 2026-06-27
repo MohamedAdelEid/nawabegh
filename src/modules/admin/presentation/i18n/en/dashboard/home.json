@@ -1,0 +1,79 @@
+{
+  "home": {
+    "title": "Welcome back",
+    "description": "A live overview of subscriptions, revenue, schools, and platform activity.",
+    "common": {
+      "error": "We couldn't load the dashboard right now.",
+      "retry": "Try again"
+    },
+    "summaryCards": {
+      "activeSubscriptions": "Active subscriptions",
+      "publishedCourses": "Published courses",
+      "totalCourses": "Total courses",
+      "courses": "Courses",
+      "schools": "Schools",
+      "teachers": "Teachers",
+      "students": "Students",
+      "parents": "Parents",
+      "totalUsers": "Total users"
+    },
+    "revenue": {
+      "title": "Subscriptions & revenue",
+      "totalSubscriptions": "Total subscriptions",
+      "totalRevenue": "Total revenue ({currency})",
+      "monthlyGoal": "Monthly goal",
+      "monthlyGoalNote": "{percent}% of this month's goal has been achieved."
+    },
+    "newUsersChart": {
+      "title": "New users",
+      "legend": "New users",
+      "months": {
+        "3": "Last 3 months",
+        "6": "Last 6 months",
+        "12": "Last 12 months"
+      }
+    },
+    "schoolRankings": {
+      "title": "School rankings",
+      "points": "{count} pts",
+      "students": "{count} students",
+      "empty": "No school rankings yet."
+    },
+    "activityMetrics": {
+      "liveSessionsToday": "Live sessions today",
+      "completedLessons": "Completed lessons",
+      "completedExams": "Completed exams",
+      "issuedCertificates": "Issued certificates",
+      "units": {
+        "sessions": "session",
+        "lessons": "lesson",
+        "exams": "exam",
+        "certificates": "certificate"
+      }
+    },
+    "topStudents": {
+      "title": "Top students",
+      "viewAll": "View all",
+      "points": "{count} pts",
+      "empty": "No students yet."
+    },
+    "quickLinks": {
+      "title": "Quick links",
+      "sendNotification": "Send notification",
+      "blockViolator": "Manage users",
+      "pendingReports": "Support tickets",
+      "interactiveBook": "Interactive book",
+      "addCourse": "Add course",
+      "addUser": "Add user"
+    },
+    "recentActivities": {
+      "title": "Recent activity",
+      "empty": "No recent activity."
+    },
+    "reviewTasks": {
+      "title": "Pending review",
+      "reviewDetails": "Review details",
+      "empty": "Nothing waiting for review."
+    }
+  }
+}

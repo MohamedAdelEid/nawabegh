@@ -11,7 +11,7 @@ import { DashboardBadge } from "@/shared/presentation/components/dashboard/Dashb
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherHomeDashboardSkeleton } from "@/modules/teacher/presentation/components/dashboard/TeacherHomeDashboardSkeleton";
 
 const statIcons = {
   todaySessions: Video,
@@ -24,16 +24,7 @@ export function TeacherHomeDashboard() {
   const { data, isLoading, isError } = useTeacherDashboard();
 
   if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-32 w-full rounded-[1.75rem]" />
-        <div className="grid gap-4 md:grid-cols-3">
-          <Skeleton className="h-36 rounded-[1.75rem]" />
-          <Skeleton className="h-36 rounded-[1.75rem]" />
-          <Skeleton className="h-36 rounded-[1.75rem]" />
-        </div>
-      </div>
-    );
+    return <TeacherHomeDashboardSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

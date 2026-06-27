@@ -57,7 +57,7 @@ export function PaymentsOverviewDashboard() {
   }, [loadOverview]);
 
   const summary = overview?.summary;
-  const currencyLabel = locale.startsWith("ar") ? "ريال" : "SAR";
+  const currencyLabel = locale.startsWith("ar") ? "ر.ع." : "OMR";
 
   const statCards = useMemo(
     () => [

@@ -303,7 +303,7 @@ function formatCurrency(value: number): string {
   if (!value) return "—";
   return new Intl.NumberFormat(undefined, {
     style: "currency",
-    currency: "SAR",
+    currency: "OMR",
     maximumFractionDigits: 0,
   }).format(value);
 }

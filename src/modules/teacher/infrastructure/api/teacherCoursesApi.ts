@@ -145,7 +145,7 @@ function formatPriceLabel(
   if (!price) return "—";
   return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "SAR",
+    currency: "OMR",
     maximumFractionDigits: 0,
   }).format(price);
 }

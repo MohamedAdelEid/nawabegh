@@ -25,8 +25,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       <input
         type="text"
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none text-right"
-        dir="rtl"
+        className="flex-1 bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none text-start"
         autoComplete="off"
       />
     </div>

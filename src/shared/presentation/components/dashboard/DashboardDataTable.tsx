@@ -45,7 +45,7 @@ export function DashboardDataTable<TRow>({
 
   return (
     <div className={cn("overflow-x-auto", containerClassName)}>
-      <table className={cn("min-w-full text-right", tableClassName)}>
+      <table className={cn("min-w-full text-start", tableClassName)}>
         <thead>
           <tr className="border-b border-slate-100 text-sm text-slate-400">
             {columns.map((column) => (

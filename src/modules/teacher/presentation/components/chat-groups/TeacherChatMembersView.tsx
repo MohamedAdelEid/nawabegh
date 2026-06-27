@@ -25,7 +25,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/presentation/components/ui/popover";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherChatMembersSkeleton } from "@/modules/teacher/presentation/components/chat-groups/TeacherChatMembersSkeleton";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { cn } from "@/shared/application/lib/cn";
 
@@ -33,6 +33,7 @@ type ParticipantAction = "ban" | "violation";
 
 export function TeacherChatMembersView({ courseId }: { courseId: string }) {
   const t = useTranslations("teacher.dashboard.chatGroups.members");
+  const tCommon = useTranslations("teacher.dashboard");
   const { data, isLoading, isError } = useTeacherChatMembers(courseId);
   const settingsMutation = useTeacherChatGroupSettingsMutation(courseId);
   const { banMutation, violationMutation } = useTeacherChatParticipantActions(courseId);
@@ -82,7 +83,7 @@ export function TeacherChatMembersView({ courseId }: { courseId: string }) {
   };
 
   if (isLoading) {
-    return <Skeleton className="h-[80vh] w-full rounded-[2rem]" />;
+    return <TeacherChatMembersSkeleton label={tCommon("common.loading")} />;
   }
 
   if (isError || !data) {

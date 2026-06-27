@@ -25,7 +25,7 @@ import { DashboardTableCard } from "@/shared/presentation/components/dashboard/D
 import { DashboardPagination } from "@/shared/presentation/components/dashboard/DashboardPagination";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherLiveSessionsDashboardSkeleton } from "@/modules/teacher/presentation/components/live-sessions/TeacherLiveSessionsDashboardSkeleton";
 import type {
   TeacherLiveSessionRow,
   TeacherLiveSessionStatus,
@@ -152,7 +152,12 @@ export function TeacherLiveSessionsDashboard({ embedded = false }: { embedded?: 
   };
 
   if (isInitialLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return (
+      <TeacherLiveSessionsDashboardSkeleton
+        label={t("common.loading")}
+        withHeader={!embedded}
+      />
+    );
   }
 
   if (isError || !data) {

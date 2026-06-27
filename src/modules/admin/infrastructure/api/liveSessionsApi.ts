@@ -94,6 +94,9 @@ export type LiveSession = {
   zoomStartUrl: string;
   zoomPassword: string;
   status: string;
+  runtimeMode: number | null;
+  canStartBroadcast: boolean;
+  hostTokenPath: string | null;
   recordingUrl: string | null;
   recordingLinkedAt: string | null;
   activeEnrollmentCount: number;
@@ -101,6 +104,14 @@ export type LiveSession = {
   goals: LiveSessionGoal[];
   tasks: LiveSessionTask[];
   attachments: LiveSessionAttachment[];
+};
+
+export type LiveHostToken = {
+  roomName: string;
+  token: string;
+  wsUrl: string;
+  hostIdentity: string;
+  hostDisplayName: string;
 };
 
 export type CreatedLiveSession = {
@@ -361,6 +372,13 @@ function mapLiveSession(data: unknown): LiveSession | null {
   if (!record || !id) return null;
 
   const broadcastLink = resolveBroadcastLink(record);
+  const runtimeModeRaw = record.runtimeMode;
+  const runtimeModeNumber =
+    typeof runtimeModeRaw === "number" && Number.isFinite(runtimeModeRaw)
+      ? runtimeModeRaw
+      : typeof runtimeModeRaw === "string" && runtimeModeRaw.trim() !== "" && !Number.isNaN(Number(runtimeModeRaw))
+        ? Number(runtimeModeRaw)
+        : null;
   const runtimeMode = readString(record, ["runtimeMode"], "");
   const status = readString(record, ["status"], "");
 
@@ -386,6 +404,9 @@ function mapLiveSession(data: unknown): LiveSession | null {
     zoomStartUrl: readString(record, ["zoomStartUrl"], ""),
     zoomPassword: readString(record, ["zoomPassword"], ""),
     status: runtimeMode || status,
+    runtimeMode: runtimeModeNumber,
+    canStartBroadcast: readBoolean(record, ["canStartBroadcast"]),
+    hostTokenPath: readNullableString(record, ["hostTokenPath"]),
     recordingUrl: readNullableString(record, ["recordingUrl"]),
     recordingLinkedAt: readNullableString(record, ["recordingLinkedAt"]),
     activeEnrollmentCount: readNumber(record, [
@@ -580,4 +601,55 @@ export async function getLiveSessionIdForStation(
     errorMessage: result.errorMessage,
     data: result.data?.liveSessionId ?? null,
   };
+}
+
+function mapLiveHostToken(data: unknown): LiveHostToken | null {
+  const record = asRecord(extractEnvelopeData(data));
+  const token = readString(record, ["token"], "").trim();
+  const wsUrl = readString(record, ["wsUrl", "roomUrl"], "").trim();
+  if (!record || !token || !wsUrl) return null;
+
+  return {
+    roomName: readString(record, ["roomName"], ""),
+    token,
+    wsUrl,
+    hostIdentity: readString(record, ["hostIdentity"], ""),
+    hostDisplayName: readString(record, ["hostDisplayName", "displayName"], ""),
+  };
+}
+
+export async function getLiveHostToken(
+  stationId: string,
+): Promise<LiveSessionApiResult<LiveHostToken>> {
+  try {
+    const response = await httpClient.get<unknown>({
+      url: `/api/v1/live-stations/${encodeURIComponent(stationId)}/host-token`,
+    });
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: mapLiveHostToken(response.data),
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to load host token");
+  }
+}
+
+export async function endLiveSession(sessionId: string): Promise<LiveSessionApiResult<null>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: `/api/v1/live-sessions/${encodeURIComponent(sessionId)}/end`,
+    });
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: null,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to end live session");
+  }
 }

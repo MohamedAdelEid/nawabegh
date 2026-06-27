@@ -151,6 +151,7 @@ export interface LiveBroadcastStation {
   durationMin: number;
   date: string;
   time: string;
+  scheduledAt: string;
   broadcastLink: string;
   registeredCount: number;
   isLive: boolean;
@@ -418,6 +419,7 @@ export const mockLiveBroadcastStation: LiveBroadcastStation = {
   durationMin: 60,
   date: "16 أكتوبر 2024",
   time: "08:00",
+  scheduledAt: "2024-10-16T08:00:00Z",
   broadcastLink: "https://zoom.us/j/...",
   registeredCount: 1240,
   isLive: true,

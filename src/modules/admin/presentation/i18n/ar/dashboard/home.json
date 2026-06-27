@@ -1,0 +1,79 @@
+{
+  "home": {
+    "title": "أهلاً بعودتك",
+    "description": "نظرة حية على الاشتراكات والإيرادات والمدارس ونشاط المنصة.",
+    "common": {
+      "error": "تعذّر تحميل لوحة التحكم حالياً.",
+      "retry": "إعادة المحاولة"
+    },
+    "summaryCards": {
+      "activeSubscriptions": "اشتراكات نشطة",
+      "publishedCourses": "الدورات المنشورة",
+      "totalCourses": "إجمالي الدورات",
+      "courses": "الدورات",
+      "schools": "المدارس",
+      "teachers": "المعلمون",
+      "students": "الطلاب",
+      "parents": "أولياء الأمور",
+      "totalUsers": "إجمالي المستخدمين"
+    },
+    "revenue": {
+      "title": "الاشتراكات والإيرادات",
+      "totalSubscriptions": "إجمالي الاشتراكات",
+      "totalRevenue": "إجمالي الإيرادات ({currency})",
+      "monthlyGoal": "الهدف الشهري",
+      "monthlyGoalNote": "تم تحقيق {percent}% من الهدف الشهري."
+    },
+    "newUsersChart": {
+      "title": "المستخدمون الجدد",
+      "legend": "مستخدمون جدد",
+      "months": {
+        "3": "آخر 3 أشهر",
+        "6": "آخر 6 أشهر",
+        "12": "آخر 12 شهراً"
+      }
+    },
+    "schoolRankings": {
+      "title": "تصنيف المدارس",
+      "points": "{count} نقطة",
+      "students": "{count} طالب",
+      "empty": "لا يوجد تصنيف للمدارس بعد."
+    },
+    "activityMetrics": {
+      "liveSessionsToday": "جلسات مباشرة اليوم",
+      "completedLessons": "دروس مكتملة",
+      "completedExams": "اختبارات مكتملة",
+      "issuedCertificates": "شهادات صادرة",
+      "units": {
+        "sessions": "جلسة",
+        "lessons": "درس",
+        "exams": "اختبار",
+        "certificates": "شهادة"
+      }
+    },
+    "topStudents": {
+      "title": "الطلاب المتصدرون",
+      "viewAll": "عرض الكل",
+      "points": "{count} نقطة",
+      "empty": "لا يوجد طلاب بعد."
+    },
+    "quickLinks": {
+      "title": "روابط سريعة",
+      "sendNotification": "إرسال تنبيه",
+      "blockViolator": "إدارة المستخدمين",
+      "pendingReports": "بلاغات الدعم",
+      "interactiveBook": "كتاب تفاعلي",
+      "addCourse": "إضافة دورة",
+      "addUser": "إضافة مستخدم"
+    },
+    "recentActivities": {
+      "title": "آخر النشاطات",
+      "empty": "لا توجد نشاطات حديثة."
+    },
+    "reviewTasks": {
+      "title": "مهام تنتظر المراجعة",
+      "reviewDetails": "مراجعة التفاصيل",
+      "empty": "لا توجد مهام تنتظر المراجعة."
+    }
+  }
+}

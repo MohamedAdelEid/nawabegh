@@ -1254,8 +1254,8 @@
           "coverUploading": "جاري رفع الغلاف...",
           "coverUploaded": "تم رفع الغلاف",
           "coverRequirements": "JPG, PNG — نسبة 16:9 — الحد الأقصى 5 ميجابايت",
-          "basePrice": "السعر الأصلي (ر.س)",
-          "offerPrice": "السعر بعد الخصم (ر.س)"
+          "basePrice": "السعر الأصلي (ر.ع.)",
+          "offerPrice": "السعر بعد الخصم (ر.ع.)"
         },
         "options": {
           "grade1": "الأول ثانوي",
@@ -1289,7 +1289,7 @@
           "fallbackTitle": "الرياضيات المتقدمة للصف الثاني ثانوي",
           "fallbackSubject": "الرياضيات",
           "fallbackGrade": "الثاني ثانوي",
-          "currency": "ر.س",
+          "currency": "ر.ع.",
           "accessType": "نوع الوصول",
           "lessons": "{count} درس",
           "paths": "{count} مسار",

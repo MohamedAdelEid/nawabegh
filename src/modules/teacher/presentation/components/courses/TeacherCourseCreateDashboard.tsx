@@ -25,7 +25,7 @@ import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCourseFormSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCourseFormSkeleton";
 import { cn } from "@/shared/application/lib/cn";
 
 const COURSE_COVER_UPLOAD_FOLDER = "courses";
@@ -227,7 +227,7 @@ export function TeacherCourseCreateDashboard({ courseId }: { courseId?: string }
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   if (isEditMode && editLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherCourseFormSkeleton label={t("common.loading")} />;
   }
 
   return (

@@ -9,9 +9,10 @@ import {
   Users,
   Video,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
 import { mapLiveSessionToStation } from "@/modules/admin/domain/utils/liveSessionMappers";
 import {
@@ -21,11 +22,26 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
-import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+
+const LiveBroadcastRoomBox = dynamic(
+  () =>
+    import("@/shared/presentation/components/live-session/LiveBroadcastRoomBox").then(
+      (module) => module.LiveBroadcastRoomBox,
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-[28rem] items-center justify-center rounded-[1.75rem] bg-[#2C4260] text-sm text-white/70">
+        …
+      </div>
+    ),
+  },
+);
 
 interface Props {
   journeyId: string;
@@ -49,44 +65,61 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   const routes = useScopedDashboardRoutes();
 
   const [station, setStation] = useState<LiveBroadcastStation | null>(null);
+  const [runtimeMode, setRuntimeMode] = useState(LiveSessionRuntimeMode.Upcoming);
+  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
+  const [canStartBroadcast, setCanStartBroadcast] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    void (async () => {
-      setLoading(true);
+  const loadSession = useCallback(async () => {
+    setLoading(true);
 
-      const stationInfoResult = await getLiveStationInfo(stationId);
-      if (stationInfoResult.errorMessage && stationInfoResult.status !== "NotFound") {
-        notify.error(stationInfoResult.errorMessage);
-      }
+    const stationInfoResult = await getLiveStationInfo(stationId);
+    if (stationInfoResult.errorMessage && stationInfoResult.status !== "NotFound") {
+      notify.error(stationInfoResult.errorMessage);
+    }
 
-      const sessionId = stationInfoResult.data?.liveSessionId ?? null;
-      if (!sessionId) {
-        clearStoredSessionId(stationId);
-        router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
-        return;
-      }
-
-      const result = await getLiveSessionWorkspace(sessionId);
-      if (result.data) {
-        storeSessionId(stationId, result.data.id);
-        setStation(mapLiveSessionToStation(result.data));
-        setLoading(false);
-        return;
-      }
-
+    const sessionId = stationInfoResult.data?.liveSessionId ?? null;
+    if (!sessionId) {
       clearStoredSessionId(stationId);
-      if (result.status === "NotFound") {
-        router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
-        return;
-      }
+      router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
+      return;
+    }
 
-      if (result.errorMessage) {
-        notify.error(result.errorMessage);
+    if (stationInfoResult.data) {
+      setRuntimeMode(stationInfoResult.data.runtimeMode);
+      setRecordingUrl(stationInfoResult.data.recordingUrl);
+    }
+
+    const result = await getLiveSessionWorkspace(sessionId);
+    if (result.data) {
+      storeSessionId(stationId, result.data.id);
+      setStation(mapLiveSessionToStation(result.data));
+      setCanStartBroadcast(result.data.canStartBroadcast);
+      if (result.data.runtimeMode !== null) {
+        setRuntimeMode(result.data.runtimeMode);
+      }
+      if (result.data.recordingUrl) {
+        setRecordingUrl(result.data.recordingUrl);
       }
       setLoading(false);
-    })();
+      return;
+    }
+
+    clearStoredSessionId(stationId);
+    if (result.status === "NotFound") {
+      router.replace(routes.journeyEditor.LIVE_BROADCAST_ADD(journeyId, stationId));
+      return;
+    }
+
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+    }
+    setLoading(false);
   }, [journeyId, router, routes.journeyEditor, stationId]);
+
+  useEffect(() => {
+    void loadSession();
+  }, [loadSession]);
 
   if (loading) {
     return <JourneyEditorStationPageSkeleton showSidebar />;
@@ -95,8 +128,6 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   if (!station) return null;
 
   const presenterInitial = station.presenter.trim().charAt(0) || "?";
-  const joinUrl = station.broadcastLink.trim();
-  const coverImageSrc = resolveFileUrl(station.thumbnailUrl);
   const presenterAvatarSrc = resolveFileUrl(station.presenterAvatarUrl);
   const statusKey = station.isLive
     ? "live"
@@ -106,6 +137,8 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   const contextLine = [station.courseTitle, station.stationName, station.learningPathTitle]
     .filter(Boolean)
     .join(" · ");
+  const showBroadcastHint =
+    runtimeMode === LiveSessionRuntimeMode.Live || canStartBroadcast;
 
   return (
     <div className="space-y-7">
@@ -145,26 +178,15 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
                   </span>
                   <Users className="h-4 w-4 text-white/60" />
                 </div>
-                {joinUrl ? (
-                  <Button
-                    asChild
-                    className="w-full rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
-                  >
-                    <a href={joinUrl} target="_blank" rel="noopener noreferrer">
-                      {t("actions.joinRoom")}
-                    </a>
-                  </Button>
+                {showBroadcastHint ? (
+                  <p className="text-center text-xs text-white/70">
+                    {t("actions.broadcastInPlayer")}
+                  </p>
                 ) : (
-                  <Button
-                    disabled
-                    className="w-full rounded-2xl bg-[#C8AC59]/60 text-white shadow-[0px_4px_0px_0px_#8F6C0B]"
-                  >
-                    {t("actions.joinRoom")}
-                  </Button>
+                  <p className="text-center text-xs text-white/60">
+                    {t("actions.joinRoomUnavailable")}
+                  </p>
                 )}
-                <p className="mt-2 text-center text-xs text-white/60">
-                  {joinUrl ? t("actions.joinRoomHint") : t("actions.joinRoomUnavailable")}
-                </p>
               </div>
 
               {/* Countdown */}
@@ -291,46 +313,18 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
 
         {/* Main content */}
         <main className="space-y-6">
-          <div
-            className={cn(
-              "relative flex min-h-52 items-end overflow-hidden rounded-[1.75rem] p-6",
-              coverImageSrc
-                ? "bg-[#2C4260]"
-                : "bg-gradient-to-br from-[#2C4260] to-[#1a2a3a]",
-            )}
-          >
-            {coverImageSrc ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element -- resolved via FileUpload/download API */}
-                <img
-                  src={coverImageSrc}
-                  alt={station.title}
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1a2a3a]/90 via-[#2C4260]/40 to-transparent" />
-              </>
-            ) : null}
-            <div className="relative z-10">
-              <div className="mb-2 flex items-center gap-2">
-                <span
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold text-white",
-                    station.isLive ? "bg-rose-500" : "bg-[#C8AC59] text-[#2C4260]",
-                  )}
-                >
-                  {station.isLive ? (
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                  ) : null}
-                  {t(`status.${statusKey}`)}
-                </span>
-              </div>
-              <h2 className="text-2xl font-bold text-white">{station.title}</h2>
-              <p className="mt-1 flex items-center gap-1.5 text-sm text-white/70">
-                <Users className="h-3.5 w-3.5" />
-                {t("registered", { count: station.registeredCount })}
-              </p>
-            </div>
-          </div>
+          <LiveBroadcastRoomBox
+            stationId={station.stationId}
+            sessionId={station.id}
+            title={station.title}
+            runtimeMode={runtimeMode}
+            recordingUrl={recordingUrl}
+            canStartBroadcast={canStartBroadcast}
+            scheduledAt={station.scheduledAt}
+            registeredCount={station.registeredCount}
+            coverImageUrl={station.thumbnailUrl}
+            onSessionEnded={() => void loadSession()}
+          />
 
           {/* Overview */}
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_4px_0px_0px_#0000000D]">

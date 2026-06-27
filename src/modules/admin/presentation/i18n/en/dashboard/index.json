@@ -963,7 +963,7 @@
         "adminStats": {
           "title": "Admin statistics",
           "students": "currently enrolled students",
-          "revenue": "Total revenue (SAR)",
+          "revenue": "Total revenue (OMR)",
           "completion": "Student completion rate"
         },
         "decision": {
@@ -1004,8 +1004,8 @@
           "term": "Term",
           "teacher": "Teacher",
           "subject": "Subject",
-          "basePrice": "Base price (SAR)",
-          "offerPrice": "Discount price (SAR)"
+          "basePrice": "Base price (OMR)",
+          "offerPrice": "Discount price (OMR)"
         },
         "placeholders": {
           "title": "Example: Advanced mathematics for grade 11",
@@ -2875,8 +2875,9 @@
         "description": "Create an interactive live broadcast station for your students.",
         "actions": {
           "joinRoom": "Join Room",
-          "joinRoomHint": "Opens the Zoom meeting in a new tab.",
-          "joinRoomUnavailable": "The meeting link will be available after the session is scheduled.",
+          "joinRoomHint": "Opens the broadcast player on this page.",
+          "joinRoomUnavailable": "The broadcast will be available when the session goes live.",
+          "broadcastInPlayer": "Use the player on the right to start broadcasting.",
           "registerNote": "Cancel session registration",
           "waitNote": "Subscribers will be notified {minutes} minutes before the session starts."
         },
@@ -3630,7 +3631,7 @@
       "stats": {
         "revenue": {
           "label": "Revenue",
-          "indicator": "SAR this month"
+          "indicator": "OMR this month"
         },
         "activeStudents": {
           "label": "Active now",
@@ -4060,7 +4061,7 @@
         },
         "averageSubscription": {
           "label": "Average subscription",
-          "indicator": "Saudi Riyal"
+          "indicator": "Omani Rial"
         },
         "expectedRevenue": {
           "label": "Expected revenue",
@@ -4138,7 +4139,7 @@
           },
           "currency": {
             "label": "Currency",
-            "sar": "Saudi Riyal (SAR)"
+            "omr": "Omani Rial (OMR)"
           },
           "basePrice": {
             "label": "Base price"

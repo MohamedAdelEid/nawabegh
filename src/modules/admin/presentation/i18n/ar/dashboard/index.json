@@ -963,7 +963,7 @@
         "adminStats": {
           "title": "إحصائيات الإدارة",
           "students": "طالب مسجل حالياً",
-          "revenue": "إجمالي الإيرادات (SAR)",
+          "revenue": "إجمالي الإيرادات (OMR)",
           "completion": "معدل إكمال الطلاب"
         },
         "decision": {
@@ -1004,8 +1004,8 @@
           "term": "الفصل الدراسي (Term)",
           "teacher": "المعلم",
           "subject": "المادة",
-          "basePrice": "السعر الأصلي (SAR)",
-          "offerPrice": "السعر بعد الخصم (SAR)"
+          "basePrice": "السعر الأصلي (OMR)",
+          "offerPrice": "السعر بعد الخصم (OMR)"
         },
         "placeholders": {
           "title": "مثال: الرياضيات المتقدمة للصف الثاني ثانوي",
@@ -2878,8 +2878,9 @@
         "description": "قم بإنشاء محطة بث مباشر تفاعلية لطلابك.",
         "actions": {
           "joinRoom": "الانضمام للقاعة",
-          "joinRoomHint": "يفتح اجتماع Zoom في تبويب جديد.",
-          "joinRoomUnavailable": "سيظهر رابط الاجتماع بعد جدولة الحصة.",
+          "joinRoomHint": "يفتح مشغل البث في هذه الصفحة.",
+          "joinRoomUnavailable": "سيظهر البث عند بدء الحصة المباشرة.",
+          "broadcastInPlayer": "استخدم المشغّل على اليمين لبدء البث.",
           "registerNote": "إلغاء التسجيل في الحصة",
           "waitNote": "سيتم الإبلاغ المشتركين قبل بدء الحصة بـ {minutes} دقيقة."
         },
@@ -3633,7 +3634,7 @@
       "stats": {
         "revenue": {
           "label": "الإيرادات",
-          "indicator": "ريال سعودي هذا الشهر"
+          "indicator": "ريال عماني هذا الشهر"
         },
         "activeStudents": {
           "label": "نشط الآن",
@@ -4063,7 +4064,7 @@
         },
         "averageSubscription": {
           "label": "متوسط سعر الاشتراك",
-          "indicator": "ريال سعودي"
+          "indicator": "ريال عماني"
         },
         "expectedRevenue": {
           "label": "الإيرادات المتوقعة",
@@ -4141,7 +4142,7 @@
           },
           "currency": {
             "label": "العملة",
-            "sar": "ريال سعودي (SAR)"
+            "omr": "ريال عماني (OMR)"
           },
           "basePrice": {
             "label": "السعر الأساسي"

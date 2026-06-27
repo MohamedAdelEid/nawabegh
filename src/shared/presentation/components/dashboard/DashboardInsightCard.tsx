@@ -51,7 +51,7 @@ export function DashboardInsightCard({
           ) : (
             <div className="hidden"/>
           )}
-          <div className="space-y-3 text-right">
+          <div className="space-y-3 text-start">
             <h3 className="text-3xl font-bold leading-tight">{title}</h3>
             <p
               className={cn(

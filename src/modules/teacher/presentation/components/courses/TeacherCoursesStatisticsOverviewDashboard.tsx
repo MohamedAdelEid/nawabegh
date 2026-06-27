@@ -25,7 +25,7 @@ import {
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCoursesStatisticsOverviewSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCoursesStatisticsOverviewSkeleton";
 import { cn } from "@/shared/application/lib/cn";
 
 const statIcons = {
@@ -79,7 +79,7 @@ export function TeacherCoursesStatisticsOverviewDashboard() {
   }, [filterData, t]);
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherCoursesStatisticsOverviewSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

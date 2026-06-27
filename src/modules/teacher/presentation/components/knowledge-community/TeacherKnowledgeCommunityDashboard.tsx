@@ -14,11 +14,12 @@ import {
   CommunityTopAuthorsWidget,
 } from "@/shared/presentation/components/community/CommunitySidebarWidgets";
 import { DashboardPagination } from "@/shared/presentation/components/dashboard";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherKnowledgeCommunityFeedSkeleton } from "@/modules/teacher/presentation/components/knowledge-community/TeacherKnowledgeCommunityFeedSkeleton";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 
 export function TeacherKnowledgeCommunityDashboard() {
   const t = useTranslations("teacher.dashboard.knowledgeCommunity");
+  const tCommon = useTranslations("teacher.dashboard");
   const [sort, setSort] = useState<CommunityFeedSort>("latest");
   const [search, setSearch] = useState("");
   const feed = useTeacherCommunityFeed(sort);
@@ -60,11 +61,7 @@ export function TeacherKnowledgeCommunityDashboard() {
       {feed.error ? <ApiFailureAlert message={feed.error} fallbackMessage={t("loadError")} /> : null}
 
       {feed.loading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="h-56 w-full rounded-[1.5rem]" />
-          ))}
-        </div>
+        <TeacherKnowledgeCommunityFeedSkeleton label={tCommon("common.loading")} />
       ) : (
         <div className="space-y-4">
           {filteredPosts.length === 0 ? (

@@ -21,7 +21,7 @@ export function DashboardTableFooterPagination({
 }: DashboardTableFooterPaginationProps) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <p className="text-right text-sm text-slate-400">{summary}</p>
+      <p className="text-start text-sm text-slate-400">{summary}</p>
       <DashboardPagination
         pages={pages}
         currentPage={currentPage}

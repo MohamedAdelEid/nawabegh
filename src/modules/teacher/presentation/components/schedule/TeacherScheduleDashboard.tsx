@@ -12,7 +12,7 @@ import { DashboardSegmentedControl } from "@/shared/presentation/components/dash
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherScheduleDashboardSkeleton } from "@/modules/teacher/presentation/components/schedule/TeacherScheduleDashboardSkeleton";
 
 type ViewMode = "weekly" | "monthly";
 
@@ -66,7 +66,7 @@ export function TeacherScheduleDashboard() {
   };
 
   if (isPending && !data) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherScheduleDashboardSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

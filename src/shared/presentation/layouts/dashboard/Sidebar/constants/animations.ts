@@ -7,31 +7,42 @@ export const SIDEBAR_WIDTH_COLLAPSED = "var(--dashboard-sidebar-collapsed)";
 export const SIDEBAR_DURATION = 0.45;
 export const SIDEBAR_EASE = [0.25, 0.1, 0.25, 1] as const;
 
-export const sidebarVariants: Variants = {
-  initial: {
-    width: SIDEBAR_WIDTH_COLLAPSED,
-    x: SIDEBAR_WIDTH_COLLAPSED,
-    opacity: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
-  },
-  expanded: {
-    width: SIDEBAR_WIDTH_EXPANDED,
-    x: 0,
-    opacity: 1,
-    transition: { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE },
-  },
-  collapsed: {
-    width: SIDEBAR_WIDTH_COLLAPSED,
-    x: 0,
-    opacity: 1,
-    transition: { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE },
-  },
+/**
+ * The sidebar is pinned to the inline-start edge (`start-0`). Logical CSS follows
+ * `dir`, but framer-motion's `x` transform is physical, so the off-screen offset
+ * must point toward the start edge: right (+) in RTL, left (-) in LTR.
+ */
+export const createSidebarVariants = (isRtl: boolean): Variants => {
+  const offscreenX = isRtl
+    ? SIDEBAR_WIDTH_COLLAPSED
+    : `calc(-1 * ${SIDEBAR_WIDTH_COLLAPSED})`;
+
+  return {
+    initial: {
+      width: SIDEBAR_WIDTH_COLLAPSED,
+      x: offscreenX,
+      opacity: 0,
+      transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+    },
+    expanded: {
+      width: SIDEBAR_WIDTH_EXPANDED,
+      x: 0,
+      opacity: 1,
+      transition: { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE },
+    },
+    collapsed: {
+      width: SIDEBAR_WIDTH_COLLAPSED,
+      x: 0,
+      opacity: 1,
+      transition: { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE },
+    },
+  };
 };
 
-export const mobileSidebarVariants: Variants = {
-  hidden: { x: "100%", opacity: 0.5 },
+export const createMobileSidebarVariants = (isRtl: boolean): Variants => ({
+  hidden: { x: isRtl ? "100%" : "-100%", opacity: 0.5 },
   visible: { x: 0, opacity: 1 },
-};
+});
 
 export const itemVariants: Variants = {
   hidden: { opacity: 0, x: -20 },

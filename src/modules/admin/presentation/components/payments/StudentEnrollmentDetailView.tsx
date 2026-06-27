@@ -36,7 +36,7 @@ export function StudentEnrollmentDetailView({ enrollmentId }: StudentEnrollmentD
   const t = useTranslations("admin.dashboard.paymentManagement");
   const locale = useLocale();
   const router = useRouter();
-  const currencyLabel = locale.startsWith("ar") ? "ريال" : "SAR";
+  const currencyLabel = locale.startsWith("ar") ? "ر.ع." : "OMR";
 
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<AdminStudentEnrollmentDetail | null>(null);

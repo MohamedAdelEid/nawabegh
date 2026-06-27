@@ -113,7 +113,7 @@ export function CurriculumManagementDashboard() {
         id: "name",
         header: t("educationLevels.table.columns.name"),
         renderCell: (row) => (
-          <div className="space-y-0.5 text-right">
+          <div className="space-y-0.5 text-start">
             <p className="font-semibold text-slate-800">{localizedName(row.nameAr, row.nameEn)}</p>
             <p className="text-xs text-slate-400">
               {row.nameAr} / {row.nameEn}
@@ -149,7 +149,7 @@ export function CurriculumManagementDashboard() {
         id: "name",
         header: t("grades.table.columns.name"),
         renderCell: (row) => (
-          <div className="space-y-0.5 text-right">
+          <div className="space-y-0.5 text-start">
             <p className="font-semibold text-slate-800">{localizedName(row.nameAr, row.nameEn)}</p>
             <p className="text-xs text-slate-400">
               {row.nameAr} / {row.nameEn}
@@ -207,7 +207,7 @@ export function CurriculumManagementDashboard() {
                 </div>
               )}
             </div>
-            <div className="space-y-0.5 text-right">
+            <div className="space-y-0.5 text-start">
               <p className="font-semibold text-slate-800">{localizedName(row.nameAr, row.nameEn)}</p>
               <p className="text-xs text-slate-400">
                 {row.nameAr} / {row.nameEn}
@@ -516,7 +516,7 @@ export function CurriculumManagementDashboard() {
           title={tableTitle}
           footer={
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <p className="text-right text-sm text-slate-400">
+              <p className="text-start text-sm text-slate-400">
                 {t("table.pagination.summary", {
                   from: page?.rows.length ? (page.currentPage - 1) * page.pageSize + 1 : 0,
                   to: (page?.currentPage ?? 1) * (page?.pageSize ?? 10),

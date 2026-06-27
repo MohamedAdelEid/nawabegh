@@ -33,7 +33,7 @@ import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
 import { ChatMessageBubble } from "@/shared/presentation/components/chat";
 import { Button } from "@/shared/presentation/components/ui/button";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherChatConversationSkeleton } from "@/modules/teacher/presentation/components/chat-groups/TeacherChatConversationSkeleton";
 import {
   ModalDescription,
   ModalShell,
@@ -68,6 +68,7 @@ function voiceBlobToFile(blob: Blob): File {
 
 export function TeacherChatConversationView({ courseId }: { courseId: string }) {
   const t = useTranslations("teacher.dashboard.chatGroups.conversation");
+  const tCommon = useTranslations("teacher.dashboard");
   const router = useRouter();
   const { data, isLoading, isError } = useTeacherChatConversation(courseId);
   const sendMutation = useTeacherChatSendMessage(courseId);
@@ -249,7 +250,7 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
   };
 
   if (isLoading) {
-    return <Skeleton className="h-[80vh] w-full rounded-[2rem]" />;
+    return <TeacherChatConversationSkeleton label={tCommon("common.loading")} />;
   }
 
   if (isError || !data) {

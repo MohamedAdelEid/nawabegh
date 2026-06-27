@@ -34,7 +34,7 @@ export function DashboardStatCard({
       )}
     >
       <CardContent className="flex items-start justify-between gap-4 p-6">
-        <div className="space-y-4 text-right">
+        <div className="space-y-4 text-start">
           {indicator ? (
             <p className={cn("text-sm font-semibold text-slate-400", indicatorClassName)}>
               {indicator}

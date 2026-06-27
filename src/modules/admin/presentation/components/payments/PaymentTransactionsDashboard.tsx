@@ -52,7 +52,7 @@ function toUtcEndOfDay(dateStr: string): string | undefined {
 export function PaymentTransactionsDashboard() {
   const t = useTranslations("admin.dashboard.paymentManagement");
   const locale = useLocale();
-  const currencyLabel = locale.startsWith("ar") ? "ريال" : "SAR";
+  const currencyLabel = locale.startsWith("ar") ? "ر.ع." : "OMR";
 
   const [filters, setFilters] = useState<PaymentTransactionsFilterState>(
     DEFAULT_PAYMENT_TRANSACTIONS_FILTERS,

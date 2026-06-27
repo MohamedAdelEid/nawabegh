@@ -42,7 +42,7 @@ import {
   type DashboardDataTableColumn,
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCoursesDashboardSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCoursesDashboardSkeleton";
 
 const statIcons = {
   totalTracks: BookOpen,
@@ -169,7 +169,7 @@ export function TeacherCoursesDashboard() {
   );
 
   if (isInitialLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherCoursesDashboardSkeleton label={t("common.loading")} />;
   }
 
   if ((isError && !data) || !data) {

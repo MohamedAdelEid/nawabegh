@@ -18,12 +18,13 @@ import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDa
 import { CommunityAuthorLink } from "@/shared/presentation/components/community/CommunityAuthorLink";
 import { CommunityFollowButton } from "@/shared/presentation/components/community/CommunityFollowButton";
 import { getKnowledgeCommunityAuthorProfile } from "@/modules/teacher/infrastructure/api/knowledgeCommunityApi";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherCommunityArticleSkeleton } from "@/modules/teacher/presentation/components/knowledge-community/TeacherCommunityArticleSkeleton";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 
 export function TeacherCommunityArticleView({ articleId }: { articleId: string }) {
   const t = useTranslations("teacher.dashboard.knowledgeCommunity.article");
+  const tCommon = useTranslations("teacher.dashboard");
   const locale = useLocale();
   const routes = useScopedDashboardRoutes();
   const { data, loading, error, feedPost, refreshEngagement } = useTeacherCommunityArticle(articleId);
@@ -52,7 +53,7 @@ export function TeacherCommunityArticleView({ articleId }: { articleId: string }
   }, [data?.article.author?.userId]);
 
   if (loading) {
-    return <Skeleton className="h-[40rem] w-full rounded-[1.5rem]" />;
+    return <TeacherCommunityArticleSkeleton label={tCommon("common.loading")} />;
   }
 
   if (error || !data) {

@@ -11,7 +11,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherSessionDetailsSkeleton } from "@/modules/teacher/presentation/components/session-details/TeacherSessionDetailsSkeleton";
 
 function isResourceFileId(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value.trim());
@@ -39,7 +39,7 @@ export function TeacherSessionDetailsView({ sessionId }: { sessionId: string }) 
   const { data, isLoading, isError } = useTeacherSessionDetails(sessionId);
 
   if (isLoading) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return <TeacherSessionDetailsSkeleton label={t("common.loading")} />;
   }
 
   if (isError || !data) {

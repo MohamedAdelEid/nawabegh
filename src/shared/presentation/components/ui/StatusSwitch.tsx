@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/shared/application/lib/cn";
+import { useDirection } from "@/shared/application/hooks/useDirection";
 
 interface StatusSwitchProps {
   checked: boolean;
@@ -21,6 +22,19 @@ export function StatusSwitch({
   activeClassName = "bg-[#243B5A]",
   inactiveClassName = "bg-slate-200",
 }: StatusSwitchProps) {
+  const { isRtl } = useDirection();
+
+  // The thumb anchors at the inline-start edge (right in RTL, left in LTR).
+  // `translate-x` is physical, so mirror its sign for LTR to keep the same
+  // visual behavior the Arabic layout already has.
+  const thumbTranslate = checked
+    ? isRtl
+      ? "translate-x-[-0.2rem]"
+      : "translate-x-[0.2rem]"
+    : isRtl
+      ? "-translate-x-7"
+      : "translate-x-7";
+
   return (
     <button
       type="button"
@@ -41,7 +55,7 @@ export function StatusSwitch({
       <span
         className={cn(
           "inline-block h-6 w-6 rounded-full bg-white shadow transition-transform",
-          checked ? "translate-x-[-0.2rem]" : "-translate-x-7",
+          thumbTranslate,
         )}
       />
     </button>

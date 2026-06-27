@@ -38,7 +38,7 @@ export function PaymentTransactionDetailSheet({
 }: PaymentTransactionDetailSheetProps) {
   const t = useTranslations("admin.dashboard.paymentManagement.transactionDetail");
   const locale = useLocale();
-  const currencyLabel = locale.startsWith("ar") ? "ريال" : "SAR";
+  const currencyLabel = locale.startsWith("ar") ? "ر.ع." : "OMR";
   const [loading, setLoading] = useState(false);
   const [detail, setDetail] = useState<AdminPaymentTransactionDetail | null>(null);
 

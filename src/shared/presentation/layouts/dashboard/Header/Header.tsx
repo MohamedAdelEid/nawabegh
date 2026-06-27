@@ -48,10 +48,10 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="order-3 min-w-0 basis-full xl:order-2 xl:basis-auto xl:flex-1">
           <SearchInput
             placeholder={t("header.searchPlaceholder")}
-            className="w-full xl:ml-auto xl:max-w-[32rem] focus:outline-none"
+            className="w-full xl:me-auto xl:max-w-[32rem] focus:outline-none"
           />
         </div>
-        <div className="order-2 mr-auto flex items-center gap-2 sm:gap-3 xl:order-3 xl:mr-0">
+        <div className="order-2 ms-auto flex items-center gap-2 sm:gap-3 xl:order-3 xl:ms-0">
           <UserDropdown translationNamespace={translationNamespace} />
           <HeaderActionButton
             icon={Bell}

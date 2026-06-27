@@ -33,11 +33,11 @@ export const DashboardContent: React.FC<DashboardContentProps> = ({
       animate={
         !isMobile
           ? {
-              marginRight: isSidebarCollapsed
+              marginInlineStart: isSidebarCollapsed
                 ? SIDEBAR_WIDTH_COLLAPSED
                 : SIDEBAR_WIDTH_EXPANDED,
             }
-          : { marginRight: 0 }
+          : { marginInlineStart: 0 }
       }
       transition={{ duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE }}
       className={cn("flex-1", isMobile && isMobileMenuOpen && "overflow-hidden")}

@@ -25,7 +25,7 @@ import { getCountriesDropdown } from "@/shared/infrastructure/api/country.api";
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherAccountSettingsSkeleton } from "@/modules/teacher/presentation/components/account-settings/TeacherAccountSettingsSkeleton";
 import { TeacherAccountProfileSidebar } from "./TeacherAccountProfileSidebar";
 
 function ViewField({ label, value }: { label: string; value: string }) {
@@ -119,16 +119,7 @@ export function TeacherAccountSettingsDashboard() {
   };
 
   if (isLoading || !values) {
-    return (
-      <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <Skeleton className="h-[28rem] rounded-[2rem]" />
-        <div className="space-y-6">
-          <Skeleton className="h-64 rounded-[2rem]" />
-          <Skeleton className="h-64 rounded-[2rem]" />
-          <Skeleton className="h-48 rounded-[2rem]" />
-        </div>
-      </div>
-    );
+    return <TeacherAccountSettingsSkeleton label={tCommon("common.loading")} />;
   }
 
   if (isError || !data) {

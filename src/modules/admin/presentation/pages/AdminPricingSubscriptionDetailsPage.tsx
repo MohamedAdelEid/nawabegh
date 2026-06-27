@@ -61,8 +61,8 @@ export function AdminPricingSubscriptionDetailsPage({
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-slate-100 text-sm"><td className="px-6 py-5 font-bold text-[#1E3A66]">#INV-2023-001</td><td className="px-6 py-5">12 يناير 2023</td><td className="px-6 py-5">2,400 ر.س</td><td className="px-6 py-5"><DashboardBadge tone="success">ناجحة</DashboardBadge></td></tr>
-              <tr className="text-sm"><td className="px-6 py-5 font-bold text-[#1E3A66]">#INV-2022-045</td><td className="px-6 py-5">12 يناير 2022</td><td className="px-6 py-5">1,200 ر.س</td><td className="px-6 py-5"><DashboardBadge tone="info">مرفوض</DashboardBadge></td></tr>
+              <tr className="border-b border-slate-100 text-sm"><td className="px-6 py-5 font-bold text-[#1E3A66]">#INV-2023-001</td><td className="px-6 py-5">12 يناير 2023</td><td className="px-6 py-5">2,400 ر.ع.</td><td className="px-6 py-5"><DashboardBadge tone="success">ناجحة</DashboardBadge></td></tr>
+              <tr className="text-sm"><td className="px-6 py-5 font-bold text-[#1E3A66]">#INV-2022-045</td><td className="px-6 py-5">12 يناير 2022</td><td className="px-6 py-5">1,200 ر.ع.</td><td className="px-6 py-5"><DashboardBadge tone="info">مرفوض</DashboardBadge></td></tr>
             </tbody>
           </table>
         </div>

@@ -53,7 +53,7 @@ const DASHBOARD_DATA: PricingManagementDashboardData = {
     {
       id: "averageSubscription",
       labelKey: "pricingManagement.stats.averageSubscription.label",
-      value: "150 ر.س",
+      value: "150 ر.ع.",
       indicatorKey: "pricingManagement.stats.averageSubscription.indicator",
       indicatorToneClassName: "text-amber-700",
       icon: Banknote,
@@ -76,7 +76,7 @@ const DASHBOARD_DATA: PricingManagementDashboardData = {
       name: "أساسيات لغة بايثون",
       typeId: "oneTime",
       linkedContentLabel: "دورة البرمجة الشاملة",
-      priceLabel: "299 ر.س",
+      priceLabel: "299 ر.ع.",
       active: true,
     },
     {
@@ -85,7 +85,7 @@ const DASHBOARD_DATA: PricingManagementDashboardData = {
       name: "الاشتراك الذهبي السنوي",
       typeId: "yearly",
       linkedContentLabel: "جميع مسارات العلوم",
-      priceLabel: "1,499 ر.س",
+      priceLabel: "1,499 ر.ع.",
       active: true,
     },
     {
@@ -94,7 +94,7 @@ const DASHBOARD_DATA: PricingManagementDashboardData = {
       name: "باقة المعلم الفضية",
       typeId: "monthly",
       linkedContentLabel: "مجموعة أدوات المعلمين",
-      priceLabel: "150 ر.س",
+      priceLabel: "150 ر.ع.",
       active: false,
     },
   ],
@@ -104,7 +104,7 @@ const PLAN_FORM_DETAILS: Record<string, PricingPlanForm> = {
   "plan-99012": {
     name: "أساسيات لغة بايثون",
     typeId: "oneTime",
-    currency: "sar",
+    currency: "omr",
     basePrice: "299",
     offerPrice: "0",
     linkedContent: "python-basics-course",

@@ -116,7 +116,7 @@ export async function createCourseDraft(
       statusId: "draft",
       coverTone: "blue",
       coverLabel: "NEW",
-      revenue: "$0",
+      revenue: "0 ر.ع.",
       lessonCount: Number(payload.lessonCount) || 0,
       studentCount: 0,
       createdAt: new Date().toISOString(),

@@ -32,7 +32,7 @@ export function DashboardTableCard({
       {title || actions ? (
         <CardHeader className="flex flex-col gap-4 border-b border-slate-100 p-6 md:flex-row md:items-center md:justify-between">
           {title ? (
-            <CardTitle className="text-right text-2xl font-bold text-slate-800">{title}</CardTitle>
+            <CardTitle className="text-start text-2xl font-bold text-slate-800">{title}</CardTitle>
           ) : (
             <div />
           )}

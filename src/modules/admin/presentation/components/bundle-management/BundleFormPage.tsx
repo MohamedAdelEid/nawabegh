@@ -466,7 +466,7 @@ export function BundleFormPage({ bundleId }: BundleFormPageProps) {
 
               <LabeledInput
                 label={t("fields.coursesTotalPrice")}
-                value={`${coursesTotalPrice.toFixed(2)} ر.س`}
+                value={`${coursesTotalPrice.toFixed(2)} ر.ع.`}
                 placeholder=""
                 onChange={() => undefined}
                 readOnly

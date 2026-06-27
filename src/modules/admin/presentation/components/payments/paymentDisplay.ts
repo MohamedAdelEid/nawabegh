@@ -41,8 +41,8 @@ export function formatPaymentAmount(
   currencyLabel?: string,
 ): string {
   const formatted = new Intl.NumberFormat(locale).format(amount);
-  if (currency === "SAR") {
-    return `${formatted} ${currencyLabel ?? (locale.startsWith("ar") ? "ريال" : "SAR")}`;
+  if (currency === "OMR") {
+    return `${formatted} ${currencyLabel ?? (locale.startsWith("ar") ? "ر.ع." : "OMR")}`;
   }
   return `${formatted} ${currency}`;
 }
@@ -137,7 +137,7 @@ export function fillMonthlyRevenueGaps(
   year: number,
 ): Array<{ year: number; month: number; amount: number; currency: string; label: string }> {
   const byMonth = new Map(rows.filter((row) => row.year === year).map((row) => [row.month, row]));
-  const currency = rows.find((row) => row.year === year)?.currency ?? "SAR";
+  const currency = rows.find((row) => row.year === year)?.currency ?? "OMR";
 
   return Array.from({ length: 12 }, (_, index) => {
     const month = index + 1;

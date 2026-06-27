@@ -41,7 +41,7 @@ export function AdminPricingPlanFormPage({
   const [form, setForm] = useState<PricingPlanForm>({
     name: "",
     typeId: "oneTime",
-    currency: "sar",
+    currency: "omr",
     basePrice: "0",
     offerPrice: "0",
     linkedContent: "",
@@ -154,7 +154,7 @@ export function AdminPricingPlanFormPage({
                   label={t("pricingManagement.form.fields.currency.label")}
                   value={form.currency}
                   onChange={(value) => setForm((prev) => ({ ...prev, currency: value }))}
-                  options={[{ value: "sar", label: t("pricingManagement.form.fields.currency.sar") }]}
+                  options={[{ value: "omr", label: t("pricingManagement.form.fields.currency.omr") }]}
                 />
                 <LabeledInput
                   label={t("pricingManagement.form.fields.basePrice.label")}

@@ -1,0 +1,27 @@
+{
+  "liveBroadcastRoom": {
+    "startBroadcast": "بدء البث",
+    "connecting": "جاري الاتصال…",
+    "endSession": "إنهاء الجلسة",
+    "endingSession": "جاري إنهاء الجلسة…",
+    "sessionEnded": "تم إنهاء الجلسة المباشرة بنجاح",
+    "upcomingMessage": "لم تبدأ الحصة بعد. يمكنك البث عند حلول الموعد المجدول.",
+    "liveReadyMessage": "الحصة مباشرة الآن. ابدأ البث من هنا — يمكن للطلاب الانضمام من التطبيق.",
+    "liveViewerMessage": "الحصة مباشرة الآن. في انتظار بدء المعلم للبث.",
+    "endedWithoutRecording": "انتهت هذه الحصة. التسجيل غير متاح بعد.",
+    "registered": "{count} طالب مسجل",
+    "status": {
+      "live": "مباشر",
+      "upcoming": "قادمة",
+      "ended": "منتهية"
+    },
+    "countdown": {
+      "hours": "ساعة",
+      "minutes": "دقيقة",
+      "seconds": "ثانية"
+    },
+    "errors": {
+      "hostToken": "تعذر تحميل بيانات البث. تحقق من صلاحياتك وحاول مرة أخرى."
+    }
+  }
+}

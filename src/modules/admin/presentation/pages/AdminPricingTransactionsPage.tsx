@@ -33,7 +33,7 @@ export function AdminPricingTransactionsPage() {
       />
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <MiniCard title={t("pricingManagement.transactions.cards.total")} value="124,500 ر.س" />
+        <MiniCard title={t("pricingManagement.transactions.cards.total")} value="124,500 ر.ع." />
         <MiniCard title={t("pricingManagement.transactions.cards.success")} value={String(counts.success)} />
         <MiniCard title={t("pricingManagement.transactions.cards.failed")} value={String(counts.failed)} />
         <MiniCard title={t("pricingManagement.transactions.cards.pending")} value={String(counts.pending)} />

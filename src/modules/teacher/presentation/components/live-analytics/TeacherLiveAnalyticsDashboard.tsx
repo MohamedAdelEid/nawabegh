@@ -21,7 +21,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { TeacherLiveAnalyticsDashboardSkeleton } from "@/modules/teacher/presentation/components/live-analytics/TeacherLiveAnalyticsDashboardSkeleton";
 
 const statIcons = {
   totalAttendance: Users,
@@ -87,7 +87,12 @@ export function TeacherLiveAnalyticsDashboard({
   }, [onManageSessions, t]);
 
   if (isPending && !data) {
-    return <Skeleton className="h-96 w-full rounded-[2rem]" />;
+    return (
+      <TeacherLiveAnalyticsDashboardSkeleton
+        label={t("common.loading")}
+        withHeader={!embedded}
+      />
+    );
   }
 
   if (isError || !data) {

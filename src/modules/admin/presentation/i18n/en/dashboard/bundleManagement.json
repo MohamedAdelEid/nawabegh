@@ -71,7 +71,7 @@
         "actions": "Actions"
       },
       "coursesCount": "{count} courses",
-      "priceValue": "{price} SAR",
+      "priceValue": "{price} OMR",
       "pagination": {
         "summary": "Showing {from}-{to} of {total} bundles",
         "previous": "Previous",
@@ -148,7 +148,7 @@
       "fields": {
         "name": "Bundle name",
         "namePlaceholder": "Example: AI basics for beginners",
-        "price": "Price (SAR)",
+        "price": "Price (OMR)",
         "courses": "Choose courses",
         "coursesPlaceholder": "Choose a course to add...",
         "coursesSearchPlaceholder": "Search courses...",
@@ -161,8 +161,8 @@
         "previewNamePlaceholder": "Enter bundle name above...",
         "previewDescriptionPlaceholder": "The short bundle description appears here to encourage students to subscribe.",
         "previewCoursesBadge": "{count} courses",
-        "previewPricePlaceholder": "-- SAR",
-        "previewSavings": "Save {amount} SAR ({percent}%)"
+        "previewPricePlaceholder": "-- OMR",
+        "previewSavings": "Save {amount} OMR ({percent}%)"
       },
       "publishingModes": {
         "activePublished": "Active (available to students)",

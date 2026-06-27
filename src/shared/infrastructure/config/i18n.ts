@@ -5,9 +5,11 @@ import type { AppLocale } from "@/config/locale";
 import { appModules } from "./modules";
 
 import arCommon from "../../presentation/i18n/ar/common/index.json";
+import arLiveBroadcastRoom from "../../presentation/i18n/ar/liveBroadcastRoom/index.json";
 import arPagination from "../../presentation/i18n/ar/pagination/index.json";
 import arTable from "../../presentation/i18n/ar/table/index.json";
 import enCommon from "../../presentation/i18n/en/common/index.json";
+import enLiveBroadcastRoom from "../../presentation/i18n/en/liveBroadcastRoom/index.json";
 import enPagination from "../../presentation/i18n/en/pagination/index.json";
 import enTable from "../../presentation/i18n/en/table/index.json";
 
@@ -18,11 +20,13 @@ function mergeShared(
   common: typeof arCommon,
   table: typeof arTable,
   pagination: typeof arPagination,
+  liveBroadcastRoom: typeof arLiveBroadcastRoom,
 ): Record<string, unknown> {
   return {
     ...common,
     ...table,
     ...pagination,
+    ...liveBroadcastRoom,
   };
 }
 
@@ -43,8 +47,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   const sharedMessages =
     locale === "ar"
-      ? mergeShared(arCommon, arTable, arPagination)
-      : mergeShared(enCommon, enTable, enPagination);
+      ? mergeShared(arCommon, arTable, arPagination, arLiveBroadcastRoom)
+      : mergeShared(enCommon, enTable, enPagination, enLiveBroadcastRoom);
 
   const fromModules: Record<string, unknown> = {};
   for (const mod of appModules) {

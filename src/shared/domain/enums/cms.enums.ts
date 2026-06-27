@@ -89,6 +89,14 @@ export enum LiveSessionStatus {
   RecordingAvailable = 4,
 }
 
+/** Computed UI mode — prefer over persisted `LiveSessionStatus` for display. */
+export enum LiveSessionRuntimeMode {
+  Upcoming = 0,
+  Live = 1,
+  Recorded = 2,
+  EndedWithoutRecording = 3,
+}
+
 export enum QuestionGenerationStatus {
   None = 0,
   Processing = 1,

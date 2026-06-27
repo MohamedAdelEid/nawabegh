@@ -11,6 +11,7 @@ import arPaymentManagement from "./presentation/i18n/ar/dashboard/paymentManagem
 import arSupportTickets from "./presentation/i18n/ar/dashboard/supportTickets.json";
 import arResultsAnalytics from "./presentation/i18n/ar/dashboard/resultsAnalytics.json";
 import arHomeNav from "./presentation/i18n/ar/dashboard/homeNav.json";
+import arHome from "./presentation/i18n/ar/dashboard/home.json";
 import arNotImplemented from "./presentation/i18n/ar/dashboard/notImplemented.json";
 import enDashboard from "./presentation/i18n/en/dashboard/index.json";
 import enAdManagement from "./presentation/i18n/en/dashboard/adManagement.json";
@@ -22,11 +23,13 @@ import enPaymentManagement from "./presentation/i18n/en/dashboard/paymentManagem
 import enSupportTickets from "./presentation/i18n/en/dashboard/supportTickets.json";
 import enResultsAnalytics from "./presentation/i18n/en/dashboard/resultsAnalytics.json";
 import enHomeNav from "./presentation/i18n/en/dashboard/homeNav.json";
+import enHome from "./presentation/i18n/en/dashboard/home.json";
 import enNotImplemented from "./presentation/i18n/en/dashboard/notImplemented.json";
 
 function dashboardForLocale(locale: AppLocale) {
   const base = locale === "ar" ? arDashboard.dashboard : enDashboard.dashboard;
   const homeNav = locale === "ar" ? arHomeNav.homeNav : enHomeNav.homeNav;
+  const home = locale === "ar" ? arHome.home : enHome.home;
   const notImplemented =
     locale === "ar" ? arNotImplemented.notImplemented : enNotImplemented.notImplemented;
   const ads = locale === "ar" ? arAdManagement.adManagement : enAdManagement.adManagement;
@@ -52,6 +55,7 @@ function dashboardForLocale(locale: AppLocale) {
       : enResultsAnalytics.resultsAnalytics;
   return {
     ...base,
+    home,
     homeNav,
     notImplemented,
     adManagement: ads,

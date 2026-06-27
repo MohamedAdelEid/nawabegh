@@ -71,7 +71,7 @@
         "actions": "الإجراءات"
       },
       "coursesCount": "{count} دورة",
-      "priceValue": "{price} ر.س",
+      "priceValue": "{price} ر.ع.",
       "pagination": {
         "summary": "عرض {from}-{to} من أصل {total} حزمة",
         "previous": "السابق",
@@ -148,7 +148,7 @@
       "fields": {
         "name": "اسم المسار",
         "namePlaceholder": "مثال: أساسيات الذكاء الاصطناعي للمبتدئين",
-        "price": "السعر (ريال)",
+        "price": "السعر (ريال عماني)",
         "courses": "اختر الدورات",
         "coursesPlaceholder": "اختر دورة لإضافتها...",
         "coursesSearchPlaceholder": "ابحث عن دورة...",
@@ -161,8 +161,8 @@
         "previewNamePlaceholder": "أدخل اسم المسار أعلاه...",
         "previewDescriptionPlaceholder": "الوصف المختصر للحزمة يظهر هنا ليشجع الطلاب على الاشتراك.",
         "previewCoursesBadge": "{count} دورة",
-        "previewPricePlaceholder": "-- ر.س",
-        "previewSavings": "توفير {amount} ر.س ({percent}%)"
+        "previewPricePlaceholder": "-- ر.ع.",
+        "previewSavings": "توفير {amount} ر.ع. ({percent}%)"
       },
       "publishingModes": {
         "activePublished": "نشط (متاح للطلاب)",

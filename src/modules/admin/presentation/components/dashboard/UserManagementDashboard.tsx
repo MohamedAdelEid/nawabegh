@@ -118,7 +118,7 @@ function UserManagementStatCard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white before:absolute before:bottom-5 before:right-0 before:top-5 before:w-1",
+        "relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white before:absolute before:bottom-5 before:start-0 before:top-5 before:w-1",
         accentClassName,
       )}
     style={{
@@ -126,7 +126,7 @@ function UserManagementStatCard({
     }}
     >
       <div className="flex items-start justify-between gap-4 p-6">
-        <div className="space-y-4 text-right">
+        <div className="space-y-4 text-start">
           {indicator ? (
             <p dir="ltr" className="text-sm font-semibold text-emerald-500">{indicator}</p>
           ) : (
@@ -625,7 +625,7 @@ export function UserManagementDashboard() {
         id: "fullName",
         header: t("userManagement.table.columns.fullName"),
         renderCell: (row) => (
-          <div className="min-w-[14rem] space-y-1 text-right">
+          <div className="min-w-[14rem] space-y-1 text-start">
             <p className="font-semibold text-slate-800">{row.fullName}</p>
             <p dir="ltr" className="text-xs text-slate-400">{row.phoneNumber}</p>
           </div>
@@ -927,13 +927,13 @@ export function UserManagementDashboard() {
                     <div className="relative">
                       {menuOpenUserId === row.id ? (
                         <div
-                          className="absolute left-0 top-2 z-20 min-w-[8rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
+                          className="absolute end-0 top-2 z-20 min-w-[8rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
                           onClick={(event) => event.stopPropagation()}
                         >
                           <button
                             type="button"
                             disabled={pendingDeleteUserId === row.id}
-                            className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
+                            className="w-full rounded-xl px-3 py-2 text-start text-sm font-medium text-rose-600 transition-colors hover:bg-rose-50"
                             onClick={() => {
                               setMenuOpenUserId(null);
                               setDeleteModalUser(row);

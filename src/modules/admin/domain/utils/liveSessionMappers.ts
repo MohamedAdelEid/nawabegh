@@ -1,5 +1,6 @@
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
 import type { LiveSession } from "@/modules/admin/infrastructure/api/liveSessionsApi";
+import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
 
 function formatDisplayTime(time: string) {
   if (!time.trim()) return "";
@@ -47,9 +48,10 @@ function formatTimeFromIso(iso: string) {
   return `${hour12}:${minutes} ${period}`;
 }
 
-function isLiveSessionStatus(status: string) {
+function isLiveSessionStatus(status: string, runtimeMode: number | null) {
+  if (runtimeMode === LiveSessionRuntimeMode.Live) return true;
   const normalized = status.trim().toLowerCase();
-  return normalized === "live" || normalized === "running";
+  return normalized === "live" || normalized === "running" || normalized === "1";
 }
 
 export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStation {
@@ -72,9 +74,10 @@ export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStat
     durationMin: session.durationMinutes,
     date: formatDisplayDate(session.scheduledDate || scheduledAt),
     time: formatDisplayTime(session.scheduledTime) || formatTimeFromIso(scheduledAt),
+    scheduledAt,
     broadcastLink: session.roomUrl || session.zoomJoinUrl,
     registeredCount: session.activeEnrollmentCount,
-    isLive: isLiveSessionStatus(session.status),
+    isLive: isLiveSessionStatus(session.status, session.runtimeMode),
     countdown: computeCountdown(scheduledAt),
     objectives: session.goals.map((goal) => ({
       id: String(goal.id || goal.order),
