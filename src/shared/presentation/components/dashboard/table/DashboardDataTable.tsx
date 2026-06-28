@@ -51,7 +51,7 @@ export function DashboardDataTable<TRow>({
             {columns.map((column) => (
               <th
                 key={column.id}
-                className={cn("px-6 py-5 font-medium", column.headerClassName)}
+                className={cn("px-6 py-5 font-medium text-start", column.headerClassName)}
               >
                 {column.header}
               </th>
@@ -75,7 +75,7 @@ export function DashboardDataTable<TRow>({
               <tr
                 key={getRowKey(row)}
                 className={cn(
-                  "border-b border-slate-100 text-sm text-slate-700 transition-colors duration-200",
+                  "border-b border-slate-100 text-sm text-slate-700 transition-colors duration-200 text-start",
                   onRowClick && "cursor-pointer hover:bg-slate-50/70",
                   typeof rowClassName === "function" ? rowClassName(row) : rowClassName,
                 )}

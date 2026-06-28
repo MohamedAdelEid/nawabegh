@@ -126,9 +126,10 @@ export function AdminQuestionBankPage() {
       header: t("questionBank.table.columns.type"),
       renderCell: (row) => (
         <DashboardBadge tone={row.questionType === 0 ? "warning" : "info"}>
-          {row.questionType !== null
-            ? (questionTypeMap.get(row.questionType) ?? String(row.questionType))
-            : "—"}
+          {row.questionTypeLabel
+            ?? (row.questionType !== null
+              ? (questionTypeMap.get(row.questionType) ?? String(row.questionType))
+              : "—")}
         </DashboardBadge>
       ),
     },
@@ -142,9 +143,10 @@ export function AdminQuestionBankPage() {
       header: t("questionBank.table.columns.difficulty"),
       renderCell: (row) => (
         <DashboardBadge tone="success">
-          {row.difficultyLevel !== null
-            ? (difficultyMap.get(row.difficultyLevel) ?? String(row.difficultyLevel))
-            : "—"}
+          {row.difficultyLabel
+            ?? (row.difficultyLevel !== null
+              ? (difficultyMap.get(row.difficultyLevel) ?? String(row.difficultyLevel))
+              : "—")}
         </DashboardBadge>
       ),
     },

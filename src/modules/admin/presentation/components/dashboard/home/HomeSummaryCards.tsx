@@ -2,7 +2,6 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { DashboardStatCard } from "@/shared/presentation/components/dashboard";
-import { formatCompactNumber } from "@/shared/application/lib/format";
 import { localeToIntl } from "@/modules/admin/presentation/components/dashboard/home/homeFormat";
 import { getSummaryCardVisual } from "@/modules/admin/presentation/components/dashboard/home/homeDashboardConfig";
 import type { AdminHomeSummaryCard } from "@/modules/admin/domain/types/adminHomeDashboard.types";
@@ -37,7 +36,7 @@ export function HomeSummaryCards({ cards }: HomeSummaryCardsProps) {
           <DashboardStatCard
             key={card.key}
             label={label}
-            value={formatCompactNumber(card.count, intlLocale)}
+            value={String(card.count)}
             indicator={formatChange(card.changePercent, intlLocale)}
             indicatorClassName={isPositive ? "text-emerald-600" : "text-red-500"}
             icon={icon}

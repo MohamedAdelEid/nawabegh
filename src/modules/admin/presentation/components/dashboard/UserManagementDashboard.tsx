@@ -624,9 +624,9 @@ export function UserManagementDashboard() {
         id: "fullName",
         header: t("userManagement.table.columns.fullName"),
         renderCell: (row) => (
-          <div className="min-w-[14rem] space-y-1 text-start">
+          <div className="min-w-[14rem] space-y-1">
             <p className="font-semibold text-slate-800">{row.fullName}</p>
-            <p dir="ltr" className="text-xs text-slate-400">{row.phoneNumber}</p>
+            {/* <p dir="ltr" className="text-xs text-slate-400">{row.phoneNumber}</p> */}
           </div>
         ),
       },

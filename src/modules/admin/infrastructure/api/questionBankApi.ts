@@ -1,4 +1,5 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
+import { DifficultyLevel, QuestionType } from "@/shared/domain/enums/question.enums";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import {
@@ -52,7 +53,9 @@ export type QuestionBankListRow = {
   subjectName: string;
   questionSnippet: string;
   difficultyLevel: number | null;
+  difficultyLabel: string | null;
   questionType: number | null;
+  questionTypeLabel: string | null;
   status: number | null;
 };
 
@@ -144,6 +147,55 @@ function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
   return [];
 }
 
+const DIFFICULTY_ENUM_NAMES: Record<string, number> = {
+  easy: DifficultyLevel.Easy,
+  medium: DifficultyLevel.Medium,
+  hard: DifficultyLevel.Hard,
+};
+
+const QUESTION_TYPE_ENUM_NAMES: Record<string, number> = {
+  multiplechoice: QuestionType.MultipleChoice,
+  trueorfalse: QuestionType.TrueOrFalse,
+};
+
+function normalizeEnumKey(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z]/g, "");
+}
+
+function readEnumAsNumber(
+  record: UnknownRecord | null,
+  keys: string[],
+  stringLookup: Record<string, number>,
+): number | null {
+  const numeric = readNumber(record, keys);
+  if (numeric !== null) return numeric;
+
+  if (!record) return null;
+
+  for (const key of keys) {
+    const raw = record[key];
+    if (typeof raw === "string") {
+      const mapped = stringLookup[normalizeEnumKey(raw)];
+      if (mapped !== undefined) return mapped;
+      continue;
+    }
+
+    const nested = asRecord(raw);
+    if (!nested) continue;
+
+    const nestedNumeric = readNumber(nested, ["value", "id", "code"]);
+    if (nestedNumeric !== null) return nestedNumeric;
+
+    const nestedName = readString(nested, ["name", "displayName", "displayNameEn"]);
+    if (nestedName) {
+      const mapped = stringLookup[normalizeEnumKey(nestedName)];
+      if (mapped !== undefined) return mapped;
+    }
+  }
+
+  return null;
+}
+
 function mapHttpStatus(statusCode: number | null): BackendStatus | "Error" {
   switch (statusCode) {
     case 400:
@@ -190,11 +242,16 @@ function mapEnumOption(item: unknown): QuestionBankEnumOption | null {
   const value = readNumber(record, ["value"]);
   if (value === null) return null;
 
+  const displayNameEn = readString(record, ["displayNameEn"]);
+  const displayNameAr = readString(record, ["displayNameAr"]);
+  const displayName = readString(record, ["displayName", "label"]);
+  const name = readString(record, ["name"]);
+
   return {
     value,
-    name: readString(record, ["name"]),
-    displayNameEn: readString(record, ["displayNameEn"]),
-    displayNameAr: readString(record, ["displayNameAr"]),
+    name,
+    displayNameEn: displayNameEn || displayName || name,
+    displayNameAr: displayNameAr || displayName || name,
   };
 }
 
@@ -244,10 +301,30 @@ function mapListRow(item: unknown): QuestionBankListRow | null {
     id,
     subjectId: readNumber(record, ["subjectId"]),
     subjectName: readString(record, ["subjectName"], "—"),
-    questionSnippet: readString(record, ["questionSnippet"], "—"),
-    difficultyLevel: readNumber(record, ["difficultyLevel"]),
-    questionType: readNumber(record, ["questionType"]),
-    status: readNumber(record, ["status"]),
+    questionSnippet: readString(record, ["questionSnippet", "questionText"], "—"),
+    difficultyLevel: readEnumAsNumber(
+      record,
+      ["difficultyLevel", "difficulty", "DifficultyLevel", "Difficulty"],
+      DIFFICULTY_ENUM_NAMES,
+    ),
+    difficultyLabel: readNullableString(record, [
+      "difficultyLevelName",
+      "difficultyName",
+      "difficultyLabel",
+      "difficultyDisplayName",
+    ]),
+    questionType: readEnumAsNumber(
+      record,
+      ["questionType", "type", "QuestionType", "Type"],
+      QUESTION_TYPE_ENUM_NAMES,
+    ),
+    questionTypeLabel: readNullableString(record, [
+      "questionTypeName",
+      "typeName",
+      "questionTypeLabel",
+      "questionTypeDisplayName",
+    ]),
+    status: readEnumAsNumber(record, ["status", "Status"], {}),
   };
 }
 
