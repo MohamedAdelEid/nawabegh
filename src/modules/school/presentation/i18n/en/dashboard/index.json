@@ -1,0 +1,273 @@
+{
+  "dashboard": {
+    "title": "School Dashboard",
+    "header": {
+      "searchPlaceholder": "Search for an announcement or alert...",
+      "actions": {
+        "settings": "Quick settings",
+        "notifications": "Notifications"
+      },
+      "mobileMenu": {
+        "open": "Open menu",
+        "close": "Close menu"
+      },
+      "menu": {
+        "settings": "Settings",
+        "logout": "Log out"
+      },
+      "user": {
+        "menuLabel": "Open account menu",
+        "guestName": "School",
+        "roles": {
+          "admin": "System Admin",
+          "student": "Student",
+          "teacher": "Teacher",
+          "parent": "Parent",
+          "school": "School"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "Main pages",
+      "footerSection": "Help & account",
+      "toggleExpand": "Expand sidebar",
+      "toggleCollapse": "Collapse sidebar",
+      "nav": {
+        "home": "Home",
+        "announcements": "Announcements & alerts",
+        "settings": "Settings",
+        "logout": "Log out"
+      }
+    },
+    "settingsPage": {
+      "title": "Account settings",
+      "description": "Manage your school account details."
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "Failed to load data",
+      "retry": "Retry",
+      "back": "Back",
+      "saving": "Saving...",
+      "sending": "Sending..."
+    },
+    "audience": {
+      "all": "Everyone",
+      "students": "Students",
+      "parents": "Parents",
+      "teachers": "Teachers",
+      "studentsTeachersParents": "Everyone (students, teachers & parents)"
+    },
+    "channels": {
+      "inApp": "In-app notification",
+      "mobilePush": "Mobile push",
+      "sms": "SMS"
+    },
+    "status": {
+      "published": "Published",
+      "urgent": "Urgent",
+      "scheduled": "Scheduled",
+      "draft": "Draft",
+      "sending": "Sending",
+      "sent": "Sent",
+      "success": "Success",
+      "failed": "Failed"
+    },
+    "type": {
+      "ad": "Announcement",
+      "urgentAlert": "Urgent alert"
+    },
+    "kpis": {
+      "totalAnnouncements": "Total announcements",
+      "activeAlerts": "Active alerts",
+      "reachRate": "Reach rate",
+      "scheduledSoon": "Scheduled soon",
+      "changeThisMonth": "{value}% this month",
+      "excellentPerformance": "Excellent performance"
+    },
+    "dashboardPage": {
+      "title": "Announcements & Alerts Center",
+      "subtitle": "Manage and track your school's communication with students and parents",
+      "exportReport": "Export report",
+      "compose": {
+        "title": "Send a new announcement",
+        "tabs": {
+          "ad": "Announcement",
+          "urgentAlert": "Urgent alert"
+        },
+        "fields": {
+          "messageTitle": "Message title",
+          "messageTitlePlaceholder": "e.g. First-term exam schedule",
+          "messageBody": "Message content",
+          "messageBodyPlaceholder": "Write the announcement details here...",
+          "audience": "Target audience",
+          "displayDuration": "Display duration",
+          "sendMethod": "Send method",
+          "attachments": "Attach files",
+          "attachmentsHint": "Image or PDF"
+        },
+        "audienceOptions": {
+          "all": "Everyone (students & parents)",
+          "students": "Students",
+          "parents": "Parents",
+          "teachers": "Teachers"
+        },
+        "durationOptions": {
+          "h24": "24 hours",
+          "h48": "48 hours",
+          "h72": "72 hours",
+          "d7": "7 days"
+        },
+        "sendMethodOptions": {
+          "instant": "Send now",
+          "scheduled": "Schedule"
+        },
+        "scheduledAt": "Send time",
+        "submit": "Send announcement now",
+        "saveDraft": "Save as draft",
+        "validation": {
+          "titleRequired": "Message title is required.",
+          "bodyRequired": "Message content is required.",
+          "scheduledInFuture": "The schedule time must be in the future."
+        },
+        "messages": {
+          "draftSaved": "Draft saved",
+          "scheduled": "Announcement scheduled",
+          "sent": "Announcement created and sending started",
+          "error": "Could not send the announcement",
+          "uploadError": "Could not upload the file"
+        }
+      },
+      "activeAndScheduled": {
+        "title": "Active & scheduled announcements",
+        "latestBadge": "Latest 10",
+        "viewAll": "View all announcements",
+        "empty": "No active or scheduled announcements right now."
+      },
+      "recentActivity": {
+        "title": "Recent activity log",
+        "filter": "Filter",
+        "columns": {
+          "title": "Title",
+          "type": "Type",
+          "status": "Status",
+          "date": "Date"
+        },
+        "empty": "No recent activity."
+      },
+      "realtimeTracking": {
+        "title": "Live send tracking",
+        "activeNow": "Active now",
+        "sent": "Sent",
+        "inProgress": "In progress",
+        "failed": "Failed",
+        "idle": "No send is currently in progress."
+      },
+      "tips": {
+        "title": "Tip of the day",
+        "action": "See more tips"
+      },
+      "smartRecommendations": {
+        "title": "Improve reach effectiveness",
+        "action": "Browse smart recommendations"
+      }
+    },
+    "listPage": {
+      "title": "Announcements & Alerts Management",
+      "subtitle": "View and manage all announcements sent to the educational community",
+      "createNew": "Create new announcement",
+      "filters": {
+        "searchPlaceholder": "Search titles...",
+        "openFilter": "Filter",
+        "tabs": {
+          "all": "All",
+          "published": "Published",
+          "scheduled": "Scheduled",
+          "draft": "Draft"
+        }
+      },
+      "table": {
+        "columns": {
+          "title": "Announcement title",
+          "audience": "Audience",
+          "status": "Status",
+          "date": "Date",
+          "reach": "Reach rate",
+          "actions": "Actions"
+        },
+        "actions": {
+          "view": "View",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "empty": "No matching announcements.",
+        "loadError": "Could not load announcements."
+      },
+      "pagination": {
+        "summary": "Showing {from}-{to} of {total} announcements",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "tips": {
+        "title": "Tip of the day",
+        "body": "Short, direct messages with illustrative images achieve a 40% higher engagement rate than long text messages.",
+        "action": "See more tips"
+      },
+      "smartRecommendations": {
+        "title": "Improve reach effectiveness",
+        "body": "Use our smart analytics tools to find the best times to send announcements and ensure the highest read rate from parents and students.",
+        "action": "Browse smart recommendations"
+      },
+      "delete": {
+        "title": "Delete announcement",
+        "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+        "confirm": "Yes, delete",
+        "cancel": "Cancel",
+        "success": "Announcement deleted",
+        "error": "Could not delete the announcement"
+      }
+    },
+    "detailPage": {
+      "referenceLine": "Reference: #{code} • Sent on {date}",
+      "notFound": "This announcement was not found.",
+      "actions": {
+        "resend": "Resend",
+        "printReport": "Print report",
+        "archive": "Archive alert",
+        "delete": "Delete record"
+      },
+      "stats": {
+        "deliveredSuccess": "Delivered successfully",
+        "failedSuffix": "failed to send",
+        "totalRecipients": "Total recipients",
+        "deliveryRate": "Delivery rate"
+      },
+      "targetGroups": {
+        "title": "Target groups",
+        "students": "Students",
+        "parents": "Parents",
+        "teachers": "Teachers",
+        "channelsTitle": "Send channels"
+      },
+      "operationLog": {
+        "title": "Operation log"
+      },
+      "content": {
+        "title": "Message content"
+      },
+      "attachments": {
+        "title": "Attachments ({count})",
+        "view": "View",
+        "download": "Download"
+      },
+      "messages": {
+        "resendSuccess": "Resend started",
+        "resendError": "Could not resend",
+        "archiveSuccess": "Announcement archived",
+        "archiveError": "Could not archive",
+        "deleteSuccess": "Announcement deleted",
+        "deleteError": "Could not delete the announcement"
+      }
+    }
+  }
+}

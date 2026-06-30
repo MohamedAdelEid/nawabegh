@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
   DashboardBreadcrumb,
@@ -71,14 +70,6 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
         <DashboardPageHeader
           title={t("page.title")}
           description={t("page.description")}
-          action={
-            <Button
-              type="button"
-              className="rounded-lg bg-[#2b415e] px-6 py-2.5 text-sm font-bold text-white hover:bg-[#243650]"
-            >
-              {t("page.myCoursesAction")}
-            </Button>
-          }
         />
       </div>
 
@@ -94,6 +85,7 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
         subjects={subjects}
         teachers={teachers}
         subjectsLoading={subjectsQuery.isLoading && subjects.length === 0}
+        subjectsError={subjectsQuery.isError}
         teachersLoading={teachersQuery.isLoading && teachers.length === 0}
         teachersError={teachersQuery.isError}
       />
@@ -111,13 +103,6 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
           title={t("section.title")}
           actions={
             <div className="flex items-center gap-2">
-              {/* <button
-                type="button"
-                aria-label={t("section.filter")}
-                className="flex h-[38px] w-[38px] items-center justify-center rounded-lg border-2 border-[#cbd5e1] bg-white text-[#64748b] transition-colors hover:border-slate-300"
-              >
-                <Filter className="size-[18px]" aria-hidden />
-              </button> */}
               <DashboardViewToggle
                 value={viewMode}
                 onChange={setViewMode}

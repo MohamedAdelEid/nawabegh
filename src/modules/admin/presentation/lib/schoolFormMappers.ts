@@ -49,6 +49,8 @@ export function mapSchoolDetailToFormValues(
   const countryMatch = countryOptions.find(
     (option) => option.label.trim() === detail.country.trim(),
   );
+  const resolvedCountryId =
+    detail.countryId > 0 ? String(detail.countryId) : countryMatch?.id ?? "";
 
   return {
     schoolName: detail.name,
@@ -56,11 +58,13 @@ export function mapSchoolDetailToFormValues(
     schoolLogoFile: null,
     schoolLogoPreviewUrl: detail.logoUrl || null,
     country: detail.country,
-    countryId: countryMatch?.id ?? "",
+    countryId: resolvedCountryId,
     city: detail.city,
     address: detail.address,
     phoneNumber: detail.phoneNumber,
     email: detail.email,
+    loginEmail: "",
+    loginPassword: "",
     subscriptionPlanId: resolveSubscriptionPlanId(detail.subscriptionPlanId),
     educationStageIds: parseEducationStages(detail.performanceLevel),
   };

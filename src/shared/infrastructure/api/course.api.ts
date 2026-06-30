@@ -16,6 +16,7 @@ import {
 } from "@/shared/infrastructure/api/apiResponse.utils";
 import { mapApiItems } from "@/shared/infrastructure/api/mapApiItems";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
 
 function buildExploreParams(params: ExploreCoursesQueryParams): Record<string, string | number> {
   const base = paginatedParams(params);
@@ -34,17 +35,19 @@ export async function getExploreCoursesPage(
   const pageSize = params.pageSize ?? 12;
 
   const response = await httpClient.get<unknown>({
-    url: "Course/explore",
+    url: "/api/v1/Course/explore",
     params: buildExploreParams({ ...params, pageNumber, pageSize }),
   });
 
   const rows = mapApiItems(resolveApiList(response), mapExploreCourseDto);
+  const pagination = parseXPaginationHeader(response.headers);
 
   return {
     rows,
-    currentPage: pageNumber,
-    pageSize,
-    hasMore: rows.length >= pageSize,
+    currentPage: pagination?.currentPage ?? pageNumber,
+    pageSize: pagination?.pageSize ?? pageSize,
+    totalCount: pagination?.totalCount,
+    hasMore: pagination ? pagination.hasNext : rows.length >= pageSize,
   };
 }
 
@@ -53,7 +56,7 @@ export async function getCourseExploreDetails(
   locale: string,
 ): Promise<CourseDetailsModel> {
   const response = await httpClient.get<unknown>({
-    url: `Course/explore/details/${courseId}`,
+    url: `/api/v1/Course/explore/details/${courseId}`,
   });
   const raw = resolveApiData<unknown>(response);
   const dto = mapCourseDetailsDto(raw);

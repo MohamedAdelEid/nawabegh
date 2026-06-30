@@ -67,7 +67,7 @@ export function CheckoutPaymentPanel({
           className={cn(
             "flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition-colors",
             activeTab === "visa"
-              ? "border-[#c7af6d] bg-[#c7af6d] text-white"
+              ? "border-[#c7af6d] bg-[#fbf6ea] text-[#c7af6d]"
               : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc]",
           )}
         >
@@ -80,7 +80,7 @@ export function CheckoutPaymentPanel({
           className={cn(
             "flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition-colors",
             activeTab === "activation"
-              ? "border-[#c7af6d] bg-white text-[#2b415e]"
+              ? "border-[#c7af6d] bg-[#fbf6ea] text-[#c7af6d]"
               : "border-[#e2e8f0] bg-white text-[#64748b] hover:bg-[#f8fafc]",
           )}
         >

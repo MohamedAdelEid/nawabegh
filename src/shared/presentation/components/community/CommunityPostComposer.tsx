@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ImageIcon, Link2, Paperclip, Send } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
 export function CommunityPostComposer() {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.composer");
+  const t = useCommunityTranslations("composer");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
 

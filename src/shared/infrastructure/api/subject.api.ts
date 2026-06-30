@@ -10,7 +10,7 @@ import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 export async function getSubjects(params?: PaginatedQueryParams): Promise<Subject[]> {
   const response = await httpClient.get<unknown>({
-    url: "Subject",
+    url: "/api/v1/Subject",
     params: paginatedParams(params),
   });
 

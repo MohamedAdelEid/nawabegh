@@ -4,6 +4,8 @@ import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
+import { Lock } from "lucide-react";
+import { StudentPathProgressStatus } from "@/modules/student/domain/progress/progress.enums";
 import { useProgressPath } from "@/modules/student/application/hooks/useProgressPath";
 import { ProgressPathBanner } from "./ProgressPathBanner";
 import { ProgressPathSkeleton } from "./ProgressPathSkeleton";
@@ -84,7 +86,11 @@ export function ProgressPathDashboard() {
     router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${params.toString()}`);
   };
 
+  const isPathLocked =
+    activePathProgress?.pathProgressStatus === StudentPathProgressStatus.Locked;
+
   const handleStationSelect = (station: PathStationProgressDto) => {
+    if (isPathLocked) return;
     void station;
   };
 
@@ -182,6 +188,17 @@ export function ProgressPathDashboard() {
         )}
       </div>
 
+      {isPathLocked ? (
+        <div className="relative z-10 px-4 pt-3 md:px-6">
+          <div className="flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-medium text-[#64748b]">
+            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
+              <Lock className="size-3.5 text-[#64748b]" aria-hidden />
+            </span>
+            <span>{t("locked.notice")}</span>
+          </div>
+        </div>
+      ) : null}
+
       <div className="relative z-10 mt-2">
         {pathStationsQuery.isLoading && !pathStationsQuery.data ? (
           <ProgressPathTimelineSkeleton />
@@ -189,6 +206,7 @@ export function ProgressPathDashboard() {
           <ProgressPathTimeline
             stations={pathStationsQuery.data?.stations ?? []}
             onStationSelect={handleStationSelect}
+            locked={isPathLocked}
           />
         )}
       </div>

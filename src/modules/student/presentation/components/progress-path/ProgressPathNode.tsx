@@ -10,10 +10,15 @@ import { resolveProgressPathNodeVisual } from "./progress-path-node.utils";
 type ProgressPathNodeProps = {
   station: PathStationProgressDto;
   onSelect?: (station: PathStationProgressDto) => void;
+  pathLocked?: boolean;
 };
 
-export function ProgressPathNode({ station, onSelect }: ProgressPathNodeProps) {
-  const visual = resolveProgressPathNodeVisual(station);
+export function ProgressPathNode({
+  station,
+  onSelect,
+  pathLocked = false,
+}: ProgressPathNodeProps) {
+  const visual = resolveProgressPathNodeVisual(station, pathLocked);
   const isLocked = visual.variant === "locked";
 
   return (

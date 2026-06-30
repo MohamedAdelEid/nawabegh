@@ -77,6 +77,7 @@ export type ExploreCoursesPage = {
   rows: ExploreCourseDto[];
   currentPage: number;
   pageSize: number;
+  totalCount?: number;
   hasMore: boolean;
 };
 

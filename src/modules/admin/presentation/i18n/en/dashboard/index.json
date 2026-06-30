@@ -94,6 +94,7 @@
         "sections": {
           "identity": "School identity",
           "contact": "Location and contact information",
+          "login": "School login credentials",
           "subscription": "Subscriptions and educational stages",
           "location": "Location preview"
         },
@@ -140,6 +141,14 @@
           "email": {
             "label": "Official email",
             "placeholder": "info@school.edu.sa"
+          },
+          "loginEmail": {
+            "label": "Login email",
+            "placeholder": "admin@school.edu.sa"
+          },
+          "loginPassword": {
+            "label": "Login password",
+            "placeholder": "••••••••"
           },
           "country": {
             "label": "Country",

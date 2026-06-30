@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { MapPinned } from "lucide-react";
+import { KeyRound, MapPinned } from "lucide-react";
 import { SchoolIcon } from "@/modules/admin/presentation/assets/icons/school";
 import { SubscriptionIcon } from "@/modules/admin/presentation/assets/icons/subscraption";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -32,10 +32,12 @@ import { mapSchoolDetailToFormValues } from "@/modules/admin/presentation/lib/sc
 import { SchoolFormActions } from "@/modules/admin/presentation/components/school-form/SchoolFormActions";
 import { SchoolIdentitySection } from "@/modules/admin/presentation/components/school-form/SchoolIdentitySection";
 import { SchoolContactSection } from "@/modules/admin/presentation/components/school-form/SchoolContactSection";
+import { SchoolFormSectionCard } from "@/modules/admin/presentation/components/school-form/SchoolFormSectionCard";
 import { SchoolSubscriptionSection } from "@/modules/admin/presentation/components/school-form/SchoolSubscriptionSection";
 import { SchoolLocationSection } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import type { SchoolLocationInput } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
 const ARABIC_INDIC_ZERO_CODE = "٠".charCodeAt(0);
@@ -82,9 +84,12 @@ function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload
     description: normalizeTextInput(values.schoolDescription),
     city: normalizeTextInput(values.city),
     country: normalizeTextInput(values.country),
+    countryId: Number(values.countryId),
     points: 0,
     performanceLevel: buildPerformanceLevel(values),
     establishmentDate: new Date().toISOString(),
+    loginEmail: normalizeDigitsToLatin(normalizeTextInput(values.loginEmail)).toLowerCase(),
+    loginPassword: values.loginPassword,
   };
 }
 
@@ -104,6 +109,7 @@ function buildUpdateSchoolPayload(
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
     city: normalizeTextInput(values.city),
     country: normalizeTextInput(values.country),
+    countryId: Number(values.countryId),
     points: detail.points,
     performanceLevel: buildPerformanceLevel(values),
     establishmentDate: detail.establishmentDate || new Date().toISOString(),
@@ -414,6 +420,29 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           onPhoneChange={(value) => setField("phoneNumber", value)}
           onEmailChange={(value) => setField("email", value)}
         />
+
+        {!isEditMode ? (
+          <SchoolFormSectionCard
+            icon={KeyRound}
+            title={t("schoolManagement.addForm.sections.login")}
+          >
+            <div className="grid gap-5 md:grid-cols-2">
+              <LabeledInput
+                label={t("schoolManagement.addForm.fields.loginEmail.label")}
+                value={values.loginEmail}
+                placeholder={t("schoolManagement.addForm.fields.loginEmail.placeholder")}
+                onChange={(value) => setField("loginEmail", value)}
+              />
+              <LabeledInput
+                label={t("schoolManagement.addForm.fields.loginPassword.label")}
+                type="password"
+                value={values.loginPassword}
+                placeholder={t("schoolManagement.addForm.fields.loginPassword.placeholder")}
+                onChange={(value) => setField("loginPassword", value)}
+              />
+            </div>
+          </SchoolFormSectionCard>
+        ) : null}
 
         <SchoolSubscriptionSection
           icon={SubscriptionIcon}

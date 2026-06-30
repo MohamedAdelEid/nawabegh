@@ -1,6 +1,6 @@
 import type { ExploreCoursesQueryParams } from "@/shared/domain/types/course.types";
 
-export const EXPLORE_COURSES_PAGE_SIZE = 12;
+export const EXPLORE_COURSES_PAGE_SIZE = 5;
 
 export const exploreCoursesQueryKeys = {
   subjects: (locale: string) => ["student-explore-subjects", locale] as const,

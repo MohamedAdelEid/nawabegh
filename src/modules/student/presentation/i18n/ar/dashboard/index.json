@@ -36,9 +36,10 @@
         "home": "الرئيسية",
         "journey": "رحلة التفوق",
         "studyMaterials": "المواد الدراسية",
-        "allCourses": "كافة الدورات",
+        "allCourses": "دورات نوابغ المتاحة",
         "interactiveBook": "كتاب تفاعلي",
         "helpFiles": "ملفات المساعدة",
+        "knowledgeCommunity": "مجتمع المعرفة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
@@ -105,11 +106,16 @@
       },
       "filters": {
         "searchPlaceholder": "ماذا تريد أن تتعلم اليوم؟ ابحث عن الدورات، المعلمين...",
+        "subject": "المادة",
+        "subjectPlaceholder": "اختر المادة",
+        "subjectSearch": "ابحث عن مادة...",
+        "noSubjects": "لا توجد مواد",
+        "subjectsError": "تعذر تحميل المواد",
         "teacher": "المعلم",
         "teacherPlaceholder": "اختر المعلم",
         "teacherSearch": "ابحث عن معلم...",
         "allTeachers": "كل المعلمين",
-        "allSubjects": "الكل",
+        "allSubjects": "كل المواد",
         "noTeachers": "لا يوجد معلمون",
         "teachersError": "تعذر تحميل المعلمين"
       },
@@ -231,7 +237,7 @@
     },
     "checkout": {
       "page": {
-        "title": "إتمام الاشتراك",
+        "title": "إتمام عملية الدفع",
         "description": "اختر طريقة الدفع وأكمل عملية الاشتراك"
       },
       "result": {
@@ -240,7 +246,7 @@
       "breadcrumb": {
         "home": "الرئيسية",
         "courses": "كافة الدورات",
-        "checkout": "الدفع"
+        "checkout": "إتمام عملية الدفع"
       },
       "stepper": {
         "dataEntry": "بيانات الدفع",
@@ -254,33 +260,34 @@
         "discount": "الخصم",
         "vat": "ضريبة القيمة المضافة ({rate}%)",
         "subscriptionPrice": "سعر الاشتراك",
-        "activationMethod": "كود التفعيل — بدون دفع",
+        "paymentMethod": "طريقة الدفع",
+        "activationMethod": "كود مسبق الدفع",
         "amountRequired": "المبلغ المطلوب",
-        "total": "الإجمالي",
+        "total": "الإجمالي النهائي",
         "reference": "المرجع: {value}",
-        "activationNote": "أدخل كود التفعيل لتفعيل الدورة فوراً دون الحاجة للدفع.",
-        "guarantee": "دفع آمن ومحمي عبر منصة نوابغ. بياناتك مشفرة بالكامل."
+        "activationNote": "سيتم تفعيل وصولك الكامل فور التحقق من صحة كود التفعيل للدخول.",
+        "guarantee": "ضمان استرداد الأموال لمدة 14 يوماً في حال لم تكن راضياً عن المحتوى."
       },
       "payment": {
-        "visaTitle": "الدفع ببطاقة فيزا / ماستركارد",
-        "activationTitle": "التفعيل بكود",
-        "tabVisa": "فيزا / بطاقة",
+        "visaTitle": "إتمام عملية الدفع",
+        "activationTitle": "تفعيل الاشتراك بواسطة الكود",
+        "tabVisa": "بطاقة ائتمان",
         "tabActivation": "كود التفعيل",
         "visaDescription": "سيتم توجيهك إلى بوابة الدفع الآمنة لإتمام عملية الشراء.",
         "securePaymentTitle": "دفع آمن",
-        "securePaymentDescription": "تتم معالجة المدفوعات عبر Tap Payments. نوابغ لا تحتفظ ببيانات بطاقتك.",
-        "couponLabel": "كوبون خصم (اختياري)",
-        "couponPlaceholder": "أدخل كود الخصم",
+        "securePaymentDescription": "تتم معالجة المدفوعات عبر بوابة دفع آمنة. نوابغ لا تحتفظ ببيانات بطاقتك.",
+        "couponLabel": "هل لديك كود خصم؟",
+        "couponPlaceholder": "أدخل الكود هنا",
         "couponApply": "تطبيق",
-        "payNow": "ادفع الآن بأمان",
+        "payNow": "إتمام عملية الدفع الآن",
         "redirecting": "جاري التوجيه للدفع...",
-        "activationDescription": "إذا كان لديك كود تفعيل من مدرستك أو مؤسستك، أدخله أدناه.",
+        "activationDescription": "أدخل كود التفعيل المكوّن من 12 رمزاً والذي حصلت عليه من أحد موزّعينا المعتمدين للوصول الفوري للمحتوى.",
         "activationCodeLabel": "كود التفعيل",
         "activationCodePlaceholder": "XXXX-XXXX-XXXX",
-        "activationCodeHint": "الأكواد غير حساسة لحالة الأحرف ويتم تحويلها تلقائياً.",
-        "verifyAndActivate": "تحقق وفعّل",
+        "activationCodeHint": "يرجى التأكد من إدخال الرموز بشكل صحيح كما تظهر في القسيمة.",
+        "verifyAndActivate": "تحقق وفعّل الآن",
         "verifying": "جاري التحقق...",
-        "noCodeSupport": "ليس لديك كود؟ استخدم الدفع بالبطاقة أو تواصل مع الدعم."
+        "noCodeSupport": "ليس لديك كود؟ تواصل مع الدعم"
       },
       "processing": {
         "title": "جاري التحقق من الدفع",
@@ -343,6 +350,9 @@
         "defaultPath": "مسار التعلم",
         "unit": "الوحدة {index}"
       },
+      "locked": {
+        "notice": "هذا المسار مقفل حالياً. يمكنك استعراض محطاته، لكن لا يمكنك الدخول إليها حتى يتم فتحه."
+      },
       "empty": {
         "noCourses": "لم تُسجَّل في أي دورة بعد.",
         "exploreCourses": "استكشف الدورات"
@@ -379,6 +389,190 @@
       "errors": {
         "load": "تعذر تحميل الاشتراكات. يرجى المحاولة مرة أخرى.",
         "retry": "إعادة المحاولة"
+      }
+    },
+    "common": {
+      "loading": "جاري التحميل...",
+      "error": "حدث خطأ أثناء تحميل البيانات"
+    },
+    "knowledgeCommunity": {
+      "title": "مجتمع المعرفة",
+      "subtitle": "تواصل مع زملائك ومعلميك في مكان واحد",
+      "searchPlaceholder": "البحث عن مجموعة...",
+      "feedTitle": "المشاركات الأخيرة",
+      "loadError": "تعذر تحميل خلاصة المجتمع",
+      "empty": "لا توجد مشاركات مطابقة لبحثك حالياً.",
+      "pagination": {
+        "previous": "الصفحة السابقة",
+        "next": "الصفحة التالية"
+      },
+      "filters": {
+        "latest": "الأحدث",
+        "mostActive": "الأكثر تفاعلاً",
+        "unanswered": "غير المجاب عنها"
+      },
+      "composer": {
+        "you": "أنت",
+        "placeholder": "اكتب سؤالاً أو فكرة تعليمية هنا...",
+        "image": "صورة",
+        "file": "ملف",
+        "link": "رابط",
+        "publish": "نشر"
+      },
+      "feed": {
+        "attachment": "مرفق",
+        "pdfAttachment": "ملف PDF"
+      },
+      "sidebar": {
+        "topArticles": {
+          "title": "أفضل مقالات الأسبوع",
+          "readTime": "{minutes} دقائق قراءة"
+        },
+        "topAuthors": {
+          "title": "أبرز الكتاب",
+          "stats": "{articles} مقال • {followers} متابع",
+          "follow": "متابعة"
+        },
+        "badges": {
+          "title": "أوسمة المجتمع",
+          "viewAll": "عرض كل الأوسمة"
+        },
+        "newsletter": {
+          "title": "نشرة المعرفة",
+          "description": "اشترك لتصلك أحدث المقالات والأفكار التعليمية.",
+          "emailPlaceholder": "البريد الإلكتروني",
+          "submit": "اشتراك الآن",
+          "success": "تم الاشتراك في النشرة بنجاح."
+        }
+      },
+      "article": {
+        "pageTitle": "تفاصيل المقال",
+        "notFound": "المقال غير موجود",
+        "followSuccess": "أصبحت تتابع هذا الكاتب.",
+        "readTime": "{minutes} دقائق قراءة",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "category": "التصنيف",
+          "current": "تفاصيل المقال"
+        },
+        "authorCard": {
+          "title": "عن الكاتب",
+          "follow": "متابعة الكاتب"
+        },
+        "interactions": {
+          "save": "حفظ",
+          "saved": "محفوظ",
+          "share": "مشاركة",
+          "yourRating": "تقييمك",
+          "rated": "شكراً لتقييمك.",
+          "bookmarkSaved": "تم حفظ المقال في المفضلة.",
+          "bookmarkRemoved": "تمت إزالة المقال من المفضلة."
+        },
+        "comments": {
+          "title": "التعليقات",
+          "count": "{count} تعليق",
+          "you": "أنت",
+          "placeholder": "أضف تعليقك هنا...",
+          "submit": "نشر التعليق",
+          "success": "تم نشر التعليق.",
+          "error": "تعذر نشر التعليق.",
+          "like": "إعجاب ({count})",
+          "reply": "رد"
+        }
+      },
+      "create": {
+        "title": "إنشاء منشور جديد",
+        "subtitle": "شارك أفكارك، اسأل سؤالاً، أو انشر للمعرفة مع زملائك",
+        "validation": {
+          "required": "العنوان والتصنيف والمحتوى مطلوبة."
+        },
+        "fields": {
+          "title": "عنوان المنشور",
+          "titlePlaceholder": "أدخل عنواناً جذاباً لموضوعك...",
+          "category": "تخصص أو تصنيف الموضوع",
+          "categoryPlaceholder": "اختر التخصص...",
+          "content": "محتوى المنشور",
+          "contentPlaceholder": "اكتب سؤالك أو شارك فكرتك هنا بالتفصيل..."
+        },
+        "actions": {
+          "addImage": "إضافة صورة",
+          "uploadFile": "رفع ملف",
+          "preview": "معاينة المنشور",
+          "publish": "نشر الآن"
+        },
+        "attachments": {
+          "imageReady": "تم رفع صورة الغلاف.",
+          "fileReady": "المرفق جاهز: {name}"
+        },
+        "publishSuccess": "تم إرسال منشورك للمراجعة.",
+        "publishError": "تعذر نشر المنشور.",
+        "rules": {
+          "title": "قواعد النشر",
+          "items": {
+            "one": "اكتب عنواناً واضحاً يعكس موضوع المشاركة.",
+            "two": "اختر أقرب تخصص أو تصنيف للموضوع.",
+            "three": "استخدم لغة محترمة واذكر المصادر عند الحاجة.",
+            "four": "تجنب مشاركة بيانات طلاب خاصة في المنشورات العامة."
+          },
+          "tip": "ابدأ بسؤال أو فكرة واضحة ليتمكن زملاؤك من المساعدة بسرعة."
+        },
+        "smartTip": {
+          "title": "نصيحة ذكية",
+          "body": "استخدم العناوين والقوائم والفقرات القصيرة لجعل منشورك أسهل في القراءة وأكثر تفاعلاً."
+        }
+      },
+      "preview": {
+        "title": "معاينة المنشور",
+        "subtitle": "راجع منشورك قبل النشر",
+        "missingDraft": "لا يوجد مسودة. ارجع إلى المحرر وحاول مرة أخرى.",
+        "uncategorized": "بدون تصنيف",
+        "attachment": "مرفق: {name}",
+        "backToEdit": "العودة للتعديل",
+        "continueEditing": "متابعة التعديل"
+      },
+      "author": {
+        "pageTitle": "ملف الكاتب",
+        "notFound": "الكاتب غير موجود",
+        "articlesTitle": "المقالات المنشورة",
+        "emptyArticles": "لم ينشر هذا الكاتب أي مقالات بعد.",
+        "joined": "انضم {date}",
+        "follow": "متابعة",
+        "unfollow": "إلغاء المتابعة",
+        "followSuccess": "أصبحت تتابع هذا الكاتب.",
+        "unfollowSuccess": "تم إلغاء متابعة هذا الكاتب.",
+        "goToAccount": "الذهاب للحساب على نوابغ",
+        "points": "{count} نقطة",
+        "readTime": "{minutes} دقائق قراءة",
+        "loadMore": "تحميل المزيد من المقالات",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "current": "ملف الكاتب"
+        },
+        "tabs": {
+          "mostRead": "الأكثر قراءة",
+          "topRated": "الأعلى تقييماً",
+          "all": "كل المقالات"
+        },
+        "stats": {
+          "title": "نظرة عامة",
+          "articles": "مقالاً منشوراً",
+          "followers": "متابع",
+          "following": "يتابع",
+          "interactions": "تفاعل"
+        },
+        "badges": {
+          "title": "الشارات المحققة",
+          "empty": "لا توجد شارات محققة بعد."
+        },
+        "skills": {
+          "title": "المهارات"
+        },
+        "connect": {
+          "title": "تواصل مع المؤلف",
+          "website": "الموقع الشخصي",
+          "twitter": "تويتر / X",
+          "linkedin": "لينكدإن"
+        }
       }
     }
   }

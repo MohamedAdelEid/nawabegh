@@ -9,7 +9,7 @@ export async function getTeachers(params?: TeachersQueryParams): Promise<Teacher
   const { subjectId, ...pagination } = params ?? {};
 
   const response = await httpClient.get<unknown>({
-    url: "Teachers",
+    url: "/api/v1/Teachers",
     params: {
       ...paginatedParams(pagination),
       ...(subjectId != null ? { subjectId } : {}),

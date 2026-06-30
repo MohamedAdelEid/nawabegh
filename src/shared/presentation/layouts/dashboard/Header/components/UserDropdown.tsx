@@ -24,6 +24,7 @@ interface UserDropdownProps {
 
 function roleLabel(role: string | undefined, t: ReturnType<typeof useTranslations>) {
   if (role === "Admin") return t("header.user.roles.admin");
+  if (role === "School") return t("header.user.roles.school");
   if (role === "Teacher") return t("header.user.roles.teacher");
   if (role === "Parent") return t("header.user.roles.parent");
   return t("header.user.roles.student");

@@ -15,11 +15,13 @@ import {
 type ProgressPathTimelineProps = {
   stations: PathStationProgressDto[];
   onStationSelect?: (station: PathStationProgressDto) => void;
+  locked?: boolean;
 };
 
 export function ProgressPathTimeline({
   stations,
   onStationSelect,
+  locked = false,
 }: ProgressPathTimelineProps) {
   if (stations.length === 0) {
     return null;
@@ -123,7 +125,11 @@ export function ProgressPathTimeline({
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <ProgressPathNode station={station} onSelect={onStationSelect} />
+              <ProgressPathNode
+                station={station}
+                onSelect={onStationSelect}
+                pathLocked={locked}
+              />
             </motion.div>
           );
         })}

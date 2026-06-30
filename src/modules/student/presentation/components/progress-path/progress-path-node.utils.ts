@@ -36,11 +36,26 @@ export const TIMELINE_LAYOUT = {
 
 export function resolveProgressPathNodeVisual(
   station: PathStationProgressDto,
+  pathLocked = false,
 ): ProgressPathNodeVisual {
   const isLive = station.stationType === StationType.LiveStream;
   const liveMode = station.liveSessionSchedule?.runtimeMode;
   const countdown = station.liveSessionSchedule?.countdownSeconds ?? null;
   const iconSrc = resolveStationIcon(station.stationType);
+
+  // When the whole learning path is locked, every station is visible but
+  // non-joinable regardless of its individual status.
+  if (pathLocked) {
+    return {
+      variant: "locked",
+      isInteractive: false,
+      showLivePulse: false,
+      countdownSeconds: null,
+      shadowSrc: JOURNEY_ASSETS.stations.shadowGray,
+      maskSrc: JOURNEY_ASSETS.stations.maskGray,
+      iconSrc,
+    };
+  }
 
   if (isLive && liveMode === LiveSessionRuntimeMode.Live) {
     return {

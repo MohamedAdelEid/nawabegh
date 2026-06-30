@@ -2,7 +2,6 @@
 
 import { Bookmark, Heart, MessageSquare, Share2, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
 import { rateCommunityArticle } from "@/modules/admin/infrastructure/api/communityArticlesApi";
 import {
   bookmarkKnowledgeCommunityArticle,
@@ -12,6 +11,7 @@ import {
 } from "@/modules/teacher/infrastructure/api/knowledgeCommunityApi";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
 type CommunityInteractionBarProps = {
   articleId: string;
@@ -36,7 +36,7 @@ export function CommunityInteractionBar({
   onLikeChange,
   onBookmarkChange,
 }: CommunityInteractionBarProps) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.article.interactions");
+  const t = useCommunityTranslations("article.interactions");
   const [likes, setLikes] = useState(likesCount);
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);

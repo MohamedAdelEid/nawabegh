@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
 import {
   followKnowledgeCommunityUser,
   unfollowKnowledgeCommunityUser,
@@ -9,6 +8,7 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { cn } from "@/shared/application/lib/cn";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
 type CommunityFollowButtonProps = {
   userId: string;
@@ -25,7 +25,7 @@ export function CommunityFollowButton({
   className,
   fullWidth = false,
 }: CommunityFollowButtonProps) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.author");
+  const t = useCommunityTranslations("author");
   const [following, setFollowing] = useState(isFollowing);
   const [submitting, setSubmitting] = useState(false);
 

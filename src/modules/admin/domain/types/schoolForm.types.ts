@@ -18,6 +18,8 @@ export interface SchoolFormValues {
   address: string;
   phoneNumber: string;
   email: string;
+  loginEmail: string;
+  loginPassword: string;
   subscriptionPlanId: SchoolSubscriptionPlanId;
   educationStageIds: SchoolEducationStageId[];
 }

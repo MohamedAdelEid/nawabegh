@@ -29,6 +29,31 @@ export function ExploreCoursesPageSkeleton() {
   );
 }
 
+function CourseCardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-[20px] border border-[#e2e8f0] bg-white">
+      <Skeleton className="h-48 w-full rounded-none" />
+      <div className="space-y-3 p-6">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-7 w-full" />
+        <Skeleton className="h-4 w-32 ms-auto" />
+        <Skeleton className="h-11 w-full rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+/** Cards-only skeleton used while loading additional pages (no featured hero). */
+export function ExploreCoursesCardsSkeleton({ count = 5 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+      {Array.from({ length: count }).map((_, index) => (
+        <CourseCardSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
+
 export function ExploreCoursesGridSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
@@ -48,18 +73,7 @@ export function ExploreCoursesGridSkeleton() {
         <Skeleton className="hidden h-[453px] w-[321px] shrink-0 md:block" />
       </div>
       {Array.from({ length: 5 }).map((_, index) => (
-        <div
-          key={index}
-          className="overflow-hidden rounded-[20px] border border-[#e2e8f0] bg-white"
-        >
-          <Skeleton className="h-48 w-full rounded-none" />
-          <div className="space-y-3 p-6">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-7 w-full" />
-            <Skeleton className="h-4 w-32 ms-auto" />
-            <Skeleton className="h-11 w-full rounded-xl" />
-          </div>
-        </div>
+        <CourseCardSkeleton key={index} />
       ))}
     </div>
   );

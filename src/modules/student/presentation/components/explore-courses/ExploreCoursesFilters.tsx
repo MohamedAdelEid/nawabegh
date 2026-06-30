@@ -2,11 +2,11 @@
 
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { Subject } from "@/shared/domain/types/subject.types";
 import type { Teacher } from "@/shared/domain/types/teacher.types";
 import { cn } from "@/shared/application/lib/cn";
-import { SubjectTabs } from "./SubjectTabs";
+import { SubjectFilterSelect } from "./SubjectFilterSelect";
 import { TeacherFilterSelect } from "./TeacherFilterSelect";
 
 type ExploreCoursesFiltersProps = {
@@ -21,6 +21,7 @@ type ExploreCoursesFiltersProps = {
   subjects: Subject[];
   teachers: Teacher[];
   subjectsLoading?: boolean;
+  subjectsError?: boolean;
   teachersLoading?: boolean;
   teachersError?: boolean;
   className?: string;
@@ -38,12 +39,12 @@ export function ExploreCoursesFilters({
   subjects,
   teachers,
   subjectsLoading = false,
+  subjectsError = false,
   teachersLoading = false,
   teachersError = false,
   className,
 }: ExploreCoursesFiltersProps) {
   const t = useTranslations("student.dashboard.exploreCourses");
-  const locale = useLocale();
 
   return (
     <motion.section
@@ -70,19 +71,23 @@ export function ExploreCoursesFilters({
         />
       </div>
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-        {subjectsLoading ? (
-          <div className="h-[53px] flex-1 animate-pulse rounded-md bg-[#f1f5f9]" />
-        ) : (
-          <SubjectTabs
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-[#2b415e]">
+            {t("filters.subject")}
+          </label>
+          <SubjectFilterSelect
             subjects={subjects}
-            activeSubjectId={subjectId}
-            allLabel={t("filters.allSubjects")}
-            locale={locale}
+            value={subjectId}
             onChange={onSubjectChange}
+            isLoading={subjectsLoading}
+            isError={subjectsError}
           />
-        )}
-        <div className="w-full lg:max-w-[248px]">
+        </div>
+        <div className="space-y-2">
+          <label className="block text-sm font-bold text-[#2b415e]">
+            {t("filters.teacher")}
+          </label>
           <TeacherFilterSelect
             teachers={teachers}
             value={teacherId}

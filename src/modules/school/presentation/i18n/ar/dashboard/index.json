@@ -1,0 +1,273 @@
+{
+  "dashboard": {
+    "title": "لوحة تحكم المدرسة",
+    "header": {
+      "searchPlaceholder": "ابحث عن إعلان أو تنبيه...",
+      "actions": {
+        "settings": "إعدادات سريعة",
+        "notifications": "الإشعارات"
+      },
+      "mobileMenu": {
+        "open": "فتح القائمة",
+        "close": "إغلاق القائمة"
+      },
+      "menu": {
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      },
+      "user": {
+        "menuLabel": "فتح قائمة الحساب",
+        "guestName": "المدرسة",
+        "roles": {
+          "admin": "مدير النظام",
+          "student": "طالب",
+          "teacher": "معلم",
+          "parent": "ولي أمر",
+          "school": "المدرسة"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "الصفحات الرئيسية",
+      "footerSection": "المساعدة والحساب",
+      "toggleExpand": "توسيع القائمة",
+      "toggleCollapse": "طي القائمة",
+      "nav": {
+        "home": "الرئيسية",
+        "announcements": "الإعلانات والتنبيهات",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "settingsPage": {
+      "title": "إعدادات الحساب",
+      "description": "إدارة بيانات حساب المدرسة."
+    },
+    "common": {
+      "loading": "جارٍ التحميل...",
+      "error": "تعذّر تحميل البيانات",
+      "retry": "إعادة المحاولة",
+      "back": "رجوع",
+      "saving": "جارٍ الحفظ...",
+      "sending": "جارٍ الإرسال..."
+    },
+    "audience": {
+      "all": "الجميع",
+      "students": "الطلاب",
+      "parents": "أولياء الأمور",
+      "teachers": "المعلمون",
+      "studentsTeachersParents": "الجميع (طلاب ومعلمون وأولياء أمور)"
+    },
+    "channels": {
+      "inApp": "إشعار التطبيق",
+      "mobilePush": "إشعار الجوال",
+      "sms": "رسالة نصية"
+    },
+    "status": {
+      "published": "منشور",
+      "urgent": "عاجل جداً",
+      "scheduled": "مجدول",
+      "draft": "مسودة",
+      "sending": "جاري الإرسال",
+      "sent": "مرسل",
+      "success": "نجح",
+      "failed": "فشل"
+    },
+    "type": {
+      "ad": "إعلان",
+      "urgentAlert": "تنبيه عاجل"
+    },
+    "kpis": {
+      "totalAnnouncements": "إجمالي الإعلانات",
+      "activeAlerts": "تنبيهات نشطة",
+      "reachRate": "معدل الوصول",
+      "scheduledSoon": "مجدولة قريباً",
+      "changeThisMonth": "{value}% هذا الشهر",
+      "excellentPerformance": "أداء ممتاز"
+    },
+    "dashboardPage": {
+      "title": "مركز الإعلانات والتنبيهات",
+      "subtitle": "إدارة وتتبع تواصل المدرسة مع الطلاب وأولياء الأمور",
+      "exportReport": "تصدير التقرير",
+      "compose": {
+        "title": "إرسال إعلان جديد",
+        "tabs": {
+          "ad": "إعلان",
+          "urgentAlert": "تنبيه عاجل"
+        },
+        "fields": {
+          "messageTitle": "عنوان الرسالة",
+          "messageTitlePlaceholder": "مثلاً: موعد امتحانات الفصل الدراسي الأول",
+          "messageBody": "محتوى الرسالة",
+          "messageBodyPlaceholder": "اكتب تفاصيل الإعلان هنا...",
+          "audience": "الجمهور المستهدف",
+          "displayDuration": "مدة الظهور",
+          "sendMethod": "طريقة الإرسال",
+          "attachments": "إرفاق ملفات",
+          "attachmentsHint": "صورة أو PDF"
+        },
+        "audienceOptions": {
+          "all": "الجميع (طلاب وأولياء أمور)",
+          "students": "الطلاب",
+          "parents": "أولياء الأمور",
+          "teachers": "المعلمون"
+        },
+        "durationOptions": {
+          "h24": "24 ساعة",
+          "h48": "48 ساعة",
+          "h72": "72 ساعة",
+          "d7": "7 أيام"
+        },
+        "sendMethodOptions": {
+          "instant": "إرسال فوري",
+          "scheduled": "إرسال مجدول"
+        },
+        "scheduledAt": "موعد الإرسال",
+        "submit": "إرسال الإعلان الآن",
+        "saveDraft": "حفظ كمسودة",
+        "validation": {
+          "titleRequired": "عنوان الرسالة مطلوب.",
+          "bodyRequired": "محتوى الرسالة مطلوب.",
+          "scheduledInFuture": "موعد الجدولة يجب أن يكون في المستقبل."
+        },
+        "messages": {
+          "draftSaved": "تم حفظ المسودة",
+          "scheduled": "تم جدولة الإعلان",
+          "sent": "تم إنشاء الإعلان وبدء الإرسال",
+          "error": "تعذّر إرسال الإعلان",
+          "uploadError": "تعذّر رفع الملف"
+        }
+      },
+      "activeAndScheduled": {
+        "title": "الإعلانات النشطة والمجدولة",
+        "latestBadge": "أحدث 10",
+        "viewAll": "عرض جميع الإعلانات",
+        "empty": "لا توجد إعلانات نشطة أو مجدولة حالياً."
+      },
+      "recentActivity": {
+        "title": "سجل العمليات الأخير",
+        "filter": "تصفية",
+        "columns": {
+          "title": "العنوان",
+          "type": "النوع",
+          "status": "الحالة",
+          "date": "التاريخ"
+        },
+        "empty": "لا توجد عمليات حديثة."
+      },
+      "realtimeTracking": {
+        "title": "تتبع الإرسال اللحظي",
+        "activeNow": "نشط الآن",
+        "sent": "تم الإرسال",
+        "inProgress": "قيد التنفيذ",
+        "failed": "فشل الإرسال",
+        "idle": "لا توجد عمليات إرسال جارية حالياً."
+      },
+      "tips": {
+        "title": "نصيحة اليوم",
+        "action": "شاهد المزيد من النصائح"
+      },
+      "smartRecommendations": {
+        "title": "حسّن فعالية الوصول",
+        "action": "استعراض التوصيات الذكية"
+      }
+    },
+    "listPage": {
+      "title": "إدارة الإعلانات والتنبيهات",
+      "subtitle": "عرض وإدارة جميع الإعلانات المرسلة للمجتمع التعليمي",
+      "createNew": "إنشاء إعلان جديد",
+      "filters": {
+        "searchPlaceholder": "ابحث في العناوين...",
+        "openFilter": "تصفية",
+        "tabs": {
+          "all": "الكل",
+          "published": "منشور",
+          "scheduled": "مجدول",
+          "draft": "مسودة"
+        }
+      },
+      "table": {
+        "columns": {
+          "title": "عنوان الإعلان",
+          "audience": "الجمهور",
+          "status": "الحالة",
+          "date": "التاريخ",
+          "reach": "نسبة الوصول",
+          "actions": "إجراءات"
+        },
+        "actions": {
+          "view": "عرض",
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "empty": "لا توجد إعلانات مطابقة.",
+        "loadError": "تعذّر تحميل الإعلانات."
+      },
+      "pagination": {
+        "summary": "عرض {from}-{to} من أصل {total} إعلان",
+        "previous": "السابق",
+        "next": "التالي"
+      },
+      "tips": {
+        "title": "نصيحة اليوم",
+        "body": "الرسائل القصيرة والمباشرة التي تحتوي على صور توضيحية تحقق معدل تفاعل أعلى بنسبة 40% مقارنة بالرسائل النصية الطويلة.",
+        "action": "شاهد المزيد من النصائح"
+      },
+      "smartRecommendations": {
+        "title": "تحسين فعالية الوصول",
+        "body": "استخدم أدوات التحليل الذكية لدينا لمعرفة أفضل الأوقات لإرسال الإعلانات لضمان أعلى معدل قراءة من أولياء الأمور والطلاب.",
+        "action": "استعراض التوصيات الذكية"
+      },
+      "delete": {
+        "title": "حذف الإعلان",
+        "description": "هل أنت متأكد من حذف \"{title}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+        "confirm": "نعم، احذف",
+        "cancel": "إلغاء",
+        "success": "تم حذف الإعلان",
+        "error": "تعذّر حذف الإعلان"
+      }
+    },
+    "detailPage": {
+      "referenceLine": "رقم المرجع: #{code} • تم الإرسال في {date}",
+      "notFound": "لم يتم العثور على هذا الإعلان.",
+      "actions": {
+        "resend": "إعادة إرسال",
+        "printReport": "طباعة التقرير",
+        "archive": "أرشفة التنبيه",
+        "delete": "حذف السجل"
+      },
+      "stats": {
+        "deliveredSuccess": "تم التسليم بنجاح",
+        "failedSuffix": "فشل الإرسال",
+        "totalRecipients": "إجمالي المستلمين",
+        "deliveryRate": "معدل التسليم"
+      },
+      "targetGroups": {
+        "title": "الفئات المستهدفة",
+        "students": "الطلاب",
+        "parents": "أولياء الأمور",
+        "teachers": "المعلمون",
+        "channelsTitle": "قنوات الإرسال"
+      },
+      "operationLog": {
+        "title": "سجل العمليات"
+      },
+      "content": {
+        "title": "محتوى الرسالة"
+      },
+      "attachments": {
+        "title": "المرفقات ({count})",
+        "view": "عرض",
+        "download": "تنزيل"
+      },
+      "messages": {
+        "resendSuccess": "تمت إعادة الإرسال",
+        "resendError": "تعذّرت إعادة الإرسال",
+        "archiveSuccess": "تمت أرشفة الإعلان",
+        "archiveError": "تعذّرت الأرشفة",
+        "deleteSuccess": "تم حذف الإعلان",
+        "deleteError": "تعذّر حذف الإعلان"
+      }
+    }
+  }
+}

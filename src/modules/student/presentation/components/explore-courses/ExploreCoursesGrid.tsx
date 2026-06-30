@@ -4,9 +4,13 @@ import { useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import type { CourseCardModel } from "@/shared/domain/types/course.types";
 import type { DashboardViewMode } from "@/shared/presentation/components/dashboard";
+import { EXPLORE_COURSES_PAGE_SIZE } from "@/modules/student/application/constants/exploreCoursesQueryKeys";
 import { CourseCard } from "./CourseCard";
 import { FeaturedCourseCard } from "./FeaturedCourseCard";
-import { ExploreCoursesGridSkeleton } from "./ExploreCoursesSkeleton";
+import {
+  ExploreCoursesCardsSkeleton,
+  ExploreCoursesGridSkeleton,
+} from "./ExploreCoursesSkeleton";
 
 type ExploreCoursesGridProps = {
   courses: CourseCardModel[];
@@ -81,8 +85,8 @@ export function ExploreCoursesGrid({
       </motion.div>
       <div ref={sentinelRef} className="h-1 w-full" aria-hidden />
       {isFetchingNextPage ? (
-        <div className="pt-6">
-          <ExploreCoursesGridSkeleton />
+        <div className="pt-8">
+          <ExploreCoursesCardsSkeleton count={EXPLORE_COURSES_PAGE_SIZE} />
         </div>
       ) : null}
     </>

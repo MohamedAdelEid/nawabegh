@@ -11,9 +11,15 @@ import {
   studentSidebarItems,
 } from "@/modules/student/domain/data/studentSidebarItems";
 import { teacherSidebarItems } from "@/modules/teacher/domain/data/teacherSidebarItems";
+import { schoolSidebarItems } from "@/modules/school/domain/data/schoolSidebarItems";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 
-export type DashboardShellVariant = "admin" | "student" | "teacher" | "parent";
+export type DashboardShellVariant =
+  | "admin"
+  | "student"
+  | "teacher"
+  | "parent"
+  | "school";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -27,6 +33,7 @@ interface DashboardLayoutProps {
 function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
   if (variant === "admin") return adminSidebarItems;
   if (variant === "teacher") return teacherSidebarItems;
+  if (variant === "school") return schoolSidebarItems;
   if (variant === "parent") {
     return buildStudentShellSidebar("/parent/dashboard", "/parent/settings");
   }
@@ -36,6 +43,7 @@ function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
 function intlNamespaceForVariant(variant: DashboardShellVariant): string {
   if (variant === "admin") return "admin.dashboard";
   if (variant === "teacher") return "teacher.dashboard";
+  if (variant === "school") return "school.dashboard";
   return "student.dashboard";
 }
 

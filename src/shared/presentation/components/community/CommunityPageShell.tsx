@@ -1,8 +1,8 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { cn } from "@/shared/application/lib/cn";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
 type CommunityPageShellProps = {
   title: string;
@@ -23,7 +23,7 @@ export function CommunityPageShell({
   sidebar,
   className,
 }: CommunityPageShellProps) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity");
+  const t = useCommunityTranslations();
 
   return (
     <div className={cn("space-y-6", className)}>

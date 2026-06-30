@@ -17,6 +17,7 @@ export interface LabeledInputProps {
   labelClassName?: string;
   disabled?: boolean;
   readOnly?: boolean;
+  type?: React.ComponentProps<typeof Input>["type"];
 }
 
 export function LabeledInput({
@@ -30,6 +31,7 @@ export function LabeledInput({
   labelClassName,
   disabled,
   readOnly,
+  type,
 }: LabeledInputProps) {
   const reactId = React.useId();
   const id = idProp ?? `labeled-input-${reactId}`;
@@ -41,6 +43,7 @@ export function LabeledInput({
       </Label>
       <Input
         id={id}
+        type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}

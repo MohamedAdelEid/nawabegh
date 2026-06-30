@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Sparkles, Trophy } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { subscribeCommunityNewsletter } from "@/modules/admin/infrastructure/api/communityArticlesApi";
 import type { CommunityBadgeRow } from "@/modules/admin/domain/types/communityBadges.types";
 import type {
@@ -15,9 +14,10 @@ import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDa
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { CommunitySidebarCard } from "./CommunityPageShell";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
 export function CommunityTopArticlesWidget({ articles }: { articles: CommunityFeedPost[] }) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.sidebar.topArticles");
+  const t = useCommunityTranslations("sidebar.topArticles");
   const routes = useScopedDashboardRoutes();
 
   return (
@@ -45,7 +45,7 @@ export function CommunityTopArticlesWidget({ articles }: { articles: CommunityFe
 }
 
 export function CommunityTopAuthorsWidget({ authors }: { authors: CommunityAuthorSummary[] }) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.sidebar.topAuthors");
+  const t = useCommunityTranslations("sidebar.topAuthors");
   const routes = useScopedDashboardRoutes();
 
   return (
@@ -83,7 +83,7 @@ export function CommunityTopAuthorsWidget({ authors }: { authors: CommunityAutho
 }
 
 export function CommunityBadgesWidget({ badges }: { badges: CommunityBadgeRow[] }) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.sidebar.badges");
+  const t = useCommunityTranslations("sidebar.badges");
 
   return (
     <CommunitySidebarCard title={t("title")}>
@@ -112,7 +112,7 @@ export function CommunityBadgesWidget({ badges }: { badges: CommunityBadgeRow[] 
 }
 
 export function CommunityNewsletterWidget() {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.sidebar.newsletter");
+  const t = useCommunityTranslations("sidebar.newsletter");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
 

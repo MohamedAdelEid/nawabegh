@@ -36,9 +36,10 @@
         "home": "Home",
         "journey": "Excellence Journey",
         "studyMaterials": "Study materials",
-        "allCourses": "All Courses",
+        "allCourses": "Available Nawabegh Courses",
         "interactiveBook": "Interactive book",
         "helpFiles": "Help files",
+        "knowledgeCommunity": "Knowledge community",
         "helper": "Help",
         "settings": "Settings",
         "logout": "Log out"
@@ -84,11 +85,16 @@
       },
       "filters": {
         "searchPlaceholder": "What do you want to learn today? Search courses, teachers...",
+        "subject": "Subject",
+        "subjectPlaceholder": "Select a subject",
+        "subjectSearch": "Search subjects...",
+        "noSubjects": "No subjects found",
+        "subjectsError": "Could not load subjects",
         "teacher": "Teacher",
         "teacherPlaceholder": "Select a teacher",
         "teacherSearch": "Search teachers...",
         "allTeachers": "All teachers",
-        "allSubjects": "All",
+        "allSubjects": "All subjects",
         "noTeachers": "No teachers found",
         "teachersError": "Could not load teachers"
       },
@@ -210,7 +216,7 @@
     },
     "checkout": {
       "page": {
-        "title": "Complete Your Subscription",
+        "title": "Complete Payment",
         "description": "Choose your payment method and complete enrollment"
       },
       "result": {
@@ -219,7 +225,7 @@
       "breadcrumb": {
         "home": "Home",
         "courses": "All Courses",
-        "checkout": "Checkout"
+        "checkout": "Complete Payment"
       },
       "stepper": {
         "dataEntry": "Payment details",
@@ -233,33 +239,34 @@
         "discount": "Discount",
         "vat": "VAT ({rate}%)",
         "subscriptionPrice": "Subscription price",
-        "activationMethod": "Activation code — no payment required",
+        "paymentMethod": "Payment method",
+        "activationMethod": "Prepaid code",
         "amountRequired": "Amount due",
-        "total": "Total",
+        "total": "Final total",
         "reference": "Reference: {value}",
-        "activationNote": "Enter your activation code to unlock the course instantly without payment.",
-        "guarantee": "Secure payment protected by Nawabegh. Your data is encrypted."
+        "activationNote": "Your full access will be activated as soon as your activation code is verified.",
+        "guarantee": "14-day money-back guarantee if you're not satisfied with the content."
       },
       "payment": {
-        "visaTitle": "Pay with Visa / Mastercard",
-        "activationTitle": "Activate with Code",
-        "tabVisa": "Visa / Card",
+        "visaTitle": "Complete Payment",
+        "activationTitle": "Activate subscription with code",
+        "tabVisa": "Credit card",
         "tabActivation": "Activation Code",
         "visaDescription": "You will be redirected to our secure payment partner to complete your purchase.",
         "securePaymentTitle": "Secure payment",
-        "securePaymentDescription": "Payments are processed by Tap Payments. Nawabegh never stores your card details.",
-        "couponLabel": "Discount coupon (optional)",
-        "couponPlaceholder": "Enter coupon code",
+        "securePaymentDescription": "Payments are processed by a secure payment gateway. Nawabegh never stores your card details.",
+        "couponLabel": "Have a discount code?",
+        "couponPlaceholder": "Enter the code here",
         "couponApply": "Apply",
-        "payNow": "Pay securely now",
+        "payNow": "Complete payment now",
         "redirecting": "Redirecting to payment...",
-        "activationDescription": "If you have an activation code from your school or institution, enter it below.",
+        "activationDescription": "Enter the 12-character activation code you received from one of our authorized distributors for instant access to the content.",
         "activationCodeLabel": "Activation code",
         "activationCodePlaceholder": "XXXX-XXXX-XXXX",
-        "activationCodeHint": "Codes are case-insensitive and will be uppercased automatically.",
-        "verifyAndActivate": "Verify & activate",
+        "activationCodeHint": "Please make sure you enter the characters exactly as they appear on the voucher.",
+        "verifyAndActivate": "Verify & activate now",
         "verifying": "Verifying code...",
-        "noCodeSupport": "Don't have a code? Use Visa payment or contact support."
+        "noCodeSupport": "Don't have a code? Contact support."
       },
       "processing": {
         "title": "Verifying your payment",
@@ -322,6 +329,9 @@
         "defaultPath": "Learning path",
         "unit": "Unit {index}"
       },
+      "locked": {
+        "notice": "This path is locked for now. You can preview its stations, but you can't join any until it's unlocked."
+      },
       "empty": {
         "noCourses": "You are not enrolled in any courses yet.",
         "exploreCourses": "Explore courses"
@@ -358,6 +368,190 @@
       "errors": {
         "load": "Could not load your subscriptions. Please try again.",
         "retry": "Retry"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "error": "Failed to load data"
+    },
+    "knowledgeCommunity": {
+      "title": "Knowledge community",
+      "subtitle": "Connect with colleagues and teachers in one place",
+      "searchPlaceholder": "Search for a group...",
+      "feedTitle": "Recent posts",
+      "loadError": "Could not load the community feed",
+      "empty": "No posts match your search yet.",
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page"
+      },
+      "filters": {
+        "latest": "Latest",
+        "mostActive": "Most active",
+        "unanswered": "Unanswered"
+      },
+      "composer": {
+        "you": "You",
+        "placeholder": "Write a question or educational idea here...",
+        "image": "Image",
+        "file": "File",
+        "link": "Link",
+        "publish": "Post"
+      },
+      "feed": {
+        "attachment": "Attachment",
+        "pdfAttachment": "PDF file"
+      },
+      "sidebar": {
+        "topArticles": {
+          "title": "Top articles this week",
+          "readTime": "{minutes} min read"
+        },
+        "topAuthors": {
+          "title": "Top authors",
+          "stats": "{articles} articles • {followers} followers",
+          "follow": "Follow"
+        },
+        "badges": {
+          "title": "Community badges",
+          "viewAll": "View all badges"
+        },
+        "newsletter": {
+          "title": "Knowledge newsletter",
+          "description": "Subscribe to receive the latest articles and educational ideas.",
+          "emailPlaceholder": "Email address",
+          "submit": "Subscribe now",
+          "success": "You are subscribed to the newsletter."
+        }
+      },
+      "article": {
+        "pageTitle": "Article details",
+        "notFound": "Article not found",
+        "followSuccess": "You are now following this author.",
+        "readTime": "{minutes} min read",
+        "breadcrumbs": {
+          "home": "Home",
+          "category": "Category",
+          "current": "Article details"
+        },
+        "authorCard": {
+          "title": "About the author",
+          "follow": "Follow author"
+        },
+        "interactions": {
+          "save": "Save",
+          "saved": "Saved",
+          "share": "Share",
+          "yourRating": "Your rating",
+          "rated": "Thanks for your rating.",
+          "bookmarkSaved": "Article saved to your bookmarks.",
+          "bookmarkRemoved": "Bookmark removed."
+        },
+        "comments": {
+          "title": "Comments",
+          "count": "{count} comments",
+          "you": "You",
+          "placeholder": "Add your comment here...",
+          "submit": "Post comment",
+          "success": "Comment posted.",
+          "error": "Could not post your comment.",
+          "like": "Like ({count})",
+          "reply": "Reply"
+        }
+      },
+      "create": {
+        "title": "Create a new post",
+        "subtitle": "Share your ideas, ask a question, or publish knowledge with your colleagues",
+        "validation": {
+          "required": "Title, category, and content are required."
+        },
+        "fields": {
+          "title": "Post title",
+          "titlePlaceholder": "Enter an attractive title for your topic...",
+          "category": "Specialization or category",
+          "categoryPlaceholder": "Choose a specialization...",
+          "content": "Post content",
+          "contentPlaceholder": "Write your question or share your idea here in detail..."
+        },
+        "actions": {
+          "addImage": "Add image",
+          "uploadFile": "Upload file",
+          "preview": "Preview post",
+          "publish": "Publish now"
+        },
+        "attachments": {
+          "imageReady": "Cover image uploaded.",
+          "fileReady": "Attachment ready: {name}"
+        },
+        "publishSuccess": "Your post was submitted for review.",
+        "publishError": "Could not publish your post.",
+        "rules": {
+          "title": "Publishing rules",
+          "items": {
+            "one": "Write a clear title that reflects the topic.",
+            "two": "Choose the closest specialization or category.",
+            "three": "Use respectful language and cite sources when needed.",
+            "four": "Avoid sharing private student data in public posts."
+          },
+          "tip": "Start with a clear question or idea so colleagues can help faster."
+        },
+        "smartTip": {
+          "title": "Smart tip",
+          "body": "Use headings, lists, and short paragraphs to make your post easier to read and more engaging."
+        }
+      },
+      "preview": {
+        "title": "Post preview",
+        "subtitle": "Review your post before publishing",
+        "missingDraft": "No draft found. Go back to the editor and try again.",
+        "uncategorized": "Uncategorized",
+        "attachment": "Attachment: {name}",
+        "backToEdit": "Back to edit",
+        "continueEditing": "Continue editing"
+      },
+      "author": {
+        "pageTitle": "Author profile",
+        "notFound": "Author not found",
+        "articlesTitle": "Published articles",
+        "emptyArticles": "This author has not published any articles yet.",
+        "joined": "Joined {date}",
+        "follow": "Follow",
+        "unfollow": "Unfollow",
+        "followSuccess": "You are now following this author.",
+        "unfollowSuccess": "You unfollowed this author.",
+        "goToAccount": "Go to Nawabegh account",
+        "points": "{count} points",
+        "readTime": "{minutes} min read",
+        "loadMore": "Load more articles",
+        "breadcrumbs": {
+          "home": "Home",
+          "current": "Author profile"
+        },
+        "tabs": {
+          "mostRead": "Most read",
+          "topRated": "Highest rated",
+          "all": "All articles"
+        },
+        "stats": {
+          "title": "Overview",
+          "articles": "Published articles",
+          "followers": "Followers",
+          "following": "Following",
+          "interactions": "Interactions"
+        },
+        "badges": {
+          "title": "Earned badges",
+          "empty": "No badges earned yet."
+        },
+        "skills": {
+          "title": "Skills"
+        },
+        "connect": {
+          "title": "Connect with the author",
+          "website": "Personal website",
+          "twitter": "Twitter / X",
+          "linkedin": "LinkedIn"
+        }
       }
     }
   }

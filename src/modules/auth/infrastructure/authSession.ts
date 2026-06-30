@@ -54,12 +54,13 @@ export function buildLoginPayload(credentials: LoginCredentials) {
 
 const DASHBOARD_ROLE_RANK: Record<string, number> = {
   Admin: 0,
-  Teacher: 1,
-  Parent: 2,
-  Student: 3,
+  School: 1,
+  Teacher: 2,
+  Parent: 3,
+  Student: 4,
 };
 
-const KNOWN_ROLES = ["Admin", "Student", "Teacher", "Parent"] as const;
+const KNOWN_ROLES = ["Admin", "Student", "Teacher", "Parent", "School"] as const;
 
 function normalizeApiRole(raw: string): string {
   const r = raw?.trim();
@@ -220,6 +221,7 @@ export function getAuthErrorMessage(response: BackendApiResponse<unknown> & { st
 export function getRedirectPathForRole(role?: string | null) {
   const r = role ? normalizeApiRole(role) : "Student";
   if (r === "Admin") return ROUTES.ADMIN.HOME;
+  if (r === "School") return ROUTES.USER.SCHOOL.HOME;
   if (r === "Teacher") return ROUTES.USER.TEACHER.HOME;
   if (r === "Parent") return ROUTES.USER.PARENT.HOME;
   return ROUTES.USER.STUDENT.HOME;
@@ -228,6 +230,7 @@ export function getRedirectPathForRole(role?: string | null) {
 export function getSettingsPathForRole(role?: string | null) {
   const r = role ? normalizeApiRole(role) : "Student";
   if (r === "Admin") return ROUTES.ADMIN.SETTINGS;
+  if (r === "School") return ROUTES.USER.SCHOOL.SETTINGS;
   if (r === "Teacher") return ROUTES.USER.TEACHER.SETTINGS;
   if (r === "Parent") return ROUTES.USER.PARENT.SETTINGS;
   return ROUTES.USER.STUDENT.SETTINGS;

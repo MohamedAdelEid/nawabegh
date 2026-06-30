@@ -6,7 +6,8 @@ import {
   SidebarMessageIcon,
 } from "@/shared/presentation/icons/sidebar";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
-import { CircleHelp, LogOut, Settings } from "lucide-react";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { CircleHelp, LogOut, Newspaper, Settings } from "lucide-react";
 
 export function buildStudentShellSidebar(dashboardBase: string, settingsHref: string): SidebarItems {
   return {
@@ -27,8 +28,8 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
       {
         id: "allCourses",
         labelKey: "sidebar.nav.allCourses",
-        href: "/student/courses",
-        activePathPrefixes: ["/student/courses"],
+        href: ROUTES.USER.STUDENT.COURSES,
+        activePathPrefixes: [ROUTES.USER.STUDENT.COURSES],
         icon: SidebarMessageIcon,
       },
       {
@@ -67,4 +68,22 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
   };
 }
 
-export const studentSidebarItems = buildStudentShellSidebar("/student/dashboard", "/student/settings");
+const studentShellSidebar = buildStudentShellSidebar("/student/dashboard", "/student/settings");
+
+/**
+ * Student sidebar. Knowledge community is a student-only destination, so it is
+ * appended here rather than inside the shared builder (which the parent portal reuses).
+ */
+export const studentSidebarItems: SidebarItems = {
+  ...studentShellSidebar,
+  main: [
+    ...studentShellSidebar.main,
+    {
+      id: "knowledgeCommunity",
+      labelKey: "sidebar.nav.knowledgeCommunity",
+      href: ROUTES.USER.STUDENT.KNOWLEDGE_COMMUNITY.LIST,
+      activePathPrefixes: [ROUTES.USER.STUDENT.KNOWLEDGE_COMMUNITY.LIST],
+      icon: Newspaper,
+    },
+  ],
+};

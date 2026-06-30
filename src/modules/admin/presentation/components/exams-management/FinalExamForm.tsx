@@ -675,14 +675,14 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
                 {generating ? t("messages.generating") : t("sidebar.generateAi")}
               </Button>
 
-              <Button
+              {/* <Button
                 type="button"
                 className="h-11 w-full gap-2 rounded-2xl bg-[#2C4260] text-white hover:bg-[#243751]"
                 onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.LIST)}
               >
                 <Sparkles className="h-4 w-4" />
                 {t("sidebar.generateBank")}
-              </Button>
+              </Button> */}
 
               {quizId ? (
                 <Button

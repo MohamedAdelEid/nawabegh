@@ -89,17 +89,17 @@ export function CheckoutOrderSummary({
             ) : null}
           </>
         ) : (
-          <div className="flex items-center justify-between text-[#64748b]">
-            <dt>{t("summary.subscriptionPrice")}</dt>
-            <dd className="font-medium line-through">{formatMoney(pricing.originalPrice)}</dd>
-          </div>
+          <>
+            <div className="flex items-center justify-between text-[#64748b]">
+              <dt>{t("summary.subscriptionPrice")}</dt>
+              <dd className="font-medium line-through">{formatMoney(pricing.originalPrice)}</dd>
+            </div>
+            <div className="flex items-center justify-between text-[#64748b]">
+              <dt>{t("summary.paymentMethod")}</dt>
+              <dd className="font-bold text-emerald-600">{t("summary.activationMethod")}</dd>
+            </div>
+          </>
         )}
-
-        {isActivation ? (
-          <div className="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">
-            {t("summary.activationMethod")}
-          </div>
-        ) : null}
 
         <div className="flex items-center justify-between border-t border-[#e2e8f0] pt-4">
           <dt className="text-base font-bold text-[#2b415e]">

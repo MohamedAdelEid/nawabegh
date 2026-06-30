@@ -94,6 +94,7 @@
         "sections": {
           "identity": "هوية المدرسة",
           "contact": "الموقع ومعلومات الاتصال",
+          "login": "بيانات تسجيل الدخول",
           "subscription": "الاشتراك والمراحل التعليمية",
           "location": "الموقع الجغرافي"
         },
@@ -140,6 +141,14 @@
           "email": {
             "label": "البريد الإلكتروني الرسمي",
             "placeholder": "info@school.edu.sa"
+          },
+          "loginEmail": {
+            "label": "البريد الإلكتروني لتسجيل الدخول",
+            "placeholder": "admin@school.edu.sa"
+          },
+          "loginPassword": {
+            "label": "كلمة مرور تسجيل الدخول",
+            "placeholder": "••••••••"
           },
           "country": {
             "label": "الدولة",

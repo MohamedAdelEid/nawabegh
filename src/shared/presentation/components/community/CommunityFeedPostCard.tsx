@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { Bookmark, Download, Heart, MessageSquare, Share2 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import type { CommunityFeedPost } from "@/modules/teacher/domain/types/knowledgeCommunity.types";
 import { formatCommunityRelativeTime } from "@/modules/teacher/domain/utils/knowledgeCommunityMappers";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 import { CommunityMediaImage, resolveCommunityFileUrl } from "@/shared/presentation/components/community/CommunityMediaImage";
 import { cn } from "@/shared/application/lib/cn";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
@@ -23,7 +24,7 @@ function categoryTone(category: string) {
 }
 
 export function CommunityFeedPostCard({ post, className }: CommunityFeedPostCardProps) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.feed");
+  const t = useCommunityTranslations("feed");
   const locale = useLocale();
   const routes = useScopedDashboardRoutes();
 

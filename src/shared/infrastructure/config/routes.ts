@@ -189,6 +189,15 @@ export const ROUTES = {
       CHECKOUT_RESULT: "/student/checkout/result",
       JOURNEY: "/student/journey",
       SETTINGS: "/student/settings",
+      KNOWLEDGE_COMMUNITY: {
+        LIST: "/student/knowledge-community",
+        CREATE: "/student/knowledge-community/create",
+        PREVIEW: "/student/knowledge-community/create/preview",
+        ARTICLE: (articleId: string) =>
+          `/student/knowledge-community/articles/${encodeURIComponent(articleId)}`,
+        AUTHOR: (authorId: string) =>
+          `/student/knowledge-community/authors/${encodeURIComponent(authorId)}`,
+      },
     },
     TEACHER: {
       HOME: "/teacher/dashboard",
@@ -269,6 +278,18 @@ export const ROUTES = {
     PARENT: {
       HOME: "/parent/dashboard",
       SETTINGS: "/parent/settings",
+    },
+    SCHOOL: {
+      HOME: "/school/dashboard",
+      SETTINGS: "/school/settings",
+      ANNOUNCEMENTS: {
+        LIST: "/school/announcements",
+        CREATE: "/school/announcements/create",
+        VIEW: (announcementId: string) =>
+          `/school/announcements/${encodeURIComponent(announcementId)}`,
+        EDIT: (announcementId: string) =>
+          `/school/announcements/${encodeURIComponent(announcementId)}/edit`,
+      },
     },
   },
   PUBLIC: {

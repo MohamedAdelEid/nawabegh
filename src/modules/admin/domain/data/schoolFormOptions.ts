@@ -56,6 +56,8 @@ export const defaultSchoolFormValues: SchoolFormValues = {
   address: "",
   phoneNumber: "",
   email: "",
+  loginEmail: "",
+  loginPassword: "",
   subscriptionPlanId: "interactive",
   educationStageIds: ["elementary"],
 };

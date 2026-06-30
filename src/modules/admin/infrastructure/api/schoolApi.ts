@@ -29,9 +29,12 @@ export type CreateSchoolPayload = {
   description: string;
   city: string;
   country: string;
+  countryId: number;
   points: number;
   performanceLevel: string;
   establishmentDate: string;
+  loginEmail: string;
+  loginPassword: string;
   // subscriptionPlanId: string;
 };
 
@@ -45,6 +48,7 @@ export type CreatedSchool = {
   description: string;
   city: string;
   country: string;
+  countryId: number;
   points: number;
   performanceLevel: string;
   establishmentDate: string;
@@ -71,6 +75,7 @@ export type SchoolDetail = {
   email: string;
   city: string;
   country: string;
+  countryId: number;
   points: number;
   performanceLevel: string;
   establishmentDate: string;
@@ -102,6 +107,7 @@ export type UpdateSchoolPayload = {
   email: string;
   city: string;
   country: string;
+  countryId: number;
   points: number;
   performanceLevel: string;
   establishmentDate: string;
@@ -360,6 +366,7 @@ function mapSchoolDetail(data: unknown): SchoolDetail | null {
     email: readString(record, ["email"]) ?? "",
     city: readString(record, ["city", "cityName"]) ?? "",
     country: readString(record, ["country", "countryName"]) ?? "",
+    countryId: readNumber(record, ["countryId"]) ?? 0,
     points: readNumber(record, ["points"]) ?? 0,
     performanceLevel: readString(record, ["performanceLevel"]) ?? "",
     establishmentDate: readString(record, ["establishmentDate"]) ?? "",
@@ -389,6 +396,7 @@ function mapCreatedSchool(data: unknown): CreatedSchool | null {
     description: readString(record, ["description"]) ?? "",
     city: readString(record, ["city"]) ?? "",
     country: readString(record, ["country"]) ?? "",
+    countryId: readNumber(record, ["countryId"]) ?? 0,
     points: readNumber(record, ["points"]) ?? 0,
     performanceLevel: readString(record, ["performanceLevel"]) ?? "",
     establishmentDate: readString(record, ["establishmentDate"]) ?? "",

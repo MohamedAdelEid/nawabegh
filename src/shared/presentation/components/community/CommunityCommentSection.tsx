@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import {
   postKnowledgeCommunityArticleComment,
   type CommunityCommentDto,
@@ -15,6 +15,7 @@ import { cn } from "@/shared/application/lib/cn";
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
+import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
 type CommunityCommentSectionProps = {
   articleId: string;
@@ -31,7 +32,7 @@ export function CommunityCommentSection({
   onCommentsChange,
   onRefreshComments,
 }: CommunityCommentSectionProps) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.article.comments");
+  const t = useCommunityTranslations("article.comments");
   const locale = useLocale();
   const [comments, setComments] = useState(initialComments);
   const [draft, setDraft] = useState("");
@@ -122,7 +123,7 @@ function CommentCard({
   locale: string;
   nested?: boolean;
 }) {
-  const t = useTranslations("teacher.dashboard.knowledgeCommunity.article.comments");
+  const t = useCommunityTranslations("article.comments");
   const author = comment.author;
   const [likesCount, setLikesCount] = useState(comment.likesCount);
   const [isLiked, setIsLiked] = useState(comment.isLikedByCurrentUser ?? false);

@@ -4,7 +4,7 @@ import { getAuthSecret } from "@/shared/infrastructure/auth/authSecret";
 import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
-const PROTECTED_PREFIXES = ["/admin", "/student", "/teacher", "/parent"];
+const PROTECTED_PREFIXES = ["/admin", "/student", "/teacher", "/parent", "/school"];
 const AUTH_COOKIE_NAMES = [
   "next-auth.session-token",
   "__Secure-next-auth.session-token",
@@ -21,6 +21,7 @@ function isProtectedPath(pathname: string) {
 function getRoleHome(role?: string | null) {
   const normalizedRole = role?.trim().toLowerCase();
   if (normalizedRole === "admin") return ROUTES.ADMIN.HOME;
+  if (normalizedRole === "school") return ROUTES.USER.SCHOOL.HOME;
   if (normalizedRole === "teacher") return ROUTES.USER.TEACHER.HOME;
   if (normalizedRole === "parent") return ROUTES.USER.PARENT.HOME;
   return ROUTES.USER.STUDENT.HOME;
@@ -73,5 +74,6 @@ export const config = {
     "/student/:path*",
     "/teacher/:path*",
     "/parent/:path*",
+    "/school/:path*",
   ],
 };

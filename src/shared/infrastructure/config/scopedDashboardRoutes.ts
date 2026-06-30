@@ -1,6 +1,6 @@
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
-export type DashboardScope = "admin" | "teacher";
+export type DashboardScope = "admin" | "teacher" | "student";
 
 export type HelperFileManagementRoutes = {
   LIST: string;
@@ -103,10 +103,26 @@ const TEACHER_INTERACTIVE_BASE = ROUTES.USER.TEACHER.INTERACTIVE_BOOKS.LIST;
 const TEACHER_JOURNEY_BASE = ROUTES.USER.TEACHER.JOURNEY_EDITOR.LIST;
 
 export function getDashboardScopeFromPathname(pathname: string): DashboardScope {
-  return pathname.startsWith("/teacher") ? "teacher" : "admin";
+  if (pathname.startsWith("/teacher")) return "teacher";
+  if (pathname.startsWith("/student")) return "student";
+  return "admin";
 }
 
 export function getScopedDashboardRoutes(scope: DashboardScope): ScopedDashboardRoutes {
+  if (scope === "student") {
+    const studentHome = ROUTES.USER.STUDENT.HOME;
+    return {
+      scope,
+      home: studentHome,
+      helperFileManagement: createHelperFileRoutes(`${studentHome}/helper-file-management`),
+      interactiveBooks: createInteractiveBooksRoutes(`${studentHome}/interactive-books`),
+      journeyEditor: createJourneyEditorRoutes(`${studentHome}/journey-editor`),
+      knowledgeCommunity: ROUTES.USER.STUDENT.KNOWLEDGE_COMMUNITY,
+      interactiveBooksListHref: studentHome,
+      journeyEditorListHref: studentHome,
+    };
+  }
+
   if (scope === "teacher") {
     return {
       scope,
