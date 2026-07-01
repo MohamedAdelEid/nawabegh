@@ -1033,7 +1033,7 @@
         },
         "pricing": {
           "free": "مجانية",
-          "oneTime": "مدفوعة (لمرة واحدة)",
+          "oneTime": "مدفوعة",
           "monthly": "اشتراك شهري"
         },
         "accessDuration": {

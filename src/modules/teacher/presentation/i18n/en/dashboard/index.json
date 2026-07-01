@@ -1270,7 +1270,7 @@
         },
         "pricing": {
           "free": "Free",
-          "oneTime": "Paid (one-time)",
+          "oneTime": "Paid",
           "monthly": "Monthly subscription"
         },
         "actions": {
