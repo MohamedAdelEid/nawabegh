@@ -595,7 +595,7 @@ export interface TeacherCoursesStatisticsOverviewData {
   };
 }
 
-export type TeacherCoursePricingType = "free" | "oneTime" | "monthly";
+export type TeacherCoursePricingType = "free" | "oneTime";
 
 export interface TeacherCourseCreatePayload {
   title: string;

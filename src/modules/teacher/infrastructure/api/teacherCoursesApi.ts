@@ -261,7 +261,6 @@ function buildListStats(rows: TeacherCourseListRow[], totalItems: number, locale
 
 function pricingTypeToAccessType(pricingType: TeacherCourseCreatePayload["pricingType"]): CourseAccessType {
   if (pricingType === "free") return CourseAccessType.Free;
-  if (pricingType === "monthly") return CourseAccessType.Subscription;
   return CourseAccessType.Paid;
 }
 
@@ -558,7 +557,7 @@ export async function fetchTeacherCourseForEdit(courseId: string): Promise<Teach
   const accessType = mapAccessType(course.accessType);
   let pricingType: TeacherCourseCreatePayload["pricingType"] = "oneTime";
   if (accessType === "free") pricingType = "free";
-  else if (accessType === "subscription") pricingType = "monthly";
+  else if (accessType === "subscription") pricingType = "oneTime";
 
   return {
     title: readString(course, ["title"], ""),

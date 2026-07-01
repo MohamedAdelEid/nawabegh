@@ -40,7 +40,7 @@
         "schedule": "الجدول الزمني",
         "interactiveBooks": "إدارة الكتاب التفاعلي",
         "journeyEditor": "محرر الرحلة التعليمية",
-        "helperFileManagement": "إدارة ملفات المساعدة",
+        "helperFileManagement": "محطة التلخيص",
         "knowledgeCommunity": "مجتمع المعرفة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
@@ -746,8 +746,8 @@
     },
     "helperFileManagement": {
       "page": {
-        "title": "إدارة ملفات المساعدة",
-        "description": "رفع وإدارة ملفات الموارد المساعدة المرتبطة بدوراتك."
+        "title": "محطة التلخيص",
+        "description": "رفع وإدارة ملفات التلخيص المرتبطة بدوراتك."
       }
     },
     "liveSessions": {
@@ -858,7 +858,7 @@
       "resources": {
         "title": "مصادر التعلم",
         "download": "تحميل",
-        "openInHelperFiles": "فتح في ملفات المساعدة",
+        "openInHelperFiles": "فتح في محطة التلخيص",
         "unavailable": "المعاينة غير متاحة لهذا الملف."
       },
       "related": {

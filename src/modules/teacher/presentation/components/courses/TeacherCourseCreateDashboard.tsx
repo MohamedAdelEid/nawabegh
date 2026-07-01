@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FileUp, Gift, RefreshCw, Wallet } from "lucide-react";
+import { FileUp, Gift, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -36,7 +36,6 @@ const PRICING_OPTIONS: Array<{
 }> = [
   { id: "free", icon: Gift },
   { id: "oneTime", icon: Wallet },
-  { id: "monthly", icon: RefreshCw },
 ];
 
 type FormState = {

@@ -38,7 +38,7 @@
         "courseManagement": "Course management",
         "bundleManagement": "Educational bundles management",
         "invoiceManagement": "Invoice management",
-        "helperFileManagement": "Manage helper files",
+        "helperFileManagement": "Summarization station",
         "pricingManagement": "Pricing & plans",
         "paymentGatewaySettings": "Payment gateway settings",
         "articleEditor": "Article editor",
@@ -2581,7 +2581,7 @@
         "examEditor": "Exam Editor",
         "examPreview": "Preview Exam Questions",
         "examEditQuestions": "Edit Exam Questions",
-        "helperResourceEditor": "Helper Resource"
+        "helperResourceEditor": "Summarization station"
       },
       "dashboard": {
         "readyBadge": "{percent}% ready",
@@ -2631,7 +2631,7 @@
           "shortQuiz": "Short Quiz",
           "challenge": "Challenge",
           "exam": "Exam",
-          "helperFile": "Helper Files"
+          "helperFile": "Summarization station"
         },
         "completionRules": {
           "viewAll": "Watch Completion (100%)",
@@ -2665,7 +2665,7 @@
             "shortQuiz": "Short Quiz",
             "challenge": "Challenge",
             "exam": "Exams",
-            "helperFile": "Helper Files"
+            "helperFile": "Summarization station"
           }
         }
       },
@@ -3625,15 +3625,15 @@
     },
     "contentManagement": {
       "page": {
-        "title": "Content files management",
+        "title": "Summarization station",
         "description": "Follow and organize all learning resources available on the platform.",
         "addFile": "Add new file",
         "loading": "Loading content files...",
-        "loadError": "Failed to load helper resource files"
+        "loadError": "Failed to load summarization station files"
       },
       "breadcrumbs": {
         "home": "Home",
-        "content": "Manage helper files",
+        "content": "Summarization station",
         "add": "Add",
         "edit": "Edit"
       },
@@ -3716,7 +3716,7 @@
           "createdAt": "Created at",
           "actions": "Actions"
         },
-        "empty": "No helper resource files found",
+        "empty": "No summarization station files found",
         "deleteSuccess": "File deleted successfully",
         "status": {
           "active": "Active",
@@ -3735,7 +3735,7 @@
         }
       },
       "deleteModal": {
-        "title": "Delete helper file",
+        "title": "Delete summarization file",
         "description": "Are you sure you want to delete \"{fileName}\"? This cannot be undone.",
         "confirm": "Confirm delete",
         "cancel": "Cancel"
@@ -3767,7 +3767,7 @@
         "pageDescription": "Upload and link supporting educational resources to active courses.",
         "breadcrumbs": {
           "home": "Home",
-          "content": "Manage helper files",
+          "content": "Summarization station",
           "journeyEditor": "Journey editor",
           "add": "Add",
           "edit": "Edit"
@@ -3782,13 +3782,13 @@
           "step3": "Define access policy"
         },
         "stationContext": {
-          "addTitle": "Add helper file to station",
-          "pageDescription": "Create a helper resource file for this journey station.",
+          "addTitle": "Add file to summarization station",
+          "pageDescription": "Create a summarization file for this journey station.",
           "title": "Station context",
-          "step1": "Create or upload the helper resource",
-          "step2": "Keep the resource ready for station attachment",
+          "step1": "Create or upload the summarization file",
+          "step2": "Keep the file ready for station attachment",
           "step3": "Return to the journey editor",
-          "note": "The file is created in helper file management. The station attach API will be wired when the backend contract is available."
+          "note": "The file is created in the summarization station. The station attach API will be wired when the backend contract is available."
         },
         "sections": {
           "linkCourse": "Link course",
@@ -3819,8 +3819,8 @@
           "fileRequired": "Please upload a file first"
         },
         "messages": {
-          "createSuccess": "Helper resource created successfully",
-          "createError": "Failed to create helper resource"
+          "createSuccess": "Summarization file created successfully",
+          "createError": "Failed to create summarization file"
         },
         "upload": {
           "title": "Drag files here",
@@ -3847,7 +3847,7 @@
       },
       "details": {
         "loading": "Loading file details...",
-        "description": "View helper resource file details (read-only).",
+        "description": "View summarization file details (read-only).",
         "readOnlyBadge": "View only",
         "openFile": "Open file",
         "viewer": {
@@ -3861,7 +3861,7 @@
         "deleteSuccess": "File deleted successfully",
         "breadcrumbs": {
           "home": "Home",
-          "content": "Content files management"
+          "content": "Summarization station"
         },
         "fields": {
           "station": "Station",

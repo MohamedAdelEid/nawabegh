@@ -40,7 +40,7 @@
         "schedule": "Schedule",
         "interactiveBooks": "Interactive book management",
         "journeyEditor": "Journey editor",
-        "helperFileManagement": "Help file management",
+        "helperFileManagement": "Summarization station",
         "knowledgeCommunity": "Knowledge community",
         "helper": "Help",
         "settings": "Settings",
@@ -746,8 +746,8 @@
     },
     "helperFileManagement": {
       "page": {
-        "title": "Help file management",
-        "description": "Upload and manage helper resource files linked to your courses."
+        "title": "Summarization station",
+        "description": "Upload and manage summarization files linked to your courses."
       }
     },
     "liveSessions": {
@@ -858,7 +858,7 @@
       "resources": {
         "title": "Learning resources",
         "download": "Download",
-        "openInHelperFiles": "Open in help files",
+        "openInHelperFiles": "Open in summarization station",
         "unavailable": "Preview is not available for this file."
       },
       "related": {

@@ -20,7 +20,7 @@
         "description": "Track invoices, payment transactions, and active enrollments. Review revenue, monitor billing activity, and manage gateway settings."
       },
       "helperFileManagement": {
-        "description": "Upload, organize, and maintain helper documents that support lessons and exams. Preview files and keep shared resources accessible."
+        "description": "Upload, organize, and maintain summarization station files that support lessons and exams. Preview files and keep shared resources accessible."
       },
       "pricingManagement": {
         "description": "Configure subscription plans, pricing tiers, and payment-related settings. Track transactions and manage billing for schools and users."
