@@ -463,7 +463,8 @@
         "title": "Create a new post",
         "subtitle": "Share your ideas, ask a question, or publish knowledge with your colleagues",
         "validation": {
-          "required": "Title, category, and content are required."
+          "required": "Title, category, and content are required.",
+          "contentMinLength": "Content must be at least {min} characters. You entered {count} characters."
         },
         "fields": {
           "title": "Post title",

@@ -20,6 +20,11 @@ import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureA
 
 const IMAGE_FOLDER = "community/articles";
 const FILE_FOLDER = "community/attachments";
+const MIN_CONTENT_LENGTH = 50;
+
+function getPlainTextLength(content: string): number {
+  return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().length;
+}
 
 const EMPTY_DRAFT: CommunityPostDraft = {
   title: "",
@@ -117,6 +122,16 @@ export function StudentCommunityCreatePostView() {
       setError(t("validation.required"));
       return false;
     }
+    const contentLength = getPlainTextLength(draft.content);
+    if (contentLength < MIN_CONTENT_LENGTH) {
+      setError(
+        t("validation.contentMinLength", {
+          min: MIN_CONTENT_LENGTH,
+          count: contentLength,
+        }),
+      );
+      return false;
+    }
     setError(null);
     return true;
   };
@@ -139,8 +154,10 @@ export function StudentCommunityCreatePostView() {
       tags: [],
     });
     setSubmitting(false);
-    if (!result.data?.articleId || result.errorMessage) {
-      notify.error(result.errorMessage ?? t("publishError"));
+    if (!result.data?.articleId) {
+      const message = result.errorMessage ?? t("publishError");
+      setError(message);
+      notify.error(message);
       return;
     }
     sessionStorage.removeItem(STUDENT_COMMUNITY_POST_DRAFT_STORAGE_KEY);

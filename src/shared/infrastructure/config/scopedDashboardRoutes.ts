@@ -34,6 +34,7 @@ export type KnowledgeCommunityRoutes = {
   LIST: string;
   CREATE: string;
   PREVIEW: string;
+  SUBMITTED: (articleId: string) => string;
   ARTICLE: (articleId: string) => string;
   AUTHOR: (authorId: string) => string;
 };
@@ -146,6 +147,7 @@ export function getScopedDashboardRoutes(scope: DashboardScope): ScopedDashboard
       LIST: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
       CREATE: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
       PREVIEW: ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
+      SUBMITTED: (_articleId: string) => ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
       ARTICLE: ROUTES.ADMIN.ARTICLE_EDITOR.VIEW,
       AUTHOR: (_authorId: string) => ROUTES.ADMIN.ARTICLE_EDITOR.LIST,
     },

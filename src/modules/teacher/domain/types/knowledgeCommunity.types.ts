@@ -80,3 +80,11 @@ export type CommunityArticleViewModel = {
 };
 
 export const COMMUNITY_POST_DRAFT_STORAGE_KEY = "teacher-community-post-draft";
+export const COMMUNITY_POST_SUBMISSION_STORAGE_KEY = "teacher-community-post-submission";
+
+export type CommunityPostSubmission = {
+  articleId: string;
+  title: string;
+  categoryLabel: string;
+  submittedAt: string;
+};

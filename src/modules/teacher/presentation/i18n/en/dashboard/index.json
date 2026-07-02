@@ -1860,7 +1860,8 @@
         "title": "Create a new post",
         "subtitle": "Share your ideas, ask a question, or publish knowledge with your colleagues",
         "validation": {
-          "required": "Title, category, and content are required."
+          "required": "Title, category, and content are required.",
+          "contentMinLength": "Content must be at least {min} characters. You entered {count} characters."
         },
         "fields": {
           "title": "Post title",
@@ -1905,6 +1906,52 @@
         "attachment": "Attachment: {name}",
         "backToEdit": "Back to edit",
         "continueEditing": "Continue editing"
+      },
+      "submitted": {
+        "title": "Post submitted",
+        "subtitle": "Your post is waiting for review before it goes live",
+        "postLabel": "Submitted post",
+        "untitledPost": "Untitled post",
+        "body": "Thank you for sharing your post with the community. Our team will review it to make sure it follows the publishing guidelines.",
+        "reviewNote": "You will be redirected to your post automatically once it is approved and published.",
+        "status": {
+          "inReview": "Submitted and in review"
+        },
+        "sidebar": {
+          "title": "What happens next?",
+          "steps": {
+            "one": "Your post enters the moderation queue.",
+            "two": "The team reviews the content and category.",
+            "three": "After approval, your post appears in the community feed."
+          }
+        },
+        "actions": {
+          "backToCommunity": "Back to community",
+          "createAnother": "Create another post"
+        }
+      },
+      "submitted": {
+        "title": "Post submitted",
+        "subtitle": "Your post is waiting for review before it goes live",
+        "postLabel": "Submitted post",
+        "untitledPost": "Untitled post",
+        "body": "Thank you for sharing your knowledge. Our team will review your post to make sure it follows community guidelines.",
+        "reviewNote": "You will stay on this page while your post is under review. Once it is approved and published, you will be taken to the live article automatically.",
+        "status": {
+          "inReview": "Submitted and in review"
+        },
+        "sidebar": {
+          "title": "What happens next?",
+          "steps": {
+            "one": "Your post enters the moderation queue.",
+            "two": "An editor reviews the content and category.",
+            "three": "After approval, your post appears in the knowledge community."
+          }
+        },
+        "actions": {
+          "backToCommunity": "Back to community",
+          "createAnother": "Create another post"
+        }
       },
       "author": {
         "pageTitle": "Author profile",

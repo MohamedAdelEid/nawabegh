@@ -1,7 +1,11 @@
 import type { ArticleRow, ArticleStatusId } from "@/modules/admin/domain/data/articleEditorDashboardData";
 import { ArticleStatus } from "@/modules/admin/domain/entities/community.enums";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
-import { getApiErrorMessage, isApiSuccess } from "@/shared/infrastructure/api/apiResponse.utils";
+import {
+  extractApiErrorMessage,
+  getApiErrorMessage,
+  isApiSuccess,
+} from "@/shared/infrastructure/api/apiResponse.utils";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import {
   followKnowledgeCommunityUser,
@@ -80,15 +84,10 @@ function buildErrorResult<T>(
   const responseData = asRecord(response?.data);
   const dataEnvelope = responseData as BackendApiResponse<unknown> | null;
 
-  const detailMessage =
-    readString(responseData, ["detail", "title"], "") ||
-    dataEnvelope?.error?.message ||
-    (typeof axiosError?.message === "string" ? axiosError.message : fallbackMessage);
-
   return {
     status: (typeof dataEnvelope?.status === "string" ? dataEnvelope.status : undefined) ?? "Error",
     message: typeof dataEnvelope?.message === "string" ? dataEnvelope.message : undefined,
-    errorMessage: detailMessage,
+    errorMessage: extractApiErrorMessage(error, fallbackMessage),
     data: null,
   };
 }
@@ -925,13 +924,23 @@ export async function createCommunityArticle(
         tags: payload.tags ?? [],
       },
     });
+
+    if (!isApiSuccess(response)) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: getApiErrorMessage(response, "Failed to create article"),
+        data: null,
+      };
+    }
+
     const root = asRecord(response.data);
     const dataNode = asRecord(root?.data) ?? root;
     const articleId = readString(dataNode, ["articleId", "id"], "");
     return {
       status: response.status,
       message: response.message,
-      errorMessage: response.error?.message,
+      errorMessage: articleId ? undefined : getApiErrorMessage(response, "Failed to create article"),
       data: articleId ? { articleId } : null,
     };
   } catch (error) {

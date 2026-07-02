@@ -198,6 +198,8 @@ export const ROUTES = {
         LIST: "/student/knowledge-community",
         CREATE: "/student/knowledge-community/create",
         PREVIEW: "/student/knowledge-community/create/preview",
+        SUBMITTED: (articleId: string) =>
+          `/student/knowledge-community/create/submitted/${encodeURIComponent(articleId)}`,
         ARTICLE: (articleId: string) =>
           `/student/knowledge-community/articles/${encodeURIComponent(articleId)}`,
         AUTHOR: (authorId: string) =>
@@ -251,6 +253,8 @@ export const ROUTES = {
         LIST: "/teacher/knowledge-community",
         CREATE: "/teacher/knowledge-community/create",
         PREVIEW: "/teacher/knowledge-community/create/preview",
+        SUBMITTED: (articleId: string) =>
+          `/teacher/knowledge-community/create/submitted/${encodeURIComponent(articleId)}`,
         ARTICLE: (articleId: string) =>
           `/teacher/knowledge-community/articles/${encodeURIComponent(articleId)}`,
         AUTHOR: (authorId: string) =>

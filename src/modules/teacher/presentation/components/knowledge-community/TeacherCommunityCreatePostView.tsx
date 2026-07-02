@@ -9,6 +9,7 @@ import { createCommunityArticle } from "@/modules/admin/infrastructure/api/commu
 import { getKnowledgeCommunityCategoriesDropdown } from "@/modules/teacher/infrastructure/api/knowledgeCommunityCategoriesApi";
 import {
   COMMUNITY_POST_DRAFT_STORAGE_KEY,
+  COMMUNITY_POST_SUBMISSION_STORAGE_KEY,
   type CommunityPostDraft,
 } from "@/modules/teacher/domain/types/knowledgeCommunity.types";
 import { CommunityRichTextEditor } from "@/shared/presentation/components/community/CommunityRichTextEditor";
@@ -20,6 +21,11 @@ import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureA
 
 const IMAGE_FOLDER = "community/articles";
 const FILE_FOLDER = "community/attachments";
+const MIN_CONTENT_LENGTH = 50;
+
+function getPlainTextLength(content: string): number {
+  return content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().length;
+}
 
 const EMPTY_DRAFT: CommunityPostDraft = {
   title: "",
@@ -117,6 +123,16 @@ export function TeacherCommunityCreatePostView() {
       setError(t("validation.required"));
       return false;
     }
+    const contentLength = getPlainTextLength(draft.content);
+    if (contentLength < MIN_CONTENT_LENGTH) {
+      setError(
+        t("validation.contentMinLength", {
+          min: MIN_CONTENT_LENGTH,
+          count: contentLength,
+        }),
+      );
+      return false;
+    }
     setError(null);
     return true;
   };
@@ -139,13 +155,24 @@ export function TeacherCommunityCreatePostView() {
       tags: [],
     });
     setSubmitting(false);
-    if (!result.data?.articleId || result.errorMessage) {
-      notify.error(result.errorMessage ?? t("publishError"));
+    if (!result.data?.articleId) {
+      const message = result.errorMessage ?? t("publishError");
+      setError(message);
+      notify.error(message);
       return;
     }
     sessionStorage.removeItem(COMMUNITY_POST_DRAFT_STORAGE_KEY);
+    sessionStorage.setItem(
+      COMMUNITY_POST_SUBMISSION_STORAGE_KEY,
+      JSON.stringify({
+        articleId: result.data.articleId,
+        title: draft.title,
+        categoryLabel: draft.categoryLabel,
+        submittedAt: new Date().toISOString(),
+      }),
+    );
     notify.success(t("publishSuccess"));
-    router.push(routes.knowledgeCommunity.ARTICLE(result.data.articleId));
+    router.push(routes.knowledgeCommunity.SUBMITTED(result.data.articleId));
   };
 
   return (
