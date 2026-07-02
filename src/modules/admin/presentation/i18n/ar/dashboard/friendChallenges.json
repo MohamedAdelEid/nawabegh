@@ -1,0 +1,118 @@
+{
+  "friendChallenges": {
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "challenges": "إحصائيات التحديات"
+    },
+    "comingSoon": "قريباً",
+    "difficulty": {
+      "Easy": "سهل",
+      "Medium": "متوسط",
+      "Hard": "صعب"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي"
+    },
+    "overview": {
+      "page": {
+        "title": "إحصائيات التحديات",
+        "description": "متابعة أداء تحديات الطلاب وتحليل النتائج ومستويات الصعوبة.",
+        "exportReport": "تصدير التقرير",
+        "refresh": "تحديث البيانات"
+      },
+      "stats": {
+        "totalChallenges": {
+          "label": "إجمالي التحديات"
+        },
+        "successRate": {
+          "label": "نسبة الإجابات الصحيحة"
+        },
+        "totalPoints": {
+          "label": "إجمالي النقاط المكتسبة"
+        },
+        "averageDifficulty": {
+          "label": "مستوى الصعوبة الأكثر شيوعاً"
+        }
+      },
+      "charts": {
+        "difficulty": {
+          "title": "توزيع مستويات الصعوبة",
+          "subtitle": "نسبة التحديات حسب مستوى الصعوبة",
+          "levels": {
+            "Easy": "سهل",
+            "Medium": "متوسط",
+            "Hard": "صعب"
+          }
+        },
+        "dailyRate": {
+          "title": "معدل التحديات اليومي",
+          "subtitle": "التحديات المكتملة خلال آخر 7 أيام"
+        }
+      },
+      "filters": {
+        "search": {
+          "label": "البحث",
+          "placeholder": "البحث باسم الطالب..."
+        },
+        "difficulty": {
+          "label": "مستوى الصعوبة",
+          "all": "الكل",
+          "easy": "سهل",
+          "medium": "متوسط",
+          "hard": "صعب"
+        },
+        "subject": {
+          "label": "المادة",
+          "all": "الكل"
+        },
+        "fromDate": "من",
+        "toDate": "إلى"
+      },
+      "table": {
+        "title": "سجل التحديات الأخيرة",
+        "challengers": "المتحديان",
+        "vs": "ضد",
+        "subject": "المادة",
+        "winner": "الفائز",
+        "tie": "تعادل",
+        "difficulty": "مستوى الصعوبة",
+        "date": "تاريخ التحدي",
+        "points": "النقاط المكتسبة",
+        "pointsEarned": "+{value} نقطة",
+        "zeroPoints": "+0 نقطة",
+        "actions": "الإجراءات",
+        "viewDetail": "عرض تفاصيل التحدي",
+        "empty": "لا توجد تحديات مطابقة للفلاتر الحالية.",
+        "showing": "عرض {from}–{to} من {total} تحدٍ"
+      }
+    },
+    "detail": {
+      "page": {
+        "title": "تفاصيل التحدي",
+        "description": "مراجعة شاملة لنتائج التحدي، أداء المتنافسين، وسجل الإجابات التفصيلي.",
+        "shareReport": "مشاركة التقرير"
+      },
+      "loadError": "تعذر تحميل تفاصيل التحدي.",
+      "difficultyLevel": "مستوى {level}",
+      "duration": "مدة التحدي {value}",
+      "participant": {
+        "winner": "الفائز",
+        "score": "النتيجة",
+        "points": "النقاط",
+        "accuracy": "الدقة"
+      },
+      "answerLog": {
+        "title": "سجل الإجابات التفصيلي",
+        "question": "السؤال",
+        "correctAnswer": "الإجابة الصحيحة",
+        "timeSpent": "الوقت المستغرق",
+        "correct": "صحيح",
+        "incorrect": "خاطئ",
+        "empty": "لا توجد إجابات مسجلة لهذه الجلسة.",
+        "showAll": "عرض كافة الأسئلة ({count} سؤال)",
+        "showLess": "عرض عدد أقل من الأسئلة"
+      }
+    }
+  }
+}

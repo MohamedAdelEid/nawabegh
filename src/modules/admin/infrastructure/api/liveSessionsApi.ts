@@ -1,4 +1,5 @@
 import type { BackendStatus } from "@/shared/domain/types/api.types";
+import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
 import { env } from "@/shared/infrastructure/config/env";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
@@ -225,6 +226,29 @@ function readArray(record: UnknownRecord | null, keys: string[]): unknown[] {
   return [];
 }
 
+function parseLiveSessionRuntimeMode(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+  if (trimmed !== "" && !Number.isNaN(Number(trimmed))) return Number(trimmed);
+
+  switch (trimmed.toLowerCase()) {
+    case "upcoming":
+      return LiveSessionRuntimeMode.Upcoming;
+    case "live":
+      return LiveSessionRuntimeMode.Live;
+    case "recorded":
+    case "recordingavailable":
+      return LiveSessionRuntimeMode.Recorded;
+    case "endedwithoutrecording":
+    case "ended":
+      return LiveSessionRuntimeMode.EndedWithoutRecording;
+    default:
+      return null;
+  }
+}
+
 function mapHttpStatus(statusCode: number | null): BackendStatus | "Error" {
   switch (statusCode) {
     case 400:
@@ -372,14 +396,7 @@ function mapLiveSession(data: unknown): LiveSession | null {
   if (!record || !id) return null;
 
   const broadcastLink = resolveBroadcastLink(record);
-  const runtimeModeRaw = record.runtimeMode;
-  const runtimeModeNumber =
-    typeof runtimeModeRaw === "number" && Number.isFinite(runtimeModeRaw)
-      ? runtimeModeRaw
-      : typeof runtimeModeRaw === "string" && runtimeModeRaw.trim() !== "" && !Number.isNaN(Number(runtimeModeRaw))
-        ? Number(runtimeModeRaw)
-        : null;
-  const runtimeMode = readString(record, ["runtimeMode"], "");
+  const runtimeModeLabel = readString(record, ["runtimeMode"], "");
   const status = readString(record, ["status"], "");
 
   return {
@@ -403,8 +420,8 @@ function mapLiveSession(data: unknown): LiveSession | null {
     zoomJoinUrl: broadcastLink || readString(record, ["zoomJoinUrl"], ""),
     zoomStartUrl: readString(record, ["zoomStartUrl"], ""),
     zoomPassword: readString(record, ["zoomPassword"], ""),
-    status: runtimeMode || status,
-    runtimeMode: runtimeModeNumber,
+    status: runtimeModeLabel || status,
+    runtimeMode: parseLiveSessionRuntimeMode(record.runtimeMode),
     canStartBroadcast: readBoolean(record, ["canStartBroadcast"]),
     hostTokenPath: readNullableString(record, ["hostTokenPath"]),
     recordingUrl: readNullableString(record, ["recordingUrl"]),
@@ -495,7 +512,8 @@ function mapLiveStationInfo(data: unknown): LiveStationInfo | null {
     scheduledEndAt: readString(record, ["scheduledEndAt", "scheduledEndUtc"], ""),
     durationMinutes: readNumber(record, ["durationMinutes", "durationMin"]),
     status: readNumber(record, ["status"]),
-    runtimeMode: readNumber(record, ["runtimeMode"]),
+    runtimeMode:
+      parseLiveSessionRuntimeMode(record.runtimeMode) ?? LiveSessionRuntimeMode.Upcoming,
     recordingUrl: readNullableString(record, ["recordingUrl"]),
     learningGoals: mapLearningGoals(record.learningGoals),
     preSessionTasks: readArray(record, ["preSessionTasks", "tasks"])
@@ -633,7 +651,12 @@ export async function getLiveHostToken(
       data: mapLiveHostToken(response.data),
     };
   } catch (error) {
-    return buildErrorResult(error, "Failed to load host token");
+    const result = buildErrorResult<LiveHostToken>(error, "Failed to load host token");
+    const errorMessage = result.errorMessage?.toLowerCase() ?? "";
+    if (errorMessage.includes("forbidden") || errorMessage.includes("غير متاحة")) {
+      return { ...result, status: "Forbidden" };
+    }
+    return result;
   }
 }
 

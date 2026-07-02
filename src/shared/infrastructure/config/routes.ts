@@ -119,6 +119,11 @@ export const ROUTES = {
       QUIZ_ANALYSIS: (quizId: string) =>
         `/admin/results/quizzes/${encodeURIComponent(quizId)}/analysis`,
     },
+    FRIEND_CHALLENGES: {
+      LIST: "/admin/friend-challenges",
+      DETAIL: (challengeId: string) =>
+        `/admin/friend-challenges/${encodeURIComponent(challengeId)}`,
+    },
     QUESTION_BANK: {
       LIST: "/admin/question-bank",
       MANAGE: "/admin/question-bank/manage",
@@ -215,6 +220,9 @@ export const ROUTES = {
         EDIT: (courseId: string) => `/teacher/courses/${courseId}/edit`,
         STATISTICS: (courseId: string) => `/teacher/courses/${courseId}/statistics`,
         STATISTICS_OVERVIEW: "/teacher/course-statistics",
+        SUBSCRIBERS: (courseId: string) => `/teacher/courses/${courseId}/subscribers`,
+        SUBSCRIBER_PROFILE: (courseId: string, studentUserId: string) =>
+          `/teacher/courses/${courseId}/subscribers/${encodeURIComponent(studentUserId)}`,
       },
       CHAT_GROUPS: {
         LIST: "/teacher/chat-groups",

@@ -1,4 +1,5 @@
 import type { ArticleRow, ArticleStatusId } from "@/modules/admin/domain/data/articleEditorDashboardData";
+import { ArticleStatus } from "@/modules/admin/domain/entities/community.enums";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { getApiErrorMessage, isApiSuccess } from "@/shared/infrastructure/api/apiResponse.utils";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
@@ -92,24 +93,72 @@ function buildErrorResult<T>(
   };
 }
 
+const ARTICLE_STATUS_STRING_TO_CODE: Record<string, CommunityArticleStatusCode> = {
+  draft: ArticleStatus.Draft,
+  pendingreview: ArticleStatus.PendingReview,
+  needsedits: ArticleStatus.NeedsEdits,
+  published: ArticleStatus.Published,
+  hidden: ArticleStatus.Hidden,
+  removed: ArticleStatus.Removed,
+};
+
+function readArticleStatusCode(record: UnknownRecord | null): CommunityArticleStatusCode | null {
+  if (!record) return null;
+
+  const numericStatus = readNumber(record, ["status", "articleStatus", "articleStatusCode"]);
+  if (
+    numericStatus !== null &&
+    numericStatus >= ArticleStatus.Draft &&
+    numericStatus <= ArticleStatus.Removed
+  ) {
+    return numericStatus as CommunityArticleStatusCode;
+  }
+
+  const statusText = readString(record, ["status", "articleStatus"], "").trim();
+  if (!statusText) return null;
+
+  const normalized = statusText.replace(/\s+/g, "").toLowerCase();
+  return ARTICLE_STATUS_STRING_TO_CODE[normalized] ?? null;
+}
+
 /** Maps backend ArticleStatus enum to dashboard status keys. */
 export function mapCommunityArticleStatus(status: number | null | undefined): ArticleStatusId {
   switch (status) {
-    case 0:
+    case ArticleStatus.Draft:
       return "draft";
-    case 1:
+    case ArticleStatus.PendingReview:
       return "pendingReview";
-    case 2:
+    case ArticleStatus.NeedsEdits:
       return "needsEdits";
-    case 3:
+    case ArticleStatus.Published:
       return "published";
-    case 4:
+    case ArticleStatus.Hidden:
       return "hidden";
-    case 5:
+    case ArticleStatus.Removed:
       return "rejected";
     default:
       return "draft";
   }
+}
+
+export function canHideCommunityArticle(statusId: ArticleStatusId): boolean {
+  return statusId === "published";
+}
+
+export function canUnhideCommunityArticle(statusId: ArticleStatusId): boolean {
+  return statusId === "hidden";
+}
+
+export function resolveCommunityArticleMutationError(
+  errorMessage: string | undefined,
+  messages: { invalidStatusHide: string; invalidStatusUnhide: string; fallback: string },
+  operation: "hide" | "unhide" = "hide",
+): string {
+  const normalized = errorMessage?.trim().toUpperCase();
+  if (normalized === "INVALID_STATUS") {
+    return operation === "unhide" ? messages.invalidStatusUnhide : messages.invalidStatusHide;
+  }
+  return errorMessage?.trim() || messages.fallback;
 }
 
 function estimateReadMinutesFromExcerpt(excerpt: string): number {
@@ -138,7 +187,7 @@ function mapArticleRow(item: unknown): ArticleRow | null {
   const authorRecord = asRecord(record.author);
   const categoryRecord = asRecord(record.primaryCategory);
   const excerpt = readString(record, ["excerpt"], "");
-  const statusNum = readNumber(record, ["status"]);
+  const statusCode = readArticleStatusCode(record);
 
   const authorName = readString(authorRecord, ["fullName", "name"], "—");
   const authorAvatarRaw = readString(
@@ -176,8 +225,8 @@ function mapArticleRow(item: unknown): ArticleRow | null {
       ["viewsList"],
     ),
     publishedAt: readString(record, ["publishedAt", "createdAt", "submittedAt"], "") || "",
-    statusId: mapCommunityArticleStatus(statusNum),
-    isHidden: statusNum === 4,
+    statusId: mapCommunityArticleStatus(statusCode),
+    isHidden: statusCode === ArticleStatus.Hidden,
   };
 }
 
@@ -522,7 +571,7 @@ function mapArticleDetailFromRecord(record: UnknownRecord): CommunityArticleDeta
     title: readString(record, ["title"], "—"),
     content: readString(record, ["content"], ""),
     coverImageUrl: readString(record, ["coverImageUrl", "coverImage"], "") || null,
-    status: readNumber(record, ["status"]) ?? 0,
+    status: readArticleStatusCode(record) ?? ArticleStatus.Draft,
     isFeatured: readBoolean(record, ["isFeatured"], false),
     categories,
     tags,

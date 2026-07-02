@@ -31,8 +31,11 @@ import {
 } from "@/modules/admin/domain/data/articleEditorReviewData";
 import {
   approveCommunityArticle,
+  canHideCommunityArticle,
+  canUnhideCommunityArticle,
   hideCommunityArticle,
   rejectCommunityArticle,
+  resolveCommunityArticleMutationError,
   unhideCommunityArticle,
 } from "@/modules/admin/infrastructure/api/communityArticlesApi";
 import type { ArticleStatusId } from "@/modules/admin/domain/data/articleEditorDashboardData";
@@ -70,11 +73,11 @@ function reviewArticleStatusTone(status: ArticleStatusId) {
 
 /** Same rules as `ArticleEditorDashboard` row actions. */
 function canHideArticleForAdmin(statusId: ArticleStatusId) {
-  return statusId !== "hidden" && statusId !== "rejected";
+  return canHideCommunityArticle(statusId);
 }
 
 function canUnhideArticleForAdmin(statusId: ArticleStatusId) {
-  return statusId === "hidden";
+  return canUnhideCommunityArticle(statusId);
 }
 
 export function AdminArticleEditorReviewPage({
@@ -175,7 +178,13 @@ export function AdminArticleEditorReviewPage({
     setHideArticlePending(false);
 
     if (result.errorMessage) {
-      notify.error(result.errorMessage ?? tEditor("table.loadError"));
+      notify.error(
+        resolveCommunityArticleMutationError(result.errorMessage, {
+          invalidStatusHide: tEditor("table.errors.invalidStatusHide"),
+          invalidStatusUnhide: tEditor("table.errors.invalidStatusUnhide"),
+          fallback: tEditor("table.loadError"),
+        }, isHidden ? "unhide" : "hide"),
+      );
       return;
     }
     notify.success(

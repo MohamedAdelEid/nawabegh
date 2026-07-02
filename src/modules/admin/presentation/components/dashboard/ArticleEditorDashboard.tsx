@@ -12,10 +12,13 @@ import {
 } from "@/modules/admin/domain/data/articleEditorDashboardData";
 import {
   approveCommunityArticle,
+  canHideCommunityArticle,
+  canUnhideCommunityArticle,
   deleteCommunityArticle,
   getCommunityArticles,
   hideCommunityArticle,
   rejectCommunityArticle,
+  resolveCommunityArticleMutationError,
   unhideCommunityArticle,
   type CommunityArticleStatusCode,
 } from "@/modules/admin/infrastructure/api/communityArticlesApi";
@@ -83,12 +86,20 @@ function canReviewArticle(statusId: ArticleStatusId) {
   return statusId === "pendingReview" || statusId === "needsEdits";
 }
 
-function canHideArticle(statusId: ArticleStatusId) {
-  return statusId !== "hidden" && statusId !== "rejected";
-}
-
-function canUnhideArticle(statusId: ArticleStatusId) {
-  return statusId === "hidden";
+function articleMutationErrorMessage(
+  t: ReturnType<typeof useTranslations>,
+  errorMessage: string | undefined,
+  operation: "hide" | "unhide" = "hide",
+) {
+  return resolveCommunityArticleMutationError(
+    errorMessage,
+    {
+      invalidStatusHide: t("articleEditor.table.errors.invalidStatusHide"),
+      invalidStatusUnhide: t("articleEditor.table.errors.invalidStatusUnhide"),
+      fallback: t("articleEditor.table.loadError"),
+    },
+    operation,
+  );
 }
 
 export function ArticleEditorDashboard() {
@@ -338,7 +349,7 @@ export function ArticleEditorDashboard() {
       notify.success(result.message ?? t("articleEditor.table.actions.hideSuccess"));
       await loadArticles();
     } else {
-      notify.error(result.errorMessage ?? t("articleEditor.table.loadError"));
+      notify.error(articleMutationErrorMessage(t, result.errorMessage, "hide"));
     }
     setPendingMutationId(null);
   };
@@ -351,7 +362,7 @@ export function ArticleEditorDashboard() {
       notify.success(result.message ?? t("articleEditor.table.actions.showSuccess"));
       await loadArticles();
     } else {
-      notify.error(result.errorMessage ?? t("articleEditor.table.loadError"));
+      notify.error(articleMutationErrorMessage(t, result.errorMessage, "unhide"));
     }
     setPendingMutationId(null);
   };
@@ -665,7 +676,7 @@ export function ArticleEditorDashboard() {
                         >
                           <ClipboardList className="h-4 w-4" />
                         </button>
-                        {canUnhideArticle(row.statusId) ? (
+                        {canUnhideCommunityArticle(row.statusId) ? (
                           <button
                             type="button"
                             className="dashboard-icon-btn"
@@ -678,7 +689,7 @@ export function ArticleEditorDashboard() {
                           >
                             <Eye className="h-4 w-4" />
                           </button>
-                        ) : canHideArticle(row.statusId) ? (
+                        ) : canHideCommunityArticle(row.statusId) ? (
                           <button
                             type="button"
                             className="dashboard-icon-btn"
@@ -769,7 +780,7 @@ export function ArticleEditorDashboard() {
                             >
                               {t("articleEditor.table.actions.view")}
                             </button>
-                            {canUnhideArticle(row.statusId) ? (
+                            {canUnhideCommunityArticle(row.statusId) ? (
                               <button
                                 type="button"
                                 role="menuitem"
@@ -782,7 +793,7 @@ export function ArticleEditorDashboard() {
                               >
                                 {t("articleEditor.table.actions.show")}
                               </button>
-                            ) : canHideArticle(row.statusId) ? (
+                            ) : canHideCommunityArticle(row.statusId) ? (
                               <button
                                 type="button"
                                 role="menuitem"

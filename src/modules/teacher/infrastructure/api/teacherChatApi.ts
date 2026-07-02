@@ -516,22 +516,56 @@ export async function deleteChatMessage(messageId: string): Promise<void> {
   assertSuccess(response, "Failed to delete message");
 }
 
-export async function addChatMessageReaction(messageId: string, emoji: string): Promise<void> {
+export type ChatMessageReactionDto = {
+  emoji: string;
+  count: number;
+  reactedByCurrentUser: boolean;
+};
+
+function mapMessageReactions(data: unknown): ChatMessageReactionDto[] {
+  return extractListRows(data)
+    .map((item) => {
+      const row = asRecord(item);
+      if (!row) return null;
+      const emoji = readString(row, ["emoji"], "").trim();
+      if (!emoji) return null;
+      return {
+        emoji,
+        count: readNumber(row, ["count"]) ?? 0,
+        reactedByCurrentUser: readBoolean(row, [
+          "reactedByCurrentUser",
+          "isReactedByCurrentUser",
+          "reactedByMe",
+          "hasReacted",
+        ]),
+      };
+    })
+    .filter((item): item is ChatMessageReactionDto => item !== null);
+}
+
+export async function addChatMessageReaction(
+  messageId: string,
+  emoji: string,
+): Promise<ChatMessageReactionDto[]> {
   const response = await httpClient.post<unknown>({
     url: `${CHAT_BASE}/messages/${encodeURIComponent(messageId)}/reactions`,
     data: JSON.stringify(emoji),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json; charset=utf-8" },
   });
   assertSuccess(response, "Failed to add reaction");
+  return mapMessageReactions(response.data);
 }
 
-export async function removeChatMessageReaction(messageId: string, emoji: string): Promise<void> {
+export async function removeChatMessageReaction(
+  messageId: string,
+  emoji: string,
+): Promise<ChatMessageReactionDto[]> {
   const response = await httpClient.delete<unknown>({
     url: `${CHAT_BASE}/messages/${encodeURIComponent(messageId)}/reactions`,
-    data: JSON.stringify(emoji),
-    headers: { "Content-Type": "application/json" },
+    params: { emoji },
   });
   assertSuccess(response, "Failed to remove reaction");
+  return mapMessageReactions(response.data);
 }
 
 export async function banChatUser(

@@ -24,6 +24,7 @@ import {
   Receipt,
   School,
   Settings,
+  Swords,
   Users,
 } from "lucide-react";
 
@@ -168,6 +169,16 @@ export const adminSidebarItems: SidebarItems = {
       href: ROUTES.ADMIN.RESULTS.LIST,
       activePathPrefixes: [ROUTES.ADMIN.RESULTS.LIST, "/admin/results/"],
       icon: BarChart3,
+    },
+    {
+      id: "friendChallenges",
+      labelKey: "sidebar.nav.friendChallenges",
+      href: ROUTES.ADMIN.FRIEND_CHALLENGES.LIST,
+      activePathPrefixes: [
+        ROUTES.ADMIN.FRIEND_CHALLENGES.LIST,
+        "/admin/friend-challenges/",
+      ],
+      icon: Swords,
     },
   ],
   secondary: [

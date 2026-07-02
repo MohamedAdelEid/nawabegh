@@ -407,6 +407,7 @@ export interface TeacherCourseWeeklyPerformancePoint {
 
 export interface TeacherStationInsight {
   stationId: string;
+  stationType?: number;
   learningPathTitle: string;
   stationName: string;
   metricPercent: number;
@@ -611,4 +612,124 @@ export interface TeacherCourseCreatePayload {
 
 export interface TeacherCourseCreateResult {
   courseId: string;
+}
+
+export interface TeacherSubscriberRanking {
+  rank: number;
+  studentUserId: string;
+  fullName: string;
+  profileImageUrl: string | null;
+  progressPercent: number;
+  coursePointsEarned: number;
+}
+
+export interface TeacherSubscriberRankingsData {
+  rankings: TeacherSubscriberRanking[];
+}
+
+export interface TeacherSubscribersSummary {
+  totalStudents: number;
+  activeStudents: number;
+  newStudentsLast30Days: number;
+  completionPercent: number;
+  averageScorePercent: number;
+}
+
+export interface TeacherSubscriberListItem {
+  studentUserId: string;
+  fullName: string;
+  profileImageUrl: string | null;
+  username: string;
+  gradeName: string;
+  email: string;
+  isActive: boolean;
+  statusLabelAr: string;
+  enrolledAt: string;
+  progressPercent: number;
+  averageScorePercent: number;
+  lastActivityAt: string | null;
+}
+
+export interface TeacherSubscribersListData {
+  summary: TeacherSubscribersSummary;
+  students: {
+    items: TeacherSubscriberListItem[];
+    totalCount: number;
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+  };
+}
+
+export interface TeacherSubscriberIdentity {
+  userId: string;
+  fullName: string;
+  profileImageUrl: string | null;
+  gradeName: string;
+  schoolName: string;
+  countryName: string;
+  isActive: boolean;
+  enrolledAt: string;
+}
+
+export interface TeacherSubscriberCourseKpis {
+  progressPercent: number;
+  averageScorePercent: number;
+  attendancePercent: number;
+  lastActivityAt: string | null;
+  certificateEarned: boolean;
+  courseRank: number;
+  coursePointsEarned: number;
+  completedStationsCount: number;
+  totalStationsCount: number;
+  quizAttemptsCount: number;
+}
+
+export interface TeacherSubscriberInteraction {
+  chatMessagesSent: number;
+  stationsCompleted: number;
+  quizzesSubmitted: number;
+  liveSessionsAttended: number;
+}
+
+export interface TeacherSubscriberLearningPath {
+  learningPathId: string;
+  title: string;
+  order: number;
+  totalStations: number;
+  completedStations: number;
+  progressPercent: number;
+}
+
+export interface TeacherSubscriberQuizResult {
+  quizId: string;
+  title: string;
+  scorePercent: number;
+  passed: boolean;
+  submittedAt: string;
+}
+
+export interface TeacherSubscriberRecentActivity {
+  activityType: string;
+  activityTypeLabelAr: string;
+  title: string;
+  occurredAtUtc: string;
+}
+
+export interface TeacherSubscriberWeeklyActivityPoint {
+  dateUtc: string;
+  activityCount: number;
+  dayLabel: string;
+}
+
+export interface TeacherSubscriberProfileData {
+  courseId: string;
+  courseTitle: string;
+  identity: TeacherSubscriberIdentity;
+  courseKpis: TeacherSubscriberCourseKpis;
+  interaction: TeacherSubscriberInteraction;
+  learningPaths: TeacherSubscriberLearningPath[];
+  quizResults: TeacherSubscriberQuizResult[];
+  recentActivity: TeacherSubscriberRecentActivity[];
+  weeklyActivity: TeacherSubscriberWeeklyActivityPoint[];
 }

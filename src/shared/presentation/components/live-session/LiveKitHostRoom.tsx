@@ -8,7 +8,7 @@ import {
 import "@livekit/components-styles";
 import { Room } from "livekit-client";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 
@@ -33,12 +33,6 @@ export function LiveKitHostRoom({
   // unmounts reuse/destroy the same connection instead of leaking new ones.
   const room = useMemo(() => new Room({ adaptiveStream: true, dynacast: true }), []);
 
-  useEffect(() => {
-    return () => {
-      void room.disconnect();
-    };
-  }, [room]);
-
   return (
     <LiveKitRoom
       room={room}
@@ -48,7 +42,11 @@ export function LiveKitHostRoom({
       video
       audio
       onDisconnected={onDisconnected}
-      onError={(error) => notify.error(error.message)}
+      onError={(error) => {
+        // Benign teardown noise when the room disconnects on unmount or end-session.
+        if (error.message.includes("User-Initiated Abort")) return;
+        notify.error(error.message);
+      }}
       className="h-full w-full"
       data-lk-theme="default"
     >

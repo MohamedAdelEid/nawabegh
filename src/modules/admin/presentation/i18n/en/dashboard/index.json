@@ -54,6 +54,7 @@
         "badgeManagement": "Badge management",
         "supportTickets": "Support & disputes",
         "resultsAnalytics": "Results & Analytics",
+        "friendChallenges": "Challenge Statistics",
         "helper": "Help",
         "settings": "Settings",
         "logout": "Log out"
@@ -2134,7 +2135,11 @@
           "pageSize": "Rows per page"
         },
         "empty": "No articles match the current filters.",
-        "loadError": "Could not load articles. Please try again."
+        "loadError": "Could not load articles. Please try again.",
+        "errors": {
+          "invalidStatusHide": "Only published articles can be hidden.",
+          "invalidStatusUnhide": "Only hidden articles can be shown again."
+        }
       },
       "modals": {
         "delete": {

@@ -38,7 +38,7 @@
         "courseManagement": "إدارة الدورات التعليمية",
         "bundleManagement": "ادارة الحزم التعليمية",
         "invoiceManagement": "ادارة الفواتير",
-        "helperFileManagement": "محطة التلخيص",
+        "helperFileManagement": "اداره الملفات المساعده",
         "pricingManagement": "إدارة الخطط والأسعار",
         "paymentGatewaySettings": "إعدادات بوابات الدفع",
         "articleEditor": "محرر المقالات",
@@ -54,6 +54,7 @@
         "badgeManagement": "إدارة الأوسمة",
         "supportTickets": "الدعم والنزاعات",
         "resultsAnalytics": "النتائج والتحليلات",
+        "friendChallenges": "إحصائيات التحديات",
         "helper": "مساعدة",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
@@ -2134,7 +2135,11 @@
           "pageSize": "عدد الصفوف في الصفحة"
         },
         "empty": "لا توجد مقالات مطابقة للفلاتر الحالية.",
-        "loadError": "تعذر تحميل المقالات. حاول مرة أخرى."
+        "loadError": "تعذر تحميل المقالات. حاول مرة أخرى.",
+        "errors": {
+          "invalidStatusHide": "يمكن إخفاء المقالات المنشورة فقط.",
+          "invalidStatusUnhide": "يمكن إظهار المقالات المخفية فقط."
+        }
       },
       "modals": {
         "delete": {
@@ -3628,7 +3633,7 @@
     },
     "contentManagement": {
       "page": {
-        "title": "محطة التلخيص",
+        "title": "اداره الملفات المساعده",
         "description": "تتبع وتنظيم جميع الموارد التعليمية المتاحة على المنصة.",
         "addFile": "إضافة ملف جديد",
         "loading": "جاري تحميل ملفات المحتوى...",
@@ -3636,7 +3641,7 @@
       },
       "breadcrumbs": {
         "home": "الرئيسية",
-        "content": "محطة التلخيص",
+        "content": "اداره الملفات المساعده",
         "add": "إضافة",
         "edit": "تعديل"
       },

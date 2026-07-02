@@ -59,7 +59,25 @@ export function useTeacherChatMessageActions(courseId: string) {
       emoji: string;
       reactions: Array<{ emoji: string; reactedByCurrentUser?: boolean }>;
     }) => teacherApi.toggleChatReaction(messageId, emoji, reactions),
-    onSuccess: invalidate,
+    onSuccess: (updatedReactions, { messageId }) => {
+      queryClient.setQueriesData<TeacherChatConversationData>(
+        { queryKey: ["teacher", "chat", courseId, "conversation"] },
+        (previous) => {
+          if (!previous) return previous;
+          return {
+            ...previous,
+            dateGroups: previous.dateGroups.map((group) => ({
+              ...group,
+              messages: group.messages.map((message) =>
+                message.id === messageId
+                  ? { ...message, reactions: updatedReactions }
+                  : message,
+              ),
+            })),
+          };
+        },
+      );
+    },
   });
 
   return { pinMutation, deleteMutation, reactionMutation };

@@ -40,7 +40,7 @@
         "schedule": "الجدول الزمني",
         "interactiveBooks": "إدارة الكتاب التفاعلي",
         "journeyEditor": "محرر الرحلة التعليمية",
-        "helperFileManagement": "محطة التلخيص",
+        "helperFileManagement": "اداره الملفات المساعده",
         "knowledgeCommunity": "مجتمع المعرفة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
@@ -746,7 +746,7 @@
     },
     "helperFileManagement": {
       "page": {
-        "title": "محطة التلخيص",
+        "title": "اداره الملفات المساعده",
         "description": "رفع وإدارة ملفات التلخيص المرتبطة بدوراتك."
       }
     },
@@ -1073,6 +1073,84 @@
               "title": "درس تمهيدي",
               "meta": "درس فيديو"
             }
+          }
+        }
+      },
+      "subscribers": {
+        "title": "مشتركي الدورة",
+        "description": "عرض وإدارة الطلاب المشتركين في هذه الدورة ومتابعة تقدمهم.",
+        "breadcrumb": "المشتركون",
+        "breadcrumbCourse": "تفاصيل الدورة",
+        "actions": {
+          "exportReport": "تصدير التقرير"
+        },
+        "rankings": {
+          "title": "الطلاب المشتركون",
+          "viewAll": "عرض الكل",
+          "empty": "لا يوجد مشتركون بعد."
+        },
+        "stats": {
+          "totalStudents": "إجمالي المشتركين",
+          "activeStudents": "النشطون",
+          "newStudents": "+{count} جدد",
+          "completionRate": "نسبة إكمال الدورة",
+          "completionHint": "متوسط التقدم",
+          "averageScore": "متوسط الدرجات"
+        },
+        "filters": {
+          "searchLabel": "بحث",
+          "searchPlaceholder": "البحث بالاسم أو البريد...",
+          "reset": "إعادة ضبط"
+        },
+        "table": {
+          "title": "قائمة المشتركين",
+          "student": "المشترك",
+          "grade": "الصف",
+          "enrolledAt": "تاريخ الاشتراك",
+          "progress": "نسبة الإنجاز",
+          "lastActivity": "آخر نشاط",
+          "status": "الحالة",
+          "actions": "الإجراءات",
+          "viewProfile": "عرض الملف",
+          "active": "نشط",
+          "empty": "لا يوجد مشتركون مطابقون للبحث.",
+          "showing": "عرض {from}-{to} من أصل {total} مشترك"
+        },
+        "profile": {
+          "backToList": "العودة للمشتركين",
+          "online": "متصل الآن",
+          "offline": "غير متصل",
+          "joined": "انضم: {date}",
+          "overallProgress": "التقدم العام",
+          "progressLevel": "مستوى التقدم",
+          "certificateEarned": "حصل على الشهادة",
+          "lastActivity": "آخر نشاط",
+          "learningPaths": "مسار الدورة التدريبية",
+          "learningPathsEmpty": "لا توجد مسارات تعليمية.",
+          "pathCompleted": "مكتمل",
+          "weeklyActivity": "أداء الطالب (الأسبوعي)",
+          "activityCount": "عدد الأنشطة",
+          "quizResults": "نتائج الاختبارات",
+          "quizResultsEmpty": "لا توجد نتائج اختبارات.",
+          "quizTitle": "الاختبار",
+          "quizScore": "الدرجة",
+          "quizDate": "التاريخ",
+          "interaction": "إحصائيات التفاعل",
+          "interactionMessages": "رسائل المحادثة",
+          "interactionStations": "المحطات المكتملة",
+          "interactionQuizzes": "الاختبارات المسلّمة",
+          "interactionLive": "الجلسات المباشرة",
+          "recentActivity": "سجل النشاط الأخير",
+          "recentActivityEmpty": "لا يوجد نشاط حديث.",
+          "kpis": {
+            "points": "إجمالي النقاط",
+            "progress": "نسبة التقدم",
+            "stations": "المحطات المكتملة",
+            "stationsValue": "{completed}/{total}",
+            "averageScore": "متوسط الدرجات",
+            "quizzes": "الاختبارات",
+            "attendance": "نسبة الحضور",
+            "rank": "الترتيب في الدورة"
           }
         }
       },

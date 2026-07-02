@@ -57,7 +57,6 @@ function isLiveSessionStatus(status: string, runtimeMode: number | null) {
 export function mapLiveSessionToStation(session: LiveSession): LiveBroadcastStation {
   const scheduledAt = session.scheduledAt || `${session.scheduledDate}T${session.scheduledTime}`;
   const teacher = session.responsibleTeacher;
-
   return {
     id: session.id,
     stationId: session.stationId,

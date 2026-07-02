@@ -14,6 +14,13 @@ import {
   type TeacherCourseStatisticsParams,
   type TeacherCoursesStatisticsOverviewParams,
 } from "@/modules/teacher/infrastructure/api/teacherCoursesStatisticsApi";
+import {
+  fetchTeacherCourseSubscriberProfile,
+  fetchTeacherCourseSubscriberRankings,
+  fetchTeacherCourseSubscribersList,
+  type TeacherCourseSubscriberRankingsParams,
+  type TeacherCourseSubscribersListParams,
+} from "@/modules/teacher/infrastructure/api/teacherCourseSubscribersApi";
 import { fetchTeacherLiveAnalytics } from "@/modules/teacher/infrastructure/api/teacherLiveAnalyticsApi";
 import {
   endTeacherLiveSession,
@@ -48,6 +55,9 @@ import type {
   TeacherCoursesListData,
   TeacherCoursesListParams,
   TeacherCourseStatisticsData,
+  TeacherSubscriberProfileData,
+  TeacherSubscriberRankingsData,
+  TeacherSubscribersListData,
   TeacherChatConversationData,
   TeacherChatMembersData,
   TeacherChatGroupSettings,
@@ -130,6 +140,28 @@ export const teacherApi = {
     return fetchTeacherCourseStatisticsDetail(courseId, params);
   },
 
+  async getCourseSubscriberRankings(
+    courseId: string,
+    params: TeacherCourseSubscriberRankingsParams = {},
+  ): Promise<TeacherSubscriberRankingsData> {
+    return fetchTeacherCourseSubscriberRankings(courseId, params);
+  },
+
+  async getCourseSubscribers(
+    courseId: string,
+    params: TeacherCourseSubscribersListParams = {},
+  ): Promise<TeacherSubscribersListData> {
+    return fetchTeacherCourseSubscribersList(courseId, params);
+  },
+
+  async getCourseSubscriberProfile(
+    courseId: string,
+    studentUserId: string,
+    locale = "ar",
+  ): Promise<TeacherSubscriberProfileData> {
+    return fetchTeacherCourseSubscriberProfile(courseId, studentUserId, locale);
+  },
+
   async createCourse(
     payload: TeacherCourseCreatePayload,
     submitForReview = false,
@@ -198,20 +230,14 @@ export const teacherApi = {
     messageId: string,
     emoji: string,
     reactions: Array<{ emoji: string; reactedByCurrentUser?: boolean }> = [],
-  ): Promise<void> {
-    const selectedReaction = reactions.find((item) => item.emoji === emoji);
+  ) {
+    const myCurrentEmoji = reactions.find((item) => item.reactedByCurrentUser)?.emoji;
 
-    if (selectedReaction?.reactedByCurrentUser) {
-      await removeChatMessageReaction(messageId, emoji);
-      return;
+    if (myCurrentEmoji === emoji) {
+      return removeChatMessageReaction(messageId, emoji);
     }
 
-    const existingUserReaction = reactions.find((item) => item.reactedByCurrentUser);
-    if (existingUserReaction && existingUserReaction.emoji !== emoji) {
-      await removeChatMessageReaction(messageId, existingUserReaction.emoji);
-    }
-
-    await addChatMessageReaction(messageId, emoji);
+    return addChatMessageReaction(messageId, emoji);
   },
 
   async banChatParticipant(courseId: string, userId: string, reason: string): Promise<void> {

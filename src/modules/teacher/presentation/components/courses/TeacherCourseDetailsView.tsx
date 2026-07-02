@@ -32,6 +32,7 @@ import { DashboardBadge } from "@/shared/presentation/components/dashboard/Dashb
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { TeacherCourseDetailsSkeleton } from "@/modules/teacher/presentation/components/courses/TeacherCourseDetailsSkeleton";
+import { TeacherCourseSubscriberRankingsCard } from "@/modules/teacher/presentation/components/courses/subscribers";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
 function CurriculumItemIcon({ type }: { type: TeacherCourseCurriculumItem["type"] }) {
@@ -167,7 +168,7 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-6">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {[
@@ -202,12 +203,12 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
           <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
             <CardContent className="space-y-6 p-6">
               <div className="flex items-center justify-between gap-4">
+                <h2 className="text-xl font-bold text-slate-800">{t("courses.details.curriculum.title")}</h2>
                 <Button variant="link" className="text-[#C9A227]" asChild>
                   <Link href={ROUTES.USER.TEACHER.JOURNEY_EDITOR.EDITOR(courseId)}>
                     {t("courses.details.curriculum.viewPath")}
                   </Link>
                 </Button>
-                <h2 className="text-xl font-bold text-slate-800">{t("courses.details.curriculum.title")}</h2>
               </div>
 
               {data.curriculum.length === 0 ? (
@@ -230,6 +231,13 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
                               item.locked ? "border-slate-100 bg-slate-50 opacity-60" : "border-slate-100 bg-slate-50"
                             }`}
                           >
+                            <div className="flex flex-1 items-center gap-3 text-right">
+                              <CurriculumItemIcon type={item.type} />
+                              <div>
+                                <p className="font-medium text-slate-800">{item.title}</p>
+                                <p className="text-xs text-slate-500">{item.metaLabel}</p>
+                              </div>
+                            </div>
                             <div className="flex items-center gap-2">
                               {item.type === "pdf" ? (
                                 <Button variant="ghost" size="icon" className="rounded-xl">
@@ -240,13 +248,6 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
                                   <Eye className="h-4 w-4" />
                                 </Button>
                               )}
-                            </div>
-                            <div className="flex flex-1 items-center justify-end gap-3 text-right">
-                              <div>
-                                <p className="font-medium text-slate-800">{item.title}</p>
-                                <p className="text-xs text-slate-500">{item.metaLabel}</p>
-                              </div>
-                              <CurriculumItemIcon type={item.type} />
                             </div>
                           </div>
                         ))}
@@ -259,26 +260,30 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
           </Card>
         </div>
 
-        <Card className="h-fit rounded-[2rem] border-transparent bg-[#2C4260] text-white shadow-[var(--dashboard-shadow-soft)]">
-          <CardContent className="space-y-6 p-6 text-right">
-            <h2 className="text-lg font-bold">{t("courses.details.managementStats.title")}</h2>
-            <div className="space-y-2">
-              <Users className="mb-1 h-5 w-5 text-white/70" />
-              <p className="text-4xl font-bold">{data.registeredStudents}</p>
-              <p className="text-sm text-white/70">{t("courses.details.managementStats.registered")}</p>
-            </div>
-            <div className="space-y-2">
-              <Map className="mb-1 h-5 w-5 text-white/70" />
-              <p className="text-4xl font-bold">{data.learningPathCount}</p>
-              <p className="text-sm text-white/70">{t("courses.details.managementStats.learningPaths")}</p>
-            </div>
-            <div className="space-y-2">
-              <FolderOpen className="mb-1 h-5 w-5 text-white/70" />
-              <p className="text-4xl font-bold">{data.fileCount}</p>
-              <p className="text-sm text-white/70">{t("courses.details.managementStats.files")}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          <Card className="h-fit rounded-[2rem] border-transparent bg-[#2C4260] text-white shadow-[var(--dashboard-shadow-soft)]">
+            <CardContent className="space-y-6 p-6 text-right">
+              <h2 className="text-lg font-bold">{t("courses.details.managementStats.title")}</h2>
+              <div className="space-y-2">
+                <Users className="mb-1 h-5 w-5 text-white/70" />
+                <p className="text-4xl font-bold">{data.registeredStudents}</p>
+                <p className="text-sm text-white/70">{t("courses.details.managementStats.registered")}</p>
+              </div>
+              <div className="space-y-2">
+                <Map className="mb-1 h-5 w-5 text-white/70" />
+                <p className="text-4xl font-bold">{data.learningPathCount}</p>
+                <p className="text-sm text-white/70">{t("courses.details.managementStats.learningPaths")}</p>
+              </div>
+              <div className="space-y-2">
+                <FolderOpen className="mb-1 h-5 w-5 text-white/70" />
+                <p className="text-4xl font-bold">{data.fileCount}</p>
+                <p className="text-sm text-white/70">{t("courses.details.managementStats.files")}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <TeacherCourseSubscriberRankingsCard courseId={courseId} />
+        </div>
       </div>
     </div>
   );

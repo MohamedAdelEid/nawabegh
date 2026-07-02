@@ -22,6 +22,7 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { useAuth } from "@/shared/application/hooks/useAuth";
 import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
@@ -63,6 +64,8 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
+  const { user } = useAuth();
+  const isTeacherHost = user?.role === "Teacher";
 
   const [station, setStation] = useState<LiveBroadcastStation | null>(null);
   const [runtimeMode, setRuntimeMode] = useState(LiveSessionRuntimeMode.Upcoming);
@@ -117,9 +120,42 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
     setLoading(false);
   }, [journeyId, router, routes.journeyEditor, stationId]);
 
+  const refreshLiveState = useCallback(async () => {
+    const stationInfoResult = await getLiveStationInfo(stationId);
+    const sessionId = stationInfoResult.data?.liveSessionId;
+    if (!sessionId) return;
+
+    if (stationInfoResult.data) {
+      setRuntimeMode(stationInfoResult.data.runtimeMode);
+      setRecordingUrl(stationInfoResult.data.recordingUrl);
+    }
+
+    const result = await getLiveSessionWorkspace(sessionId);
+    if (!result.data) return;
+
+    setStation(mapLiveSessionToStation(result.data));
+    setCanStartBroadcast(result.data.canStartBroadcast);
+    if (result.data.runtimeMode !== null) {
+      setRuntimeMode(result.data.runtimeMode);
+    }
+    if (result.data.recordingUrl) {
+      setRecordingUrl(result.data.recordingUrl);
+    }
+  }, [stationId]);
+
   useEffect(() => {
     void loadSession();
   }, [loadSession]);
+
+  useEffect(() => {
+    if (runtimeMode !== LiveSessionRuntimeMode.Upcoming) return;
+
+    const intervalId = window.setInterval(() => {
+      void refreshLiveState();
+    }, 30_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [refreshLiveState, runtimeMode]);
 
   if (loading) {
     return <JourneyEditorStationPageSkeleton showSidebar />;
@@ -138,7 +174,9 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
     .filter(Boolean)
     .join(" · ");
   const showBroadcastHint =
-    runtimeMode === LiveSessionRuntimeMode.Live || canStartBroadcast;
+    canStartBroadcast ||
+    isTeacherHost ||
+    runtimeMode === LiveSessionRuntimeMode.Live;
 
   return (
     <div className="space-y-7">
@@ -324,6 +362,8 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
             registeredCount={station.registeredCount}
             coverImageUrl={station.thumbnailUrl}
             onSessionEnded={() => void loadSession()}
+            onScheduleDue={() => void refreshLiveState()}
+            isTeacherHost={isTeacherHost}
           />
 
           {/* Overview */}

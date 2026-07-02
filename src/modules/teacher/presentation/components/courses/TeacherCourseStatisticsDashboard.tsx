@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   Award,
@@ -23,6 +24,7 @@ import type {
   TeacherInteractiveStudent,
   TeacherStationInsight,
 } from "@/modules/teacher/domain/types/teacher.types";
+import { StationType } from "@/shared/domain/enums/learning-path.enums";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { cn } from "@/shared/application/lib/cn";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
@@ -59,6 +61,28 @@ function getInteractionTier(percent: number): InteractionTier {
   if (percent >= 70) return "onTrack";
   if (percent >= 35) return "needsHelp";
   return "atRisk";
+}
+
+function getTeacherStationReviewHref(
+  courseId: string,
+  stationId: string,
+  stationType?: number,
+): string {
+  const routes = ROUTES.USER.TEACHER.JOURNEY_EDITOR;
+
+  switch (stationType) {
+    case StationType.Flashcards:
+      return routes.FLASHCARD_GROUP(courseId, stationId);
+    case StationType.LiveStream:
+      return routes.LIVE_BROADCAST_VIEW(courseId, stationId);
+    case StationType.Challenge:
+      return routes.CHALLENGE_EDITOR(courseId, stationId);
+    case StationType.HelperResource:
+      return routes.HELPER_RESOURCE_EDITOR(courseId, stationId);
+    case StationType.ShortQuiz:
+    default:
+      return routes.EXAM_EDITOR(courseId, stationId);
+  }
 }
 
 function TeacherCourseTopStudentsTable({
@@ -185,33 +209,24 @@ function TeacherCourseTopStudentsTable({
 }
 
 function TeacherCourseChatInteractionCard({
+  courseId,
   students,
   interactionBoost,
   locale,
 }: {
+  courseId: string;
   students: TeacherInteractiveStudent[];
   interactionBoost: TeacherInteractionBoost | null | undefined;
   locale: string;
 }) {
   const t = useTranslations("teacher.dashboard");
   const totalInteraction = students.reduce((sum, student) => sum + student.interactionPoints, 0);
+  const chatHref = ROUTES.USER.TEACHER.CHAT_GROUPS.VIEW(courseId);
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
       <CardContent className="flex h-full flex-col space-y-5 p-6 text-right">
         <h3 className="text-lg font-bold text-slate-800">{t("courses.statistics.chat.title")}</h3>
-
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#DCE6F5]">
-            <MessageCircle className="h-5 w-5 text-[#2C4260]" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs text-slate-500">{t("courses.statistics.chat.volumeLabel")}</p>
-            <p className="text-3xl font-bold text-slate-800">
-              {totalInteraction.toLocaleString(locale)}
-            </p>
-          </div>
-        </div>
 
         {interactionBoost ? (
           <div className="space-y-3 rounded-2xl bg-sky-50 p-4">
@@ -239,16 +254,18 @@ function TeacherCourseChatInteractionCard({
             type="button"
             variant="outline"
             className="mt-auto w-full rounded-xl border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            asChild
           >
-            {interactionBoost.actionLabelAr}
+            <Link href={chatHref}>{interactionBoost.actionLabelAr}</Link>
           </Button>
         ) : (
           <Button
             type="button"
             variant="outline"
             className="mt-auto w-full rounded-xl border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
+            asChild
           >
-            {t("courses.statistics.chat.openDiscussion")}
+            <Link href={chatHref}>{t("courses.statistics.chat.openDiscussion")}</Link>
           </Button>
         )}
       </CardContent>
@@ -270,17 +287,25 @@ function formatSessionTime(scheduledAtUtc: string, locale: string): string {
 }
 
 function StationInsightCard({
+  courseId,
   insight,
   title,
   tone,
   actionLabel,
+  action,
 }: {
+  courseId: string;
   insight: TeacherStationInsight;
   title: string;
   tone: "success" | "warning";
   actionLabel: string;
+  action: "view" | "review";
 }) {
   const isSuccess = tone === "success";
+  const actionHref =
+    action === "view"
+      ? ROUTES.USER.TEACHER.JOURNEY_EDITOR.EDITOR(courseId)
+      : getTeacherStationReviewHref(courseId, insight.stationId, insight.stationType);
 
   return (
     <Card
@@ -304,8 +329,8 @@ function StationInsightCard({
         {insight.descriptionAr ? (
           <p className="text-sm text-slate-600">{insight.descriptionAr}</p>
         ) : null}
-        <Button variant="outline" className="rounded-xl border-slate-300 bg-white">
-          {actionLabel}
+        <Button variant="outline" className="rounded-xl border-slate-300 bg-white" asChild>
+          <Link href={actionHref}>{actionLabel}</Link>
         </Button>
       </CardContent>
     </Card>
@@ -484,18 +509,22 @@ export function TeacherCourseStatisticsDashboard({ courseId }: { courseId: strin
           <div className="grid gap-4 md:grid-cols-2">
             {data.highestAchievement ? (
               <StationInsightCard
+                courseId={courseId}
                 insight={data.highestAchievement}
                 title={t("courses.statistics.insights.highestAchievement")}
                 tone="success"
                 actionLabel={t("courses.statistics.insights.viewStation")}
+                action="view"
               />
             ) : null}
             {data.hardestLesson ? (
               <StationInsightCard
+                courseId={courseId}
                 insight={data.hardestLesson}
                 title={t("courses.statistics.insights.hardestLesson")}
                 tone="warning"
                 actionLabel={t("courses.statistics.insights.reviewContent")}
+                action="review"
               />
             ) : null}
           </div>
@@ -505,6 +534,7 @@ export function TeacherCourseStatisticsDashboard({ courseId }: { courseId: strin
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2.5fr)_minmax(280px,1fr)]">
         <TeacherCourseTopStudentsTable students={data.topInteractingStudents} locale={locale} />
         <TeacherCourseChatInteractionCard
+          courseId={courseId}
           students={data.topInteractingStudents}
           interactionBoost={data.interactionBoost}
           locale={locale}

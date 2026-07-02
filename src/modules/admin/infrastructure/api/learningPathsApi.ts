@@ -1,4 +1,5 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
+import { StationType } from "@/shared/domain/enums/learning-path.enums";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -114,12 +115,34 @@ function extractEnvelopeData(data: unknown): unknown {
   return record?.data ?? data;
 }
 
+function readStationType(record: UnknownRecord | null): number {
+  if (!record) return StationType.LiveStream;
+  for (const key of ["type", "stationType"]) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const normalized = value.replace(/\s+/g, "").toLowerCase();
+      const byName: Record<string, StationType> = {
+        livestream: StationType.LiveStream,
+        flashcards: StationType.Flashcards,
+        shortquiz: StationType.ShortQuiz,
+        challenge: StationType.Challenge,
+        helperresource: StationType.HelperResource,
+        recordedlecture: StationType.RecordedLecture,
+      };
+      const mapped = byName[normalized];
+      if (mapped != null) return mapped;
+    }
+  }
+  return StationType.LiveStream;
+}
+
 function extractListRows(data: unknown): unknown[] {
   const unwrapped = extractEnvelopeData(data);
   if (Array.isArray(unwrapped)) return unwrapped;
   const record = asRecord(unwrapped);
   if (!record) return [];
-  for (const key of ["items", "results", "records", "list", "rows"]) {
+  for (const key of ["learningPaths", "items", "results", "records", "list", "rows"]) {
     const value = record[key];
     if (Array.isArray(value)) return value;
   }
@@ -146,7 +169,7 @@ function mapCourseLearningPathStation(item: unknown): CourseLearningPathStation 
     id,
     name: readString(record, ["name", "stationName"], ""),
     order: readNumber(record, ["order"]),
-    type: readNumber(record, ["type", "stationType"]),
+    type: readStationType(record),
   };
 }
 

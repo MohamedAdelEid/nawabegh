@@ -6,6 +6,7 @@
     "endingSession": "Ending session…",
     "sessionEnded": "Live session ended successfully",
     "upcomingMessage": "This session has not started yet. You can go live when the scheduled time arrives.",
+    "waitingForOpen": "The scheduled time has arrived. Waiting for the session to open on the server…",
     "liveReadyMessage": "The session is live. Start broadcasting from here — students can join from the app.",
     "liveViewerMessage": "The session is live. Waiting for the host to start broadcasting.",
     "endedWithoutRecording": "This session has ended. The recording is not available yet.",
@@ -21,7 +22,8 @@
       "seconds": "sec"
     },
     "errors": {
-      "hostToken": "Could not load broadcast credentials. Check your permissions and try again."
+      "hostToken": "Could not load broadcast credentials. Check your permissions and try again.",
+      "sessionUnavailable": "This session is not available for broadcasting right now. Please wait until it opens or refresh the page."
     }
   }
 }

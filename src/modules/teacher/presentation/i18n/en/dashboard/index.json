@@ -1076,6 +1076,84 @@
           }
         }
       },
+      "subscribers": {
+        "title": "Course subscribers",
+        "description": "View and manage students enrolled in this course and track their progress.",
+        "breadcrumb": "Subscribers",
+        "breadcrumbCourse": "Course details",
+        "actions": {
+          "exportReport": "Export report"
+        },
+        "rankings": {
+          "title": "Subscribed students",
+          "viewAll": "View all",
+          "empty": "No subscribers yet."
+        },
+        "stats": {
+          "totalStudents": "Total subscribers",
+          "activeStudents": "Active students",
+          "newStudents": "+{count} new",
+          "completionRate": "Course completion rate",
+          "completionHint": "Average progress",
+          "averageScore": "Average score"
+        },
+        "filters": {
+          "searchLabel": "Search",
+          "searchPlaceholder": "Search by name or email...",
+          "reset": "Reset"
+        },
+        "table": {
+          "title": "Subscribers list",
+          "student": "Student",
+          "grade": "Grade",
+          "enrolledAt": "Enrollment date",
+          "progress": "Completion %",
+          "lastActivity": "Last activity",
+          "status": "Status",
+          "actions": "Actions",
+          "viewProfile": "View profile",
+          "active": "Active",
+          "empty": "No subscribers match your search.",
+          "showing": "Showing {from}-{to} of {total} subscribers"
+        },
+        "profile": {
+          "backToList": "Back to subscribers",
+          "online": "Online now",
+          "offline": "Offline",
+          "joined": "Joined: {date}",
+          "overallProgress": "Overall progress",
+          "progressLevel": "Progress level",
+          "certificateEarned": "Certificate earned",
+          "lastActivity": "Last activity",
+          "learningPaths": "Course learning path",
+          "learningPathsEmpty": "No learning paths yet.",
+          "pathCompleted": "Completed",
+          "weeklyActivity": "Weekly student performance",
+          "activityCount": "Activity count",
+          "quizResults": "Quiz results",
+          "quizResultsEmpty": "No quiz results yet.",
+          "quizTitle": "Quiz",
+          "quizScore": "Score",
+          "quizDate": "Date",
+          "interaction": "Interaction stats",
+          "interactionMessages": "Chat messages",
+          "interactionStations": "Stations completed",
+          "interactionQuizzes": "Quizzes submitted",
+          "interactionLive": "Live sessions",
+          "recentActivity": "Recent activity",
+          "recentActivityEmpty": "No recent activity.",
+          "kpis": {
+            "points": "Total points",
+            "progress": "Progress %",
+            "stations": "Completed stations",
+            "stationsValue": "{completed}/{total}",
+            "averageScore": "Average score",
+            "quizzes": "Quizzes",
+            "attendance": "Attendance %",
+            "rank": "Course rank"
+          }
+        }
+      },
       "statistics": {
         "title": "Course statistics: {course}",
         "description": "Comprehensive analysis of student performance and interaction with course content.",

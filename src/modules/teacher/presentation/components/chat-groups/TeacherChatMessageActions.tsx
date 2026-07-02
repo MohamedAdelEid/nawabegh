@@ -6,9 +6,8 @@ import { CornerUpLeft, MoreVertical, Pin, PinOff, Trash2 } from "lucide-react";
 import type { TeacherChatMessage } from "@/modules/teacher/domain/types/teacher.types";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/presentation/components/ui/popover";
+import { CHAT_REACTION_EMOJIS } from "@/shared/domain/constants/chatReactionEmojis";
 import { cn } from "@/shared/application/lib/cn";
-
-const QUICK_REACTIONS = ["👍", "👏", "🔥"] as const;
 
 type TeacherChatMessageActionsProps = {
   message: TeacherChatMessage;
@@ -33,7 +32,7 @@ export function TeacherChatMessageActions({
   return (
     <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
       <div className="flex items-center gap-0.5 rounded-full bg-white px-1 py-0.5 shadow-sm">
-        {QUICK_REACTIONS.map((emoji) => {
+        {CHAT_REACTION_EMOJIS.map((emoji) => {
           const reaction = message.reactions?.find((item) => item.emoji === emoji);
           return (
             <button

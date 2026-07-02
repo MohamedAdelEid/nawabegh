@@ -1,0 +1,118 @@
+{
+  "friendChallenges": {
+    "breadcrumbs": {
+      "home": "Home",
+      "challenges": "Challenge Statistics"
+    },
+    "comingSoon": "Coming soon",
+    "difficulty": {
+      "Easy": "Easy",
+      "Medium": "Medium",
+      "Hard": "Hard"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "overview": {
+      "page": {
+        "title": "Challenge Statistics",
+        "description": "Monitor student challenge performance and analyze results and difficulty levels.",
+        "exportReport": "Export report",
+        "refresh": "Refresh data"
+      },
+      "stats": {
+        "totalChallenges": {
+          "label": "Total challenges"
+        },
+        "successRate": {
+          "label": "Correct answer rate"
+        },
+        "totalPoints": {
+          "label": "Total points earned"
+        },
+        "averageDifficulty": {
+          "label": "Most common difficulty"
+        }
+      },
+      "charts": {
+        "difficulty": {
+          "title": "Difficulty distribution",
+          "subtitle": "Share of challenges by difficulty level",
+          "levels": {
+            "Easy": "Easy",
+            "Medium": "Medium",
+            "Hard": "Hard"
+          }
+        },
+        "dailyRate": {
+          "title": "Daily challenge rate",
+          "subtitle": "Completed challenges over the last 7 days"
+        }
+      },
+      "filters": {
+        "search": {
+          "label": "Search",
+          "placeholder": "Search by student name..."
+        },
+        "difficulty": {
+          "label": "Difficulty",
+          "all": "All",
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard"
+        },
+        "subject": {
+          "label": "Subject",
+          "all": "All"
+        },
+        "fromDate": "From",
+        "toDate": "To"
+      },
+      "table": {
+        "title": "Recent challenges log",
+        "challengers": "Challengers",
+        "vs": "vs",
+        "subject": "Subject",
+        "winner": "Winner",
+        "tie": "Tie",
+        "difficulty": "Difficulty",
+        "date": "Challenge date",
+        "points": "Points earned",
+        "pointsEarned": "+{value} points",
+        "zeroPoints": "+0 points",
+        "actions": "Actions",
+        "viewDetail": "View challenge details",
+        "empty": "No challenges match the current filters.",
+        "showing": "Showing {from}–{to} of {total} challenges"
+      }
+    },
+    "detail": {
+      "page": {
+        "title": "Challenge details",
+        "description": "Comprehensive review of challenge results, competitor performance, and detailed answer log.",
+        "shareReport": "Share report"
+      },
+      "loadError": "Unable to load challenge details.",
+      "difficultyLevel": "{level} level",
+      "duration": "Challenge duration {value}",
+      "participant": {
+        "winner": "Winner",
+        "score": "Score",
+        "points": "Points",
+        "accuracy": "Accuracy"
+      },
+      "answerLog": {
+        "title": "Detailed answer log",
+        "question": "Question",
+        "correctAnswer": "Correct answer",
+        "timeSpent": "Time spent",
+        "correct": "Correct",
+        "incorrect": "Incorrect",
+        "empty": "No answers recorded for this session.",
+        "showAll": "Show all questions ({count})",
+        "showLess": "Show fewer questions"
+      }
+    }
+  }
+}

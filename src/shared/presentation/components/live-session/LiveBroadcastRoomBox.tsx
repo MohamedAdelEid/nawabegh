@@ -2,7 +2,7 @@
 
 import { Loader2, Radio, Video, VideoOff } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   endLiveSession,
   getLiveHostToken,
@@ -26,6 +26,8 @@ export interface LiveBroadcastRoomBoxProps {
   registeredCount: number;
   coverImageUrl?: string;
   onSessionEnded?: () => void;
+  onScheduleDue?: () => void;
+  isTeacherHost?: boolean;
 }
 
 type Countdown = { hours: number; minutes: number; seconds: number };
@@ -60,6 +62,36 @@ function useLiveCountdown(scheduledAt: string, active: boolean): Countdown {
   return countdown;
 }
 
+function StartBroadcastButton({
+  connecting,
+  onClick,
+  label,
+  connectingLabel,
+}: {
+  connecting: boolean;
+  onClick: () => void;
+  label: string;
+  connectingLabel: string;
+}) {
+  return (
+    <Button
+      type="button"
+      className="rounded-2xl bg-[#C8AC59] px-8 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
+      disabled={connecting}
+      onClick={onClick}
+    >
+      {connecting ? (
+        <>
+          <Loader2 className="me-2 h-4 w-4 animate-spin" />
+          {connectingLabel}
+        </>
+      ) : (
+        label
+      )}
+    </Button>
+  );
+}
+
 export function LiveBroadcastRoomBox({
   stationId,
   sessionId,
@@ -71,44 +103,65 @@ export function LiveBroadcastRoomBox({
   registeredCount,
   coverImageUrl,
   onSessionEnded,
+  onScheduleDue,
+  isTeacherHost = false,
 }: LiveBroadcastRoomBoxProps) {
   const t = useTranslations("liveBroadcastRoom");
   const [connecting, setConnecting] = useState(false);
   const [ending, setEnding] = useState(false);
   const [hostCredentials, setHostCredentials] = useState<LiveHostToken | null>(null);
   const [isBroadcasting, setIsBroadcasting] = useState(false);
+  const scheduleDueNotifiedRef = useRef(false);
   const countdown = useLiveCountdown(
     scheduledAt,
     runtimeMode === LiveSessionRuntimeMode.Upcoming,
   );
 
-  // Once the scheduled time arrives, treat an "Upcoming" session as Live so the
-  // host immediately gets the broadcast controls without needing a refresh.
   const scheduleArrived =
     countdown.hours === 0 && countdown.minutes === 0 && countdown.seconds === 0;
-  const effectiveRuntimeMode =
-    runtimeMode === LiveSessionRuntimeMode.Upcoming && scheduleArrived
-      ? LiveSessionRuntimeMode.Live
-      : runtimeMode;
+
+  useEffect(() => {
+    scheduleDueNotifiedRef.current = false;
+  }, [scheduledAt, runtimeMode]);
+
+  useEffect(() => {
+    if (runtimeMode !== LiveSessionRuntimeMode.Upcoming || !scheduleArrived) return;
+    if (scheduleDueNotifiedRef.current) return;
+    scheduleDueNotifiedRef.current = true;
+    onScheduleDue?.();
+  }, [onScheduleDue, runtimeMode, scheduleArrived]);
 
   const resolvedRecordingUrl = resolveFileUrl(recordingUrl ?? undefined);
   const resolvedCoverImage = resolveFileUrl(coverImageUrl) ?? undefined;
-  const canHost =
-    effectiveRuntimeMode === LiveSessionRuntimeMode.Live || canStartBroadcast;
+  const canShowHostButton =
+    canStartBroadcast ||
+    (isTeacherHost &&
+      (runtimeMode === LiveSessionRuntimeMode.Live ||
+        (runtimeMode === LiveSessionRuntimeMode.Upcoming && scheduleArrived)));
 
   const handleStartBroadcast = useCallback(async () => {
+    if (!canShowHostButton) {
+      notify.error(t("errors.sessionUnavailable"));
+      return;
+    }
+
     setConnecting(true);
     const result = await getLiveHostToken(stationId);
     setConnecting(false);
 
     if (!result.data) {
-      notify.error(result.errorMessage ?? t("errors.hostToken"));
+      const message =
+        result.status === "Forbidden"
+          ? t("errors.sessionUnavailable")
+          : result.errorMessage ?? t("errors.hostToken");
+      notify.error(message);
+      onScheduleDue?.();
       return;
     }
 
     setHostCredentials(result.data);
     setIsBroadcasting(true);
-  }, [stationId, t]);
+  }, [canShowHostButton, onScheduleDue, stationId, t]);
 
   const handleEndSession = useCallback(async () => {
     setEnding(true);
@@ -145,7 +198,7 @@ export function LiveBroadcastRoomBox({
     );
   }
 
-  if (effectiveRuntimeMode === LiveSessionRuntimeMode.Recorded && resolvedRecordingUrl) {
+  if (runtimeMode === LiveSessionRuntimeMode.Recorded && resolvedRecordingUrl) {
     return (
       <div className="overflow-hidden rounded-[1.75rem] border border-white/80 bg-[#0f172a] shadow-[0px_8px_0px_0px_#0000000D]">
         <div className="relative aspect-video w-full bg-black">
@@ -162,7 +215,7 @@ export function LiveBroadcastRoomBox({
     );
   }
 
-  if (effectiveRuntimeMode === LiveSessionRuntimeMode.EndedWithoutRecording) {
+  if (runtimeMode === LiveSessionRuntimeMode.EndedWithoutRecording) {
     return (
       <PlaceholderBox
         coverImageSrc={resolvedCoverImage}
@@ -176,7 +229,7 @@ export function LiveBroadcastRoomBox({
     );
   }
 
-  if (effectiveRuntimeMode === LiveSessionRuntimeMode.Upcoming) {
+  if (runtimeMode === LiveSessionRuntimeMode.Upcoming) {
     return (
       <PlaceholderBox
         coverImageSrc={resolvedCoverImage}
@@ -185,26 +238,36 @@ export function LiveBroadcastRoomBox({
         badge={t("status.upcoming")}
         badgeClassName="bg-[#C8AC59] text-[#2C4260]"
         icon={<Video className="h-14 w-14 text-white/50" />}
-        message={t("upcomingMessage")}
+        message={scheduleArrived ? t("waitingForOpen") : t("upcomingMessage")}
         footer={
-          <div className="flex justify-center gap-4 text-center">
-            {[
-              { value: countdown.hours, label: t("countdown.hours") },
-              { value: countdown.minutes, label: t("countdown.minutes") },
-              { value: countdown.seconds, label: t("countdown.seconds") },
-            ].map(({ value, label }, index) => (
-              <div key={label} className="flex items-center gap-1">
-                {index > 0 ? (
-                  <span className="text-2xl font-bold text-white/40">:</span>
-                ) : null}
-                <div>
-                  <p className="text-3xl font-bold text-white">
-                    {String(value).padStart(2, "0")}
-                  </p>
-                  <p className="text-xs text-white/60">{label}</p>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex justify-center gap-4 text-center">
+              {[
+                { value: countdown.hours, label: t("countdown.hours") },
+                { value: countdown.minutes, label: t("countdown.minutes") },
+                { value: countdown.seconds, label: t("countdown.seconds") },
+              ].map(({ value, label }, index) => (
+                <div key={label} className="flex items-center gap-1">
+                  {index > 0 ? (
+                    <span className="text-2xl font-bold text-white/40">:</span>
+                  ) : null}
+                  <div>
+                    <p className="text-3xl font-bold text-white">
+                      {String(value).padStart(2, "0")}
+                    </p>
+                    <p className="text-xs text-white/60">{label}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            {canShowHostButton ? (
+              <StartBroadcastButton
+                connecting={connecting}
+                onClick={() => void handleStartBroadcast()}
+                label={t("startBroadcast")}
+                connectingLabel={t("connecting")}
+              />
+            ) : null}
           </div>
         }
       />
@@ -219,24 +282,15 @@ export function LiveBroadcastRoomBox({
       badge={t("status.live")}
       badgeClassName="bg-rose-500"
       icon={<Radio className="h-14 w-14 text-white/50" />}
-      message={canHost ? t("liveReadyMessage") : t("liveViewerMessage")}
+      message={canShowHostButton ? t("liveReadyMessage") : t("liveViewerMessage")}
       footer={
-        canHost ? (
-          <Button
-            type="button"
-            className="rounded-2xl bg-[#C8AC59] px-8 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
-            disabled={connecting}
+        canShowHostButton ? (
+          <StartBroadcastButton
+            connecting={connecting}
             onClick={() => void handleStartBroadcast()}
-          >
-            {connecting ? (
-              <>
-                <Loader2 className="me-2 h-4 w-4 animate-spin" />
-                {t("connecting")}
-              </>
-            ) : (
-              t("startBroadcast")
-            )}
-          </Button>
+            label={t("startBroadcast")}
+            connectingLabel={t("connecting")}
+          />
         ) : null
       }
       pulseBadge
