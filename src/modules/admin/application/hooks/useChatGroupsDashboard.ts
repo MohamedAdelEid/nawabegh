@@ -10,6 +10,7 @@ import {
 } from "@/modules/admin/infrastructure/api/chatGroupsApi";
 import { mapChatGroupListItemToRow } from "@/modules/admin/domain/utils/chatGroupMappers";
 import type { ChatGroupRow } from "@/modules/admin/domain/types/chatGroups.types";
+import { keepPreviousTableData } from "@/shared/application/lib/tableQueryState";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -79,6 +80,7 @@ export function useChatGroupsDashboard(filters: ChatGroupsFilterState, pageNumbe
         gradeId:
           gradeIdParam !== undefined && !Number.isNaN(gradeIdParam) ? gradeIdParam : undefined,
       }),
+    placeholderData: keepPreviousTableData,
   });
 
   const statsQuery = useQuery({

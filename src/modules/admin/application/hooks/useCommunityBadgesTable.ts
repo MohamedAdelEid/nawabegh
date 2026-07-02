@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import type { CommunityBadgeRow } from "@/modules/admin/domain/types/communityBadges.types";
 import { getCommunityBadgesPage } from "@/modules/admin/infrastructure/api/communityBadgesApi";
@@ -73,6 +78,7 @@ export function useCommunityBadgesTable(options: UseCommunityBadgesTableOptions 
     queryKey: [ADMIN_COMMUNITY_BADGES_TABLE_QUERY_KEY, locale, queryParams],
     queryFn: () => getCommunityBadgesPage(queryParams),
     enabled: options.enabled ?? true,
+    placeholderData: keepPreviousTableData,
   });
 
   const rawPage = query.data?.data ?? null;
@@ -91,6 +97,7 @@ export function useCommunityBadgesTable(options: UseCommunityBadgesTableOptions 
     }
   }, [pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -100,7 +107,7 @@ export function useCommunityBadgesTable(options: UseCommunityBadgesTableOptions 
     data: query.data,
     page,
     rawPage,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     isError: query.isError,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,

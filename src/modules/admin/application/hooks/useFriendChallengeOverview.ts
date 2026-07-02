@@ -1,6 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { getFriendChallengeOverview } from "@/modules/admin/infrastructure/api/friendChallengesApi";
 
@@ -13,11 +18,13 @@ export function useFriendChallengeOverview(challengeId: string) {
     queryKey: [ADMIN_FRIEND_CHALLENGE_OVERVIEW_QUERY_KEY, locale, challengeId],
     queryFn: () => getFriendChallengeOverview(challengeId),
     enabled: Boolean(challengeId),
+    placeholderData: keepPreviousTableData,
   });
 
+  const tableQueryState = getTableQueryState(query);
   return {
     overview: query.data?.data ?? null,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

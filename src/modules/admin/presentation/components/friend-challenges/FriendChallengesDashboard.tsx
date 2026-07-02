@@ -236,7 +236,7 @@ export function FriendChallengesDashboard() {
               onClick={() => void dashboard.refetch()}
               aria-label={t("overview.page.refresh")}
             >
-              <RefreshCw className={cn("h-4 w-4", dashboard.isLoading && "animate-spin")} />
+              <RefreshCw className={cn("h-4 w-4", dashboard.isRefetching && "animate-spin")} />
             </Button>
             <DisabledFeatureButton
               label={t("overview.page.exportReport")}
@@ -302,7 +302,10 @@ export function FriendChallengesDashboard() {
         onChange={(patch) => dashboard.setFilters((prev) => ({ ...prev, ...patch }))}
       />
 
-      <DashboardTableCard title={t("overview.table.title")}>
+      <DashboardTableCard
+        title={t("overview.table.title")}
+        className={dashboard.isRefetching ? "opacity-60 transition-opacity" : undefined}
+      >
         <DashboardDataTable
           columns={columns}
           rows={rows}

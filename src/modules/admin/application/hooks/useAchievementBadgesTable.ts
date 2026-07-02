@@ -9,6 +9,10 @@ import {
 } from "@/modules/admin/domain/types/achievementBadgesFilters.types";
 import type { AchievementBadgeRow } from "@/modules/admin/domain/types/achievementBadges.types";
 import { getAchievementBadges } from "@/modules/admin/infrastructure/api/achievementBadgesApi";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
 
 const DEFAULT_PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 350;
@@ -71,6 +75,7 @@ export function useAchievementBadgesTable() {
   const query = useQuery({
     queryKey: [ADMIN_ACHIEVEMENT_BADGES_TABLE_QUERY_KEY, locale, queryParams],
     queryFn: () => getAchievementBadges(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const rawPage = query.data?.data ?? null;
@@ -89,6 +94,8 @@ export function useAchievementBadgesTable() {
     }
   }, [pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
+
   return {
     filters,
     setFilters,
@@ -98,7 +105,7 @@ export function useAchievementBadgesTable() {
     data: query.data,
     page,
     rawPage,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     refetch: query.refetch,
   };
 }

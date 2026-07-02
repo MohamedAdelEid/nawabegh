@@ -474,6 +474,8 @@ export function ArticleEditorDashboard() {
     [formatter, t],
   );
 
+  const isTableRefetching = isLoading && initialLoadComplete;
+
   return (
     <div className="space-y-8">
             <div className="space-y-2">
@@ -597,6 +599,7 @@ export function ArticleEditorDashboard() {
           >
             <DashboardTableCard
               title={t("articleEditor.table.title")}
+              className={isTableRefetching ? "opacity-60 transition-opacity" : undefined}
               footer={
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <p className="text-right text-sm text-slate-500">
@@ -613,7 +616,7 @@ export function ArticleEditorDashboard() {
               }
             >
               <div className="overflow-x-auto">
-                {isLoading ? (
+                {isLoading && rows.length === 0 ? (
                   <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.reviewPage.loading")}</p>
                 ) : rows.length === 0 ? (
                   <p className="px-6 py-12 text-center text-sm text-slate-500">{t("articleEditor.table.empty")}</p>

@@ -330,7 +330,9 @@ export function ResultsAnalyticsDashboard() {
       </ResultsAnalyticsAnimatedSection>
 
       <ResultsAnalyticsAnimatedSection delay={0.12}>
-        <DashboardTableCard>
+        <DashboardTableCard
+          className={overview.isRefetching ? "opacity-60 transition-opacity" : undefined}
+        >
           <DashboardDataTable
             rows={rows}
             columns={columns}

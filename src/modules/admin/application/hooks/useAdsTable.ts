@@ -8,6 +8,10 @@ import {
   type AdManagementFilterState,
 } from "@/modules/admin/domain/types/adManagementFilters.types";
 import { filtersToQueryParams, getAds } from "@/modules/admin/infrastructure/api/adsApi";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
 
 const DEFAULT_PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_MS = 350;
@@ -51,6 +55,7 @@ export function useAdsTable() {
   const query = useQuery({
     queryKey: [ADMIN_ADS_TABLE_QUERY_KEY, locale, queryParams],
     queryFn: () => getAds(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.data ?? null;
@@ -62,6 +67,8 @@ export function useAdsTable() {
     }
   }, [page, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
+
   return {
     filters,
     setFilters,
@@ -70,7 +77,7 @@ export function useAdsTable() {
     pages: buildPages(pageNumber, totalPages),
     data: query.data,
     page,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     refetch: query.refetch,
   };
 }

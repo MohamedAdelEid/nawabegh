@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import {
   DEFAULT_GRADES_FILTERS,
@@ -53,6 +58,7 @@ export function useGradesTable() {
   const query = useQuery({
     queryKey: ["admin-grades-table", locale, queryParams],
     queryFn: () => getGrades(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.data ?? null;
@@ -64,6 +70,7 @@ export function useGradesTable() {
     }
   }, [page, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -72,7 +79,7 @@ export function useGradesTable() {
     pages: buildPages(pageNumber, totalPages),
     data: query.data,
     page,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     refetch: query.refetch,
   };
 }

@@ -556,6 +556,9 @@ export function CourseManagementDashboard() {
     },
   ];
 
+  const isTableRefetching = loadState === "loading" && courseRows.length > 0;
+  const isInitialTableLoading = loadState === "loading" && courseRows.length === 0;
+
   return (
     <div className="space-y-8">
             <div className="space-y-2">
@@ -602,7 +605,7 @@ export function CourseManagementDashboard() {
         ))}
       </section>
 
-      <DashboardFiltersPanel isLoading={loadState === "loading"} className="flex flex-wrap gap-4">
+      <DashboardFiltersPanel isLoading={isTableRefetching} className="flex flex-wrap gap-4">
         <DashboardFilterSelect
           label={t("courseManagement.filters.stages.label")}
           value={filters.stageId}
@@ -672,6 +675,7 @@ export function CourseManagementDashboard() {
 
       <DashboardTableCard
         title={t("courseManagement.table.title")}
+        className={isTableRefetching ? "opacity-60 transition-opacity" : undefined}
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
@@ -693,7 +697,7 @@ export function CourseManagementDashboard() {
           </div>
         }
       >
-        {loadState === "loading" ? (
+        {isInitialTableLoading ? (
           <p className="px-6 py-12 text-center text-sm text-slate-500">{t("courseManagement.table.loading")}</p>
         ) : loadState === "error" ? (
           <p className="px-6 py-12 text-center text-sm text-red-600">{t("courseManagement.table.loadError")}</p>

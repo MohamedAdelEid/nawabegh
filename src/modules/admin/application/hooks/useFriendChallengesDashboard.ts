@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import {
   DEFAULT_FRIEND_CHALLENGES_FILTERS,
@@ -59,6 +64,7 @@ export function useFriendChallengesDashboard(pageSize = DEFAULT_PAGE_SIZE) {
   const query = useQuery({
     queryKey: [ADMIN_FRIEND_CHALLENGES_DASHBOARD_QUERY_KEY, locale, queryParams],
     queryFn: () => getFriendChallengesDashboard(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const data = query.data?.data ?? null;
@@ -70,6 +76,7 @@ export function useFriendChallengesDashboard(pageSize = DEFAULT_PAGE_SIZE) {
     }
   }, [data, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -77,7 +84,7 @@ export function useFriendChallengesDashboard(pageSize = DEFAULT_PAGE_SIZE) {
     setPageNumber,
     pages: buildPages(pageNumber, totalPages),
     data,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

@@ -206,8 +206,8 @@ export function TeacherChatGroupsDashboard() {
     [invalidateChatQueries, t],
   );
 
-  const isLoading = listQuery.isLoading || listQuery.isFetching;
-  const isInitialLoading = listQuery.isLoading && !page;
+  const isTableRefetching = listQuery.isFetching && !listQuery.isPending;
+  const isInitialLoading = listQuery.isPending && !page;
   const isStatsLoading = statsQuery.isLoading;
 
   const columns = useMemo<DashboardDataTableColumn<ChatGroupRow>[]>(
@@ -429,6 +429,7 @@ export function TeacherChatGroupsDashboard() {
 
       <DashboardTableCard
         title={t("table.title")}
+        className={isTableRefetching ? "opacity-60 transition-opacity" : undefined}
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
@@ -444,7 +445,7 @@ export function TeacherChatGroupsDashboard() {
           </div>
         }
       >
-        {isLoading ? (
+        {isInitialLoading && !page ? (
           <div className="space-y-3 px-4 py-12">
             {Array.from({ length: 6 }).map((_, index) => (
               <Skeleton key={index} className="h-14 w-full rounded-xl" />

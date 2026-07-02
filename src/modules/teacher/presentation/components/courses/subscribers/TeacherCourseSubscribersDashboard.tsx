@@ -222,7 +222,10 @@ export function TeacherCourseSubscribersDashboard({ courseId }: { courseId: stri
         onReset={dashboard.resetFilters}
       />
 
-      <DashboardTableCard title={t("courses.subscribers.table.title")}>
+      <DashboardTableCard
+        title={t("courses.subscribers.table.title")}
+        className={dashboard.isRefetching ? "opacity-60 transition-opacity" : undefined}
+      >
         <DashboardDataTable
           columns={columns}
           rows={rows}

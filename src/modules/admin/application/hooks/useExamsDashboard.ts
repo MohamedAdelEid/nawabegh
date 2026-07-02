@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import {
   DEFAULT_EXAMS_MANAGEMENT_FILTERS,
@@ -54,6 +59,7 @@ export function useExamsDashboard(initialPageSize = DEFAULT_PAGE_SIZE) {
   const query = useQuery({
     queryKey: ["admin-exams-dashboard", locale, queryParams],
     queryFn: () => getExamsDashboard(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const dashboard = query.data?.data ?? null;
@@ -65,6 +71,7 @@ export function useExamsDashboard(initialPageSize = DEFAULT_PAGE_SIZE) {
     }
   }, [dashboard, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -72,7 +79,7 @@ export function useExamsDashboard(initialPageSize = DEFAULT_PAGE_SIZE) {
     setPageNumber,
     pages: buildPages(pageNumber, totalPages),
     dashboard,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

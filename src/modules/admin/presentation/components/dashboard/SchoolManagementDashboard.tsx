@@ -306,6 +306,7 @@ export function SchoolManagementDashboard() {
 
       <DashboardTableCard
         title={t("schoolManagement.table.title")}
+        className={schoolsTable.isRefetching ? "opacity-60 transition-opacity" : undefined}
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
@@ -324,7 +325,7 @@ export function SchoolManagementDashboard() {
           </div>
         }
       >
-        {schoolsTable.isLoading ? (
+        {schoolsTable.isLoading && !page ? (
           <TableLoadingState
             title={t("schoolManagement.table.states.loading.title")}
             description={t("schoolManagement.table.states.loading.description")}

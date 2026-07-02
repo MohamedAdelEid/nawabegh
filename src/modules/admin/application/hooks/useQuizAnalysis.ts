@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { QUESTION_SORT, SCORE_MODE, type ScoreMode } from "@/modules/admin/domain/types/resultsAnalytics.types";
 import { getQuizAnalysis } from "@/modules/admin/infrastructure/api/resultsAnalyticsApi";
@@ -53,6 +58,7 @@ export function useQuizAnalysis(
     queryKey: [ADMIN_QUIZ_ANALYSIS_QUERY_KEY, locale, queryParams],
     queryFn: () => getQuizAnalysis(queryParams),
     enabled: Boolean(quizId),
+    placeholderData: keepPreviousTableData,
   });
 
   const analysis = query.data?.data ?? null;
@@ -64,12 +70,13 @@ export function useQuizAnalysis(
     }
   }, [analysis, questionPageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     analysis,
     questionPageNumber,
     setQuestionPageNumber,
     questionPages: buildPages(questionPageNumber, totalPages),
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { SCORE_MODE } from "@/modules/admin/domain/types/resultsAnalytics.types";
 import { getStudentResultsExams } from "@/modules/admin/infrastructure/api/resultsAnalyticsApi";
@@ -36,6 +41,7 @@ export function useStudentResultsExams(studentId: string, scoreMode = SCORE_MODE
     queryKey: [ADMIN_STUDENT_RESULTS_EXAMS_QUERY_KEY, locale, queryParams],
     queryFn: () => getStudentResultsExams(queryParams),
     enabled: Boolean(studentId),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.data ?? null;
@@ -47,12 +53,13 @@ export function useStudentResultsExams(studentId: string, scoreMode = SCORE_MODE
     }
   }, [page, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     page,
     pageNumber,
     setPageNumber,
     pages: buildPages(pageNumber, totalPages),
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

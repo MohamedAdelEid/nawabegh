@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { teacherApi } from "@/modules/teacher/infrastructure/api/teacherApi";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -43,6 +48,7 @@ export function useTeacherCourseSubscribersDashboard(
         pageSize,
       }),
     enabled: Boolean(courseId),
+    placeholderData: keepPreviousTableData,
   });
 
   const data = query.data ?? null;
@@ -60,6 +66,7 @@ export function useTeacherCourseSubscribersDashboard(
     setPageNumber(1);
   };
 
+  const tableQueryState = getTableQueryState(query);
   return {
     keyword,
     setKeyword,
@@ -67,7 +74,7 @@ export function useTeacherCourseSubscribersDashboard(
     setPageNumber,
     pages: useMemo(() => buildPages(pageNumber, totalPages), [pageNumber, totalPages]),
     data,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     isError: query.isError,
     resetFilters,
     refetch: query.refetch,

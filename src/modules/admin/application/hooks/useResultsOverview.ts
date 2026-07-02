@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import {
   DEFAULT_RESULTS_ANALYTICS_FILTERS,
@@ -52,6 +57,7 @@ export function useResultsOverview(pageSize = DEFAULT_PAGE_SIZE) {
   const query = useQuery({
     queryKey: [ADMIN_RESULTS_OVERVIEW_QUERY_KEY, locale, queryParams],
     queryFn: () => getResultsOverview(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.data ?? null;
@@ -63,6 +69,7 @@ export function useResultsOverview(pageSize = DEFAULT_PAGE_SIZE) {
     }
   }, [page, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -70,7 +77,7 @@ export function useResultsOverview(pageSize = DEFAULT_PAGE_SIZE) {
     setPageNumber,
     pages: buildPages(pageNumber, totalPages),
     page,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };

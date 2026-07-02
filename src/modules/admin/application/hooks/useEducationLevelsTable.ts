@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import {
   DEFAULT_EDUCATION_LEVELS_FILTERS,
@@ -52,6 +57,7 @@ export function useEducationLevelsTable() {
   const query = useQuery({
     queryKey: ["admin-education-levels-table", locale, queryParams],
     queryFn: () => getEducationLevels(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.data ?? null;
@@ -63,6 +69,7 @@ export function useEducationLevelsTable() {
     }
   }, [page, pageNumber, totalPages]);
 
+  const tableQueryState = getTableQueryState(query);
   return {
     filters,
     setFilters,
@@ -71,7 +78,7 @@ export function useEducationLevelsTable() {
     pages: buildPages(pageNumber, totalPages),
     data: query.data,
     page,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     refetch: query.refetch,
   };
 }

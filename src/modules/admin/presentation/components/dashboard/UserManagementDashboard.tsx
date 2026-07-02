@@ -695,7 +695,8 @@ export function UserManagementDashboard() {
 
   const summaryTotal = usersPage?.totalItems ?? 0;
   const summaryVisible = usersPage?.rows.length ?? visibleRows.length;
-  const showContentSkeleton = isLoadingUsers;
+  const showContentSkeleton = isLoadingUsers && !usersPage;
+  const isTableRefetching = isLoadingUsers && Boolean(usersPage);
 
   const handleOpenUser = (row: DashboardUserRow) => {
     router.push(`${ROUTES.ADMIN.USER_MANAGEMENT.VIEW(row.id)}?role=${row.roleQuery}`);
@@ -809,7 +810,7 @@ export function UserManagementDashboard() {
           </UserManagementAnimatedSection>
 
           <UserManagementAnimatedSection delay={0.05}>
-            <DashboardFiltersPanel isLoading={isLoadingUsers}>
+            <DashboardFiltersPanel isLoading={isTableRefetching}>
               <DashboardFilterSelect
                 label={t("userManagement.filters.roles.label")}
                 value={filters.roleId}
@@ -891,6 +892,7 @@ export function UserManagementDashboard() {
           <UserManagementAnimatedSection delay={0.08}>
             <DashboardTableCard
               title={t("userManagement.table.title")}
+              className={isTableRefetching ? "opacity-60 transition-opacity" : undefined}
               footer={
                 <DashboardTableFooterPagination
                   summary={t("userManagement.table.pagination.summary", {

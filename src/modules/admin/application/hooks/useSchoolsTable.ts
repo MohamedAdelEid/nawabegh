@@ -2,6 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { getSchools } from "@/modules/admin/infrastructure/api/schoolApi";
 import {
@@ -89,6 +94,7 @@ export function useSchoolsTable() {
   const query = useQuery({
     queryKey: ["admin-school-table", locale, queryParams],
     queryFn: () => getSchools(queryParams),
+    placeholderData: keepPreviousTableData,
   });
 
   const page = query.data?.page ?? null;
@@ -105,8 +111,11 @@ export function useSchoolsTable() {
     [page?.currentPage, pageNumber, totalPages],
   );
 
+  const tableQueryState = getTableQueryState(query);
+
   return {
     ...query,
+    ...tableQueryState,
     page,
     pageNumber,
     pageSize: DEFAULT_PAGE_SIZE,

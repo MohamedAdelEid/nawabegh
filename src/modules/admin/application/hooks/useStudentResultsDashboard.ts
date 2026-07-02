@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { getStudentResultsDashboard } from "@/modules/admin/infrastructure/api/resultsAnalyticsApi";
 
@@ -15,11 +20,13 @@ export function useStudentResultsDashboard(studentId: string, periodDays = 30) {
     queryKey: [ADMIN_STUDENT_RESULTS_DASHBOARD_QUERY_KEY, locale, studentId, period],
     queryFn: () => getStudentResultsDashboard(studentId, period),
     enabled: Boolean(studentId),
+    placeholderData: keepPreviousTableData,
   });
 
+  const tableQueryState = getTableQueryState(query);
   return {
     dashboard: query.data?.data ?? null,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     period,
     setPeriod,

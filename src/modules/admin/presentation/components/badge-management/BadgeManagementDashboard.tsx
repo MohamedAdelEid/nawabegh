@@ -428,6 +428,7 @@ export function BadgeManagementDashboard() {
 
       <DashboardTableCard
         title={t("table.title")}
+        className={badgesTable.isRefetching ? "opacity-60 transition-opacity" : undefined}
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
@@ -450,7 +451,7 @@ export function BadgeManagementDashboard() {
           </div>
         }
       >
-        {badgesTable.isLoading ? (
+        {badgesTable.isLoading && !page ? (
           <div className="space-y-4 p-6">
             {Array.from({ length: 5 }).map((_, index) => (
               <Skeleton key={index} className="h-16 w-full rounded-xl" />

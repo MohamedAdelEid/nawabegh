@@ -1,6 +1,11 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import {
+  getTableQueryState,
+  keepPreviousTableData,
+} from "@/shared/application/lib/tableQueryState";
+
 import { useLocale } from "next-intl";
 import { getStudentResultsCertificates } from "@/modules/admin/infrastructure/api/resultsAnalyticsApi";
 
@@ -13,11 +18,13 @@ export function useStudentResultsCertificates(studentId: string, enabled = true)
     queryKey: [ADMIN_STUDENT_RESULTS_CERTIFICATES_QUERY_KEY, locale, studentId],
     queryFn: () => getStudentResultsCertificates(studentId),
     enabled: Boolean(studentId) && enabled,
+    placeholderData: keepPreviousTableData,
   });
 
+  const tableQueryState = getTableQueryState(query);
   return {
     data: query.data?.data ?? null,
-    isLoading: query.isLoading || query.isFetching,
+    ...tableQueryState,
     errorMessage: query.data?.errorMessage,
     refetch: query.refetch,
   };
