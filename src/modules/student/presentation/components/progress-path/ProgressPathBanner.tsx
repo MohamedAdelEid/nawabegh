@@ -22,17 +22,7 @@ export function ProgressPathBanner({
   return (
     <div className="mx-4 overflow-hidden rounded-[25px] bg-[#2b415e] shadow-[0px_21px_26px_-5px_rgba(0,0,0,0.1),0px_8px_10px_-6px_rgba(0,0,0,0.1)] md:mx-6">
       <div className="flex items-start gap-4 p-5 md:p-6">
-        <div className="flex size-14 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={JOURNEY_ASSETS.stations.iconPath}
-            alt=""
-            className="size-7 object-contain"
-            aria-hidden
-          />
-        </div>
-
-        <div className="flex min-w-0 flex-1 flex-col items-end gap-2">
+        <div className="flex min-w-0 flex-1 flex-col items-start gap-2">
           {pathIndex !== null ? (
             <span className="rounded-full border border-[#c7af6d]/50 bg-[#c7af6d]/25 px-3 py-1 text-xs font-bold text-[#c7af6d]">
               {t("unit", { index: pathIndex })}
@@ -42,9 +32,19 @@ export function ProgressPathBanner({
               {subjectLabel}
             </span>
           ) : null}
-          <h2 className="text-end text-lg font-bold leading-tight text-white md:text-2xl">
+          <h2 className="text-start text-lg font-bold leading-tight text-white md:text-2xl">
             {pathTitle}
           </h2>
+        </div>
+
+        <div className="flex size-14 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={JOURNEY_ASSETS.stations.iconPath}
+            alt=""
+            className="size-7 object-contain"
+            aria-hidden
+          />
         </div>
       </div>
 

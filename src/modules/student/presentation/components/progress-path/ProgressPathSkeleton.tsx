@@ -6,16 +6,16 @@ export function ProgressPathSkeleton() {
   return (
     <div className="animate-pulse space-y-0 pb-10">
       <div className="flex items-center justify-between border-b border-[rgba(44,66,96,0.1)] bg-white px-6 py-5">
+        <div className="space-y-2">
+          <div className="h-8 w-56 rounded bg-[#e2e8f0]" />
+          <div className="h-4 w-40 rounded bg-[#f1f5f9]" />
+        </div>
         <div className="flex items-center gap-3">
           <div className="space-y-2">
             <div className="h-4 w-24 rounded bg-[#e2e8f0]" />
             <div className="h-3 w-16 rounded bg-[#f1f5f9]" />
           </div>
           <div className="size-10 rounded-full bg-[#e2e8f0]" />
-        </div>
-        <div className="space-y-2 text-end">
-          <div className="ms-auto h-8 w-56 rounded bg-[#e2e8f0]" />
-          <div className="ms-auto h-4 w-40 rounded bg-[#f1f5f9]" />
         </div>
       </div>
 
@@ -51,7 +51,7 @@ export function ProgressPathSkeleton() {
           <motion.div
             key={index}
             className="size-[135px] rounded-full bg-[#e2e8f0]"
-            style={{ alignSelf: index % 2 === 0 ? "flex-end" : "flex-start", marginInline: "18%" }}
+            style={{ alignSelf: index % 2 === 0 ? "flex-start" : "flex-end", marginInline: "18%" }}
             initial={{ opacity: 0.3, scale: 0.9 }}
             animate={{ opacity: [0.3, 0.7, 0.3], scale: [0.9, 1, 0.9] }}
             transition={{ duration: 1.6, repeat: Infinity, delay: index * 0.2 }}

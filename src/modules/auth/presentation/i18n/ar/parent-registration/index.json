@@ -1,0 +1,63 @@
+{
+  "auth": {
+    "parentRegistration": {
+      "meta": {
+        "title": "إنشاء حساب ولي أمر | نوابغ"
+      },
+      "brandAlt": "أكاديمية نوابغ",
+      "title": "إنشاء حساب ولي أمر",
+      "subtitle": "انضم إلى مجتمع نوابغ وتابع رحلة طفلك التعليمية",
+      "loginPrompt": "لديك حساب بالفعل؟",
+      "loginAction": "تسجيل الدخول",
+      "actions": {
+        "back": "رجوع",
+        "submit": "إنشاء حساب جديد"
+      },
+      "fields": {
+        "country": {
+          "label": "الدولة",
+          "placeholder": "اختر الدولة",
+          "searchPlaceholder": "ابحث عن دولة...",
+          "empty": "لا توجد دول مطابقة",
+          "loadError": "تعذر تحميل قائمة الدول"
+        },
+        "phone": {
+          "label": "رقم الجوال",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "ابحث عن الدولة...",
+          "countryEmpty": "لا توجد دول مطابقة"
+        },
+        "email": {
+          "label": "البريد الإلكتروني",
+          "placeholder": "example@domain.com"
+        },
+        "address": {
+          "label": "العنوان",
+          "placeholder": "المدينة، الحي، الشارع"
+        },
+        "password": {
+          "label": "كلمة المرور",
+          "placeholder": "••••••••",
+          "hint": "يجب أن تحتوي على 8 أحرف على الأقل"
+        }
+      },
+      "footerLinks": {
+        "help": "مركز المساعدة",
+        "privacy": "سياسة الخصوصية",
+        "terms": "شروط الاستخدام"
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب",
+        "invalidEmail": "أدخل بريداً إلكترونياً صالحاً",
+        "invalidPhone": "أدخل رقم هاتف صالحاً",
+        "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+        "passwordNumber": "كلمة المرور يجب أن تحتوي على رقم",
+        "passwordSymbol": "كلمة المرور يجب أن تحتوي على رمز"
+      },
+      "messages": {
+        "submitSuccess": "تم إنشاء الحساب بنجاح. يمكنك تسجيل الدخول الآن.",
+        "submitError": "تعذر إنشاء الحساب. حاول مرة أخرى."
+      }
+    }
+  }
+}

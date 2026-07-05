@@ -35,6 +35,8 @@
       "nav": {
         "home": "الرئيسية",
         "journey": "رحلة التفوق",
+        "dailyTasks": "مهام اليوم",
+        "friendChallenges": "عندي صديق",
         "studyMaterials": "المواد الدراسية",
         "allCourses": "دورات نوابغ المتاحة",
         "interactiveBook": "كتاب تفاعلي",
@@ -95,6 +97,54 @@
     "settingsPage": {
       "title": "الإعدادات",
       "description": "إدارة ملفك الشخصي وتفضيلاتك."
+    },
+    "home": {
+      "header": {
+        "searchPlaceholder": "ابحث عن درس أو معلم...",
+        "calendar": "الجدول",
+        "messages": "الرسائل",
+        "levelOnly": "المستوى {level}",
+        "levelWithBadge": "المستوى {level} — {badge}"
+      },
+      "liveSessions": {
+        "title": "حصص مباشرة الآن",
+        "viewAll": "عرض الكل",
+        "liveBadge": "مباشر",
+        "challengeBadge": "تحدي",
+        "joinNow": "انضم الآن",
+        "joining": "جاري الانضمام...",
+        "enterChallenge": "ادخل التحدي",
+        "entering": "جاري الدخول...",
+        "endsIn": "ينتهي خلال {minutes} دقيقة",
+        "watching": "{count} يشاهدون الآن",
+        "empty": "لا توجد حصص مباشرة أو تحديات الآن.",
+        "exploreCourses": "استكشف الدورات"
+      },
+      "leaderboard": {
+        "title": "لوحة الصدارة",
+        "youRank": "أنت — المركز {rank}"
+      },
+      "courses": {
+        "title": "الدورات المتاحة",
+        "viewAll": "عرض الكل",
+        "free": "مجاناً",
+        "freeBadge": "مجانية",
+        "advancedBadge": "مسار متقدم",
+        "watchCourse": "مشاهدة الدورة",
+        "joinCourse": "انضم للدورة"
+      },
+      "teachers": {
+        "title": "نخبة المعلمين الخبراء",
+        "browseAll": "تصفح كافة المعلمين",
+        "students": "• {count}+ طالب",
+        "viewProfile": "عرض الملف الشخصي"
+      },
+      "community": {
+        "title": "نشاط المجتمع",
+        "viewAll": "عرض الكل",
+        "empty": "لا يوجد نشاط حديث في المجتمع.",
+        "publishedIn": "نشر {author} في {category}"
+      }
     },
     "exploreCourses": {
       "page": {
@@ -389,6 +439,62 @@
       "errors": {
         "load": "تعذر تحميل الاشتراكات. يرجى المحاولة مرة أخرى.",
         "retry": "إعادة المحاولة"
+      }
+    },
+    "dailyTasks": {
+      "page": {
+        "title": "مهام اليوم",
+        "description": "مهامك اليومية والحصص المباشرة والتحديات."
+      },
+      "header": {
+        "welcome": "مرحباً يا {name}!",
+        "fallbackName": "طالب",
+        "subtitleTopTen": "أنت قريب من أفضل 10 طلاب هذا الأسبوع. واصل التقدم!",
+        "subtitleDefault": "أكمل مهام اليوم للحفاظ على زخم تعلّمك.",
+        "streak": "سلسلة {days} أيام"
+      },
+      "hero": {
+        "badge": "مهمة اليوم الأساسية",
+        "title": "أكمل {station} الآن",
+        "progressHint": "إنهاء هذه المحطة يرفع تقدمك إلى",
+        "progressHintSuffix": ". لا تتوقف!",
+        "motivation": "الآن، أنت على بعد خطوة واحدة من التميز!",
+        "duration": "{minutes} دقيقة تقريباً",
+        "points": "+{points} نقطة مكافأة",
+        "cta": "ابدأ الرحلة الآن"
+      },
+      "liveCard": {
+        "liveBadge": "مباشر",
+        "upcomingBadge": "قادم",
+        "teacherSubtitle": "جلسة تفاعلية مع {teacher}",
+        "remainingEnd": "الوقت المتبقي",
+        "remainingStart": "يبدأ خلال",
+        "joinNow": "انضم الآن",
+        "joining": "جاري الانضمام...",
+        "reminder": "يبدأ قريباً"
+      },
+      "challengeCard": {
+        "liveBadge": "مباشر",
+        "upcomingBadge": "قادم",
+        "stationTitle": "محطة التحدي",
+        "remainingEnd": "الوقت المتبقي",
+        "remainingOpen": "يفتح خلال",
+        "enterNow": "ابدأ التحدي الآن",
+        "entering": "جاري الدخول...",
+        "opensLater": "يفتح لاحقاً"
+      },
+      "empty": {
+        "noTasks": "لا توجد مهام مجدولة اليوم.",
+        "noChallenge": "لا يوجد تحدي مفتوح الآن.",
+        "noLive": "لا توجد حصة مباشرة مجدولة الآن.",
+        "exploreCourses": "تصفح الدورات",
+        "viewJourney": "عرض رحلة التفوق"
+      },
+      "errors": {
+        "load": "تعذر تحميل مهام اليوم. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "joinLive": "تعذر الانضمام إلى الحصة المباشرة.",
+        "enterChallenge": "تعذر الدخول إلى التحدي."
       }
     },
     "common": {

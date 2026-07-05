@@ -1,9 +1,9 @@
-import { DashboardLayout } from "@/shared/presentation/layouts";
+import { StudentAreaLayout } from "@/modules/student/presentation/layouts/StudentAreaLayout";
 
 export default function StudentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardLayout variant="student">{children}</DashboardLayout>;
+  return <StudentAreaLayout>{children}</StudentAreaLayout>;
 }

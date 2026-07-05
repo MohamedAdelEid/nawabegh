@@ -1,0 +1,189 @@
+{
+  "friendChallenge": {
+    "page": {
+      "title": "عندي صديق",
+      "historyTitle": "سجل التحديات"
+    },
+    "hub": {
+      "schoolRank": "ترتيبك في المدرسة",
+      "schoolRankValue": "#{rank} — {school}",
+      "noSchoolRank": "غير مرتبط بمدرسة",
+      "wins": "الانتصارات",
+      "losses": "الخسائر",
+      "pending": "قيد الانتظار",
+      "upcoming": "قادمة",
+      "searchPlaceholder": "ابحث عن اسم أو معرف صديقك...",
+      "viewHistory": "عرض السجل الكامل",
+      "newChallenge": "تحدي جديد",
+      "sections": {
+        "pending": "دعوات قيد الانتظار",
+        "upcoming": "التحديات القادمة",
+        "recent": "آخر النتائج"
+      },
+      "empty": {
+        "pending": "لا توجد دعوات قيد الانتظار",
+        "upcoming": "لا توجد تحديات قادمة",
+        "wins": "لم تحقق انتصارات بعد",
+        "losses": "لا توجد خسائر مسجلة",
+        "cancelled": "لا توجد تحديات ملغاة",
+        "recent": "لا توجد نتائج حديثة"
+      }
+    },
+    "history": {
+      "subtitle": "متابعة جميع التحديات القادمة والسابقة والمرفوضة.",
+      "searchPlaceholder": "ابحث عن طالب أو مادة...",
+      "filter": "تصفية",
+      "stats": {
+        "total": "إجمالي التحديات",
+        "wins": "مرات الفوز",
+        "losses": "مرات الخسارة",
+        "upcoming": "التحديات القادمة"
+      },
+      "tabs": {
+        "pending": "قيد الانتظار",
+        "upcoming": "قادمة",
+        "wins": "انتصارات",
+        "losses": "خسائر",
+        "cancelled": "ملغاة"
+      },
+      "newChallengeCard": {
+        "title": "تحدي جديد",
+        "subtitle": "قم بدعوة صديق لخوض مواجهة تعليمية"
+      }
+    },
+    "card": {
+      "accept": "قبول التحدي",
+      "decline": "رفض الدعوة",
+      "cancel": "إلغاء الدعوة",
+      "enter": "تحدي الآن",
+      "enterDisabled": "متاح قريباً",
+      "viewDetails": "عرض التفاصيل",
+      "questions": "{count} سؤال",
+      "wager": "{points} نقطة",
+      "level": "المستوى {level}",
+      "remaining": "الوقت المتبقي",
+      "win": "فوز",
+      "loss": "خسارة",
+      "tie": "تعادل",
+      "duration": "المدة: {time}",
+      "pointsDelta": "{points} نقاط"
+    },
+    "create": {
+      "title": "إرسال تحدي إلى {name}",
+      "subtitle": "خصص إعدادات المواجهة العلمية",
+      "challengeName": "اسم التحدي",
+      "challengeNamePlaceholder": "اسم التحدي",
+      "subjectLabel": "اختر المادة التعليمية",
+      "difficultyLabel": "مستوى الصعوبة",
+      "difficulty": {
+        "easy": "سهل",
+        "medium": "متوسط",
+        "hard": "صعب"
+      },
+      "questionCount": "عدد الأسئلة",
+      "wagerLabel": "النقاط المراهن عليها",
+      "wagerHint": "يُحسب تلقائياً: {count} × 20",
+      "date": "التاريخ",
+      "time": "وقت التحدي",
+      "submit": "إنشاء التحدي وإرسال دعوة",
+      "cancel": "إلغاء التحدي",
+      "success": "تم إرسال الدعوة"
+    },
+    "invite": {
+      "title": "دعوة تحدٍ جديدة",
+      "subtitle": "قام أحد الطلاب بدعوتك لخوض مواجهة تعليمية مباشرة.",
+      "countdownLabel": "الوقت المتبقي لبدء التحدي",
+      "accept": "قبول التحدي",
+      "decline": "رفض الدعوة",
+      "footer": "سيتم نقلك إلى صفحة انتظار بدء التحدي.",
+      "fields": {
+        "subject": "المادة",
+        "difficulty": "الصعوبة",
+        "questions": "الأسئلة",
+        "wager": "نقاط الرهان",
+        "date": "التاريخ",
+        "time": "الوقت"
+      }
+    },
+    "pending": {
+      "waitingTitle": "بانتظار قبول '{name}'...",
+      "waitingSubtitle": "سيتم إخطارك بمجرد قبول المنافس للبدء",
+      "inviterTitle": "في انتظار قبول الدعوة من صديقك",
+      "inviterSubtitle": "انتظر لحظات حتى تتمكن من الدخول للتحدي",
+      "cancelInvitation": "إلغاء الدعوة",
+      "cancelSearch": "إلغاء البحث والعودة للرئيسية",
+      "fields": {
+        "subject": "المادة",
+        "level": "المستوى",
+        "type": "نوع التحدي",
+        "typeValue": "تحدي صديق",
+        "waitingTime": "وقت الانتظار"
+      }
+    },
+    "upcoming": {
+      "countdownLabel": "الوقت المتبقي من التحدي",
+      "title": "تم قبول الدعوة وفي انتظار بدء التحدي",
+      "hint": "استعد! ستبدأ المنافسة فور انتهاء العد التنازلي.",
+      "tip": "تلميح: السرعة في الإجابة تمنحك نقاطاً إضافية!",
+      "enterNow": "تحدي الآن",
+      "enterDisabledHint": "سوف تتمكن من البدء في التحدي وقت اتاحته",
+      "you": "أنت",
+      "opponent": "الخصم",
+      "level": "المستوى {level}",
+      "rank": "الرتبة",
+      "points": "النقاط"
+    },
+    "duel": {
+      "arenaTitle": "ساحة التحدي",
+      "arenaSubtitle": "مواجهة مباشرة",
+      "question": "السؤال {current}/{total}",
+      "opponentAnswering": "الخصم يجاب الآن...",
+      "forfeit": "انسحاب",
+      "category": "الفئة"
+    },
+    "wait": {
+      "opponentTitle": "في انتظار انضمام الخصم…",
+      "opponentSubtitle": "سيبدأ التحدي فور دخول الطرفين",
+      "finishTitle": "في انتظار انتهاء الخصم…",
+      "finishSubtitle": "أنهيت جميع الأسئلة. النتيجة ستظهر عند انتهاء الخصم."
+    },
+    "result": {
+      "winTitle": "نصر مؤزر!",
+      "lossTitle": "حظ أوفر!",
+      "tieTitle": "تعادل!",
+      "tieBody": "لا يتم نقل نقاط الرهان في حالة التعادل",
+      "myScore": "نتيجتك",
+      "opponentScore": "نتيجة الخصم",
+      "correctAnswers": "{count} إجابة صحيحة",
+      "wagerWon": "+{points} نقطة",
+      "wagerLost": "-{points} نقطة",
+      "backToHub": "العودة للرئيسية",
+      "newChallenge": "تحدي جديد"
+    },
+    "forfeit": {
+      "title": "هل تريد الانسحاب من التحدي؟",
+      "body": "سيُعلن خصمك فائزاً وقد تخسر نقاط الرهان.",
+      "confirm": "انسحاب",
+      "cancel": "متابعة التحدي"
+    },
+    "error": {
+      "title": "حدث خطأ",
+      "close": "إغلاق",
+      "codes": {
+        "INSUFFICIENT_POINTS": "نقاط غير كافية",
+        "CHALLENGE_EXPIRED": "انتهت الدعوة",
+        "INVITE_NOT_FOUND": "التحدي غير موجود",
+        "INVALID_STATE_TRANSITION": "حالة غير صالحة",
+        "NOT_ALLOWED": "لا يمكن الدخول الآن",
+        "INVALID_OPPONENT": "خصم غير صالح",
+        "INVALID_SUBJECT": "مادة غير صالحة",
+        "QUESTION_BANK_INSUFFICIENT": "أسئلة غير كافية"
+      }
+    },
+    "common": {
+      "loading": "جاري التحميل...",
+      "retry": "إعادة المحاولة",
+      "vs": "VS"
+    }
+  }
+}

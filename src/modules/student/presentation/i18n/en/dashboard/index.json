@@ -35,6 +35,8 @@
       "nav": {
         "home": "Home",
         "journey": "Excellence Journey",
+        "dailyTasks": "Today's tasks",
+        "friendChallenges": "Friend challenge",
         "studyMaterials": "Study materials",
         "allCourses": "Available Nawabegh Courses",
         "interactiveBook": "Interactive book",
@@ -74,6 +76,54 @@
     "settingsPage": {
       "title": "Settings",
       "description": "Manage your profile and preferences."
+    },
+    "home": {
+      "header": {
+        "searchPlaceholder": "Search for a lesson or teacher...",
+        "calendar": "Schedule",
+        "messages": "Messages",
+        "levelOnly": "Level {level}",
+        "levelWithBadge": "Level {level} — {badge}"
+      },
+      "liveSessions": {
+        "title": "Live sessions now",
+        "viewAll": "View all",
+        "liveBadge": "Live",
+        "challengeBadge": "Challenge",
+        "joinNow": "Join now",
+        "joining": "Joining...",
+        "enterChallenge": "Enter challenge",
+        "entering": "Entering...",
+        "endsIn": "Ends in {minutes} min",
+        "watching": "{count} watching now",
+        "empty": "No live sessions or challenges right now.",
+        "exploreCourses": "Explore courses"
+      },
+      "leaderboard": {
+        "title": "Leaderboard",
+        "youRank": "You — rank {rank}"
+      },
+      "courses": {
+        "title": "Available courses",
+        "viewAll": "View all",
+        "free": "Free",
+        "freeBadge": "Free",
+        "advancedBadge": "Advanced track",
+        "watchCourse": "Watch course",
+        "joinCourse": "Join course"
+      },
+      "teachers": {
+        "title": "Expert teachers",
+        "browseAll": "Browse all teachers",
+        "students": "• {count}+ students",
+        "viewProfile": "View profile"
+      },
+      "community": {
+        "title": "Community activity",
+        "viewAll": "View all",
+        "empty": "No recent community activity.",
+        "publishedIn": "{author} published in {category}"
+      }
     },
     "exploreCourses": {
       "page": {
@@ -368,6 +418,62 @@
       "errors": {
         "load": "Could not load your subscriptions. Please try again.",
         "retry": "Retry"
+      }
+    },
+    "dailyTasks": {
+      "page": {
+        "title": "Today's tasks",
+        "description": "Your daily missions, live sessions, and challenges."
+      },
+      "header": {
+        "welcome": "Welcome, {name}!",
+        "fallbackName": "Student",
+        "subtitleTopTen": "You are close to the top 10 students this week. Keep going!",
+        "subtitleDefault": "Complete today's missions to keep your learning momentum.",
+        "streak": "{days}-day streak"
+      },
+      "hero": {
+        "badge": "Main task of the day",
+        "title": "Complete {station} now",
+        "progressHint": "Finishing this station raises your progress to",
+        "progressHintSuffix": ". Don't stop!",
+        "motivation": "You are one step away from excellence!",
+        "duration": "About {minutes} min",
+        "points": "+{points} reward points",
+        "cta": "Start the journey now"
+      },
+      "liveCard": {
+        "liveBadge": "Live",
+        "upcomingBadge": "Upcoming",
+        "teacherSubtitle": "Interactive session with {teacher}",
+        "remainingEnd": "Time remaining",
+        "remainingStart": "Starts in",
+        "joinNow": "Join now",
+        "joining": "Joining...",
+        "reminder": "Starts soon"
+      },
+      "challengeCard": {
+        "liveBadge": "Live",
+        "upcomingBadge": "Upcoming",
+        "stationTitle": "Challenge station",
+        "remainingEnd": "Time remaining",
+        "remainingOpen": "Opens in",
+        "enterNow": "Start challenge now",
+        "entering": "Entering...",
+        "opensLater": "Opens later"
+      },
+      "empty": {
+        "noTasks": "No tasks scheduled for today.",
+        "noChallenge": "No challenge open right now.",
+        "noLive": "No live session scheduled right now.",
+        "exploreCourses": "Browse courses",
+        "viewJourney": "View journey"
+      },
+      "errors": {
+        "load": "Could not load today's tasks. Please try again.",
+        "retry": "Retry",
+        "joinLive": "Could not join the live session.",
+        "enterChallenge": "Could not enter the challenge."
       }
     },
     "common": {

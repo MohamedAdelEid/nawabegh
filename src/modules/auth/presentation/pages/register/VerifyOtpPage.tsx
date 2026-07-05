@@ -59,7 +59,7 @@ export function VerifyOtpPage() {
 
   useEffect(() => {
     if (!config) {
-      router.replace(AUTH_ROUTES.REGISTER);
+      router.replace(AUTH_ROUTES.REGISTER_STUDENT);
     }
   }, [config, router]);
 

@@ -193,6 +193,23 @@ export const ROUTES = {
       COURSE_CHECKOUT: (courseId: string) => `/student/courses/${courseId}/checkout`,
       CHECKOUT_RESULT: "/student/checkout/result",
       JOURNEY: "/student/journey",
+      DAILY_TASKS: "/student/daily-tasks",
+      ONBOARDING_QUIZ: "/student/onboarding-quiz",
+      FRIEND_CHALLENGES: {
+        HUB: "/student/friend-challenges",
+        HISTORY: "/student/friend-challenges/history",
+        DETAIL: (id: string) => `/student/friend-challenges/${encodeURIComponent(id)}`,
+        UPCOMING: (id: string) =>
+          `/student/friend-challenges/${encodeURIComponent(id)}/upcoming`,
+        SESSION: (sessionId: string) =>
+          `/student/friend-challenges/sessions/${encodeURIComponent(sessionId)}`,
+        SESSION_WAIT_OPPONENT: (sessionId: string) =>
+          `/student/friend-challenges/sessions/${encodeURIComponent(sessionId)}/waiting-opponent`,
+        SESSION_WAIT_FINISH: (sessionId: string) =>
+          `/student/friend-challenges/sessions/${encodeURIComponent(sessionId)}/waiting-finish`,
+        SESSION_RESULT: (sessionId: string) =>
+          `/student/friend-challenges/sessions/${encodeURIComponent(sessionId)}/result`,
+      },
       SETTINGS: "/student/settings",
       KNOWLEDGE_COMMUNITY: {
         LIST: "/student/knowledge-community",

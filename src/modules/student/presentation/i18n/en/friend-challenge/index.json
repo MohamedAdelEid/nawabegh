@@ -1,0 +1,189 @@
+{
+  "friendChallenge": {
+    "page": {
+      "title": "Friend Challenge",
+      "historyTitle": "Challenge History"
+    },
+    "hub": {
+      "schoolRank": "Your school rank",
+      "schoolRankValue": "#{rank} — {school}",
+      "noSchoolRank": "No school linked",
+      "wins": "Wins",
+      "losses": "Losses",
+      "pending": "Pending",
+      "upcoming": "Upcoming",
+      "searchPlaceholder": "Search by name or username...",
+      "viewHistory": "View full history",
+      "newChallenge": "New challenge",
+      "sections": {
+        "pending": "Pending invitations",
+        "upcoming": "Upcoming challenges",
+        "recent": "Recent results"
+      },
+      "empty": {
+        "pending": "No pending invitations",
+        "upcoming": "No upcoming challenges",
+        "wins": "No wins yet",
+        "losses": "No losses recorded",
+        "cancelled": "No cancelled challenges",
+        "recent": "No recent results"
+      }
+    },
+    "history": {
+      "subtitle": "Track all upcoming, past, and rejected challenges.",
+      "searchPlaceholder": "Search student or subject...",
+      "filter": "Filter",
+      "stats": {
+        "total": "Total challenges",
+        "wins": "Wins",
+        "losses": "Losses",
+        "upcoming": "Upcoming"
+      },
+      "tabs": {
+        "pending": "Pending",
+        "upcoming": "Upcoming",
+        "wins": "Wins",
+        "losses": "Losses",
+        "cancelled": "Cancelled"
+      },
+      "newChallengeCard": {
+        "title": "New challenge",
+        "subtitle": "Invite a friend to a knowledge duel"
+      }
+    },
+    "card": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "cancel": "Cancel invitation",
+      "enter": "Enter now",
+      "enterDisabled": "Available soon",
+      "viewDetails": "View details",
+      "questions": "{count} questions",
+      "wager": "{points} pts",
+      "level": "Level {level}",
+      "remaining": "Time remaining",
+      "win": "Win",
+      "loss": "Loss",
+      "tie": "Tie",
+      "duration": "Duration: {time}",
+      "pointsDelta": "{points} pts"
+    },
+    "create": {
+      "title": "Send challenge to {name}",
+      "subtitle": "Customize duel settings",
+      "challengeName": "Challenge name",
+      "challengeNamePlaceholder": "Challenge name",
+      "subjectLabel": "Choose subject",
+      "difficultyLabel": "Difficulty",
+      "difficulty": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "questionCount": "Questions",
+      "wagerLabel": "Wager points",
+      "wagerHint": "Auto: {count} × 20",
+      "date": "Date",
+      "time": "Start time",
+      "submit": "Create and send invitation",
+      "cancel": "Cancel",
+      "success": "Invitation sent"
+    },
+    "invite": {
+      "title": "New challenge invitation",
+      "subtitle": "A student invited you to a live knowledge duel.",
+      "countdownLabel": "Time until challenge starts",
+      "accept": "Accept challenge",
+      "decline": "Decline",
+      "footer": "You will be taken to the waiting screen.",
+      "fields": {
+        "subject": "Subject",
+        "difficulty": "Difficulty",
+        "questions": "Questions",
+        "wager": "Wager",
+        "date": "Date",
+        "time": "Time"
+      }
+    },
+    "pending": {
+      "waitingTitle": "Waiting for '{name}' to accept...",
+      "waitingSubtitle": "You will be notified once they accept",
+      "inviterTitle": "Waiting for your friend to accept",
+      "inviterSubtitle": "Please wait until they respond",
+      "cancelInvitation": "Cancel invitation",
+      "cancelSearch": "Cancel and go back",
+      "fields": {
+        "subject": "Subject",
+        "level": "Level",
+        "type": "Challenge type",
+        "typeValue": "Friend challenge",
+        "waitingTime": "Waiting time"
+      }
+    },
+    "upcoming": {
+      "countdownLabel": "Time remaining until challenge",
+      "title": "Invitation accepted — waiting to start",
+      "hint": "Get ready! The duel starts when the countdown ends.",
+      "tip": "Tip: faster answers earn bonus points!",
+      "enterNow": "Enter now",
+      "enterDisabledHint": "You can enter when the window opens",
+      "you": "You",
+      "opponent": "Opponent",
+      "level": "Level {level}",
+      "rank": "Rank",
+      "points": "Points"
+    },
+    "duel": {
+      "arenaTitle": "Challenge Arena",
+      "arenaSubtitle": "Live duel",
+      "question": "Question {current}/{total}",
+      "opponentAnswering": "Opponent is answering...",
+      "forfeit": "Forfeit",
+      "category": "Category"
+    },
+    "wait": {
+      "opponentTitle": "Waiting for opponent…",
+      "opponentSubtitle": "The duel starts when both players enter",
+      "finishTitle": "Waiting for opponent to finish…",
+      "finishSubtitle": "You finished all questions. Results appear when they finish."
+    },
+    "result": {
+      "winTitle": "Victory!",
+      "lossTitle": "Better luck next time!",
+      "tieTitle": "It's a tie!",
+      "tieBody": "Wager points are not transferred on a tie",
+      "myScore": "Your score",
+      "opponentScore": "Opponent score",
+      "correctAnswers": "{count} correct",
+      "wagerWon": "+{points} pts",
+      "wagerLost": "-{points} pts",
+      "backToHub": "Back to hub",
+      "newChallenge": "New challenge"
+    },
+    "forfeit": {
+      "title": "Forfeit this duel?",
+      "body": "Your opponent wins and you may lose wager points.",
+      "confirm": "Forfeit",
+      "cancel": "Keep playing"
+    },
+    "error": {
+      "title": "Something went wrong",
+      "close": "Close",
+      "codes": {
+        "INSUFFICIENT_POINTS": "Insufficient points",
+        "CHALLENGE_EXPIRED": "Invitation expired",
+        "INVITE_NOT_FOUND": "Challenge not found",
+        "INVALID_STATE_TRANSITION": "Invalid state",
+        "NOT_ALLOWED": "Cannot enter now",
+        "INVALID_OPPONENT": "Invalid opponent",
+        "INVALID_SUBJECT": "Invalid subject",
+        "QUESTION_BANK_INSUFFICIENT": "Not enough questions"
+      }
+    },
+    "common": {
+      "loading": "Loading...",
+      "retry": "Retry",
+      "vs": "VS"
+    }
+  }
+}

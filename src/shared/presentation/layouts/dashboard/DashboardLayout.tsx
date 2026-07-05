@@ -77,6 +77,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       <DashboardContent
         translationNamespace={translationNamespace}
+        variant={variant}
         isMobile={isMobile}
         isSidebarCollapsed={isSidebarCollapsed}
         isMobileMenuOpen={isMobileMenuOpen}

@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "teacherRegistration": {
+      "meta": {
+        "title": "تسجيل معلم جديد | نوابغ"
+      },
+      "brandAlt": "أكاديمية نوابغ",
+      "title": "تسجيل معلم جديد",
+      "subtitle": "انضم إلى مجتمع نوابغ الأكاديمي وساهم في صياغة مستقبل التعليم الذكي.",
+      "loginPrompt": "لديك حساب بالفعل؟",
+      "loginAction": "تسجيل الدخول",
+      "actions": {
+        "back": "رجوع",
+        "submit": "إتمام عملية التسجيل"
+      },
+      "sections": {
+        "personal": "المعلومات الشخصية والمهنية",
+        "location": "الموقع الجغرافي",
+        "security": "أمان الحساب"
+      },
+      "fields": {
+        "jobTitle": {
+          "label": "المسمى الوظيفي",
+          "placeholder": "مثال: معلم لغة عربية"
+        },
+        "schoolName": {
+          "label": "اسم المدرسة / المؤسسة",
+          "placeholder": "أدخل اسم مدرستك"
+        },
+        "email": {
+          "label": "البريد الإلكتروني",
+          "placeholder": "name@example.com"
+        },
+        "phone": {
+          "label": "رقم الهاتف",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "ابحث عن الدولة...",
+          "countryEmpty": "لا توجد دول مطابقة"
+        },
+        "country": {
+          "label": "الدولة",
+          "placeholder": "اختر الدولة",
+          "searchPlaceholder": "ابحث عن دولة...",
+          "empty": "لا توجد دول مطابقة",
+          "loadError": "تعذر تحميل قائمة الدول"
+        },
+        "address": {
+          "label": "العنوان بالتفصيل",
+          "placeholder": "المدينة، الحي، الشارع"
+        },
+        "password": {
+          "label": "كلمة المرور",
+          "placeholder": "••••••••"
+        },
+        "confirmPassword": {
+          "label": "تأكيد كلمة المرور",
+          "placeholder": "••••••••"
+        }
+      },
+      "terms": {
+        "prefix": "أوافق على",
+        "terms": "شروط الخدمة",
+        "and": "و",
+        "privacy": "سياسة الخصوصية",
+        "suffix": "الخاصة بمنصة نوابغ، وأتعهد بصحة البيانات المدخلة."
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب",
+        "invalidEmail": "أدخل بريداً إلكترونياً صالحاً",
+        "invalidPhone": "أدخل رقم هاتف صالحاً",
+        "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+        "passwordNumber": "كلمة المرور يجب أن تحتوي على رقم",
+        "passwordSymbol": "كلمة المرور يجب أن تحتوي على رمز",
+        "passwordMismatch": "كلمتا المرور غير متطابقتين",
+        "acceptTerms": "يجب الموافقة على الشروط للمتابعة"
+      },
+      "messages": {
+        "submitSuccess": "تم إنشاء الحساب بنجاح. يمكنك تسجيل الدخول الآن.",
+        "submitError": "تعذر إتمام التسجيل. حاول مرة أخرى."
+      }
+    }
+  }
+}

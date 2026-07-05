@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { StudentHomeDashboard } from "@/modules/student/presentation/components/home/StudentHomeDashboard";
 import { DashboardTabPage } from "@/shared/presentation/components/dashboard";
 
 const STUDENT_TAB_IDS = [
@@ -24,6 +25,10 @@ export function StudentDashboardPage() {
   const searchParams = useSearchParams();
   const rawTab = searchParams.get("tab") ?? "home";
   const tab: StudentTabId = isStudentTab(rawTab) ? rawTab : "home";
+
+  if (tab === "home") {
+    return <StudentHomeDashboard />;
+  }
 
   return (
     <DashboardTabPage

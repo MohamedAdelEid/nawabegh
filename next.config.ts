@@ -37,9 +37,15 @@ function buildFileRemotePatterns(): NonNullable<NextConfig["images"]>["remotePat
 }
 
 const nextConfig: NextConfig = {
-  images: { remotePatterns: buildFileRemotePatterns() },
+  images: {
+    remotePatterns: buildFileRemotePatterns(),
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
   async redirects() {
     return [
+      { source: "/", destination: "/auth/register", permanent: false },
       { source: "/login", destination: "/auth/login", permanent: false },
       { source: "/register", destination: "/auth/register", permanent: false },
       { source: "/register/study", destination: "/auth/register", permanent: false },
