@@ -176,8 +176,8 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
               { icon: Trophy, label: t("courses.details.labels.grade"), value: data.grade, tone: "border-emerald-500" },
               {
                 icon: BookOpen,
-                label: t("courses.details.metrics.lessons"),
-                value: t("courses.details.metrics.lessonsValue", { count: data.lessonCount }),
+                label: t("courses.details.metrics.stations"),
+                value: t("courses.details.metrics.stationsValue", { count: data.lessonCount }),
                 tone: "border-amber-500",
               },
               {
@@ -217,11 +217,11 @@ export function TeacherCourseDetailsView({ courseId }: { courseId: string }) {
                 <div className="space-y-8">
                   {data.curriculum.map((unit) => (
                     <div key={unit.id} className="space-y-4">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-slate-800">{unit.title}</h3>
                         {unit.status ? (
                           <DashboardBadge tone="neutral">{t(`courses.list.status.${unit.status}`)}</DashboardBadge>
                         ) : null}
-                        <h3 className="font-bold text-slate-800">{unit.title}</h3>
                       </div>
                       <div className="space-y-3 border-r-2 border-slate-200 pr-6">
                         {unit.items.map((item) => (

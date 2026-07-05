@@ -1012,6 +1012,8 @@
         "metrics": {
           "lessons": "Total lessons",
           "lessonsValue": "{count} lessons",
+          "stations": "Total stations",
+          "stationsValue": "{count, plural, one {# station} other {# stations}}",
           "price": "Price"
         },
         "managementStats": {

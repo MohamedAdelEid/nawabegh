@@ -410,7 +410,9 @@ export async function fetchTeacherCourseWorkspace(
     subjectNameEn: readString(course, ["subjectNameEn"], ""),
     term,
     termLabel: termLabel(term, locale),
-    grade: String(readNumber(course, ["gradeId"], 0) ?? "—"),
+    grade: locale.startsWith("ar")
+      ? readString(course, ["gradeNameAr", "gradeName"], "—")
+      : readString(course, ["gradeNameEn", "gradeNameAr", "gradeName"], "—"),
     gradeId: readNumber(course, ["gradeId"], 0) ?? 0,
     status: mapCourseStatus(course.status),
     instructorName: readString(course, ["teacherFullName"], "—"),

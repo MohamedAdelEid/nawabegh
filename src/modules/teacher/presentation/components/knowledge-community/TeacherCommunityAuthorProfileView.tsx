@@ -89,7 +89,7 @@ export function TeacherCommunityAuthorProfileView({ authorId }: { authorId: stri
 
           {profile.skills.length > 0 ? (
             <CommunitySidebarCard title={t("skills.title")}>
-              <div className="flex flex-wrap justify-end gap-2">
+              <div className="flex flex-wrap gap-2">
                 {profile.skills.map((skill) => (
                   <span
                     key={skill.name}
@@ -105,25 +105,25 @@ export function TeacherCommunityAuthorProfileView({ authorId }: { authorId: stri
           <CommunitySidebarCard title={t("stats.title")}>
             <ul className="space-y-3 text-right text-sm text-slate-600">
               <li className="flex items-center justify-between gap-3">
-                <span>{profile.publishedArticlesCount.toLocaleString()}</span>
                 <span>{t("stats.articles")}</span>
+                <span>{profile.publishedArticlesCount.toLocaleString()}</span>
               </li>
               <li className="flex items-center justify-between gap-3">
-                <span>{profile.followersCount.toLocaleString()}</span>
                 <span>{t("stats.followers")}</span>
+                <span>{profile.followersCount.toLocaleString()}</span>
               </li>
               <li className="flex items-center justify-between gap-3">
-                <span>{profile.followingCount.toLocaleString()}</span>
                 <span>{t("stats.following")}</span>
+                <span>{profile.followingCount.toLocaleString()}</span>
               </li>
               <li className="flex items-center justify-between gap-3">
-                <span>{profile.interactionsCount.toLocaleString()}</span>
                 <span>{t("stats.interactions")}</span>
+                <span>{profile.interactionsCount.toLocaleString()}</span>
               </li>
             </ul>
           </CommunitySidebarCard>
 
-          <CommunityNewsletterWidget />
+          {/* <CommunityNewsletterWidget /> */}
         </>
       }
     >

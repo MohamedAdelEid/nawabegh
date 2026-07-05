@@ -1012,6 +1012,8 @@
         "metrics": {
           "lessons": "إجمالي الدروس",
           "lessonsValue": "{count} درس",
+          "stations": "إجمالي المحطات",
+          "stationsValue": "{count, plural, one {محطة واحدة} two {محطتان} few {# محطات} many {# محطة} other {# محطة}}",
           "price": "السعر"
         },
         "managementStats": {

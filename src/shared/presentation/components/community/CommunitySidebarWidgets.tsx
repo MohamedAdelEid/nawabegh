@@ -13,6 +13,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
+import { CommunityFollowButton } from "@/shared/presentation/components/community/CommunityFollowButton";
 import { CommunitySidebarCard } from "./CommunityPageShell";
 import { useCommunityTranslations } from "@/shared/presentation/components/community/useCommunityTranslations";
 
@@ -72,9 +73,11 @@ export function CommunityTopAuthorsWidget({ authors }: { authors: CommunityAutho
                 </p>
               </div>
             </div>
-            <Button variant="outline" size="sm" className="rounded-full">
-              {t("follow")}
-            </Button>
+            <CommunityFollowButton
+              userId={author.userId}
+              isFollowing={author.isFollowing ?? false}
+              className="rounded-full px-4"
+            />
           </li>
         ))}
       </ul>
