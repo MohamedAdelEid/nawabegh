@@ -31,8 +31,14 @@ export function ProgressPathTabs({
 
   const scroll = (direction: "prev" | "next") => {
     if (!scrollRef.current) return;
-    const delta = direction === "next" ? 260 : -260;
-    scrollRef.current.scrollBy({ left: delta, behavior: "smooth" });
+    const isRtl =
+      typeof document !== "undefined" && document.documentElement.dir === "rtl";
+    const magnitude = 260;
+    const forward = direction === "next" ? magnitude : -magnitude;
+    scrollRef.current.scrollBy({
+      left: isRtl ? -forward : forward,
+      behavior: "smooth",
+    });
   };
 
   const isPath = variant === "path";

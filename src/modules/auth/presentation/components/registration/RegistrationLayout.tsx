@@ -36,7 +36,7 @@ export function RegistrationLayout({ children }: RegistrationLayoutProps) {
 
   const handleBack = () => {
     if (currentStep === "account") {
-      router.back();
+      router.push(AUTH_ROUTES.REGISTER);
       return;
     }
     previousStep();

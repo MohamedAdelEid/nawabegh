@@ -1,0 +1,41 @@
+{
+  "auth": {
+    "accountType": {
+      "meta": {
+        "title": "Choose account type | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "pageTitle": "Welcome to Nawabegh",
+      "pageSubtitle": "Choose your account type to start your distinguished learning journey",
+      "loginPrompt": "Already have an account?",
+      "loginAction": "Sign in",
+      "actions": {
+        "backHome": "Back to home",
+        "continueRegistration": "Continue to create account",
+        "continueActivation": "Continue to activate account"
+      },
+      "messages": {
+        "comingSoon": "Registration for this account type will be available soon."
+      },
+      "cards": {
+        "selectedBadge": "Selected",
+        "student": {
+          "title": "Student",
+          "description": "Explore your knowledge world, solve challenges, and compete with peers in a motivating learning environment."
+        },
+        "teacher": {
+          "title": "Teacher",
+          "description": "Manage your classes, track student progress, and design interactive learning content with ease."
+        },
+        "parent": {
+          "title": "Parent",
+          "description": "Follow your children's learning journey, view their achievements, and be a partner in their success."
+        },
+        "school": {
+          "title": "School",
+          "description": "Manage students, teachers, and classes, and monitor the learning process from one dashboard."
+        }
+      }
+    }
+  }
+}

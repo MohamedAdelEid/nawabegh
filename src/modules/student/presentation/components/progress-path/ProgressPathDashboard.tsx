@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
@@ -24,6 +24,20 @@ export function ProgressPathDashboard() {
 
   const courseId = searchParams.get("courseId");
   const pathId = searchParams.get("pathId");
+  const isDemo = searchParams.get("demo") === "1";
+
+  const withDemo = (params: URLSearchParams) => {
+    if (isDemo) params.set("demo", "1");
+    return params;
+  };
+
+  const requireAccount = () => {
+    if (typeof window === "undefined") return;
+    window.parent?.postMessage(
+      { type: "nawabegh:require-account" },
+      window.location.origin,
+    );
+  };
 
   const {
     dashboardQuery,
@@ -74,33 +88,26 @@ export function ProgressPathDashboard() {
   const handleCourseChange = (nextCourseId: string) => {
     if (nextCourseId === activeCourseId) return;
     selectCourse(nextCourseId);
-    const params = new URLSearchParams();
-    params.set("courseId", nextCourseId);
-    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${params.toString()}`);
+    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(new URLSearchParams()).toString()}`);
   };
 
   const handlePathChange = (nextPathId: string) => {
     const params = new URLSearchParams();
-    if (activeCourseId) params.set("courseId", activeCourseId);
     params.set("pathId", nextPathId);
-    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${params.toString()}`);
+    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`);
   };
 
   const isPathLocked =
     activePathProgress?.pathProgressStatus === StudentPathProgressStatus.Locked;
 
   const handleStationSelect = (station: PathStationProgressDto) => {
+    if (isDemo) {
+      requireAccount();
+      return;
+    }
     if (isPathLocked) return;
     void station;
   };
-
-  useEffect(() => {
-    if (!activeCourseId || courseId) return;
-    const params = new URLSearchParams();
-    params.set("courseId", activeCourseId);
-    if (activePathId) params.set("pathId", activePathId);
-    router.replace(`${ROUTES.USER.STUDENT.JOURNEY}?${params.toString()}`);
-  }, [activeCourseId, activePathId, courseId, router]);
 
   const isLoading =
     dashboardQuery.isLoading ||
@@ -227,20 +234,8 @@ function PathHeader({
 }) {
   return (
     <header className="relative z-10 flex flex-col gap-4 border-b border-[rgba(44,66,96,0.1)] bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <div className="flex items-center gap-3">
-        <div className="text-start">
-          <p className="text-sm font-bold text-[#1e293b]">{studentName}</p>
-          <p className="text-[10px] font-bold uppercase tracking-[0.5px] text-[#c7af6d]">
-            {enrolledBadge}
-          </p>
-        </div>
-        <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(199,175,109,0.3)] bg-[#e2e8f0] shadow-sm">
-          <span className="text-base">👤</span>
-        </div>
-      </div>
-
       <div className="flex items-center gap-4">
-        <div className="text-end">
+        <div className="text-start">
           <h1 className="text-xl font-bold text-[#0f172a] md:text-[30px] md:leading-[36px]">
             {courseTitle}
           </h1>
@@ -256,6 +251,18 @@ function PathHeader({
           />
         </div>
       </div>
+
+      <div className="flex items-center gap-3">
+        <div className="text-start">
+          <p className="text-sm font-bold text-[#1e293b]">{studentName}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.5px] text-[#c7af6d]">
+            {enrolledBadge}
+          </p>
+        </div>
+        <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(199,175,109,0.3)] bg-[#e2e8f0] shadow-sm">
+          <span className="text-base">👤</span>
+        </div>
+      </div>
     </header>
   );
 }
@@ -267,7 +274,7 @@ function ProgressPathTimelineSkeleton() {
         <motion.div
           key={index}
           className="size-[135px] rounded-full bg-[#e2e8f0]/80"
-          style={{ alignSelf: index % 2 === 0 ? "flex-end" : "flex-start", marginInline: "18%" }}
+          style={{ alignSelf: index % 2 === 0 ? "flex-start" : "flex-end", marginInline: "18%" }}
           initial={{ opacity: 0.3 }}
           animate={{ opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 1.4, repeat: Infinity, delay: index * 0.2 }}

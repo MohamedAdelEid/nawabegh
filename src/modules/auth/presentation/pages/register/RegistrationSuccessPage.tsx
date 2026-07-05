@@ -10,6 +10,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { cn } from "@/shared/application/lib/cn";
 import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
+import { resolveStudentPostAuthPath } from "@/modules/student/application/lib/resolveStudentPostAuthPath";
 import { useRegistrationStore } from "@/modules/auth/presentation/store/registrationStore";
 import { useSession } from "next-auth/react";
 
@@ -26,21 +27,21 @@ export function RegistrationSuccessPage() {
   const isArabic = locale === "ar";
   const direction = isArabic ? "rtl" : "ltr";
 
-  const targetPath = getRedirectPathForRole(session?.user?.role);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace(AUTH_ROUTES.LOGIN);
+  async function navigateAfterRegistration() {
+    resetRegistration();
+    let destination: string = getRedirectPathForRole(session?.user?.role);
+    if (session?.user?.role?.trim().toLowerCase() === "student" && session.user.id) {
+      destination = await resolveStudentPostAuthPath(session.user.id);
     }
-  }, [status, router]);
+    router.replace(destination);
+    router.refresh();
+  }
 
   useEffect(() => {
     if (status !== "authenticated") return;
 
     if (secondsLeft <= 0) {
-      resetRegistration();
-      router.replace(targetPath);
-      router.refresh();
+      void navigateAfterRegistration();
       return;
     }
 
@@ -49,7 +50,13 @@ export function RegistrationSuccessPage() {
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [secondsLeft, status, resetRegistration, router, targetPath]);
+  }, [secondsLeft, status]);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace(AUTH_ROUTES.LOGIN);
+    }
+  }, [status, router]);
 
   if (status === "loading" || status === "unauthenticated") {
     return null;
@@ -104,11 +111,7 @@ export function RegistrationSuccessPage() {
         >
           <Button
             type="button"
-            onClick={() => {
-              resetRegistration();
-              router.replace(targetPath);
-              router.refresh();
-            }}
+            onClick={() => void navigateAfterRegistration()}
             className={cn(
               "h-14 w-full rounded-2xl bg-[var(--dashboard-primary)] text-base font-bold text-white",
               "shadow-[var(--dashboard-shadow-button)]",

@@ -1,0 +1,83 @@
+{
+  "auth": {
+    "teacherRegistration": {
+      "meta": {
+        "title": "Register new teacher | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "title": "Register new teacher",
+      "subtitle": "Join the Nawabegh academic community and help shape the future of smart education.",
+      "loginPrompt": "Already have an account?",
+      "loginAction": "Sign in",
+      "actions": {
+        "back": "Back",
+        "submit": "Complete registration"
+      },
+      "sections": {
+        "personal": "Personal & professional info",
+        "location": "Location",
+        "security": "Account security"
+      },
+      "fields": {
+        "jobTitle": {
+          "label": "Job title",
+          "placeholder": "e.g. Arabic language teacher"
+        },
+        "schoolName": {
+          "label": "School / institution name",
+          "placeholder": "Enter your school name"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "name@example.com"
+        },
+        "phone": {
+          "label": "Phone number",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "Search for a country...",
+          "countryEmpty": "No matching countries"
+        },
+        "country": {
+          "label": "Country",
+          "placeholder": "Select country",
+          "searchPlaceholder": "Search for a country...",
+          "empty": "No matching countries",
+          "loadError": "Could not load countries"
+        },
+        "address": {
+          "label": "Detailed address",
+          "placeholder": "City, district, street"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "••••••••"
+        },
+        "confirmPassword": {
+          "label": "Confirm password",
+          "placeholder": "••••••••"
+        }
+      },
+      "terms": {
+        "prefix": "I agree to the",
+        "terms": "Terms of Service",
+        "and": "and",
+        "privacy": "Privacy Policy",
+        "suffix": "of the Nawabegh platform, and confirm the accuracy of the entered data."
+      },
+      "validation": {
+        "required": "This field is required",
+        "invalidEmail": "Enter a valid email",
+        "invalidPhone": "Enter a valid phone number",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordNumber": "Password must include a number",
+        "passwordSymbol": "Password must include a symbol",
+        "passwordMismatch": "Passwords do not match",
+        "acceptTerms": "You must accept the terms to continue"
+      },
+      "messages": {
+        "submitSuccess": "Account created successfully. You can sign in now.",
+        "submitError": "Could not complete registration. Please try again."
+      }
+    }
+  }
+}
