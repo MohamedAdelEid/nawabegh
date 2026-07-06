@@ -206,7 +206,7 @@ function mapStationInsight(record: UnknownRecord | null): TeacherStationInsight 
 
   return {
     stationId,
-    stationType: readNumber(record, ["stationType", "type"]),
+    stationType: readNumber(record, ["stationType", "type"]) ?? undefined,
     learningPathTitle: readString(record, ["learningPathTitle"], "—"),
     stationName: readString(record, ["stationName"], "—"),
     metricPercent: readNumber(record, ["metricPercent"], 0) ?? 0,

@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "schoolActivation": {
+      "meta": {
+        "title": "School account activation | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "title": "Activate school account",
+      "description": "Please select the school you belong to so we can send an activation request. Our support team will contact you.",
+      "infoAlert": "The activation request will be sent to Nawabegh Academy administration, and the school will be contacted to complete activation.",
+      "actions": {
+        "back": "Back",
+        "submit": "Request account activation",
+        "submitting": "Submitting..."
+      },
+      "fields": {
+        "school": {
+          "label": "School name",
+          "placeholder": "Select school",
+          "searchPlaceholder": "Search for a school...",
+          "empty": "No matching schools",
+          "loadError": "Could not load schools",
+          "hint": "Only schools registered in the system are shown."
+        }
+      },
+      "validation": {
+        "schoolRequired": "Please select a school."
+      },
+      "messages": {
+        "submitSuccess": "Activation request sent successfully. Our support team will contact you soon.",
+        "submitError": "Could not send activation request. Please try again."
+      },
+      "support": {
+        "label": "For technical support, contact us on WhatsApp",
+        "phone": "+966 50 000 0000",
+        "whatsappUrl": "https://wa.me/966500000000"
+      }
+    }
+  }
+}

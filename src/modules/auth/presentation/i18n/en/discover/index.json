@@ -1,0 +1,20 @@
+{
+  "auth": {
+    "discover": {
+      "trigger": "Discover Nawabegh",
+      "popup": {
+        "title": "Discover the Nawabegh platform",
+        "subtitle": "Explore the learning journey before creating your account",
+        "close": "Close",
+        "createAccount": "Create your account"
+      },
+      "completeAccount": {
+        "title": "Complete account creation",
+        "message": "To use this feature, you must first finish creating a student account. Once your account is ready, you'll be able to access and use all features with ease.",
+        "primary": "Create student account",
+        "secondary": "Back",
+        "illustrationAlt": "Illustration character"
+      }
+    }
+  }
+}

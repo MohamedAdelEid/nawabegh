@@ -1,0 +1,63 @@
+{
+  "auth": {
+    "parentRegistration": {
+      "meta": {
+        "title": "Create parent account | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "title": "Create parent account",
+      "subtitle": "Join the Nawabegh community and follow your child's learning journey",
+      "loginPrompt": "Already have an account?",
+      "loginAction": "Sign in",
+      "actions": {
+        "back": "Back",
+        "submit": "Create new account"
+      },
+      "fields": {
+        "country": {
+          "label": "Country",
+          "placeholder": "Select country",
+          "searchPlaceholder": "Search for a country...",
+          "empty": "No matching countries",
+          "loadError": "Could not load countries"
+        },
+        "phone": {
+          "label": "Mobile number",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "Search for a country...",
+          "countryEmpty": "No matching countries"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "example@domain.com"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "City, district, street"
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "••••••••",
+          "hint": "Must be at least 8 characters"
+        }
+      },
+      "footerLinks": {
+        "help": "Help center",
+        "privacy": "Privacy policy",
+        "terms": "Terms of use"
+      },
+      "validation": {
+        "required": "This field is required",
+        "invalidEmail": "Enter a valid email",
+        "invalidPhone": "Enter a valid phone number",
+        "passwordMin": "Password must be at least 8 characters",
+        "passwordNumber": "Password must include a number",
+        "passwordSymbol": "Password must include a symbol"
+      },
+      "messages": {
+        "submitSuccess": "Account created successfully. You can sign in now.",
+        "submitError": "Could not create account. Please try again."
+      }
+    }
+  }
+}

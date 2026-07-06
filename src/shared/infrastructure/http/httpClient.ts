@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig, AxiosResponseHeaders, RawAxiosResponseHeaders } from "axios";
 import axiosClient from "./axiosClient";
 import { applyRequestInterceptor, applyResponseInterceptor } from "./interceptors";
+import { resolveApiUrl } from "./resolveApiUrl";
 import { getRequestLanguage, getToken } from "./tokenStore";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 
@@ -87,11 +88,15 @@ async function unwrap<T>(
   return data;
 }
 
+function withResolvedUrl<T extends RequestOptions>(options: T): T {
+  return { ...options, url: resolveApiUrl(options.url) };
+}
+
 async function get<T>(
   options: Omit<RequestOptions, "data" | "isFormData">,
 ): Promise<HttpClientResponse<T>> {
   const response = await axiosClient.get<BackendApiResponse<T>>(
-    options.url,
+    withResolvedUrl(options).url,
     buildConfig(options),
   );
 
@@ -102,19 +107,23 @@ async function get<T>(
 }
 
 async function post<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return unwrap(axiosClient.post(options.url, options.data, buildConfig(options)));
+  const resolved = withResolvedUrl(options);
+  return unwrap(axiosClient.post(resolved.url, resolved.data, buildConfig(resolved)));
 }
 
 async function put<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return unwrap(axiosClient.put(options.url, options.data, buildConfig(options)));
+  const resolved = withResolvedUrl(options);
+  return unwrap(axiosClient.put(resolved.url, resolved.data, buildConfig(resolved)));
 }
 
 async function patch<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  return unwrap(axiosClient.patch(options.url, options.data, buildConfig(options)));
+  const resolved = withResolvedUrl(options);
+  return unwrap(axiosClient.patch(resolved.url, resolved.data, buildConfig(resolved)));
 }
 
 async function del<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
-  const { url, data, ...rest } = options;
+  const resolved = withResolvedUrl(options);
+  const { url, data, ...rest } = resolved;
   return unwrap(
     axiosClient.delete(url, {
       ...buildConfig(rest),
@@ -124,3 +133,4 @@ async function del<T>(options: RequestOptions): Promise<BackendApiResponse<T>> {
 }
 
 export const httpClient = { get, post, put, patch, delete: del };
+export { resolveApiUrl };

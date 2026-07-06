@@ -1,0 +1,49 @@
+{
+  "onboardingQuiz": {
+    "loading": "Loading welcome quiz...",
+    "progress": {
+      "currentStage": "Current stage",
+      "questionTitle": {
+        "1": "Question one",
+        "2": "Question two",
+        "3": "Question three",
+        "4": "Question four",
+        "5": "Question five"
+      }
+    },
+    "question": {
+      "defaultHint": "Choose the correct answer based on the latest platform updates",
+      "flashcardHint": "Choose the correct answer to continue"
+    },
+    "navigation": {
+      "next": "Next question",
+      "previous": "Previous",
+      "finish": "Finish quiz"
+    },
+    "results": {
+      "title": "Congratulations! You completed the quiz",
+      "subtitle": "Review your results and collect your academic rewards",
+      "successRate": "Success rate",
+      "correct": "Correct",
+      "wrong": "Wrong",
+      "rewardLabel": "Earned reward",
+      "rewardPoints": "+{points} excellence points",
+      "badgeTitle": "Nawabegh Explorer",
+      "badgeDescription": "A new badge was unlocked for tackling complex questions",
+      "continue": "Start your journey",
+      "reviewAnswers": "Review answers",
+      "hideReview": "Hide review",
+      "answersDetail": "Answer details",
+      "correctLegend": "Your selected answers",
+      "yourAnswer": "Your answer: {answer}",
+      "noAnswer": "—",
+      "tip": "Tip: focus on upcoming lessons to improve your level"
+    },
+    "error": {
+      "title": "Unable to load quiz",
+      "generic": "Something went wrong while loading the welcome quiz. Please try again.",
+      "retry": "Try again",
+      "logout": "Sign out"
+    }
+  }
+}
