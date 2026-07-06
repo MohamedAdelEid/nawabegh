@@ -98,7 +98,7 @@ export function TeacherCommunityArticleView({ articleId }: { articleId: string }
             </div>
           </CommunitySidebarCard>
           <CommunityTopArticlesWidget articles={relatedArticles} />
-          <CommunityNewsletterWidget />
+          {/* <CommunityNewsletterWidget /> */}
         </>
       }
     >

@@ -106,14 +106,14 @@ export function CommunityFeedPostCard({ post, className }: CommunityFeedPostCard
             {post.commentsCount}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <button type="button" className="hover:text-[#2C4260]">
             <Share2 className="h-4 w-4" />
           </button>
           <button type="button" className="hover:text-[#2C4260]">
             <Bookmark className="h-4 w-4" />
           </button>
-        </div>
+        </div> */}
       </div>
     </article>
   );

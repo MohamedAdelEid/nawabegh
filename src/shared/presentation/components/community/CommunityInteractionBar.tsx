@@ -124,10 +124,10 @@ export function CommunityInteractionBar({
           <Bookmark className={cn("h-4 w-4", isBookmarked && "fill-current")} />
           {isBookmarked ? t("saved") : t("save")}
         </button>
-        <button type="button" className="inline-flex items-center gap-2">
+        {/* <button type="button" className="inline-flex items-center gap-2">
           <Share2 className="h-4 w-4" />
           {t("share")}
-        </button>
+        </button> */}
       </div>
       {enableRatings ? (
         <div className="flex items-center gap-2">

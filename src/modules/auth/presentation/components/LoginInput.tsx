@@ -1,10 +1,9 @@
 "use client";
 
 import type React from "react";
-import { Input } from "@/shared/presentation/components/ui/input";
 import { cn } from "@/shared/application/lib/cn";
 
-type LoginInputProps = React.ComponentProps<typeof Input> & {
+type LoginInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   error?: string;
   leading?: React.ReactNode;
@@ -37,16 +36,15 @@ export function LoginInput({
           "flex min-h-14 items-center gap-3 rounded-[1.25rem] border bg-white px-4 transition-colors",
           hasError
             ? "border-[var(--dashboard-danger)]"
-            : "border-[var(--auth-border)] focus-within:border-[var(--dashboard-primary)]",
+            : "border-[var(--auth-border)]",
           containerClassName,
         )}
       >
         {leading}
-        <Input
+        <input
           className={cn(
-            "h-auto border-0 bg-transparent px-0 py-0 text-sm text-slate-700 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-sm",
+            "h-auto min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-sm text-slate-700 outline-none ring-0 shadow-none focus:border-0 focus:outline-none focus:ring-0 md:text-sm",
             className,
-            "border-none focus-visible:ring-0 focus-visible:ring-offset-0",
           )}
           {...props}
         />
