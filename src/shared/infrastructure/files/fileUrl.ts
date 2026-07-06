@@ -1,10 +1,10 @@
 import { env } from "@/shared/infrastructure/config/env";
 
-export const FILE_UPLOAD_URL =
-  "https://nawabeghsystem.runasp.net/api/FileUpload/upload";
+const apiBase = env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
 
-export const FILE_DOWNLOAD_URL =
-  "https://nawabeghsystem.runasp.net/api/FileUpload/download?filePath=";
+export const FILE_UPLOAD_URL = `${apiBase}/api/FileUpload/upload`;
+
+export const FILE_DOWNLOAD_URL = `${apiBase}/api/FileUpload/download?filePath=`;
 
 export const FILE_PUBLIC_BASE_URL = `${env.NEXT_PUBLIC_FILE_PUBLIC_BASE_URL.replace(/\/+$/, "")}/`;
 

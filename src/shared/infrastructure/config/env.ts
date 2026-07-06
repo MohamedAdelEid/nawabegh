@@ -9,12 +9,12 @@ const schema = z.object({
   NEXT_PUBLIC_API_URL: z
     .string()
     .url()
-    .default("https://nawabeghsystem.runasp.net"),
+    .default("https://api.nwabigh.com"),
   NEXT_PUBLIC_API_VERSION_PREFIX: z.string().default("/api/v1"),
   NEXT_PUBLIC_FILE_PUBLIC_BASE_URL: z
     .string()
     .url()
-    .default("https://nawabeghsystem.runasp.net"),
+    .default("https://api.nwabigh.com"),
   NEXT_PUBLIC_API_TIMEOUT: z.string().default("15000"),
 });
 

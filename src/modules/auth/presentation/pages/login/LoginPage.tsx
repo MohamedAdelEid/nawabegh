@@ -24,7 +24,6 @@ import { cn } from "@/shared/application/lib/cn";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { resolveStudentPostAuthPath } from "@/modules/student/application/lib/resolveStudentPostAuthPath";
 import { LoginInput } from "../../components";
-import { DiscoverPlatformModal } from "../../components/discover/DiscoverPlatformModal";
 
 type LoginFormState = {
   email: string;
@@ -58,14 +57,12 @@ function GoogleIcon() {
 
 export function LoginPage() {
   const t = useTranslations("auth.login");
-  const tDiscover = useTranslations("auth.discover");
   const locale = useLocale();
   const isArabic = locale === "ar";
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [discoverOpen, setDiscoverOpen] = useState(false);
   const [values, setValues] = useState<LoginFormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<LoginFormErrors>({});
 
@@ -265,26 +262,9 @@ export function LoginPage() {
                 </Button>
               </form>
             </div>
-
-            <Button
-              type="button"
-              onClick={() => setDiscoverOpen(true)}
-              className="mt-6 h-16 w-full rounded-2xl bg-[#c7af6d] text-xl font-bold text-white shadow-[0px_4px_0px_#a38f5a] transition-colors hover:bg-[#bfa45f]"
-            >
-              {tDiscover("trigger")}
-            </Button>
           </motion.section>
         </div>
       </div>
-
-      <DiscoverPlatformModal
-        open={discoverOpen}
-        onOpenChange={setDiscoverOpen}
-        onCreateAccount={() => {
-          setDiscoverOpen(false);
-          router.push(AUTH_ROUTES.REGISTER_STUDENT);
-        }}
-      />
     </main>
   );
 }
