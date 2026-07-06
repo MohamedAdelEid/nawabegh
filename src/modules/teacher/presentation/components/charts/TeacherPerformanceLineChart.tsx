@@ -13,6 +13,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartResponsiveHeightClass,
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -59,10 +60,10 @@ export function TeacherPerformanceLineChart({
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="space-y-6 p-4 sm:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="space-y-1 text-right">
-            <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
+            <h2 className="text-xl font-bold text-slate-800 sm:text-2xl">{title}</h2>
             <p className="text-sm text-slate-500">{subtitle}</p>
           </div>
           <DashboardSegmentedControl<Period>
@@ -88,7 +89,7 @@ export function TeacherPerformanceLineChart({
           ) : null}
         </div>
 
-        <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
+        <ChartContainer config={chartConfig} className={`aspect-[16/7] ${chartResponsiveHeightClass}`}>
           <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="label" tickLine={false} axisLine={false} />

@@ -928,6 +928,8 @@
           "approve": "Approve",
           "reject": "Reject",
           "archive": "Archive course",
+          "publish": "Publish",
+          "unpublish": "Unpublish",
           "edit": "Edit course",
           "view": "View course",
           "more": "More actions"
@@ -938,7 +940,12 @@
           "next": "Next page",
           "pageSize": "Rows per page"
         },
-        "confirmArchive": "Archive this course? It can be hidden from publishing lists."
+        "confirmArchive": "Archive this course? It will be retired and hidden from the catalog.",
+        "confirmUnpublish": "Unpublish this course? It will stay approved but hidden from the student catalog."
+      },
+      "publishing": {
+        "published": "Published",
+        "unpublished": "Not in catalog"
       },
       "access": {
         "subscription": "Subscription",
@@ -957,7 +964,36 @@
         "approved": "Course approved successfully.",
         "rejected": "Course rejected and notes sent.",
         "rejectError": "Could not reject the course. Please try again.",
-        "archived": "Course archived successfully."
+        "archived": "Course archived successfully.",
+        "unpublished": "Course unpublished from the student catalog.",
+        "published": "Course published to the student catalog."
+      },
+      "archiveModal": {
+        "title": "Archive this course?",
+        "description": "The course will be retired and hidden from the student catalog. Existing enrollments may still have access.",
+        "courseLabel": "Course",
+        "teacherLabel": "Teacher",
+        "confirm": "Yes, archive course",
+        "cancel": "Cancel",
+        "archiving": "Archiving..."
+      },
+      "publishModal": {
+        "title": "Publish to student catalog?",
+        "description": "The course will appear in the student explore catalog and new students can discover and enroll.",
+        "courseLabel": "Course",
+        "teacherLabel": "Teacher",
+        "confirm": "Yes, publish course",
+        "cancel": "Cancel",
+        "processing": "Publishing..."
+      },
+      "unpublishModal": {
+        "title": "Unpublish from catalog?",
+        "description": "The course will stay approved but will be hidden from the student explore catalog.",
+        "courseLabel": "Course",
+        "teacherLabel": "Teacher",
+        "confirm": "Yes, unpublish course",
+        "cancel": "Cancel",
+        "processing": "Unpublishing..."
       },
       "review": {
         "loading": "Loading course review...",
@@ -968,7 +1004,20 @@
         "actions": {
           "viewPath": "View course content",
           "editCourse": "Edit course",
-          "archive": "Archive"
+          "archive": "Archive",
+          "publish": "Publish",
+          "unpublish": "Unpublish",
+          "confirmUnpublish": "Unpublish this course from the student catalog?"
+        },
+        "publishing": {
+          "published": "Published in catalog",
+          "unpublished": "Not in catalog",
+          "catalogTitle": "Catalog visibility",
+          "catalogHint": "Publish the course to make it visible in the student explore catalog.",
+          "approveHint": "The course is approved but not yet in the student catalog."
+        },
+        "rejection": {
+          "title": "Rejection details"
         },
         "adminStats": {
           "title": "Admin statistics",
@@ -978,19 +1027,29 @@
         },
         "decision": {
           "title": "Review decision",
-          "placeholder": "Add review notes if rejected...",
-          "approve": "Approve and publish",
+          "rejectHint": "To reject, add detailed notes (min. 50 characters) on the rejection page.",
+          "approve": "Approve course",
           "reject": "Reject course"
         },
         "metrics": {
           "subject": "Subject",
           "stage": "Grade",
           "lessons": "Total lessons",
+          "stations": "Stations",
           "price": "Price"
         },
         "curriculum": {
           "title": "Course content",
-          "empty": "Detailed content is not available for this course yet."
+          "empty": "Detailed content is not available for this course yet.",
+          "unavailable": "Learning paths could not be loaded. For draft courses, the server may need an admin bypass update.",
+          "stationTypes": {
+            "liveBroadcast": "Live stream",
+            "flashcard": "Flashcards",
+            "shortQuiz": "Short quiz",
+            "challenge": "Challenge",
+            "helperFile": "Helper resources",
+            "recordedLecture": "Recorded lecture"
+          }
         }
       },
       "create": {
@@ -1101,13 +1160,14 @@
         "loading": "Loading course data...",
         "title": "Review and reject content",
         "description": "Explain rejection reasons clearly to help the teacher improve the content.",
-        "validation": "Choose at least one reason and write a note of at least 10 characters.",
+        "validation": "Choose at least one reason and write a note of at least 50 characters.",
+        "notPending": "Only courses pending review can be rejected.",
         "form": {
           "title": "Rejection decision details",
           "reasonsLabel": "Common rejection reasons (you can select more than one)",
           "notesLabel": "Detailed notes",
           "notesPlaceholder": "Write the exact guidance that will be sent to the teacher to help them revise and resubmit...",
-          "minHint": "Minimum accepted length is 10 characters"
+          "minHint": "Minimum accepted length is 50 characters"
         },
         "reasons": {
           "contentQuality": "Content quality",

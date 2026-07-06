@@ -1,19 +1,26 @@
 import type {
-  CourseCurriculumItem,
-  CourseCurriculumUnit,
   CourseReviewDetail,
 } from "@/modules/admin/domain/data/courseManagementData";
+import {
+  countStationsInLearningPaths,
+  mapLearningPathsToCurriculum,
+} from "@/modules/admin/domain/utils/courseContentMappers";
 import type { CourseLearningPath } from "@/modules/admin/infrastructure/api/learningPathsApi";
-import { getCourseLearningPathsForEditor } from "@/modules/admin/infrastructure/api/learningPathsApi";
+import { getCourseLearningPathsTree } from "@/modules/admin/infrastructure/api/learningPathsApi";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import {
   CourseAccessType,
+  CourseStatus,
   CourseTerm,
-  StationType,
 } from "@/shared/domain/enums/cms.enums";
 import {
   courseAccessTypeFromApi,
+  courseAccessTypeToApiNumber,
   courseStatusFromApi,
+  courseStatusIdToApi,
+  courseTermFromApi,
+  rejectionBitmaskToReasonIds,
+  type CourseStatusId,
 } from "@/shared/domain/enums/cms.mappers";
 import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
@@ -33,6 +40,8 @@ export type CourseListItemDto = {
   coverImageUrl: string | null;
   subjectNameAr: string;
   gradeId: number;
+  gradeNameAr: string;
+  gradeNameEn: string;
   term: number;
   teacherFullName: string;
   teacherAvatarUrl: string | null;
@@ -40,6 +49,7 @@ export type CourseListItemDto = {
   originalPrice: number;
   discountedPrice: number;
   status: number;
+  statusId: CourseStatusId;
   isPublished: boolean;
 };
 
@@ -276,27 +286,9 @@ function extractPageMeta(
   };
 }
 
-function mapCourseListItem(item: unknown): CourseListItemDto | null {
-  const record = asRecord(item);
-  if (!record) return null;
-  const id = readString(record, ["id", "courseId"], "").trim();
-  if (!id) return null;
-
-  return {
-    id,
-    title: readString(record, ["title"], "—"),
-    coverImageUrl: readNullableString(record, ["coverImageUrl", "coverImage"]),
-    subjectNameAr: readString(record, ["subjectNameAr", "subjectName"], "—"),
-    gradeId: readNumber(record, ["gradeId"]) ?? 0,
-    term: readNumber(record, ["term"]) ?? CourseTerm.FirstTerm,
-    teacherFullName: readString(record, ["teacherFullName", "teacherName"], "—"),
-    teacherAvatarUrl: readNullableString(record, ["teacherAvatarUrl", "teacherProfileImageUrl"]),
-    accessType: readNumber(record, ["accessType"]) ?? CourseAccessType.Free,
-    originalPrice: readNumber(record, ["originalPrice"]) ?? 0,
-    discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
-    status: readNumber(record, ["status"]) ?? 0,
-    isPublished: readBoolean(record, ["isPublished"]),
-  };
+function readRecordValue(record: UnknownRecord | null, key: string): unknown {
+  if (!record) return undefined;
+  return record[key];
 }
 
 function formatCurrency(value: number): string {
@@ -308,60 +300,42 @@ function formatCurrency(value: number): string {
   }).format(value);
 }
 
+function mapCourseListItem(item: unknown): CourseListItemDto | null {
+  const record = asRecord(item);
+  if (!record) return null;
+  const id = readString(record, ["id", "courseId"], "").trim();
+  if (!id) return null;
+
+  const statusId = courseStatusFromApi(readRecordValue(record, "status"));
+
+  return {
+    id,
+    title: readString(record, ["title"], "—"),
+    coverImageUrl: readNullableString(record, ["coverImageUrl", "coverImage"]),
+    subjectNameAr: readString(record, ["subjectNameAr", "subjectName"], "—"),
+    gradeId: readNumber(record, ["gradeId"]) ?? 0,
+    gradeNameAr: readString(record, ["gradeNameAr", "gradeName"], "—"),
+    gradeNameEn: readString(record, ["gradeNameEn", "gradeNameAr", "gradeName"], "—"),
+    term: courseTermFromApi(readRecordValue(record, "term")),
+    teacherFullName: readString(record, ["teacherFullName", "teacherName"], "—"),
+    teacherAvatarUrl: readNullableString(record, ["teacherAvatarUrl", "teacherProfileImageUrl"]),
+    accessType: courseAccessTypeToApiNumber(readRecordValue(record, "accessType")),
+    originalPrice: readNumber(record, ["originalPrice"]) ?? 0,
+    discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
+    status: courseStatusIdToApi(statusId) ?? CourseStatus.Draft,
+    statusId,
+    isPublished: readBoolean(record, ["isPublished"]),
+  };
+}
+
 function termLabel(term: number): string {
   if (term === CourseTerm.SecondTerm) return "2";
   if (term === CourseTerm.ThirdTerm) return "3";
   return "1";
 }
 
-function stationTypeNumberToItemType(type: number): CourseCurriculumItem["type"] {
-  switch (type) {
-    case StationType.ShortQuiz:
-    case StationType.Challenge:
-      return "quiz";
-    case StationType.HelperResource:
-      return "pdf";
-    default:
-      return "video";
-  }
-}
-
-function stationTypeNumberToLabel(type: number): string {
-  switch (type) {
-    case StationType.LiveStream:
-      return "LiveStream";
-    case StationType.Flashcards:
-      return "Flashcards";
-    case StationType.ShortQuiz:
-      return "ShortQuiz";
-    case StationType.Challenge:
-      return "Challenge";
-    case StationType.HelperResource:
-      return "HelperResource";
-    case StationType.RecordedLecture:
-      return "RecordedLecture";
-    default:
-      return "—";
-  }
-}
-
-function mapLearningPathsToCurriculum(learningPaths: CourseLearningPath[]): CourseCurriculumUnit[] {
-  return [...learningPaths]
-    .sort((a, b) => a.order - b.order)
-    .map((path) => ({
-      id: path.id,
-      title: path.title || "—",
-      expanded: true,
-      items: [...path.stations]
-        .sort((a, b) => a.order - b.order)
-        .map((station, stationIndex) => ({
-          id: station.id,
-          title: station.name || "—",
-          type: stationTypeNumberToItemType(station.type),
-          durationLabel: `#${station.order || stationIndex + 1}`,
-          metaLabel: stationTypeNumberToLabel(station.type),
-        })),
-    }));
+function defaultStationLabel(type: number): string {
+  return String(type);
 }
 
 function mapCourseSummary(data: unknown): CourseSummary | null {
@@ -374,6 +348,72 @@ function mapCourseSummary(data: unknown): CourseSummary | null {
     id,
     title: readString(record, ["title"], "—"),
     description: readString(record, ["description"], ""),
+  };
+}
+
+function mapCourseDetail(
+  data: unknown,
+  learningPaths: CourseLearningPath[] = [],
+  options?: {
+    getStationLabel?: (type: number) => string;
+    curriculumLoadError?: string | null;
+  },
+): CourseReviewDetail | null {
+  const record = asRecord(extractEnvelopeData(data));
+  if (!record) return null;
+  const id = readString(record, ["id", "courseId"], "").trim();
+  if (!id) return null;
+
+  const accessType = courseAccessTypeFromApi(readRecordValue(record, "accessType"));
+  const originalPrice = readNumber(record, ["originalPrice"]) ?? 0;
+  const discountedPrice = readNumber(record, ["discountedPrice"]) ?? 0;
+  const getStationLabel = options?.getStationLabel ?? defaultStationLabel;
+  const curriculum = mapLearningPathsToCurriculum(learningPaths, getStationLabel);
+
+  const learningPathsCount = readNumber(record, ["learningPathsCount"]) ?? learningPaths.length;
+  const stationsCount =
+    readNumber(record, ["stationsCount"]) ?? countStationsInLearningPaths(learningPaths);
+
+  const statusId = courseStatusFromApi(readRecordValue(record, "status"));
+  const rejectionReasonsBitmask = readNumber(record, ["rejectionReasons"]) ?? 0;
+  const rejectionReasons = rejectionBitmaskToReasonIds(rejectionReasonsBitmask);
+  const rejectionNotes = readString(record, ["rejectionNotes"], "");
+
+  return {
+    id,
+    title: readString(record, ["title"], "—"),
+    subject: readString(record, ["subjectNameAr", "subjectNameEn", "subjectName"], "—"),
+    grade: readString(record, ["gradeNameAr", "gradeNameEn", "gradeName"], "—"),
+    teacherName: readString(record, ["teacherFullName", "teacherName"], "—"),
+    teacherAvatarUrl: readNullableString(record, ["teacherAvatarUrl"]) ?? undefined,
+    accessType,
+    statusId,
+    isPublished: readBoolean(record, ["isPublished"]),
+    coverTone: "blue",
+    coverLabel: "CRS",
+    coverImageUrl: readNullableString(record, ["coverImageUrl"]),
+    revenue: formatCurrency(discountedPrice || originalPrice),
+    lessonCount: stationsCount,
+    studentCount: readNumber(record, ["enrolledStudentsCount"]) ?? 0,
+    createdAt: readString(record, ["createdAt"], ""),
+    description: readString(record, ["description"], "—"),
+    stageLabel: readString(record, ["gradeNameAr", "gradeNameEn", "gradeName"], "—"),
+    gradeNameAr: readString(record, ["gradeNameAr", "gradeName"], "—"),
+    gradeNameEn: readString(record, ["gradeNameEn", "gradeNameAr", "gradeName"], "—"),
+    termLabel: termLabel(courseTermFromApi(readRecordValue(record, "term"))),
+    priceLabel: accessType === "free" ? "—" : formatCurrency(discountedPrice || originalPrice),
+    completionRate: 0,
+    totalRevenueLabel: "—",
+    reviewNotes: rejectionNotes || "—",
+    reviewReasons: rejectionReasons,
+    reviewerName: "—",
+    reviewedAt: readString(record, ["updatedAt", "createdAt"], ""),
+    submittedAt: readString(record, ["createdAt"], ""),
+    durationLabel: `${learningPathsCount} / ${stationsCount}`,
+    categoryLabel: readString(record, ["subjectNameAr", "subjectNameEn", "subjectName"], "—"),
+    learningPathCount: learningPathsCount,
+    curriculumLoadError: options?.curriculumLoadError ?? null,
+    curriculum,
   };
 }
 
@@ -396,58 +436,6 @@ function mapCourseEditData(data: unknown): CourseEditData | null {
     originalPrice: readNumber(record, ["originalPrice"]) ?? 0,
     discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
     accessDurationDays: readNullableNumber(record, ["accessDurationDays"]),
-  };
-}
-
-function mapCourseDetail(
-  data: unknown,
-  learningPaths: CourseLearningPath[] = [],
-): CourseReviewDetail | null {
-  const record = asRecord(extractEnvelopeData(data));
-  if (!record) return null;
-  const id = readString(record, ["id", "courseId"], "").trim();
-  if (!id) return null;
-
-  const accessType = courseAccessTypeFromApi(readNumber(record, ["accessType"]));
-  const originalPrice = readNumber(record, ["originalPrice"]) ?? 0;
-  const discountedPrice = readNumber(record, ["discountedPrice"]) ?? 0;
-  const curriculum = mapLearningPathsToCurriculum(learningPaths);
-
-  const learningPathsCount = readNumber(record, ["learningPathsCount"]) ?? learningPaths.length;
-  const stationsCount =
-    readNumber(record, ["stationsCount"]) ??
-    curriculum.reduce((sum, unit) => sum + unit.items.length, 0);
-
-  return {
-    id,
-    title: readString(record, ["title"], "—"),
-    subject: readString(record, ["subjectNameAr", "subjectNameEn", "subjectName"], "—"),
-    grade: String(readNumber(record, ["gradeId"]) ?? "—"),
-    teacherName: readString(record, ["teacherFullName", "teacherName"], "—"),
-    teacherAvatarUrl: readNullableString(record, ["teacherAvatarUrl"]) ?? undefined,
-    accessType,
-    statusId: courseStatusFromApi(readNumber(record, ["status"]) ?? 0),
-    coverTone: "blue",
-    coverLabel: "CRS",
-    coverImageUrl: readNullableString(record, ["coverImageUrl"]),
-    revenue: formatCurrency(discountedPrice || originalPrice),
-    lessonCount: stationsCount,
-    studentCount: readNumber(record, ["enrolledStudentsCount"]) ?? 0,
-    createdAt: readString(record, ["createdAt"], ""),
-    description: readString(record, ["description"], "—"),
-    stageLabel: String(readNumber(record, ["gradeId"]) ?? "—"),
-    termLabel: termLabel(readNumber(record, ["term"]) ?? CourseTerm.FirstTerm),
-    priceLabel: accessType === "free" ? "—" : formatCurrency(discountedPrice || originalPrice),
-    completionRate: 0,
-    totalRevenueLabel: "—",
-    reviewNotes: "—",
-    reviewReasons: [],
-    reviewerName: "—",
-    reviewedAt: readString(record, ["updatedAt", "createdAt"], ""),
-    submittedAt: readString(record, ["createdAt"], ""),
-    durationLabel: `${learningPathsCount} / ${stationsCount}`,
-    categoryLabel: readString(record, ["subjectNameAr", "subjectNameEn", "subjectName"], "—"),
-    curriculum,
   };
 }
 
@@ -541,21 +529,32 @@ export async function getCourse(courseId: string): Promise<CourseApiResult<Cours
   }
 }
 
+export type GetCourseDetailsOptions = {
+  getStationLabel?: (type: number) => string;
+};
+
 export async function getCourseDetails(
   courseId: string,
+  options?: GetCourseDetailsOptions,
 ): Promise<CourseApiResult<CourseReviewDetail>> {
   try {
     const [courseResponse, learningPathsResult] = await Promise.all([
       httpClient.get<unknown>({
         url: `/api/v1/Course/${encodeURIComponent(courseId)}`,
       }),
-      getCourseLearningPathsForEditor(courseId),
+      getCourseLearningPathsTree(courseId),
     ]);
 
-    const detail = mapCourseDetail(
-      courseResponse.data,
-      learningPathsResult.data ?? [],
-    );
+    const learningPaths = learningPathsResult.data?.learningPaths ?? [];
+    const curriculumLoadError =
+      learningPathsResult.data || !learningPathsResult.errorMessage
+        ? null
+        : learningPathsResult.errorMessage;
+
+    const detail = mapCourseDetail(courseResponse.data, learningPaths, {
+      getStationLabel: options?.getStationLabel,
+      curriculumLoadError,
+    });
     if (!detail) {
       return {
         status: courseResponse.status,
@@ -686,5 +685,39 @@ export async function archiveCourse(courseId: string): Promise<CourseApiResult<u
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to archive course");
+  }
+}
+
+export async function unpublishCourse(courseId: string): Promise<CourseApiResult<unknown>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: `/api/v1/Course/${encodeURIComponent(courseId)}/unpublish`,
+      data: {},
+    });
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: response.data ?? true,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to unpublish course");
+  }
+}
+
+export async function publishCourse(courseId: string): Promise<CourseApiResult<unknown>> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: `/api/v1/Course/${encodeURIComponent(courseId)}/publish`,
+      data: {},
+    });
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: response.data ?? true,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to publish course");
   }
 }

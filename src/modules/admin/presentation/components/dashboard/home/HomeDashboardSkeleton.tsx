@@ -5,20 +5,26 @@ export function HomeDashboardSkeleton() {
     <div className="space-y-8">
       <Skeleton className="h-20 w-full max-w-md rounded-[1.5rem]" />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, index) => (
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, index) => (
           <Skeleton key={index} className="h-36 rounded-[1.75rem]" />
         ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[22rem_minmax(0,1fr)]">
-        <Skeleton className="h-72 rounded-[2rem]" />
-        <Skeleton className="h-72 rounded-[2rem]" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Skeleton className="h-48 rounded-[2rem] sm:h-56 md:h-72" />
+        <Skeleton className="h-48 rounded-[2rem] sm:h-56 md:h-72" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <Skeleton className="h-80 rounded-[2rem]" />
-        <Skeleton className="h-80 rounded-[2rem]" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-6">
+          <Skeleton className="h-48 rounded-[2rem] sm:h-56" />
+          <Skeleton className="h-48 rounded-[2rem] sm:h-56" />
+        </div>
+        <div className="space-y-6">
+          <Skeleton className="h-48 rounded-[2rem] sm:h-56" />
+          <Skeleton className="h-48 rounded-[2rem] sm:h-56" />
+        </div>
       </div>
     </div>
   );

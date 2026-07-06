@@ -414,7 +414,7 @@ export function ChatGroupsDashboard() {
               columns={columns}
               getRowKey={(row) => row.id}
               emptyMessage={t("table.states.empty")}
-              tableClassName="w-full min-w-[900px] text-right"
+              tableClassName="w-full min-w-[720px] text-right"
             />
           )}
         </DashboardTableCard>

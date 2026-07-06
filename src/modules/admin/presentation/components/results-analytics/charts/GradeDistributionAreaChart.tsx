@@ -6,6 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartResponsiveHeightClass,
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -35,9 +36,9 @@ export function GradeDistributionAreaChart({
 
   return (
     <Card className="h-full rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-      <CardContent className="flex h-full flex-col space-y-4 p-6">
-        <h3 className="text-right text-lg font-bold text-slate-800">{title}</h3>
-        <ChartContainer config={chartConfig} className="aspect-[16/10] h-full w-full">
+      <CardContent className="flex h-full min-h-0 flex-col space-y-4 p-4 sm:p-6">
+        <h3 className="text-right text-base font-bold text-slate-800 sm:text-lg">{title}</h3>
+        <ChartContainer config={chartConfig} className={`aspect-[16/10] ${chartResponsiveHeightClass}`}>
           <AreaChart data={data} margin={{ top: 8, right: 16, left: 8, bottom: 0 }}>
             <defs>
               <linearGradient id="gradeDistributionFill" x1="0" y1="0" x2="0" y2="1">

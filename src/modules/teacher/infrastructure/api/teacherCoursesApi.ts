@@ -504,6 +504,7 @@ export type TeacherMyCourseOption = {
   subject: string;
   gradeId: number;
   gradeNameAr: string;
+  gradeNameEn: string;
   status: string;
   coverImageUrl: string | null;
   fileCount: number;
@@ -537,6 +538,7 @@ export async function fetchTeacherMyCoursesOptions(
         subject: readString(record, ["subject"], ""),
         gradeId: readNumber(record, ["gradeId"], 0) ?? 0,
         gradeNameAr: readString(record, ["gradeNameAr"], ""),
+        gradeNameEn: readString(record, ["gradeNameEn", "gradeNameAr"], ""),
         status: readString(record, ["status"], ""),
         coverImageUrl: resolveFileUrl(readString(record, ["coverImageUrl"], "") || null),
         fileCount: readNumber(record, ["fileCount"], 0) ?? 0,

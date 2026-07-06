@@ -62,7 +62,7 @@ export function ResultsAnalyticsFilterBar({
         placeholder={t("search.placeholder")}
         value={filters.search}
         onChange={(search) => onChange({ search })}
-        className="min-w-[14rem] flex-[2]"
+        className="min-w-0 w-full flex-[2] sm:min-w-[14rem]"
       />
     </DashboardFiltersPanel>
   );

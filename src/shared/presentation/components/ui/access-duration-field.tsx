@@ -16,7 +16,7 @@ export type AccessDurationFieldLabels = {
   daysLabel: string;
   daysPlaceholder: string;
   helpText: string;
-  presetDays: string;
+  presetDays: (days: number) => string;
 };
 
 type AccessDurationFieldProps = {
@@ -103,7 +103,7 @@ export function AccessDurationField({
                   disabled && "cursor-not-allowed opacity-60",
                 )}
               >
-                {labels.presetDays.replace("{days}", String(days))}
+                {labels.presetDays(days)}
               </button>
             ))}
           </div>

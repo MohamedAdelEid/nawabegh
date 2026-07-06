@@ -44,3 +44,11 @@ export function CourseAccessBadge({
 }) {
   return <DashboardBadge tone={courseAccessTone(accessType)}>{label}</DashboardBadge>;
 }
+
+export function CoursePublishedBadge({ label }: { label: string }) {
+  return <DashboardBadge tone="success">{label}</DashboardBadge>;
+}
+
+export function CourseUnpublishedBadge({ label }: { label: string }) {
+  return <DashboardBadge tone="neutral">{label}</DashboardBadge>;
+}

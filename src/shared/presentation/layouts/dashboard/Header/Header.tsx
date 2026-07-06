@@ -11,7 +11,6 @@ import {
   HeaderActionButton,
   MobileMenuButton,
   UserDropdown,
-  SearchInput,
 } from "./components";
 import { headerVariants } from "./constants/animations";
 
@@ -38,20 +37,14 @@ export const Header: React.FC<HeaderProps> = ({
       animate="visible"
       className="sticky top-0 z-30 border-b-2 border-slate-200 bg-white/50 backdrop-blur"
     >
-      <div className="flex flex-wrap items-center gap-3 px-4 py-4 sm:px-6 xl:flex-nowrap">
+      <div className="flex items-center gap-3 px-4 py-4 sm:px-6">
         <MobileMenuButton
           isOpen={isMobileMenuOpen}
           onToggle={onMobileMenuToggle || (() => { })}
           openLabel={t("header.mobileMenu.open")}
           closeLabel={t("header.mobileMenu.close")}
         />
-        <div className="order-3 min-w-0 basis-full xl:order-2 xl:basis-auto xl:flex-1">
-          <SearchInput
-            placeholder={t("header.searchPlaceholder")}
-            className="w-full xl:me-auto xl:max-w-[32rem] focus:outline-none"
-          />
-        </div>
-        <div className="order-2 ms-auto flex items-center gap-2 sm:gap-3 xl:order-3 xl:ms-0">
+        <div className="ms-auto flex items-center gap-2 sm:gap-3">
           <UserDropdown translationNamespace={translationNamespace} />
           <HeaderActionButton
             icon={Bell}

@@ -249,7 +249,7 @@ export function FriendChallengesDashboard() {
         }
       />
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <section className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStatCard
           label={t("overview.stats.totalChallenges.label")}
           value={kpis ? new Intl.NumberFormat(locale).format(kpis.totalChallenges) : "—"}
@@ -291,9 +291,13 @@ export function FriendChallengesDashboard() {
         />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-2">
-        <DifficultyDistributionDonut rows={data?.difficultyDistribution ?? []} />
-        <DailyChallengeRateChart rows={data?.dailyChallengeRate ?? []} />
+      <section className="grid gap-6 lg:grid-cols-2">
+        <div className="min-w-0">
+          <DifficultyDistributionDonut rows={data?.difficultyDistribution ?? []} />
+        </div>
+        <div className="min-w-0">
+          <DailyChallengeRateChart rows={data?.dailyChallengeRate ?? []} />
+        </div>
       </section>
 
       <FriendChallengesFilterBar

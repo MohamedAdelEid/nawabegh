@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { motion } from "framer-motion";
 import {
@@ -60,6 +61,7 @@ import {
 import { resolveFileUrl, resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
+import { formatCourseContextLabel, resolveGradeLabel } from "@/shared/domain/utils/grade.utils";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
@@ -108,6 +110,7 @@ type InteractiveBookCourseOption = {
 
 export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiveBookManagePageProps) {
   const t = useScopedDashboardTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const isTeacherScope = routes.scope === "teacher";
@@ -224,7 +227,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
           setCourses(
             teacherCourses.map((course) => ({
               id: course.courseId,
-              title: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+              title: formatCourseContextLabel(locale, course.title, course.subject, course),
               gradeId: course.gradeId,
             })),
           );
@@ -245,7 +248,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
         setCourses(
           result.data.rows.map((course) => ({
             id: course.id,
-            title: course.title,
+            title: formatCourseContextLabel(locale, course.title, course.subjectNameAr, course),
             gradeId: course.gradeId,
           })),
         );
@@ -260,7 +263,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
     return () => {
       alive = false;
     };
-  }, [isEditMode, isTeacherScope]);
+  }, [isEditMode, isTeacherScope, locale]);
 
   useEffect(() => {
     return () => {
@@ -741,7 +744,7 @@ export function AdminInteractiveBookManagePage({ editCourseId }: AdminInteractiv
                   <p className="text-xs text-slate-500">
                     {t("interactiveBooks.managePage.edit.courseContext", {
                       course: book.courseTitle,
-                      grade: book.gradeName,
+                      grade: resolveGradeLabel(locale, book, book.gradeName),
                     })}
                   </p>
                 </div>

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CircleAlert, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   createResourceFile,
   getResourceFileCoursesDropdown,
@@ -13,6 +13,7 @@ import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadAp
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import { AccessPolicy, ResourceFileType } from "@/shared/domain/enums/cms.enums";
+import { formatCourseContextLabel } from "@/shared/domain/utils/grade.utils";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -41,6 +42,7 @@ export function AdminHelperFileManagementAddPage({
   stationContext,
 }: AdminHelperFileManagementAddPageProps) {
   const t = useTranslations("admin.dashboard.contentManagement");
+  const locale = useLocale();
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const isTeacherScope = routes.scope === "teacher";
@@ -71,7 +73,7 @@ export function AdminHelperFileManagementAddPage({
           setCourseOptions(
             courses.map((course) => ({
               value: course.courseId,
-              label: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+              label: formatCourseContextLabel(locale, course.title, course.subject, course),
             })),
           );
         } else {
@@ -98,7 +100,7 @@ export function AdminHelperFileManagementAddPage({
     return () => {
       alive = false;
     };
-  }, [isTeacherScope, t]);
+  }, [isTeacherScope, t, locale]);
 
   const courseSelectOptions = useMemo<SearchableSelectOption<string>[]>(
     () => courseOptions,

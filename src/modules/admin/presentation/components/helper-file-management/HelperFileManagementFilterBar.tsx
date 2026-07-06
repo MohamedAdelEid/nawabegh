@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   getResourceFileCoursesDropdown,
   getStationsList,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
+import { formatCourseContextLabel } from "@/shared/domain/utils/grade.utils";
 import { ResourceFileType } from "@/shared/domain/enums/cms.enums";
 import {
   DashboardFilterSelect,
@@ -36,6 +37,7 @@ export function HelperFileManagementFilterBar({
   onChange,
 }: HelperFileManagementFilterBarProps) {
   const t = useTranslations("admin.dashboard.contentManagement");
+  const locale = useLocale();
   const routes = useScopedDashboardRoutes();
   const isTeacherScope = routes.scope === "teacher";
   const [stationOptions, setStationOptions] = useState<DashboardFilterOption<string>[]>([]);
@@ -57,7 +59,7 @@ export function HelperFileManagementFilterBar({
           setCourseOptions(
             courses.map((course) => ({
               id: course.courseId,
-              label: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+              label: formatCourseContextLabel(locale, course.title, course.subject, course),
             })),
           );
         } else {
@@ -98,7 +100,7 @@ export function HelperFileManagementFilterBar({
     return () => {
       alive = false;
     };
-  }, [isTeacherScope]);
+  }, [isTeacherScope, locale]);
 
   const stationSelectOptions = useMemo<DashboardFilterOption<string>[]>(() => {
     if (optionsLoading) {

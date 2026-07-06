@@ -10,7 +10,8 @@ import {
   XCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import { resolveGradeLabel } from "@/shared/domain/utils/grade.utils";
 import type {
   CourseManagementStat,
   CourseManagementRow,
@@ -20,6 +21,8 @@ import {
   approveCourse,
   archiveCourse,
   getCoursesPage,
+  publishCourse,
+  unpublishCourse,
   type CourseListItemDto,
 } from "@/modules/admin/infrastructure/api/courseApi";
 import { getSubjectsPage } from "@/modules/admin/infrastructure/api/subjectApi";
@@ -33,9 +36,13 @@ import {
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import {
   CourseAccessBadge,
+  CourseArchiveConfirmModal,
   CourseCoverPreview,
   CourseManagementRowActions,
+  CoursePublishConfirmModal,
+  CoursePublishedBadge,
   CourseStatusBadge,
+  CourseUnpublishedBadge,
 } from "@/modules/admin/presentation/components/course-management";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { notify } from "@/shared/application/lib/toast";
@@ -45,7 +52,6 @@ import {
 } from "@/shared/domain/enums/cms.enums";
 import {
   courseAccessTypeFromApi,
-  courseStatusFromApi,
   courseStatusIdToApi,
 } from "@/shared/domain/enums/cms.mappers";
 import {DashboardDataTable,
@@ -71,16 +77,22 @@ function formatAbbrevInt(value: number) {
   }).format(value);
 }
 
-function courseDtoToDashboardRow(row: CourseListItemDto, gradeLabel: string): CourseManagementRow {
+function courseDtoToDashboardRow(
+  row: CourseListItemDto,
+  gradeLabel: string,
+): CourseManagementRow {
   return {
     id: row.id,
     title: row.title,
     subject: row.subjectNameAr,
     grade: gradeLabel,
+    gradeNameAr: row.gradeNameAr,
+    gradeNameEn: row.gradeNameEn,
     teacherName: row.teacherFullName,
     teacherAvatarUrl: row.teacherAvatarUrl ?? undefined,
     accessType: courseAccessTypeFromApi(row.accessType),
-    statusId: courseStatusFromApi(row.status),
+    statusId: row.statusId,
+    isPublished: row.isPublished,
     coverTone: "blue",
     coverLabel: "CRS",
     coverImageUrl: row.coverImageUrl,
@@ -104,6 +116,8 @@ type CourseFilterState = {
 
 export function CourseManagementDashboard() {
   const t = useTranslations("admin.dashboard");
+  const tCourse = useTranslations("admin.dashboard.courseManagement");
+  const locale = useLocale();
   const router = useRouter();
 
   const [courseRows, setCourseRows] = useState<CourseListItemDto[]>([]);
@@ -133,6 +147,19 @@ export function CourseManagementDashboard() {
     DashboardFilterOption<string>[]
   >([]);
   const [teacherOptionsRecords, setTeacherOptionsRecords] = useState<UserManagementListRow[]>([]);
+  const [archiveTarget, setArchiveTarget] = useState<{
+    id: string;
+    title: string;
+    teacherName: string;
+  } | null>(null);
+  const [isArchiving, setIsArchiving] = useState(false);
+  const [publishingTarget, setPublishingTarget] = useState<{
+    id: string;
+    title: string;
+    teacherName: string;
+    action: "publish" | "unpublish";
+  } | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -317,18 +344,22 @@ export function CourseManagementDashboard() {
   const dashboardRows = useMemo(
     () =>
       courseRows.map((row) => {
-        const gradeLabel =
-          flattenedGradeOptions.find((option) => option.id === String(row.gradeId))?.label ??
-          String(row.gradeId || "—");
+        const dropdownLabel =
+          flattenedGradeOptions.find((option) => option.id === String(row.gradeId))?.label ?? "";
+        const gradeLabel = resolveGradeLabel(
+          locale,
+          { gradeNameAr: row.gradeNameAr, gradeNameEn: row.gradeNameEn },
+          dropdownLabel || String(row.gradeId || "—"),
+        );
         return courseDtoToDashboardRow(row, gradeLabel);
       }),
-    [courseRows, flattenedGradeOptions],
+    [courseRows, flattenedGradeOptions, locale],
   );
 
   const statCards = useMemo<CourseManagementStat[]>(() => {
     const pageCounts = courseRows.reduce(
       (acc, row) => {
-        const status = courseStatusFromApi(row.status);
+        const status = row.statusId;
         acc[status] += 1;
         return acc;
       },
@@ -474,15 +505,59 @@ export function CourseManagementDashboard() {
     await loadCourses();
   };
 
-  const confirmAndArchiveCourse = async (courseId: string) => {
-    const ok = typeof window !== "undefined" ? window.confirm(t("courseManagement.table.confirmArchive")) : true;
-    if (!ok) return;
-    const result = await archiveCourse(courseId);
+  const requestArchiveCourse = (courseId: string) => {
+    const row = dashboardRows.find((item) => item.id === courseId || item.courseId === courseId);
+    if (!row) return;
+    setArchiveTarget({
+      id: courseId,
+      title: row.title,
+      teacherName: row.teacherName,
+    });
+  };
+
+  const executeArchiveCourse = async () => {
+    if (!archiveTarget || isArchiving) return;
+    setIsArchiving(true);
+    const result = await archiveCourse(archiveTarget.id);
+    setIsArchiving(false);
     if (result.errorMessage) {
       notify.error(result.errorMessage);
       return;
     }
     notify.success(t("courseManagement.messages.archived"));
+    setArchiveTarget(null);
+    await loadCourses();
+  };
+
+  const requestPublishingCourse = (courseId: string, action: "publish" | "unpublish") => {
+    const row = dashboardRows.find((item) => item.id === courseId || item.courseId === courseId);
+    if (!row) return;
+    setPublishingTarget({
+      id: courseId,
+      title: row.title,
+      teacherName: row.teacherName,
+      action,
+    });
+  };
+
+  const executePublishingCourse = async () => {
+    if (!publishingTarget || isPublishing) return;
+    setIsPublishing(true);
+    const result =
+      publishingTarget.action === "publish"
+        ? await publishCourse(publishingTarget.id)
+        : await unpublishCourse(publishingTarget.id);
+    setIsPublishing(false);
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      return;
+    }
+    notify.success(
+      publishingTarget.action === "publish"
+        ? t("courseManagement.messages.published")
+        : t("courseManagement.messages.unpublished"),
+    );
+    setPublishingTarget(null);
     await loadCourses();
   };
 
@@ -498,7 +573,7 @@ export function CourseManagementDashboard() {
       id: "title",
       header: t("courseManagement.table.columns.title"),
       renderCell: (row) => (
-        <div className="flex min-w-[15rem] items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3 sm:min-w-[12rem]">
           <CourseCoverPreview
             tone={row.coverTone}
             label={row.coverLabel}
@@ -533,7 +608,9 @@ export function CourseManagementDashboard() {
       renderCell: (row) => (
         <div className="space-y-1">
           <p className="font-semibold">{row.subject}</p>
-          <p className="text-xs text-slate-400">{row.grade}</p>
+          <p className="text-xs text-slate-400">
+            {resolveGradeLabel(locale, row, row.grade)}
+          </p>
         </div>
       ),
     },
@@ -551,7 +628,16 @@ export function CourseManagementDashboard() {
       id: "status",
       header: t("courseManagement.table.columns.status"),
       renderCell: (row) => (
-        <CourseStatusBadge status={row.statusId} label={t(`courseManagement.status.${row.statusId}`)} />
+        <div className="flex flex-wrap gap-2">
+          <CourseStatusBadge status={row.statusId} label={t(`courseManagement.status.${row.statusId}`)} />
+          {row.statusId === "approved" ? (
+            row.isPublished ? (
+              <CoursePublishedBadge label={t("courseManagement.publishing.published")} />
+            ) : (
+              <CourseUnpublishedBadge label={t("courseManagement.publishing.unpublished")} />
+            )
+          ) : null}
+        </div>
       ),
     },
   ];
@@ -717,6 +803,8 @@ export function CourseManagementDashboard() {
                   view: t("courseManagement.table.actions.view"),
                   edit: t("courseManagement.table.actions.edit"),
                   archive: t("courseManagement.table.actions.archive"),
+                  publish: t("courseManagement.table.actions.publish"),
+                  unpublish: t("courseManagement.table.actions.unpublish"),
                   more: t("courseManagement.table.actions.more"),
                 }}
                 onApprove={approveCourseRow}
@@ -724,12 +812,78 @@ export function CourseManagementDashboard() {
                   router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REJECT(courseId))
                 }
                 onView={openReviewRoute}
-                onArchive={confirmAndArchiveCourse}
+                onEdit={(courseId) => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.EDIT(courseId))}
+                onArchive={requestArchiveCourse}
+                onPublish={(courseId) => requestPublishingCourse(courseId, "publish")}
+                onUnpublish={(courseId) => requestPublishingCourse(courseId, "unpublish")}
               />
             )}
           />
         )}
       </DashboardTableCard>
+
+      <CourseArchiveConfirmModal
+        open={archiveTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !isArchiving) setArchiveTarget(null);
+        }}
+        courseTitle={archiveTarget?.title}
+        teacherName={archiveTarget?.teacherName}
+        title={tCourse("archiveModal.title")}
+        description={tCourse("archiveModal.description")}
+        courseLabel={tCourse("archiveModal.courseLabel")}
+        teacherLabel={tCourse("archiveModal.teacherLabel")}
+        confirmLabel={tCourse("archiveModal.confirm")}
+        cancelLabel={tCourse("archiveModal.cancel")}
+        archivingLabel={tCourse("archiveModal.archiving")}
+        onConfirm={() => void executeArchiveCourse()}
+        isConfirming={isArchiving}
+      />
+
+      <CoursePublishConfirmModal
+        variant={publishingTarget?.action ?? "publish"}
+        open={publishingTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !isPublishing) setPublishingTarget(null);
+        }}
+        courseTitle={publishingTarget?.title}
+        teacherName={publishingTarget?.teacherName}
+        title={tCourse(
+          publishingTarget?.action === "unpublish" ? "unpublishModal.title" : "publishModal.title",
+        )}
+        description={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.description"
+            : "publishModal.description",
+        )}
+        courseLabel={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.courseLabel"
+            : "publishModal.courseLabel",
+        )}
+        teacherLabel={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.teacherLabel"
+            : "publishModal.teacherLabel",
+        )}
+        confirmLabel={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.confirm"
+            : "publishModal.confirm",
+        )}
+        cancelLabel={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.cancel"
+            : "publishModal.cancel",
+        )}
+        processingLabel={tCourse(
+          publishingTarget?.action === "unpublish"
+            ? "unpublishModal.processing"
+            : "publishModal.processing",
+        )}
+        onConfirm={() => void executePublishingCourse()}
+        isConfirming={isPublishing}
+      />
     </div>
   );
 }

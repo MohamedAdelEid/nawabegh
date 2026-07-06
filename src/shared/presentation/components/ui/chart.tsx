@@ -4,6 +4,12 @@ import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 import { cn } from "@/shared/application/lib/cn";
 
+/** Responsive chart height — pair with an aspect-ratio class on ChartContainer */
+export const chartResponsiveHeightClass = "h-48 w-full sm:h-56 md:h-72";
+
+/** Taller variant for dashboards that need extra chart vertical space */
+export const chartResponsiveHeightLgClass = "h-48 w-full sm:h-64 md:h-80";
+
 export type ChartConfig = Record<
   string,
   {

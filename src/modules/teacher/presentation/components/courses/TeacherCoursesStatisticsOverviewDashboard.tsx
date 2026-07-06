@@ -123,7 +123,7 @@ export function TeacherCoursesStatisticsOverviewDashboard() {
         </div>
       </div> */}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         {data.stats.map((stat) => {
           const Icon = statIcons[stat.id as keyof typeof statIcons] ?? Users;
           return (
@@ -148,15 +148,17 @@ export function TeacherCoursesStatisticsOverviewDashboard() {
         })}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="min-w-0">
           <TeacherWeeklyInteractionBarChart
             title={t("coursesStatisticsOverview.activityChart.title")}
             legendLabel={t("coursesStatisticsOverview.activityChart.current")}
             previousLegendLabel={t("coursesStatisticsOverview.activityChart.previous")}
             rows={data.weeklyActivity}
           />
-        <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-          <CardContent className="space-y-4 p-6">
+        </div>
+        <Card className="min-w-0 rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <DashboardBadge tone="danger">
                 {t("coursesStatisticsOverview.alerts.badge", { count: data.alerts.length })}

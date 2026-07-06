@@ -20,7 +20,7 @@ export const DashboardBody: React.FC<DashboardBodyProps> = ({ children, classNam
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="relative z-10 p-4 pt-6 sm:p-6 sm:pt-8 lg:pt-10 bg-[#F6F7F7] min-h-[calc(100vh_-_5rem)]"
+          className="relative z-10 min-w-0 p-4 pt-6 sm:p-6 sm:pt-8 lg:pt-10 bg-[#F6F7F7] min-h-[calc(100vh_-_5rem)]"
         >
           {children}
         </motion.div>

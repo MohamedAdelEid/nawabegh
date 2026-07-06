@@ -57,27 +57,27 @@ export function HomeOverviewDashboard() {
       <HomeSummaryCards cards={data.summaryCards} />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <HomeNewUsersChart
             points={data.newUsersChart}
             months={chartMonths}
             onMonthsChange={setChartMonths}
           />
         </div>
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <HomeRevenuePanel revenue={data.revenue} />
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <div className="flex flex-col gap-6">
             <HomeActivityMetrics metrics={data.activityMetrics} />
             <HomeTopStudents students={data.topStudents} />
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <HomeSchoolRankings schools={data.schoolRankings} />
         </div>
       </div>
@@ -85,7 +85,7 @@ export function HomeOverviewDashboard() {
       <HomeQuickLinks />
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <HomeReviewTasks reviewTasks={data.reviewTasks} />
         </div>
         <HomeRecentActivities activities={data.recentActivities} />

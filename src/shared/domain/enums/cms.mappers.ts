@@ -2,6 +2,7 @@ import {
   CourseAccessType,
   CourseRejectionReasons,
   CourseStatus,
+  CourseTerm,
 } from "@/shared/domain/enums/course.enums";
 import { LearningPathStatus } from "@/shared/domain/enums/learning-path.enums";
 
@@ -38,6 +39,26 @@ const API_TO_COURSE_REVIEW_REASON = Object.entries(COURSE_REVIEW_REASON_TO_API) 
   [CourseReviewReasonId, CourseRejectionReasons]
 >;
 
+function normalizeApiEnumToken(value: string): string {
+  return value.trim().toLowerCase().replace(/[\s_-]+/g, "");
+}
+
+function mapNumericCourseStatus(code: number): CourseStatusId {
+  switch (code) {
+    case CourseStatus.Approved:
+      return "approved";
+    case CourseStatus.Pending:
+      return "pending";
+    case CourseStatus.Rejected:
+      return "rejected";
+    case CourseStatus.Archived:
+      return "archived";
+    case CourseStatus.Draft:
+    default:
+      return "draft";
+  }
+}
+
 export function learningPathStatusToCourseStatusId(code: number): CourseStatusId {
   switch (code) {
     case LearningPathStatus.Approved:
@@ -52,20 +73,32 @@ export function learningPathStatusToCourseStatusId(code: number): CourseStatusId
   }
 }
 
-export function courseStatusFromApi(code: number): CourseStatusId {
-  switch (code) {
-    case CourseStatus.Approved:
-      return "approved";
-    case CourseStatus.Pending:
-      return "pending";
-    case CourseStatus.Rejected:
-      return "rejected";
-    case CourseStatus.Archived:
-      return "archived";
-    case CourseStatus.Draft:
-    default:
-      return "draft";
+export function courseStatusFromApi(code: unknown): CourseStatusId {
+  if (typeof code === "string") {
+    switch (normalizeApiEnumToken(code)) {
+      case "approved":
+        return "approved";
+      case "pending":
+        return "pending";
+      case "rejected":
+        return "rejected";
+      case "archived":
+        return "archived";
+      case "draft":
+        return "draft";
+      default: {
+        const numeric = Number(code);
+        if (!Number.isNaN(numeric)) return mapNumericCourseStatus(numeric);
+        return "draft";
+      }
+    }
   }
+
+  if (typeof code === "number" && Number.isFinite(code)) {
+    return mapNumericCourseStatus(code);
+  }
+
+  return "draft";
 }
 
 export function courseStatusIdToApi(status: "all" | CourseStatusId): number | undefined {
@@ -104,18 +137,73 @@ export function courseStatusIdToLearningPathStatus(status: "all" | CourseStatusI
   }
 }
 
-export function courseAccessTypeFromApi(value: number | null): CourseAccessTypeId {
-  if (value === null || Number.isNaN(value)) return "unlisted";
-  switch (value) {
-    case CourseAccessType.Free:
-      return "free";
-    case CourseAccessType.Paid:
-      return "paid";
-    case CourseAccessType.Subscription:
-      return "subscription";
-    default:
-      return "unlisted";
+export function courseAccessTypeFromApi(value: unknown): CourseAccessTypeId {
+  if (typeof value === "string") {
+    switch (normalizeApiEnumToken(value)) {
+      case "free":
+        return "free";
+      case "paid":
+        return "paid";
+      case "subscription":
+        return "subscription";
+      default: {
+        const numeric = Number(value);
+        if (!Number.isNaN(numeric)) return courseAccessTypeFromApi(numeric);
+        return "unlisted";
+      }
+    }
   }
+
+  if (typeof value === "number" && Number.isFinite(value)) {
+    switch (value) {
+      case CourseAccessType.Free:
+        return "free";
+      case CourseAccessType.Paid:
+        return "paid";
+      case CourseAccessType.Subscription:
+        return "subscription";
+      default:
+        return "unlisted";
+    }
+  }
+
+  if (value === null || value === undefined) return "unlisted";
+  return "unlisted";
+}
+
+export function courseAccessTypeToApiNumber(value: unknown): number {
+  switch (courseAccessTypeFromApi(value)) {
+    case "free":
+      return CourseAccessType.Free;
+    case "paid":
+      return CourseAccessType.Paid;
+    case "subscription":
+      return CourseAccessType.Subscription;
+    default:
+      return CourseAccessType.Free;
+  }
+}
+
+export function courseTermFromApi(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
+  if (typeof value === "string") {
+    switch (normalizeApiEnumToken(value)) {
+      case "firstterm":
+        return CourseTerm.FirstTerm;
+      case "secondterm":
+        return CourseTerm.SecondTerm;
+      case "thirdterm":
+        return CourseTerm.ThirdTerm;
+      default: {
+        const numeric = Number(value);
+        if (!Number.isNaN(numeric)) return numeric;
+        return CourseTerm.FirstTerm;
+      }
+    }
+  }
+
+  return CourseTerm.FirstTerm;
 }
 
 export function rejectionReasonIdsToBitmask(reasons: CourseReviewReasonId[]): number {

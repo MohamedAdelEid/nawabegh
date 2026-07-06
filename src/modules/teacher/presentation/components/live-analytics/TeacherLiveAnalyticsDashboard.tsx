@@ -112,7 +112,7 @@ export function TeacherLiveAnalyticsDashboard({
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {data.stats.map((stat) => {
           const Icon = statIcons[stat.id as keyof typeof statIcons] ?? Users;
           const value =
@@ -138,9 +138,9 @@ export function TeacherLiveAnalyticsDashboard({
         })}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_22rem]">
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
           <TeacherAttendanceBarChart
             title={t("liveAnalytics.chart.title")}
             subtitle={t("liveAnalytics.chart.subtitle")}
@@ -223,9 +223,9 @@ export function TeacherLiveAnalyticsDashboard({
             </CardContent>
           </Card>
         </div>
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-            <CardContent className="space-y-4 p-6">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <h2 className="text-right text-lg font-bold text-slate-800">
                 {t("liveAnalytics.upcoming.title")}
               </h2>

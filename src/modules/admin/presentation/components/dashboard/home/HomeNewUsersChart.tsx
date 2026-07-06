@@ -2,10 +2,12 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { useTranslations } from "next-intl";
+import { cn } from "@/shared/application/lib/cn";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartResponsiveHeightClass,
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -34,8 +36,9 @@ export function HomeNewUsersChart({ points, months, onMonthsChange }: HomeNewUse
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-      <CardContent className="space-y-6 p-6">
-        <div className="flex items-center justify-between gap-4">
+      <CardContent className="space-y-6 p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-bold text-slate-800 sm:text-xl">{t("title")}</h2>
           <select
             value={months}
             onChange={(event) => onMonthsChange(Number(event.target.value) as NewUsersChartMonths)}
@@ -48,10 +51,9 @@ export function HomeNewUsersChart({ points, months, onMonthsChange }: HomeNewUse
               </option>
             ))}
           </select>
-          <h2 className="text-xl font-bold text-slate-800">{t("title")}</h2>
         </div>
 
-        <ChartContainer config={chartConfig} className="aspect-[16/8] h-72 w-full">
+        <ChartContainer config={chartConfig} className={cn("aspect-[16/8]", chartResponsiveHeightClass)}>
           <BarChart data={data} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="label" tickLine={false} axisLine={false} />

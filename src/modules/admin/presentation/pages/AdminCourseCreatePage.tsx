@@ -631,7 +631,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                   daysLabel: t("create.accessDuration.daysLabel"),
                   daysPlaceholder: t("create.accessDuration.daysPlaceholder"),
                   helpText: t("create.accessDuration.helpText"),
-                  presetDays: t("create.accessDuration.presetDays"),
+                  presetDays: (days) => t("create.accessDuration.presetDays", { days }),
                 }}
               />
             ) : null}

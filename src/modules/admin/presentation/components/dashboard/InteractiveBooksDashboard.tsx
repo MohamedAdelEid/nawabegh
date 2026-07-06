@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BookOpenText, Clock3, NotebookText, Pencil, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useFormatter } from "next-intl";
+import { useFormatter, useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { interactiveBooksDashboardData } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import type { InteractiveBookTableRow } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
@@ -11,6 +11,7 @@ import { getInteractiveBooks, deleteInteractiveBook } from "@/modules/admin/infr
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
 import { notify } from "@/shared/application/lib/toast";
+import { resolveGradeLabel } from "@/shared/domain/utils/grade.utils";
 import {
   InteractiveBooksFilterBar,
   type InteractiveBooksApiFilterState,
@@ -81,6 +82,7 @@ function statusTone(statusId: "published" | "draft") {
 export function InteractiveBooksDashboard() {
   const t = useScopedDashboardTranslations();
   const formatter = useFormatter();
+  const locale = useLocale();
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const isTeacherScope = routes.scope === "teacher";
@@ -312,7 +314,7 @@ export function InteractiveBooksDashboard() {
       {
         id: "grade",
         header: t("interactiveBooks.table.columns.grade"),
-        renderCell: (row) => row.gradeName,
+        renderCell: (row) => resolveGradeLabel(locale, row, row.gradeName),
       },
       {
         id: "pages",
@@ -351,7 +353,7 @@ export function InteractiveBooksDashboard() {
         renderCell: (row) => formatCreatedAt(row.createdAt),
       },
     ],
-    [t, formatter],
+    [t, formatter, locale],
   );
 
   return (

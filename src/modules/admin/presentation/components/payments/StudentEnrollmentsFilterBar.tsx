@@ -60,7 +60,7 @@ export function StudentEnrollmentsFilterBar({
         placeholder={t("search.placeholder")}
         value={filters.search}
         onChange={(search) => onChange({ ...filters, search })}
-        className="min-w-[14rem] flex-1 xl:min-w-[18rem]"
+        className="min-w-0 w-full flex-1 sm:min-w-[14rem] xl:min-w-[18rem]"
       />
       <DashboardFilterSelect
         label={t("status.label")}
@@ -68,7 +68,7 @@ export function StudentEnrollmentsFilterBar({
         options={statusOptions}
         onChange={(status) => onChange({ ...filters, status })}
       />
-      <div className="grid min-w-[14rem] grid-cols-2 gap-2">
+      <div className="grid min-w-0 w-full sm:min-w-[14rem] grid-cols-2 gap-2">
         <AddUserDateField
           label={t("startsFrom")}
           value={filters.startsFrom}
@@ -84,7 +84,7 @@ export function StudentEnrollmentsFilterBar({
           icon={CalendarIcon}
         />
       </div>
-      <div className="grid min-w-[14rem] grid-cols-2 gap-2">
+      <div className="grid min-w-0 w-full sm:min-w-[14rem] grid-cols-2 gap-2">
         <AddUserDateField
           label={t("endsFrom")}
           value={filters.endsFrom}

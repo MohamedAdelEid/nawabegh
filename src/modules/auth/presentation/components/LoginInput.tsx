@@ -46,6 +46,7 @@ export function LoginInput({
           className={cn(
             "h-auto border-0 bg-transparent px-0 py-0 text-sm text-slate-700 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 md:text-sm",
             className,
+            "border-none focus-visible:ring-0 focus-visible:ring-offset-0",
           )}
           {...props}
         />

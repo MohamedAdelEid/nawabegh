@@ -91,7 +91,7 @@ export function SchoolManagementFilterBar({
         placeholder={t("schoolManagement.filters.keyword.placeholder")}
         value={value.keyword}
         onChange={(keyword) => onChange({ ...value, keyword })}
-        className="min-w-[14rem] xl:min-w-[16rem]"
+        className="min-w-0 w-full sm:min-w-[14rem] xl:min-w-[16rem]"
       />
     </DashboardFiltersPanel>
   );

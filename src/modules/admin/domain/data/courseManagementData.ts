@@ -37,10 +37,13 @@ export interface CourseManagementRow {
   title: string;
   subject: string;
   grade: string;
+  gradeNameAr: string;
+  gradeNameEn: string;
   teacherName: string;
   teacherAvatarUrl?: string;
   accessType: CourseAccessTypeId;
   statusId: CourseStatusId;
+  isPublished: boolean;
   coverTone: "blue" | "green" | "gold" | "slate";
   coverLabel: string;
   /** When set with a usable URL, `CourseCoverPreview` shows the remote image instead of gradients. */
@@ -58,12 +61,14 @@ export interface CourseCurriculumItem {
   type: "video" | "quiz" | "pdf" | "locked";
   durationLabel: string;
   metaLabel: string;
+  stationType?: number;
   locked?: boolean;
 }
 
 export interface CourseCurriculumUnit {
   id: string;
   title: string;
+  statusId?: CourseStatusId;
   expanded: boolean;
   items: CourseCurriculumItem[];
 }
@@ -82,6 +87,8 @@ export interface CourseReviewDetail extends CourseManagementRow {
   submittedAt: string;
   durationLabel: string;
   categoryLabel: string;
+  learningPathCount: number;
+  curriculumLoadError?: string | null;
   curriculum: CourseCurriculumUnit[];
 }
 
@@ -119,9 +126,12 @@ const rows: CourseManagementRow[] = [
     title: "أساسيات الذكاء الاصطناعي",
     subject: "علوم الحاسب",
     grade: "المرحلة الثانوية",
+    gradeNameAr: "المرحلة الثانوية",
+    gradeNameEn: "High School",
     teacherName: "د. أحمد الصالح",
     accessType: "subscription",
     statusId: "pending",
+    isPublished: false,
     coverTone: "blue",
     coverLabel: "AI",
     revenue: "84,000 ر.ع.",
@@ -134,9 +144,12 @@ const rows: CourseManagementRow[] = [
     title: "تطبيقات التفاضل والتكامل",
     subject: "الرياضيات",
     grade: "المرحلة الثانوية",
+    gradeNameAr: "المرحلة الثانوية",
+    gradeNameEn: "High School",
     teacherName: "أ. منى الهاشمي",
     accessType: "free",
     statusId: "approved",
+    isPublished: true,
     coverTone: "green",
     coverLabel: "MATH",
     revenue: "12,900 ر.ع.",
@@ -149,9 +162,12 @@ const rows: CourseManagementRow[] = [
     title: "الفنون البصرية المعاصرة",
     subject: "التربية الفنية",
     grade: "المرحلة المتوسطة",
+    gradeNameAr: "المرحلة المتوسطة",
+    gradeNameEn: "Middle School",
     teacherName: "أ. فهد الهادي",
     accessType: "paid",
     statusId: "rejected",
+    isPublished: false,
     coverTone: "gold",
     coverLabel: "ART",
     revenue: "4,200 ر.ع.",
@@ -164,9 +180,12 @@ const rows: CourseManagementRow[] = [
     title: "تاريخ الحضارات القديمة",
     subject: "التاريخ",
     grade: "المرحلة المتوسطة",
+    gradeNameAr: "المرحلة المتوسطة",
+    gradeNameEn: "Middle School",
     teacherName: "أنت (مسودة)",
     accessType: "unlisted",
     statusId: "draft",
+    isPublished: false,
     coverTone: "slate",
     coverLabel: "HIS",
     revenue: "0 ر.ع.",
@@ -227,6 +246,8 @@ const details: CourseReviewDetail[] = rows.map((row) => ({
   description:
     "مسار تعليمي تفاعلي يشرح المفاهيم الأساسية بأسلوب تطبيقي مع مراجعات قصيرة بعد كل وحدة.",
   stageLabel: row.grade,
+  gradeNameAr: row.gradeNameAr,
+  gradeNameEn: row.gradeNameEn,
   termLabel: "الفصل الدراسي الثاني",
   priceLabel: row.accessType === "free" ? "مجاني" : row.accessType === "paid" ? "150 ر.ع." : "اشتراك",
   completionRate: row.statusId === "rejected" ? 62 : 84,
@@ -242,6 +263,8 @@ const details: CourseReviewDetail[] = rows.map((row) => ({
   submittedAt: "2026-05-10T09:30:00.000Z",
   durationLabel: "12 ساعة تدريبية معتمدة",
   categoryLabel: row.subject,
+  learningPathCount: 1,
+  curriculumLoadError: null,
   curriculum: aiCurriculum,
 }));
 

@@ -66,7 +66,7 @@ export function AdManagementFilterBar({ value, onChange, onApply }: AdManagement
         placeholder={t("search.placeholder")}
         value={value.keyword}
         onChange={(keyword) => onChange({ ...value, keyword })}
-        className="min-w-[14rem] flex-[2] flex-1"
+        className="min-w-0 w-full flex-[2] flex-1 sm:min-w-[14rem]"
       />
       <Button
         type="button"

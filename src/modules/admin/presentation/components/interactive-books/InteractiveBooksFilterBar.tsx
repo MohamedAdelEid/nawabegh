@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useLocale } from "next-intl";
 import {
   DashboardFilterSelect,
   DashboardSearchFilter,
@@ -10,6 +11,7 @@ import { getCoursesPage } from "@/modules/admin/infrastructure/api/courseApi";
 import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { useScopedDashboardTranslations } from "@/shared/application/hooks/useScopedDashboardTranslations";
+import { formatCourseContextLabel } from "@/shared/domain/utils/grade.utils";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Label } from "@/shared/presentation/components/ui/label";
 
@@ -82,6 +84,7 @@ function FilterInput({
 
 export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksFilterBarProps) {
   const t = useScopedDashboardTranslations();
+  const locale = useLocale();
   const routes = useScopedDashboardRoutes();
   const isTeacherScope = routes.scope === "teacher";
   const [courses, setCourses] = useState<Array<{ id: string; title: string }>>([]);
@@ -98,7 +101,7 @@ export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksF
           setCourses(
             teacherCourses.map((course) => ({
               id: course.courseId,
-              title: [course.title, course.subject, course.gradeNameAr].filter(Boolean).join(" · "),
+              title: formatCourseContextLabel(locale, course.title, course.subject, course),
             })),
           );
           setCoursesLoadState("success");
@@ -115,7 +118,7 @@ export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksF
         setCourses(
           result.data.rows.map((course) => ({
             id: course.id,
-            title: course.title,
+            title: formatCourseContextLabel(locale, course.title, course.subjectNameAr, course),
           })),
         );
         setCoursesLoadState("success");
@@ -128,7 +131,7 @@ export function InteractiveBooksFilterBar({ value, onChange }: InteractiveBooksF
     return () => {
       alive = false;
     };
-  }, [isTeacherScope]);
+  }, [isTeacherScope, locale]);
 
   const courseOptions = useMemo<Array<DashboardFilterOption<string>>>(() => {
     const placeholder = {

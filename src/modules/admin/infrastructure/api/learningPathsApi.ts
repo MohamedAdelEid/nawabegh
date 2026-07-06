@@ -1,5 +1,6 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { StationType } from "@/shared/domain/enums/learning-path.enums";
+import { isApiSuccess } from "@/shared/infrastructure/api/apiResponse.utils";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -29,6 +30,15 @@ export type CourseLearningPath = {
   order: number;
   status: number;
   stations: CourseLearningPathStation[];
+};
+
+/** `GET /api/v1/Course/{courseId}/learning-paths` — see ADMIN_COURSE_CONTENT_VIEW_API.md §6 */
+export type CourseLearningPathsTreeResponse = {
+  courseId: string;
+  courseTitle: string;
+  allowPublicPathBrowse: boolean;
+  stationsRequireRegistration: boolean;
+  learningPaths: CourseLearningPath[];
 };
 
 export type CreateLearningPathPayload = {
@@ -227,24 +237,72 @@ export async function getCourseLearningPaths(
   }
 }
 
-export async function getCourseLearningPathsForEditor(
+function mapCourseLearningPathsTree(data: unknown): CourseLearningPathsTreeResponse | null {
+  const record = asRecord(extractEnvelopeData(data));
+  if (!record) return null;
+
+  const learningPaths = extractListRows(record)
+    .map(mapCourseLearningPath)
+    .filter((path): path is CourseLearningPath => Boolean(path));
+
+  return {
+    courseId: readString(record, ["courseId"], ""),
+    courseTitle: readString(record, ["courseTitle"], ""),
+    allowPublicPathBrowse: Boolean(record.allowPublicPathBrowse),
+    stationsRequireRegistration: Boolean(record.stationsRequireRegistration),
+    learningPaths,
+  };
+}
+
+/** Admin course content tree — `GET /api/v1/Course/{courseId}/learning-paths` */
+export async function getCourseLearningPathsTree(
   courseId: string,
-): Promise<LearningPathApiResult<CourseLearningPath[]>> {
+): Promise<LearningPathApiResult<CourseLearningPathsTreeResponse>> {
   try {
     const response = await httpClient.get<unknown>({
       url: `/api/v1/Course/${encodeURIComponent(courseId)}/learning-paths`,
     });
+
+    if (!isApiSuccess(response as BackendApiResponse<unknown>)) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: response.error?.message ?? "Failed to load course learning paths",
+        data: null,
+      };
+    }
+
+    const data = mapCourseLearningPathsTree(response.data);
+    if (!data) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: "Invalid learning paths response",
+        data: null,
+      };
+    }
+
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
-      data: extractListRows(response.data)
-        .map(mapCourseLearningPath)
-        .filter((path): path is CourseLearningPath => Boolean(path)),
+      data,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load course learning paths");
   }
+}
+
+export async function getCourseLearningPathsForEditor(
+  courseId: string,
+): Promise<LearningPathApiResult<CourseLearningPath[]>> {
+  const result = await getCourseLearningPathsTree(courseId);
+  return {
+    status: result.status,
+    message: result.message,
+    errorMessage: result.errorMessage,
+    data: result.data?.learningPaths ?? null,
+  };
 }
 
 export async function createLearningPath(

@@ -6,6 +6,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartResponsiveHeightClass,
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -34,10 +35,10 @@ export function TeacherWeeklyInteractionBarChart({
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-      <CardContent className="space-y-6 p-6">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-slate-800">{title}</h2>
-          <div className="flex items-center gap-4 text-xs text-slate-500">
+      <CardContent className="space-y-6 p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-lg font-bold text-slate-800 sm:text-xl">{title}</h2>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 sm:gap-4">
             <span className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-[#2C4260]" />
               {legendLabel}
@@ -51,7 +52,7 @@ export function TeacherWeeklyInteractionBarChart({
           </div>
         </div>
 
-        <ChartContainer config={chartConfig} className="aspect-[16/8] h-72 w-full">
+        <ChartContainer config={chartConfig} className={`aspect-[16/8] ${chartResponsiveHeightClass}`}>
           <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="day" tickLine={false} axisLine={false} />

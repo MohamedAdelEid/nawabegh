@@ -33,6 +33,8 @@ export type InteractiveBookTableRow = {
   courseTitle: string;
   gradeId: number;
   gradeName: string;
+  gradeNameAr: string;
+  gradeNameEn: string;
   pageCount: number;
   hotspotCount: number;
   activeHotspotCount: number;

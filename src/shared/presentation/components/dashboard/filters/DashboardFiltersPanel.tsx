@@ -20,7 +20,7 @@ export function DashboardFiltersPanel({
       style={{ boxShadow: "0px 8px 0px 0px #0000000D" }}
       aria-busy={isLoading}
     >
-      <div className={`flex flex-col flex-wrap gap-4 xl:flex-row xl:items-end ${innerClassName ?? ""}`.trim()}>{children}</div>
+      <div className={`flex flex-col flex-wrap gap-4 lg:flex-row lg:items-end ${innerClassName ?? ""}`.trim()}>{children}</div>
     </div>
   );
 }

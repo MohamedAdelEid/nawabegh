@@ -482,7 +482,7 @@ export function BundleFormPage({ bundleId }: BundleFormPageProps) {
                   daysLabel: t("accessDuration.daysLabel"),
                   daysPlaceholder: t("accessDuration.daysPlaceholder"),
                   helpText: t("accessDuration.helpText"),
-                  presetDays: t("accessDuration.presetDays"),
+                  presetDays: (days) => t("accessDuration.presetDays", { days }),
                 }}
               />
             </CardContent>

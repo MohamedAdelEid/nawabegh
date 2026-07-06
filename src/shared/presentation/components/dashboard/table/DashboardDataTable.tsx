@@ -44,20 +44,20 @@ export function DashboardDataTable<TRow>({
   const colSpan = columns.length + (hasActions ? 1 : 0);
 
   return (
-    <div className={cn("overflow-x-auto", containerClassName)}>
+    <div className={cn("min-w-0 overflow-x-auto", containerClassName)}>
       <table className={cn("min-w-full text-start", tableClassName)}>
         <thead>
           <tr className="border-b border-slate-100 text-sm text-slate-400">
             {columns.map((column) => (
               <th
                 key={column.id}
-                className={cn("px-6 py-5 font-medium text-start", column.headerClassName)}
+                className={cn("px-3 py-3 font-medium text-start sm:px-6 sm:py-5", column.headerClassName)}
               >
                 {column.header}
               </th>
             ))}
             {hasActions ? (
-              <th className={cn("px-6 py-5 font-medium", actionsHeaderClassName)}>
+              <th className={cn("px-3 py-3 font-medium sm:px-6 sm:py-5", actionsHeaderClassName)}>
                 {actionsHeader}
               </th>
             ) : null}
@@ -66,7 +66,7 @@ export function DashboardDataTable<TRow>({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={colSpan} className="px-6 py-12 text-center text-sm text-slate-500">
+              <td colSpan={colSpan} className="px-3 py-8 text-center text-sm text-slate-500 sm:px-6 sm:py-12">
                 {emptyMessage}
               </td>
             </tr>
@@ -82,12 +82,12 @@ export function DashboardDataTable<TRow>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {columns.map((column) => (
-                  <td key={column.id} className={cn("px-6 py-5", column.cellClassName)}>
+                  <td key={column.id} className={cn("px-3 py-3 sm:px-6 sm:py-5", column.cellClassName)}>
                     {column.renderCell(row)}
                   </td>
                 ))}
                 {hasActions ? (
-                  <td className={cn("px-6 py-5", actionsCellClassName)}>
+                  <td className={cn("px-3 py-3 sm:px-6 sm:py-5", actionsCellClassName)}>
                     {renderActions?.(row)}
                   </td>
                 ) : null}

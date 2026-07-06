@@ -167,7 +167,7 @@ export function LoginPage() {
                   error={errors.email}
                   onChange={(event) => setField("email", event.target.value)}
                   labelClassName="font-medium text-slate-700"
-                  containerClassName="min-h-12 rounded-2xl border-[#edf1f5] bg-[#f8fafc] px-4"
+                  containerClassName="min-h-12 rounded-2xl bg-[#f8fafc] px-4"
                   trailing={<Mail className="h-4 w-4 shrink-0 text-slate-400" />}
                 />
 
@@ -181,7 +181,7 @@ export function LoginPage() {
                     error={errors.password}
                     onChange={(event) => setField("password", event.target.value)}
                     labelClassName="font-medium text-slate-700"
-                    containerClassName="min-h-12 rounded-2xl border-[#edf1f5] bg-[#f8fafc] px-4"
+                    containerClassName="min-h-12 rounded-2xl bg-[#f8fafc] px-4"
                     leading={
                       <button
                         type="button"

@@ -40,7 +40,7 @@ export function BundleManagementFilterBar({
         placeholder={t("filters.search.placeholder")}
         value={value.keyword}
         onChange={(keyword) => onChange({ ...value, keyword })}
-        className="min-w-[14rem] flex-1 xl:min-w-[18rem]"
+        className="min-w-0 w-full flex-1 sm:min-w-[14rem] xl:min-w-[18rem]"
       />
       <DashboardFilterSelect
         label={t("filters.status.label")}

@@ -33,7 +33,7 @@ export function TeacherHomeDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <TeacherLevelCard
           level={data.level}
           title={t("home.level.title", { level: data.level.level })}
@@ -65,8 +65,8 @@ export function TeacherHomeDashboard() {
         })}
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[1fr_320px]">
+        <div className="min-w-0 space-y-6">
           <TeacherPerformanceLineChart
             title={t("home.chart.title")}
             subtitle={t("home.chart.subtitle")}

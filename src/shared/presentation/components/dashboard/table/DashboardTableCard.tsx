@@ -22,7 +22,7 @@ export function DashboardTableCard({
   return (
     <Card
       className={cn(
-        "overflow-hidden rounded-[2rem] border-white/80 bg-white",
+        "min-w-0 overflow-hidden rounded-[2rem] border-white/80 bg-white",
         className,
       )}
       style={{
@@ -30,9 +30,9 @@ export function DashboardTableCard({
       }}
     >
       {title || actions ? (
-        <CardHeader className="flex flex-col gap-4 border-b border-slate-100 p-6 md:flex-row md:items-center md:justify-between">
+        <CardHeader className="flex flex-col gap-4 border-b border-slate-100 p-4 sm:p-6 md:flex-row md:items-center md:justify-between">
           {title ? (
-            <CardTitle className="text-start text-2xl font-bold text-slate-800">{title}</CardTitle>
+            <CardTitle className="text-start text-xl font-bold text-slate-800 sm:text-2xl">{title}</CardTitle>
           ) : (
             <div />
           )}

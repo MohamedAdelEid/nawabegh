@@ -22,7 +22,7 @@ export function DashboardFilterSelect<T extends string>({
   disabled?: boolean;
 }) {
   return (
-    <label className="min-w-[10rem] space-y-2 text-start">
+    <label className="min-w-0 w-full space-y-2 text-start sm:min-w-[10rem] sm:w-auto">
       <span className="block text-xs font-medium text-slate-400">{label}</span>
       <div className="relative">
         <select
@@ -58,7 +58,7 @@ export function DashboardSearchFilter({
   className?: string;
 }) {
   return (
-    <label className={cn("min-w-[18rem] flex-1 space-y-2 text-start", className)}>
+    <label className={cn("min-w-0 w-full flex-1 space-y-2 text-start sm:min-w-[14rem] lg:min-w-[18rem]", className)}>
       <span className="block text-xs font-medium text-slate-400">{label}</span>
       <div className="relative">
         <input

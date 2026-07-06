@@ -152,7 +152,7 @@ export function StudentResultsDashboard({ studentId }: StudentResultsDashboardPr
       </ResultsAnalyticsAnimatedSection>
 
       <ResultsAnalyticsAnimatedSection delay={0.06}>
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+        <section className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-5">
           <Card className="rounded-[1.75rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
             <CardContent className="space-y-3 p-6">
               <p className="text-sm text-slate-500">{t("student.stats.averageScore")}</p>
@@ -212,8 +212,8 @@ export function StudentResultsDashboard({ studentId }: StudentResultsDashboardPr
       </ResultsAnalyticsAnimatedSection>
 
       <ResultsAnalyticsAnimatedSection delay={0.1}>
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className="space-y-6">
+        <section className="grid gap-6 lg:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className="min-w-0 space-y-6">
             <AcademicProgressBarChart
               title={t("student.charts.academicProgress")}
               scoreLabel={t("student.charts.scoreLabel")}

@@ -70,7 +70,7 @@ export function TeacherCourseSubscribersDashboard({ courseId }: { courseId: stri
         id: "student",
         header: t("courses.subscribers.table.student"),
         renderCell: (row) => (
-          <div className="flex min-w-[14rem] items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3 sm:min-w-[12rem]">
             <UserAvatarImageOrInitials
               trackKey={row.studentUserId}
               name={row.fullName}

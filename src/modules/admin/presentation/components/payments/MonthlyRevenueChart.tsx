@@ -8,6 +8,7 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  chartResponsiveHeightClass,
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -59,10 +60,10 @@ export function MonthlyRevenueChart({ year, rows, onYearChange }: MonthlyRevenue
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="space-y-6 p-4 sm:p-6">
         <div className="flex flex-col gap-3 text-right md:flex-row md:items-start md:justify-between">
           <div>
-            <h3 className="text-2xl font-bold text-[#1E3A66]">{t("title")}</h3>
+            <h3 className="text-xl font-bold text-[#1E3A66] sm:text-2xl">{t("title")}</h3>
             <p className="text-sm text-slate-500">{t("subtitle", { year })}</p>
           </div>
           {onYearChange ? (
@@ -74,7 +75,7 @@ export function MonthlyRevenueChart({ year, rows, onYearChange }: MonthlyRevenue
           ) : null}
         </div>
 
-        <ChartContainer config={chartConfig} className="aspect-[16/7] h-72 w-full">
+        <ChartContainer config={chartConfig} className={`aspect-[16/7] ${chartResponsiveHeightClass}`}>
           <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis dataKey="label" tickLine={false} axisLine={false} />

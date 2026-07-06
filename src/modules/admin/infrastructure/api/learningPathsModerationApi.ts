@@ -28,6 +28,7 @@ export type LearningPathModerationListItemDto = {
   teacherProfileImageUrl: string | null;
   subjectNameAr: string;
   gradeNameAr: string;
+  gradeNameEn: string;
   courseAccessType: number;
   courseStatus: number;
   status: number;
@@ -195,6 +196,7 @@ function mapListItem(record: UnknownRecord): LearningPathModerationListItemDto |
     teacherProfileImageUrl: readNullableString(record, ["teacherProfileImageUrl"]),
     subjectNameAr: readString(record, ["subjectNameAr", "subjectName"], "—"),
     gradeNameAr: readString(record, ["gradeNameAr", "gradeName"], "—"),
+    gradeNameEn: readString(record, ["gradeNameEn", "gradeNameAr", "gradeName"], "—"),
     courseAccessType: readNumber(record, ["courseAccessType"]) ?? 0,
     courseStatus: readNumber(record, ["courseStatus"]) ?? 0,
     status: readNumber(record, ["status"]) ?? 0,
@@ -268,6 +270,7 @@ export function learningPathDetailToCourseReviewDetail(
     teacherAvatarUrl: listSnapshot?.teacherProfileImageUrl ?? undefined,
     accessType,
     statusId,
+    isPublished: false,
     coverTone: "blue",
     coverLabel: "LP",
     revenue: "0 ر.ع.",
@@ -279,6 +282,8 @@ export function learningPathDetailToCourseReviewDetail(
       listSnapshot?.courseTitle ||
       "—",
     stageLabel: listSnapshot?.gradeNameAr ?? "—",
+    gradeNameAr: listSnapshot?.gradeNameAr ?? "—",
+    gradeNameEn: listSnapshot?.gradeNameEn ?? listSnapshot?.gradeNameAr ?? "—",
     termLabel: listSnapshot?.courseTitle ?? "—",
     priceLabel: "—",
     completionRate: 0,
@@ -290,6 +295,8 @@ export function learningPathDetailToCourseReviewDetail(
     submittedAt: detail.createdAt,
     durationLabel: "—",
     categoryLabel: listSnapshot?.subjectNameAr ?? "—",
+    learningPathCount: 0,
+    curriculumLoadError: null,
     curriculum: [],
   };
 }

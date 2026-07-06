@@ -76,7 +76,7 @@ export function PaymentTransactionsFilterBar({
         placeholder={t("search.placeholder")}
         value={filters.search}
         onChange={(search) => onChange({ ...filters, search })}
-        className="min-w-[14rem] flex-1 xl:min-w-[18rem]"
+        className="min-w-0 w-full flex-1 sm:min-w-[14rem] xl:min-w-[18rem]"
       />
       <DashboardFilterSelect
         label={t("status.label")}

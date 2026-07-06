@@ -21,6 +21,7 @@ export type LearningPathReviewListSnapshot = {
   teacherProfileImageUrl: string | null;
   subjectNameAr: string;
   gradeNameAr: string;
+  gradeNameEn: string;
   courseTitle: string;
   courseCoverImageUrl: string | null;
   courseId: string;

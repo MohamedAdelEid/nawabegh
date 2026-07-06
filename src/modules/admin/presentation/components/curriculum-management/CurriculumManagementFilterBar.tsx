@@ -105,7 +105,7 @@ export function CurriculumManagementFilterBar(props: CurriculumManagementFilterB
           placeholder={t("search.placeholder")}
           value={props.value.keyword}
           onChange={(keyword) => props.onChange({ ...props.value, keyword })}
-          className="min-w-[14rem] flex-[2]"
+          className="min-w-0 w-full flex-[2] sm:min-w-[14rem]"
         />
       </DashboardFiltersPanel>
     );
@@ -125,7 +125,7 @@ export function CurriculumManagementFilterBar(props: CurriculumManagementFilterB
           placeholder={t("search.placeholder")}
           value={props.value.keyword}
           onChange={(keyword) => props.onChange({ ...props.value, keyword })}
-          className="min-w-[14rem] flex-[2]"
+          className="min-w-0 w-full flex-[2] sm:min-w-[14rem]"
         />
       </DashboardFiltersPanel>
     );
@@ -153,7 +153,7 @@ export function CurriculumManagementFilterBar(props: CurriculumManagementFilterB
         placeholder={t("search.placeholder")}
         value={props.value.keyword}
         onChange={(keyword) => props.onChange({ ...props.value, keyword })}
-        className="min-w-[14rem] flex-[2]"
+        className="min-w-0 w-full flex-[2] sm:min-w-[14rem]"
       />
     </DashboardFiltersPanel>
   );

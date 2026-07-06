@@ -108,12 +108,12 @@ function TeacherCourseTopStudentsTable({
 
   return (
     <Card className="rounded-[2rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-      <CardContent className="space-y-5 p-6">
+      <CardContent className="space-y-5 p-4 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h3 className="text-right text-lg font-bold text-slate-800">
+          <h3 className="text-right text-base font-bold text-slate-800 sm:text-lg">
             {t("courses.statistics.table.title")}
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full items-center gap-2 sm:w-auto">
             <Button
               type="button"
               variant="outline"
@@ -123,7 +123,7 @@ function TeacherCourseTopStudentsTable({
             >
               <SlidersHorizontal className="h-4 w-4" />
             </Button>
-            <div className="relative min-w-[220px] flex-1">
+            <div className="relative min-w-0 flex-1 sm:min-w-[220px]">
               <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 value={search}
@@ -135,8 +135,8 @@ function TeacherCourseTopStudentsTable({
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-2xl border border-slate-100">
-          <table className="w-full min-w-[640px] text-sm">
+        <div className="min-w-0 overflow-x-auto rounded-2xl border border-slate-100">
+          <table className="w-full min-w-[560px] text-sm">
             <thead>
               <tr className="bg-slate-50 text-xs text-slate-500">
                 <th className="px-4 py-3 font-medium">{t("courses.statistics.table.student")}</th>
@@ -441,7 +441,7 @@ export function TeacherCourseStatisticsDashboard({ courseId }: { courseId: strin
         ]}
       /> */}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-2 xl:grid-cols-5">
         {data.stats.map((stat) => {
           const Icon = statIcons[stat.id as keyof typeof statIcons] ?? Users;
           const indicator =

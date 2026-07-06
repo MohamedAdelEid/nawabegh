@@ -53,21 +53,21 @@ export function DifficultyDistributionDonut({ rows, className }: DifficultyDistr
 
   return (
     <Card className={cn("rounded-[2rem] border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]", className)}>
-      <CardContent className="space-y-6 p-6">
+      <CardContent className="space-y-6 p-4 sm:p-6">
         <div className="text-right">
-          <h3 className="text-2xl font-bold text-[#1E3A66]">{t("title")}</h3>
+          <h3 className="text-xl font-bold text-[#1E3A66] sm:text-2xl">{t("title")}</h3>
           <p className="text-sm text-slate-500">{t("subtitle")}</p>
         </div>
 
         <div className="flex flex-col items-center gap-4">
           <div
-            className="relative flex h-44 w-44 items-center justify-center rounded-full"
+            className="relative flex h-36 w-36 items-center justify-center rounded-full sm:h-44 sm:w-44"
             style={{
               background: gradientStops ? `conic-gradient(${gradientStops})` : "#E2E8F0",
             }}
           >
-            <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-white text-center shadow-inner">
-              <span className="text-3xl font-extrabold text-[#1E3A66]">
+            <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-white text-center shadow-inner sm:h-32 sm:w-32">
+              <span className="text-2xl font-extrabold text-[#1E3A66] sm:text-3xl">
                 {Math.round(dominant.value)}%
               </span>
               <span className="text-xs text-slate-500">{dominant.label}</span>

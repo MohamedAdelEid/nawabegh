@@ -51,8 +51,11 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
   };
 
   const submit = async () => {
-    console.log("submit", submitting, selectedReasons.length, notes.trim().length);
-    if (submitting || selectedReasons.length === 0 || notes.trim().length < 10) {
+    if (!detail || detail.statusId !== "pending") {
+      notify.error(t("reject.notPending"));
+      return;
+    }
+    if (submitting || selectedReasons.length === 0 || notes.trim().length < 50) {
       notify.error(t("reject.validation"));
       return;
     }
@@ -72,6 +75,20 @@ export function AdminCourseRejectPage({ courseId }: { courseId: string }) {
 
   if (!detail) {
     return <div className="py-16 text-center text-sm text-slate-500">{t("reject.loading")}</div>;
+  }
+
+  if (detail.statusId !== "pending") {
+    return (
+      <div className="space-y-4 py-16 text-center">
+        <p className="text-sm text-amber-800">{t("reject.notPending")}</p>
+        <Button
+          variant="outline"
+          onClick={() => router.push(ROUTES.ADMIN.COURSE_MANAGEMENT.REVIEW(courseId))}
+        >
+          {t("reject.actions.cancel")}
+        </Button>
+      </div>
+    );
   }
 
   return (
