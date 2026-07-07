@@ -47,7 +47,6 @@ import {
 import {
   createStation,
   deleteStation,
-  reorderStations,
   type CreatedStation,
 } from "@/modules/admin/infrastructure/api/stationsApi";
 import {
@@ -351,7 +350,10 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
       return null;
     }
 
-    const createdStation = mapCreatedStation(result.data);
+    const createdStation: JourneyStation = {
+      ...mapCreatedStation(result.data),
+      type: stationDraft.type,
+    };
     setData((prev) => {
       if (!prev) return prev;
       return {
@@ -409,40 +411,6 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
         })),
       };
     });
-  };
-
-  const handleReorderStations = async (
-    pathId: string,
-    orderedIds: string[],
-  ): Promise<boolean> => {
-    const result = await reorderStations({ learningPathId: pathId, orderedIds });
-    if (result.errorMessage || !result.data) {
-      notify.error(result.errorMessage ?? t("messages.stationReorderError"));
-      return false;
-    }
-
-    const orderById = new Map(orderedIds.map((id, index) => [id, index + 1]));
-    setData((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        paths: prev.paths.map((path) =>
-          path.id === pathId
-            ? {
-                ...path,
-                stations: [...path.stations]
-                  .sort(
-                    (a, b) =>
-                      (orderById.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
-                      (orderById.get(b.id) ?? Number.MAX_SAFE_INTEGER),
-                  )
-                  .map((station, index) => ({ ...station, order: index + 1 })),
-              }
-            : path,
-        ),
-      };
-    });
-    return true;
   };
 
   const handleDeletePath = async (pathId: string) => {
@@ -520,6 +488,8 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   if (!data) return null;
 
+  const hasPaths = data.paths.length > 0;
+
   return (
     <div className="space-y-7">
       <JourneyEditorAnimatedSection>
@@ -547,17 +517,45 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <JourneyEditorAnimatedSection delay={0.06} className="space-y-5">
-          {data.paths.map((path) => (
-            <JourneyPathCard
-              key={path.id}
-              journeyId={journeyId}
-              path={path}
-              onAddStation={openAddStationModal}
-              onDeleteStation={(stationId) => void handleDeleteStation(stationId)}
-              onDeletePath={(pathId) => void handleDeletePath(pathId)}
-              onReorderStations={handleReorderStations}
-            />
-          ))}
+          {hasPaths ? (
+            data.paths.map((path) => (
+              <JourneyPathCard
+                key={path.id}
+                journeyId={journeyId}
+                path={path}
+                onAddStation={openAddStationModal}
+                onDeleteStation={(stationId) => void handleDeleteStation(stationId)}
+                onDeletePath={(pathId) => void handleDeletePath(pathId)}
+              />
+            ))
+          ) : (
+            <button
+              type="button"
+              onClick={() => setAddPathModalOpen(true)}
+              className={cn(
+                "flex w-full flex-col items-center justify-center gap-4 rounded-[1.75rem]",
+                "border-2 border-dashed border-slate-200 bg-white/60 px-6 py-16 text-center",
+                "shadow-[0px_4px_0px_0px_#0000000D] transition-colors",
+                "hover:border-[#C8AC59]/70 hover:bg-white",
+              )}
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#FEF3C7] text-[#D97706]">
+                <Plus className="h-8 w-8" />
+              </span>
+              <span className="space-y-1">
+                <span className="block text-lg font-bold text-slate-800">
+                  {t("editor.emptyState.title")}
+                </span>
+                <span className="block text-sm text-slate-400">
+                  {t("editor.emptyState.description")}
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-2xl bg-[#C8AC59] px-6 py-3 text-sm font-semibold text-white shadow-[0px_4px_0px_0px_#8F6C0B]">
+                <Plus className="h-4 w-4" />
+                {t("editor.emptyState.action")}
+              </span>
+            </button>
+          )}
         </JourneyEditorAnimatedSection>
         <JourneyEditorAnimatedSection delay={0.12} className="space-y-5">
           <Card className="rounded-[1.75rem] border-white/80 shadow-[0px_8px_0px_0px_#0000000D]">

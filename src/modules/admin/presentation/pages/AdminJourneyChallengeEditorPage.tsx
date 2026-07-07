@@ -14,6 +14,7 @@ import {
   Zap,
   ClipboardList,
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import type {
@@ -42,9 +43,12 @@ import { cn } from "@/shared/application/lib/cn";
 import { ChallengeType, DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import {
+  ChallengeAiGenerationPanel,
   ChallengeScheduleDateField,
+  getChallengeGenerateLabel,
   JourneyEditorStationPageSkeleton,
 } from "@/modules/admin/presentation/components/journey-editor";
+import { useElapsedSeconds } from "@/shared/application/hooks/useElapsedSeconds";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -229,6 +233,9 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
   const t = useTranslations("admin.dashboard.journeyEditor.challengeEditor");
   const tBc = useTranslations("admin.dashboard.journeyEditor.breadcrumbs");
   const routes = useScopedDashboardRoutes();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEditMode = searchParams.get("edit") === "1";
 
   const [station, setStation] = useState<ChallengeStation | null>(null);
   const [stationName, setStationName] = useState("");
@@ -241,9 +248,11 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
   const [timeZoneId, setTimeZoneId] = useState("");
   const [challengeId, setChallengeId] = useState<string | null>(null);
   const [hasChallenge, setHasChallenge] = useState(false);
+  const [hasQuestions, setHasQuestions] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [generatingQuestions, setGeneratingQuestions] = useState(false);
+  const generationElapsedSeconds = useElapsedSeconds(generatingQuestions);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const applyChallengeToForm = (challenge: Challenge, availableTimezones: string[]) => {
@@ -328,8 +337,13 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         const challengeResult = await getChallenge(resolvedChallengeId);
         if (challengeResult.data) {
           storeChallengeId(stationId, challengeResult.data.id);
+          if (!isEditMode) {
+            router.replace(routes.journeyEditor.CHALLENGE_PREVIEW(journeyId, stationId));
+            return;
+          }
           setChallengeId(challengeResult.data.id);
           setHasChallenge(true);
+          setHasQuestions(challengeResult.data.questions.length > 0);
           applyChallengeToForm(challengeResult.data, availableTimezones);
           setLoading(false);
           return;
@@ -346,7 +360,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
       setHasChallenge(false);
       setLoading(false);
     })();
-  }, [stationId]);
+  }, [isEditMode, journeyId, router, routes.journeyEditor, stationId]);
 
   useEffect(() => {
     if (endDate < startDate) setEndDate(startDate);
@@ -445,6 +459,7 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
     setStation((prev) => (prev ? { ...prev, id: result.data!.id } : prev));
     syncUploadedSourceFiles(payload.attachments);
     notify.success(t("messages.saveSuccess"));
+    router.replace(routes.journeyEditor.CHALLENGE_PREVIEW(journeyId, stationId));
   };
 
   const handleUpdate = async () => {
@@ -574,6 +589,11 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
       return;
     }
 
+    const challengeResult = await getChallenge(challengeId);
+    if (challengeResult.data) {
+      setHasQuestions(challengeResult.data.questions.length > 0);
+    }
+
     notify.success(t("messages.generateQuestionsSuccess"));
   };
 
@@ -589,8 +609,22 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
     timezone: timeZoneId || "—",
   });
 
+  const generateQuestionsLabel = getChallengeGenerateLabel(
+    generatingQuestions,
+    generationElapsedSeconds,
+    t("actions.generateQuestions"),
+    (elapsed) => t("actions.generatingQuestions", { elapsed }),
+  );
+
   return (
     <div className="space-y-7">
+      {generatingQuestions ? (
+        <ChallengeAiGenerationPanel
+          elapsedSeconds={generationElapsedSeconds}
+          title={t("messages.generatingQuestionsTitle")}
+          description={t("messages.generatingQuestionsDescription")}
+        />
+      ) : null}
       <DashboardPageHeader
         title={t("title")}
         description={t("description")}
@@ -613,14 +647,16 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
                 <Save className="h-4 w-4" />
                 {t("actions.updateChallenge")}
               </Button>
-              <Button
-                className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
-                onClick={() => void handleGenerateQuestions()}
-                disabled={generatingQuestions || saving}
-              >
-                <Sparkles className="h-4 w-4" />
-                {t("actions.generateQuestions")}
-              </Button>
+              {!hasQuestions ? (
+                <Button
+                  className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
+                  onClick={() => void handleGenerateQuestions()}
+                  disabled={generatingQuestions || saving}
+                >
+                  <Sparkles className={cn("h-4 w-4", generatingQuestions && "animate-pulse")} />
+                  {generateQuestionsLabel}
+                </Button>
+              ) : null}
             </div>
           ) : (
             <Button
@@ -965,14 +1001,16 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
                     <Save className="h-4 w-4" />
                     {t("actions.updateChallenge")}
                   </Button>
-                  <Button
-                    className="h-11 w-full gap-2 rounded-2xl bg-[#2C4260] text-white hover:bg-[#243652]"
-                    onClick={() => void handleGenerateQuestions()}
-                    disabled={generatingQuestions || saving}
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    {t("actions.generateQuestions")}
-                  </Button>
+                  {!hasQuestions ? (
+                    <Button
+                      className="h-11 w-full gap-2 rounded-2xl bg-[#2C4260] text-white hover:bg-[#243652]"
+                      onClick={() => void handleGenerateQuestions()}
+                      disabled={generatingQuestions || saving}
+                    >
+                      <Sparkles className={cn("h-4 w-4", generatingQuestions && "animate-pulse")} />
+                      {generateQuestionsLabel}
+                    </Button>
+                  ) : null}
                 </>
               ) : (
                 <Button

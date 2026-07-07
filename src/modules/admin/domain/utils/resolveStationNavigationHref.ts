@@ -64,7 +64,7 @@ export function getStationOpenHref(
     case "liveBroadcast":
       return journeyEditorRoutes.LIVE_BROADCAST_VIEW(journeyId, station.id);
     case "challenge":
-      return journeyEditorRoutes.CHALLENGE_EDITOR(journeyId, station.id);
+      return journeyEditorRoutes.CHALLENGE_PREVIEW(journeyId, station.id);
     case "shortQuiz":
     case "exam":
       return journeyEditorRoutes.EXAM_EDITOR(journeyId, station.id);

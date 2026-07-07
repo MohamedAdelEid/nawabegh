@@ -331,13 +331,13 @@ export async function createResourceFile(
     const response = await httpClient.post<unknown>({
       url: "/api/v1/ResourceFile",
       data: {
-        ...(stationId ? { stationId } : {}),
         courseId: payload.courseId,
         fileName: payload.fileName,
         fileUrl: payload.fileUrl,
         fileType: payload.fileType,
         accessPolicy: payload.accessPolicy,
         resourceFileType: payload.resourceFileType,
+        ...(stationId ? { stationId } : {}),
       },
     });
     return {

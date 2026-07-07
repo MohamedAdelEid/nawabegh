@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  CalendarDays,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -32,6 +31,10 @@ import { Label } from "@/shared/presentation/components/ui/label";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
+import {
+  ScheduleDatePicker,
+  ScheduleTimePicker,
+} from "@/modules/admin/presentation/components/journey-editor";
 
 interface Props {
   journeyId: string;
@@ -489,36 +492,20 @@ export function AdminJourneyLiveBroadcastAddPage({ journeyId, stationId }: Props
                     options={durationOptions}
                   />
 
-                  <div className="space-y-2 text-right">
-                    <Label htmlFor="live-session-date" className="text-[#64748B]">
-                      {t("fields.date")}
-                    </Label>
-                    <div className="relative">
-                      <CalendarDays className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <Input
-                        id="live-session-date"
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="h-14 rounded-2xl border-slate-100 bg-slate-50 pl-10 text-right"
-                      />
-                    </div>
-                  </div>
+                  <ScheduleDatePicker
+                    id="live-session-date"
+                    label={t("fields.date")}
+                    value={date}
+                    onChange={setDate}
+                  />
 
-                  <div className="space-y-2 text-right sm:col-span-2">
-                    <Label htmlFor="live-session-time" className="text-[#64748B]">
-                      {t("fields.time")}
-                    </Label>
-                    <div className="relative">
-                      <Clock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <Input
-                        id="live-session-time"
-                        type="time"
-                        value={time}
-                        onChange={(e) => setTime(e.target.value)}
-                        className="h-14 rounded-2xl border-slate-100 bg-slate-50 pl-10 text-right"
-                      />
-                    </div>
+                  <div className="sm:col-span-2">
+                    <ScheduleTimePicker
+                      id="live-session-time"
+                      label={t("fields.time")}
+                      value={time}
+                      onChange={setTime}
+                    />
                   </div>
                 </div>
               </CardContent>

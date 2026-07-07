@@ -1,4 +1,5 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
+import { StationType } from "@/shared/domain/enums/learning-path.enums";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -165,6 +166,28 @@ function extractEnvelopeData(data: unknown): unknown {
   return record?.data ?? data;
 }
 
+function readStationType(record: UnknownRecord | null): number {
+  if (!record) return StationType.LiveStream;
+  for (const key of ["type", "stationType"]) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const normalized = value.replace(/\s+/g, "").toLowerCase();
+      const byName: Record<string, StationType> = {
+        livestream: StationType.LiveStream,
+        flashcards: StationType.Flashcards,
+        shortquiz: StationType.ShortQuiz,
+        challenge: StationType.Challenge,
+        helperresource: StationType.HelperResource,
+        recordedlecture: StationType.RecordedLecture,
+      };
+      const mapped = byName[normalized];
+      if (mapped != null) return mapped;
+    }
+  }
+  return StationType.LiveStream;
+}
+
 function mapStationResourceFileRef(data: unknown): StationResourceFileRef | null {
   if (typeof data === "string") {
     const id = data.trim();
@@ -225,7 +248,7 @@ function mapCreatedStation(data: unknown): CreatedStation | null {
     name: readString(record, ["name"], ""),
     iconKey: readString(record, ["iconKey"], ""),
     order: readNumber(record, ["order"]),
-    type: readNumber(record, ["type"]),
+    type: readStationType(record),
     autoUnlockOnPreviousComplete: readBoolean(record, ["autoUnlockOnPreviousComplete"]),
     completionRule: readNumber(record, ["completionRule"]),
     completionThreshold: readNullableNumber(record, ["completionThreshold"]),

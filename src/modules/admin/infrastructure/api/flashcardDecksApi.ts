@@ -313,3 +313,22 @@ export async function createFlashcardDeckCard(
     return buildErrorResult(error, "Failed to create flashcard card");
   }
 }
+
+export async function deleteFlashcardDeckCard(
+  cardId: string,
+): Promise<FlashcardDeckApiResult<boolean>> {
+  try {
+    const response = await httpClient.delete<unknown>({
+      url: `/api/v1/flashcard-decks/cards/${encodeURIComponent(cardId)}`,
+    });
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: !response.error?.message,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to delete flashcard card");
+  }
+}

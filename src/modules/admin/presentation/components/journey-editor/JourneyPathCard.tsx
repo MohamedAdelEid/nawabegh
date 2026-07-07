@@ -1,26 +1,9 @@
 "use client";
 
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  PointerSensor,
-  type DragEndEvent,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, ChevronUp, Clock, GraduationCap, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import type { JourneyPath, JourneyStation } from "@/modules/admin/domain/data/journeyEditorData";
 import { getStationEditorHref } from "@/modules/admin/domain/utils/journeyEditorRoutes";
 import { resolveStationNavigationHref } from "@/modules/admin/domain/utils/resolveStationNavigationHref";
@@ -34,7 +17,6 @@ interface Props {
   onAddStation: (pathId: string) => void;
   onDeleteStation: (stationId: string) => void;
   onDeletePath?: (pathId: string) => void;
-  onReorderStations?: (pathId: string, orderedIds: string[]) => Promise<boolean>;
 }
 
 export function JourneyPathCard({
@@ -43,51 +25,9 @@ export function JourneyPathCard({
   onAddStation,
   onDeleteStation,
   onDeletePath,
-  onReorderStations,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.editor");
   const [collapsed, setCollapsed] = useState(path.isCollapsed);
-  const [orderedStations, setOrderedStations] = useState(path.stations);
-  const [isReordering, setIsReordering] = useState(false);
-  const stationIds = useMemo(
-    () => orderedStations.map((station) => station.id),
-    [orderedStations],
-  );
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  useEffect(() => {
-    setOrderedStations(path.stations);
-  }, [path.stations]);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id || isReordering) return;
-
-    const oldIndex = orderedStations.findIndex((station) => station.id === active.id);
-    const newIndex = orderedStations.findIndex((station) => station.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-
-    const previousStations = orderedStations;
-    const nextStations = arrayMove(orderedStations, oldIndex, newIndex);
-    setOrderedStations(nextStations);
-
-    if (!onReorderStations) return;
-
-    const orderedIds = nextStations.map((station) => station.id);
-    setIsReordering(true);
-    void (async () => {
-      const success = await onReorderStations(path.id, orderedIds);
-      setIsReordering(false);
-      if (!success) {
-        setOrderedStations(previousStations);
-      }
-    })();
-  };
 
   return (
     <div className="rounded-[1.75rem] border border-slate-200 bg-white shadow-[0px_4px_0px_0px_#0000000D] overflow-hidden">
@@ -135,24 +75,16 @@ export function JourneyPathCard({
 
       {!collapsed ? (
         <div className="space-y-2 px-5 pb-5">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={stationIds} strategy={verticalListSortingStrategy}>
-              <div className="space-y-2">
-                {orderedStations.map((station) => (
-                  <SortableStationCard
-                    key={station.id}
-                    journeyId={journeyId}
-                    station={station}
-                    onDelete={onDeleteStation}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+          <div className="space-y-2">
+            {path.stations.map((station) => (
+              <StationCardNav
+                key={station.id}
+                journeyId={journeyId}
+                station={station}
+                onDelete={onDeleteStation}
+              />
+            ))}
+          </div>
 
           <button
             type="button"
@@ -185,25 +117,16 @@ export function JourneyPathCard({
   );
 }
 
-interface SortableStationCardProps {
+interface StationCardNavProps {
   journeyId: string;
   station: JourneyStation;
   onDelete?: (stationId: string) => void;
 }
 
-function SortableStationCard({ journeyId, station, onDelete }: SortableStationCardProps) {
+function StationCardNav({ journeyId, station, onDelete }: StationCardNavProps) {
   const router = useRouter();
   const routes = useScopedDashboardRoutes();
   const [navigating, setNavigating] = useState(false);
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: station.id });
 
   const editorHref = getStationEditorHref(routes.journeyEditor, journeyId, station);
 
@@ -224,23 +147,11 @@ function SortableStationCard({ journeyId, station, onDelete }: SortableStationCa
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
-      className={cn(isDragging && "relative z-10 opacity-80")}
-    >
-      <JourneyStationCard
-        station={station}
-        editorHref={editorHref}
-        onNavigate={editorHref ? () => void handleNavigate() : undefined}
-        dragActivatorRef={setActivatorNodeRef}
-        dragHandleAttributes={attributes}
-        dragHandleListeners={listeners}
-        onDelete={onDelete}
-      />
-    </div>
+    <JourneyStationCard
+      station={station}
+      editorHref={editorHref}
+      onNavigate={editorHref ? () => void handleNavigate() : undefined}
+      onDelete={onDelete}
+    />
   );
 }

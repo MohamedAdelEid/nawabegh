@@ -158,6 +158,8 @@ export const ROUTES = {
         `/admin/journey-editor/${journeyId}/live-broadcast/${stationId}`,
       CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>
         `/admin/journey-editor/${journeyId}/challenge/${stationId}`,
+      CHALLENGE_PREVIEW: (journeyId: string, stationId: string) =>
+        `/admin/journey-editor/${journeyId}/challenge/${stationId}/preview`,
       EXAM_EDITOR: (journeyId: string, stationId: string) =>
         `/admin/journey-editor/${journeyId}/exam/${stationId}`,
       EXAM_PREVIEW: (journeyId: string, stationId: string) =>
@@ -294,6 +296,8 @@ export const ROUTES = {
           `/teacher/journey-editor/${journeyId}/live-broadcast/${stationId}`,
         CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>
           `/teacher/journey-editor/${journeyId}/challenge/${stationId}`,
+        CHALLENGE_PREVIEW: (journeyId: string, stationId: string) =>
+          `/teacher/journey-editor/${journeyId}/challenge/${stationId}/preview`,
         EXAM_EDITOR: (journeyId: string, stationId: string) =>
           `/teacher/journey-editor/${journeyId}/exam/${stationId}`,
         EXAM_PREVIEW: (journeyId: string, stationId: string) =>

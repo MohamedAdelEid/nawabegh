@@ -1,10 +1,8 @@
 "use client";
 
-import type { DraggableAttributes, DraggableSyntheticListeners } from "@dnd-kit/core";
 import {
   BookOpen,
   FlaskConical,
-  GripVertical,
   Lock,
   LockOpen,
   Pencil,
@@ -22,9 +20,6 @@ interface Props {
   station: JourneyStation;
   editorHref: string | null;
   onNavigate?: () => void;
-  dragActivatorRef?: (element: HTMLElement | null) => void;
-  dragHandleAttributes?: DraggableAttributes;
-  dragHandleListeners?: DraggableSyntheticListeners;
   onDelete?: (stationId: string) => void;
 }
 
@@ -60,9 +55,6 @@ export function JourneyStationCard({
   station,
   editorHref,
   onNavigate,
-  dragActivatorRef,
-  dragHandleAttributes,
-  dragHandleListeners,
   onDelete,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.editor");
@@ -94,18 +86,6 @@ export function JourneyStationCard({
         editorHref && onNavigate && "hover:shadow-md",
       )}
     >
-      <button
-        type="button"
-        ref={dragActivatorRef}
-        className="touch-none rounded-lg p-1 text-slate-300 hover:bg-slate-100 hover:text-slate-500"
-        aria-label={t("station.dragHandleAria")}
-        data-sortable-handle
-        {...dragHandleAttributes}
-        {...dragHandleListeners}
-      >
-        <GripVertical className="h-4 w-4 shrink-0 cursor-grab" />
-      </button>
-
       <div
         role={editorHref && onNavigate ? "button" : undefined}
         tabIndex={editorHref && onNavigate ? 0 : undefined}

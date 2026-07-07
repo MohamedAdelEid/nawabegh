@@ -7,5 +7,7 @@ export type { AddLearningPathDraft } from "./AddLearningPathModal";
 export { AddStationModal } from "./AddStationModal";
 export { JourneyPathCard } from "./JourneyPathCard";
 export { JourneyStationCard } from "./JourneyStationCard";
+export { ChallengeAiGenerationPanel, getChallengeGenerateLabel } from "./ChallengeAiGenerationPanel";
 export { ChallengeScheduleDateField } from "./ChallengeScheduleDateField";
+export { ScheduleDatePicker, ScheduleTimePicker } from "./ScheduleFields";
 export { AddExamQuestionModal } from "./AddExamQuestionModal";

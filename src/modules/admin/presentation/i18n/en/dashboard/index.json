@@ -2643,6 +2643,7 @@
         "liveBroadcastAdd": "Add Live Broadcast Station",
         "liveBroadcastView": "View Live Broadcast Station",
         "challengeEditor": "Challenge Editor",
+        "challengePreview": "Preview Challenge Questions",
         "examEditor": "Exam Editor",
         "examPreview": "Preview Exam Questions",
         "examEditQuestions": "Edit Exam Questions",
@@ -2666,6 +2667,11 @@
         "actions": {
           "saveChanges": "Save Changes",
           "previewJourney": "Preview Journey"
+        },
+        "emptyState": {
+          "title": "No learning paths yet",
+          "description": "Start building your journey by creating your first learning path.",
+          "action": "Create your first path"
         },
         "sidebar": {
           "title": "Add a Station or New Path",
@@ -2807,6 +2813,10 @@
           "titleRequired": "Deck title is required.",
           "createSuccess": "Flashcard deck created successfully.",
           "createError": "Failed to create flashcard deck."
+        },
+        "messages": {
+          "cardDeleteSuccess": "Flashcard deleted successfully.",
+          "cardDeleteError": "Failed to delete flashcard."
         }
       },
       "flashcardAdd": {
@@ -2998,6 +3008,7 @@
           "createChallenge": "Create Challenge",
           "updateChallenge": "Update Challenge",
           "generateQuestions": "Generate Questions",
+          "generatingQuestions": "Generating... {elapsed}",
           "previewChallenge": "Preview Challenge",
           "saveAndPublish": "Save and Publish Challenge"
         },
@@ -3019,7 +3030,9 @@
           "timezoneRequired": "Please select a timezone",
           "generateQuestionsSuccess": "Question generation started",
           "generateQuestionsError": "Failed to generate questions",
-          "challengeRequiredForQuestions": "Create the challenge first before generating questions"
+          "challengeRequiredForQuestions": "Create the challenge first before generating questions",
+          "generatingQuestionsTitle": "AI is generating questions",
+          "generatingQuestionsDescription": "This may take several minutes. Please keep this page open until it finishes."
         },
         "sidebar": {
           "title": "Challenge Summary",
@@ -3080,6 +3093,39 @@
           "uploaded": "Uploaded successfully",
           "invalidFormat": "Only PDF, PPTX, and MP4 files are allowed",
           "maxSizeExceeded": "File exceeds the 100 MB limit"
+        }
+      },
+      "challengePreview": {
+        "title": "Preview Challenge Questions: {name}",
+        "description": "Review generated challenge questions and settings.",
+        "actions": {
+          "editChallenge": "Edit Challenge",
+          "generateQuestions": "Generate Questions"
+        },
+        "status": {
+          "ready": "Challenge Ready"
+        },
+        "stats": {
+          "totalQuestions": "Total",
+          "questions": "questions",
+          "points": "pts"
+        },
+        "settings": {
+          "title": "Challenge Settings",
+          "duration": "Duration",
+          "minutes": "min",
+          "questionsCount": "Questions Count",
+          "generatedQuestions": "Generated Questions",
+          "totalPoints": "Total Points"
+        },
+        "emptyState": {
+          "title": "No questions yet",
+          "description": "Generate questions from your uploaded sources to preview them here.",
+          "generating": "Questions are being generated. Refresh in a moment.",
+          "failed": "Question generation failed. Try generating again."
+        },
+        "messages": {
+          "loadError": "Failed to load challenge"
         }
       },
       "examEditor": {
@@ -3853,7 +3899,7 @@
           "step1": "Create or upload the summarization file",
           "step2": "Keep the file ready for station attachment",
           "step3": "Return to the journey editor",
-          "note": "The file is created in the summarization station. The station attach API will be wired when the backend contract is available."
+          "note": "This file will be linked to the station below when you publish it."
         },
         "sections": {
           "linkCourse": "Link course",

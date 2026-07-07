@@ -50,21 +50,43 @@ export type ChallengeAttachment = {
   fileSizeBytes: number;
 };
 
+export type ChallengeQuestionOption = {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  order: number;
+};
+
+export type ChallengeQuestion = {
+  id: string;
+  text: string;
+  category: string;
+  points: number;
+  order: number;
+  options: ChallengeQuestionOption[];
+};
+
 export type Challenge = {
   id: string;
   stationId: string;
+  learningPathId: string;
+  courseId: string;
+  stationType: number;
   title: string;
   type: number;
   durationMinutes: number;
   questionCount: number;
+  generatedQuestionCount: number;
   difficulty: number;
   challengeDate: string;
   endDate: string;
   startTime: string;
   endTime: string;
   timeZoneId: string;
+  questionGenerationStatus: number;
   aiSourceFileUrl: string;
   attachments: ChallengeAttachment[];
+  questions: ChallengeQuestion[];
 };
 
 function asRecord(value: unknown): UnknownRecord | null {
@@ -166,6 +188,84 @@ function mapChallengeAttachment(data: unknown): ChallengeAttachment | null {
   };
 }
 
+const CHALLENGE_TYPE_STRING_TO_NUMBER: Record<string, number> = {
+  TimeChallenge: 0,
+  ShortQuiz: 1,
+  SpeedChallenge: 2,
+  Practice: 0,
+};
+
+const DIFFICULTY_STRING_TO_NUMBER: Record<string, number> = {
+  Easy: 0,
+  Medium: 1,
+  Hard: 2,
+};
+
+function readChallengeType(record: UnknownRecord | null, keys: string[], fallback = 0): number {
+  if (!record) return fallback;
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const normalized = value.trim();
+      if (normalized in CHALLENGE_TYPE_STRING_TO_NUMBER) {
+        return CHALLENGE_TYPE_STRING_TO_NUMBER[normalized]!;
+      }
+      const parsed = Number(normalized);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+  }
+  return fallback;
+}
+
+function readDifficulty(record: UnknownRecord | null, keys: string[], fallback = 1): number {
+  if (!record) return fallback;
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string") {
+      const normalized = value.trim();
+      if (normalized in DIFFICULTY_STRING_TO_NUMBER) {
+        return DIFFICULTY_STRING_TO_NUMBER[normalized]!;
+      }
+      const parsed = Number(normalized);
+      if (!Number.isNaN(parsed)) return parsed;
+    }
+  }
+  return fallback;
+}
+
+function mapChallengeQuestionOption(data: unknown): ChallengeQuestionOption | null {
+  const record = asRecord(data);
+  const id = readString(record, ["id"], "").trim();
+  if (!record || !id) return null;
+
+  return {
+    id,
+    text: readString(record, ["text"], ""),
+    isCorrect: Boolean(record.isCorrect),
+    order: readNumber(record, ["order"]),
+  };
+}
+
+function mapChallengeQuestion(data: unknown): ChallengeQuestion | null {
+  const record = asRecord(data);
+  const id = readString(record, ["id"], "").trim();
+  if (!record || !id) return null;
+
+  return {
+    id,
+    text: readString(record, ["text"], ""),
+    category: readString(record, ["category"], ""),
+    points: readNumber(record, ["points"]),
+    order: readNumber(record, ["order"]),
+    options: readArray(record, ["options"])
+      .map(mapChallengeQuestionOption)
+      .filter((option): option is ChallengeQuestionOption => Boolean(option))
+      .sort((a, b) => a.order - b.order),
+  };
+}
+
 function mapChallenge(data: unknown): Challenge | null {
   const record = asRecord(extractEnvelopeData(data));
   if (!record) return null;
@@ -178,20 +278,29 @@ function mapChallenge(data: unknown): Challenge | null {
   return {
     id,
     stationId: readString(record, ["stationId"], ""),
+    learningPathId: readString(record, ["learningPathId"], ""),
+    courseId: readString(record, ["courseId"], ""),
+    stationType: readNumber(record, ["stationType"]),
     title: readString(record, ["title"], ""),
-    type: readNumber(record, ["type"]),
+    type: readChallengeType(record, ["type"]),
     durationMinutes: readNumber(record, ["durationMinutes", "durationMin"]),
     questionCount: readNumber(record, ["questionCount", "questionsCount"]),
-    difficulty: readNumber(record, ["difficulty"]),
+    generatedQuestionCount: readNumber(record, ["generatedQuestionCount"]),
+    difficulty: readDifficulty(record, ["difficulty"]),
     challengeDate,
     endDate,
     startTime: readString(record, ["startTime"], "00:00:00"),
     endTime: readString(record, ["endTime"], "23:59:59"),
     timeZoneId: readString(record, ["timeZoneId", "timezoneId"], ""),
+    questionGenerationStatus: readNumber(record, ["questionGenerationStatus"]),
     aiSourceFileUrl: readString(record, ["aiSourceFileUrl"], ""),
     attachments: readArray(record, ["attachments"])
       .map(mapChallengeAttachment)
       .filter((attachment): attachment is ChallengeAttachment => Boolean(attachment)),
+    questions: readArray(record, ["questions"])
+      .map(mapChallengeQuestion)
+      .filter((question): question is ChallengeQuestion => Boolean(question))
+      .sort((a, b) => a.order - b.order),
   };
 }
 
@@ -316,6 +425,7 @@ export async function generateChallengeQuestions(
     const response = await httpClient.post<unknown>({
       url: `/api/v1/challenges/${challengeId}/generate-questions`,
       data: {},
+      timeout: 0,
     });
 
     return {

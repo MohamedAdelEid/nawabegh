@@ -2646,6 +2646,7 @@
         "liveBroadcastAdd": "إضافة محطة بث مباشر",
         "liveBroadcastView": "عرض محطة بث مباشر",
         "challengeEditor": "محرر التحديات",
+        "challengePreview": "عرض أسئلة التحدي",
         "examEditor": "محرر الاختبارات",
         "examPreview": "عرض أسئلة الاختبار",
         "examEditQuestions": "تعديل أسئلة الاختبار",
@@ -2666,6 +2667,11 @@
       "editor": {
         "title": "محرر رحلة التفوق",
         "description": "قم بتنظيم الدروس والمحطات التعليمية لبناء تجربة تعلم فريدة.",
+        "emptyState": {
+          "title": "لا توجد مسارات تعليمية بعد",
+          "description": "ابدأ ببناء رحلتك من خلال إنشاء مسارك التعليمي الأول.",
+          "action": "أنشئ مسارك الأول"
+        },
         "actions": {
           "saveChanges": "حفظ التغييرات",
           "previewJourney": "معاينة الرحلة"
@@ -2810,6 +2816,10 @@
           "titleRequired": "عنوان مجموعة البطاقات مطلوب.",
           "createSuccess": "تم إنشاء مجموعة البطاقات بنجاح.",
           "createError": "تعذر إنشاء مجموعة البطاقات."
+        },
+        "messages": {
+          "cardDeleteSuccess": "تم حذف البطاقة بنجاح.",
+          "cardDeleteError": "تعذر حذف البطاقة."
         }
       },
       "flashcardAdd": {
@@ -3001,6 +3011,7 @@
           "createChallenge": "إنشاء التحدي",
           "updateChallenge": "تحديث التحدي",
           "generateQuestions": "إنشاء الأسئلة",
+          "generatingQuestions": "جاري الإنشاء... {elapsed}",
           "previewChallenge": "معاينة التحدي",
           "saveAndPublish": "حفظ ونشر التحدي"
         },
@@ -3022,7 +3033,9 @@
           "timezoneRequired": "يرجى اختيار المنطقة الزمنية",
           "generateQuestionsSuccess": "بدأ إنشاء الأسئلة",
           "generateQuestionsError": "فشل إنشاء الأسئلة",
-          "challengeRequiredForQuestions": "أنشئ التحدي أولاً قبل إنشاء الأسئلة"
+          "challengeRequiredForQuestions": "أنشئ التحدي أولاً قبل إنشاء الأسئلة",
+          "generatingQuestionsTitle": "الذكاء الاصطناعي ينشئ الأسئلة",
+          "generatingQuestionsDescription": "قد يستغرق ذلك عدة دقائق. يرجى إبقاء هذه الصفحة مفتوحة حتى ينتهي."
         },
         "sidebar": {
           "title": "ملخص التحدي",
@@ -3083,6 +3096,39 @@
           "uploaded": "تم الرفع بنجاح",
           "invalidFormat": "يُسمح فقط بملفات PDF و PPTX و MP4",
           "maxSizeExceeded": "حجم الملف يتجاوز الحد الأقصى 100 ميجابايت"
+        }
+      },
+      "challengePreview": {
+        "title": "عرض أسئلة التحدي: {name}",
+        "description": "راجع أسئلة التحدي المُنشأة والإعدادات.",
+        "actions": {
+          "editChallenge": "تعديل التحدي",
+          "generateQuestions": "إنشاء الأسئلة"
+        },
+        "status": {
+          "ready": "التحدي جاهز"
+        },
+        "stats": {
+          "totalQuestions": "الإجمالي",
+          "questions": "أسئلة",
+          "points": "نقطة"
+        },
+        "settings": {
+          "title": "إعدادات التحدي",
+          "duration": "المدة",
+          "minutes": "دقيقة",
+          "questionsCount": "عدد الأسئلة",
+          "generatedQuestions": "الأسئلة المُنشأة",
+          "totalPoints": "إجمالي النقاط"
+        },
+        "emptyState": {
+          "title": "لا توجد أسئلة بعد",
+          "description": "أنشئ الأسئلة من المصادر المرفوعة لمعاينتها هنا.",
+          "generating": "جاري إنشاء الأسئلة. حدّث الصفحة بعد قليل.",
+          "failed": "فشل إنشاء الأسئلة. حاول مرة أخرى."
+        },
+        "messages": {
+          "loadError": "تعذر تحميل التحدي"
         }
       },
       "examEditor": {
@@ -3856,7 +3902,7 @@
           "step1": "إنشاء أو رفع ملف التلخيص",
           "step2": "تجهيز الملف لربطه بالمحطة",
           "step3": "العودة إلى محرر الرحلة",
-          "note": "يتم إنشاء الملف داخل محطة التلخيص. سيتم ربطه بالمحطة عند توفر عقد الواجهة الخلفية."
+          "note": "سيتم ربط هذا الملف بالمحطة أدناه عند النشر."
         },
         "sections": {
           "linkCourse": "ربط الدورة التدريبية",

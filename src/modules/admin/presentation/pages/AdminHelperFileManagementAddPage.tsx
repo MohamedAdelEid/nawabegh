@@ -63,6 +63,12 @@ export function AdminHelperFileManagementAddPage({
   const [courseOptions, setCourseOptions] = useState<Array<{ value: string; label: string }>>([]);
 
   useEffect(() => {
+    if (stationContext?.journeyId) {
+      setCourseId(stationContext.journeyId);
+    }
+  }, [stationContext?.journeyId]);
+
+  useEffect(() => {
     let alive = true;
     const load = async () => {
       setLoading(true);
@@ -131,8 +137,12 @@ export function AdminHelperFileManagementAddPage({
 
   const submit = async () => {
     if (submitting) return;
-    if (!courseId.trim()) {
+    if (!courseId.trim() && !stationContext?.journeyId) {
       notify.error(t("form.validation.courseRequired"));
+      return;
+    }
+    if (stationContext && !stationContext.stationId.trim()) {
+      notify.error(t("form.validation.stationRequired"));
       return;
     }
     if (!fileName.trim()) {
@@ -147,13 +157,15 @@ export function AdminHelperFileManagementAddPage({
     setSubmitting(true);
     try {
       const result = await createResourceFile({
-        ...(stationContext?.stationId ? { stationId: stationContext.stationId } : {}),
-        courseId: courseId.trim(),
+        stationId: stationContext?.stationId,
+        courseId: (stationContext?.journeyId ?? courseId).trim(),
         fileName: fileName.trim(),
         fileUrl: fileUrl.trim(),
         fileType: (fileType.trim() || inferFileType(fileName)).toUpperCase(),
         accessPolicy,
-        resourceFileType: ResourceFileType.ForCourse,
+        resourceFileType: stationContext
+          ? ResourceFileType.ForStation
+          : ResourceFileType.ForCourse,
       });
 
       if (result.errorMessage || !result.data?.id) {
@@ -204,17 +216,25 @@ export function AdminHelperFileManagementAddPage({
           <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">
               <h3 className="font-bold text-[#1E3A66]">{t("form.sections.linkCourse")}</h3>
-              <SearchableSelect
-                label={t("form.fields.course")}
-                value={courseId || null}
-                options={filteredCourseSelectOptions}
-                onChange={setCourseId}
-                placeholder={t("form.fields.coursePlaceholder")}
-                searchPlaceholder={t("form.fields.courseSearchPlaceholder")}
-                emptyMessage={t("form.fields.coursesEmpty")}
-                searchValue={courseSearchQuery}
-                onSearchValueChange={setCourseSearchQuery}
-              />
+              {stationContext ? (
+                <div className="rounded-xl bg-[#EEF4FD] p-4 text-sm text-slate-600">
+                  <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
+                  <p className="mt-2 leading-5">{t("form.stationContext.note")}</p>
+                  <p className="mt-3 font-mono text-xs text-slate-500">{stationContext.stationId}</p>
+                </div>
+              ) : (
+                <SearchableSelect
+                  label={t("form.fields.course")}
+                  value={courseId || null}
+                  options={filteredCourseSelectOptions}
+                  onChange={setCourseId}
+                  placeholder={t("form.fields.coursePlaceholder")}
+                  searchPlaceholder={t("form.fields.courseSearchPlaceholder")}
+                  emptyMessage={t("form.fields.coursesEmpty")}
+                  searchValue={courseSearchQuery}
+                  onSearchValueChange={setCourseSearchQuery}
+                />
+              )}
             </CardContent>
           </Card>
 
@@ -314,6 +334,12 @@ export function AdminHelperFileManagementAddPage({
                 <p>{t(stationContext ? "form.stationContext.step2" : "form.summary.step2")}</p>
                 <p>{t(stationContext ? "form.stationContext.step3" : "form.summary.step3")}</p>
               </div>
+              {stationContext ? (
+                <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
+                  <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
+                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
+                </div>
+              ) : null}
               <Button
                 type="button"
                 className="h-12 w-full rounded-xl bg-[#2B415E] text-white hover:bg-[#243B5A]"

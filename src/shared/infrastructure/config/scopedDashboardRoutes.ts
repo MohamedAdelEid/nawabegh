@@ -24,6 +24,7 @@ export type JourneyEditorRoutes = {
   LIVE_BROADCAST_ADD: (journeyId: string, stationId: string) => string;
   LIVE_BROADCAST_VIEW: (journeyId: string, stationId: string) => string;
   CHALLENGE_EDITOR: (journeyId: string, stationId: string) => string;
+  CHALLENGE_PREVIEW: (journeyId: string, stationId: string) => string;
   EXAM_EDITOR: (journeyId: string, stationId: string) => string;
   EXAM_PREVIEW: (journeyId: string, stationId: string) => string;
   EXAM_EDIT_QUESTIONS: (journeyId: string, stationId: string) => string;
@@ -67,6 +68,8 @@ function createJourneyEditorRoutes(base: string): JourneyEditorRoutes {
       `${base}/${journeyId}/live-broadcast/${stationId}`,
     CHALLENGE_EDITOR: (journeyId: string, stationId: string) =>
       `${base}/${journeyId}/challenge/${stationId}`,
+    CHALLENGE_PREVIEW: (journeyId: string, stationId: string) =>
+      `${base}/${journeyId}/challenge/${stationId}/preview`,
     EXAM_EDITOR: (journeyId: string, stationId: string) =>
       `${base}/${journeyId}/exam/${stationId}`,
     EXAM_PREVIEW: (journeyId: string, stationId: string) =>

@@ -19,6 +19,7 @@ import type {
 } from "@/modules/admin/domain/data/journeyEditorData";
 import {
   createFlashcardDeck,
+  deleteFlashcardDeckCard,
   getFlashcardDeck,
   getFlashcardDeckIdForStation,
   type FlashcardDeck,
@@ -126,6 +127,7 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
   const [deckTitle, setDeckTitle] = useState("");
   const [deckDifficulty, setDeckDifficulty] = useState<FlashcardDifficultyId>("medium");
   const [creatingDeck, setCreatingDeck] = useState(false);
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -206,16 +208,37 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
     notify.success(t("flashcardGroup.createDeckModal.createSuccess"));
   };
 
-  const handleDelete = (cardId: string) => {
-    setGroup((prev) =>
-      prev
-        ? {
-            ...prev,
-            cards: prev.cards.filter((c) => c.id !== cardId),
-            totalCards: prev.totalCards - 1,
-          }
-        : prev,
-    );
+  const handleDelete = async (cardId: string) => {
+    if (deletingCardId) return;
+
+    setDeletingCardId(cardId);
+    const result = await deleteFlashcardDeckCard(cardId);
+    setDeletingCardId(null);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("flashcardGroup.messages.cardDeleteError"));
+      return;
+    }
+
+    setGroup((prev) => {
+      if (!prev) return prev;
+      const nextCards = prev.cards.filter((c) => c.id !== cardId);
+      const reviewTimeMin = Math.ceil(
+        nextCards.reduce((total, card) => total + card.reviewTimeSec, 0) / 60,
+      );
+      return {
+        ...prev,
+        cards: nextCards,
+        totalCards: nextCards.length,
+        reviewTimeMin,
+      };
+    });
+    setVisibleBack((prev) => {
+      const next = new Set(prev);
+      next.delete(cardId);
+      return next;
+    });
+    notify.success(t("flashcardGroup.messages.cardDeleteSuccess"));
   };
 
   if (loading) {
@@ -370,8 +393,10 @@ export function AdminJourneyFlashcardGroupPage({ journeyId, stationId }: Props) 
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleDelete(card.id)}
-                    className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors"
+                    onClick={() => void handleDelete(card.id)}
+                    disabled={deletingCardId === card.id}
+                    className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-500 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label={t("flashcardGroup.cardActions.delete")}
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
