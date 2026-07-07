@@ -9,7 +9,7 @@ function buildFileRemotePatterns(): NonNullable<NextConfig["images"]>["remotePat
   const bases = [
     process.env.NEXT_PUBLIC_FILE_PUBLIC_BASE_URL,
     process.env.NEXT_PUBLIC_API_URL,
-    "https://nawabeghsystem.runasp.net",
+    "https://api.nwabigh.com",
   ].filter((value): value is string => Boolean(value?.trim()));
 
   const patterns = bases
