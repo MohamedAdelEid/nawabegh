@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CircleAlert, UploadCloud } from "lucide-react";
+import { CircleAlert, Loader2, Trash2, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import {
   createResourceFile,
   getResourceFileCoursesDropdown,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
+import { getStation } from "@/modules/admin/infrastructure/api/stationsApi";
 import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
-import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
+import {
+  deleteAdminUploadedFile,
+  uploadAdminFiles,
+} from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDashboardRoutes";
 import { notify } from "@/shared/application/lib/toast";
 import { AccessPolicy, ResourceFileType } from "@/shared/domain/enums/cms.enums";
@@ -32,6 +36,13 @@ interface AdminHelperFileManagementAddPageProps {
     returnHref: string;
   };
 }
+
+type UploadedFileEntry = {
+  fileName: string;
+  fileType: string;
+  fileUrl: string;
+  isDeleting?: boolean;
+};
 
 function inferFileType(fileName: string): string {
   const ext = fileName.split(".").pop()?.trim().toUpperCase();
@@ -59,6 +70,9 @@ export function AdminHelperFileManagementAddPage({
   const [fileUrl, setFileUrl] = useState("");
   const [fileType, setFileType] = useState("");
   const [accessPolicy, setAccessPolicy] = useState<AccessPolicy>(AccessPolicy.All);
+  const [stationName, setStationName] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFileEntry[]>([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const [courseOptions, setCourseOptions] = useState<Array<{ value: string; label: string }>>([]);
 
@@ -108,6 +122,26 @@ export function AdminHelperFileManagementAddPage({
     };
   }, [isTeacherScope, t, locale]);
 
+  useEffect(() => {
+    let alive = true;
+    if (!stationContext?.stationId) {
+      setStationName("");
+      return () => {
+        alive = false;
+      };
+    }
+
+    void (async () => {
+      const stationResult = await getStation(stationContext.stationId);
+      if (!alive) return;
+      setStationName(stationResult.data?.name?.trim() || "");
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [stationContext?.stationId]);
+
   const courseSelectOptions = useMemo<SearchableSelectOption<string>[]>(
     () => courseOptions,
     [courseOptions],
@@ -119,20 +153,74 @@ export function AdminHelperFileManagementAddPage({
     return courseSelectOptions.filter((option) => option.label.toLowerCase().includes(query));
   }, [courseSearchQuery, courseSelectOptions]);
 
-  const handleFilePick = async (file: File | null) => {
-    if (!file) return;
+  const handleFilePick = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setUploadProgress(0);
     setUploading(true);
-    const upload = await uploadAdminFile(file, RESOURCE_FILE_UPLOAD_FOLDER);
+    const progressTimer = window.setInterval(() => {
+      setUploadProgress((prev) => (prev >= 90 ? 90 : prev + 8));
+    }, 120);
+    const selectedFiles = Array.from(files);
+    const upload = await uploadAdminFiles(selectedFiles, RESOURCE_FILE_UPLOAD_FOLDER);
+    window.clearInterval(progressTimer);
+    setUploadProgress(100);
+    await new Promise((resolve) => window.setTimeout(resolve, 280));
     setUploading(false);
+    setUploadProgress(0);
     if (!upload.ok) {
       notify.error(upload.errorMessage);
       return;
     }
-    setFileUrl(upload.filePath);
-    if (!fileName.trim()) {
-      setFileName(file.name.replace(/\.[^/.]+$/, "") || file.name);
+
+    const nextUploadedFiles = upload.files.map((item) => ({
+      fileName: item.originalFileName.replace(/\.[^/.]+$/, "") || item.originalFileName,
+      fileType: item.contentType.trim() || inferFileType(item.originalFileName),
+      fileUrl: item.filePath,
+    }));
+
+    setUploadedFiles(nextUploadedFiles);
+    const firstUploadedFile = nextUploadedFiles[0];
+    if (firstUploadedFile) {
+      setFileUrl(firstUploadedFile.fileUrl);
+      setFileName(firstUploadedFile.fileName);
+      setFileType(firstUploadedFile.fileType);
     }
-    setFileType(inferFileType(file.name));
+  };
+
+  const handleDeleteUploadedFile = async (targetFileUrl: string) => {
+    setUploadedFiles((prev) =>
+      prev.map((file) =>
+        file.fileUrl === targetFileUrl ? { ...file, isDeleting: true } : file,
+      ),
+    );
+
+    const result = await deleteAdminUploadedFile(targetFileUrl);
+
+    if (!result.ok) {
+      setUploadedFiles((prev) =>
+        prev.map((file) =>
+          file.fileUrl === targetFileUrl ? { ...file, isDeleting: false } : file,
+        ),
+      );
+      notify.error(result.errorMessage);
+      return;
+    }
+
+    setUploadedFiles((prev) => {
+      const next = prev.filter((file) => file.fileUrl !== targetFileUrl);
+      const firstFile = next[0];
+      if (firstFile) {
+        setFileUrl(firstFile.fileUrl);
+        setFileName(firstFile.fileName);
+        setFileType(firstFile.fileType);
+      } else {
+        setFileUrl("");
+        setFileName("");
+        setFileType("");
+      }
+      return next;
+    });
+    notify.success(t("form.upload.deleteSuccess"));
   };
 
   const submit = async () => {
@@ -145,36 +233,85 @@ export function AdminHelperFileManagementAddPage({
       notify.error(t("form.validation.stationRequired"));
       return;
     }
-    if (!fileName.trim()) {
+    if (uploadedFiles.length === 0 && !fileName.trim()) {
       notify.error(t("form.validation.fileNameRequired"));
       return;
     }
-    if (!fileUrl.trim()) {
+    if (uploadedFiles.length === 0 && !fileUrl.trim()) {
       notify.error(t("form.validation.fileRequired"));
       return;
     }
 
     setSubmitting(true);
     try {
-      const result = await createResourceFile({
-        stationId: stationContext?.stationId,
-        courseId: (stationContext?.journeyId ?? courseId).trim(),
-        fileName: fileName.trim(),
-        fileUrl: fileUrl.trim(),
-        fileType: (fileType.trim() || inferFileType(fileName)).toUpperCase(),
-        accessPolicy,
-        resourceFileType: stationContext
-          ? ResourceFileType.ForStation
-          : ResourceFileType.ForCourse,
-      });
+      const targetCourseId = (stationContext?.journeyId ?? courseId).trim();
+      const filesToCreate: UploadedFileEntry[] =
+        uploadedFiles.length > 0
+          ? uploadedFiles.map((file) => ({
+              ...file,
+              fileName:
+                uploadedFiles.length === 1 && fileName.trim()
+                  ? fileName.trim()
+                  : file.fileName,
+              fileType:
+                uploadedFiles.length === 1 && fileType.trim()
+                  ? fileType.trim()
+                  : file.fileType,
+              fileUrl: uploadedFiles.length === 1 && fileUrl.trim() ? fileUrl.trim() : file.fileUrl,
+            }))
+          : [
+              {
+                fileName: fileName.trim(),
+                fileType: fileType.trim() || inferFileType(fileName),
+                fileUrl: fileUrl.trim(),
+              },
+            ];
 
-      if (result.errorMessage || !result.data?.id) {
-        notify.error(result.errorMessage ?? t("form.messages.createError"));
+      const results = await Promise.allSettled(
+        filesToCreate.map((file) =>
+          createResourceFile({
+            stationId: stationContext?.stationId,
+            courseId: targetCourseId,
+            fileName: file.fileName,
+            fileUrl: file.fileUrl,
+            fileType: file.fileType.toUpperCase(),
+            accessPolicy,
+            resourceFileType: stationContext
+              ? ResourceFileType.ForStation
+              : ResourceFileType.ForCourse,
+          }),
+        ),
+      );
+
+      const succeeded = results.filter(
+        (result) => result.status === "fulfilled" && result.value.data?.id && !result.value.errorMessage,
+      ).length;
+      const failed = filesToCreate.length - succeeded;
+
+      if (succeeded === 0) {
+        const firstError = results.find(
+          (result) => result.status === "fulfilled" && result.value.errorMessage,
+        );
+        notify.error(
+          firstError && firstError.status === "fulfilled"
+            ? firstError.value.errorMessage ?? t("form.messages.createError")
+            : t("form.messages.createError"),
+        );
         return;
       }
 
-      notify.success(t("form.messages.createSuccess"));
-      router.push(stationContext?.returnHref ?? routeConfig.VIEW(result.data.id));
+      if (failed > 0) {
+        notify.error(
+          t("form.messages.partialSuccess", {
+            success: succeeded,
+            total: filesToCreate.length,
+          }),
+        );
+      } else {
+        notify.success(t("form.messages.createSuccess"));
+      }
+
+      router.push(stationContext?.returnHref ?? routeConfig.LIST);
     } finally {
       setSubmitting(false);
     }
@@ -220,7 +357,9 @@ export function AdminHelperFileManagementAddPage({
                 <div className="rounded-xl bg-[#EEF4FD] p-4 text-sm text-slate-600">
                   <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
                   <p className="mt-2 leading-5">{t("form.stationContext.note")}</p>
-                  <p className="mt-3 font-mono text-xs text-slate-500">{stationContext.stationId}</p>
+                  <p className="mt-3 text-xs text-slate-700">
+                    {stationName || stationContext.stationId}
+                  </p>
                 </div>
               ) : (
                 <SearchableSelect
@@ -244,8 +383,9 @@ export function AdminHelperFileManagementAddPage({
               <input
                 ref={fileInputRef}
                 type="file"
+                multiple
                 className="hidden"
-                onChange={(event) => void handleFilePick(event.target.files?.[0] ?? null)}
+                onChange={(event) => void handleFilePick(event.target.files)}
               />
               <button
                 type="button"
@@ -258,10 +398,65 @@ export function AdminHelperFileManagementAddPage({
                   {uploading ? t("form.upload.uploading") : t("form.upload.title")}
                 </p>
                 <p className="text-sm text-slate-400">{t("form.upload.subtitle")}</p>
-                {fileUrl ? (
-                  <p className="mt-3 truncate text-xs text-emerald-700">{fileUrl}</p>
+                {uploadedFiles.length > 0 ? (
+                  <p className="mt-3 text-xs text-emerald-700">
+                    {t("form.upload.uploadedCount", { count: uploadedFiles.length })}
+                  </p>
                 ) : null}
               </button>
+              {uploading ? (
+                <div className="rounded-xl border border-[#D6E3F5] bg-[#F4F8FF] p-3">
+                  <div className="mb-2 flex items-center justify-between text-xs text-[#1E3A66]">
+                    <p className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {t("form.upload.loadingHint")}
+                    </p>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-white">
+                    <div
+                      className="h-2 rounded-full bg-[#2B415E] transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+              {uploadedFiles.length > 0 ? (
+                <div className="space-y-2 rounded-xl border border-slate-100 bg-slate-50 p-3">
+                  <p className="text-xs font-semibold text-slate-700">
+                    {t("form.upload.listTitle")}
+                  </p>
+                  {uploadedFiles.map((file) => (
+                    <div
+                      key={file.fileUrl}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-2"
+                    >
+                      <div className="min-w-0 text-right">
+                        <p className="truncate text-xs font-semibold text-slate-700">
+                          {file.fileName}
+                        </p>
+                        <p className="truncate text-[11px] text-slate-400">{file.fileType}</p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="h-8 px-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        onClick={() => void handleDeleteUploadedFile(file.fileUrl)}
+                        disabled={Boolean(file.isDeleting) || uploading || submitting}
+                      >
+                        {file.isDeleting ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Trash2 className="h-4 w-4" />
+                            <span className="text-xs">{t("form.upload.delete")}</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -337,7 +532,7 @@ export function AdminHelperFileManagementAddPage({
               {stationContext ? (
                 <div className="rounded-xl bg-[#EEF4FD] p-3 text-xs text-slate-600">
                   <p className="font-semibold text-[#1E3A66]">{t("form.stationContext.title")}</p>
-                  <p className="mt-1 font-mono">{stationContext.stationId}</p>
+                  <p className="mt-1">{stationName || stationContext.stationId}</p>
                 </div>
               ) : null}
               <Button

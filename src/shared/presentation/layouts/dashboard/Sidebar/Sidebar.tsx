@@ -95,7 +95,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         translationNamespace={translationNamespace}
       />
 
-      <nav className="sidebar-scroll flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pt-4">
+      <nav
+        className={cn(
+          "sidebar-scroll flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pt-4",
+          "sidebar-scroll-collapsed"
+        )}
+      >
 
         <SidebarNavSection
           items={items.main}
