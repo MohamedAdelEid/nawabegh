@@ -3931,12 +3931,18 @@
         },
         "messages": {
           "createSuccess": "Summarization file created successfully",
-          "createError": "Failed to create summarization file"
+          "createError": "Failed to create summarization file",
+          "partialSuccess": "{success} out of {total} files were published successfully."
         },
         "upload": {
           "title": "Drag files here",
           "subtitle": "or select from your device",
-          "uploading": "Uploading file..."
+          "uploading": "Uploading file...",
+          "uploadedCount": "{count} file(s) uploaded successfully.",
+          "loadingHint": "Preparing and uploading files...",
+          "listTitle": "Uploaded files",
+          "delete": "Delete",
+          "deleteSuccess": "Uploaded file deleted successfully."
         },
         "access": {
           "public": {

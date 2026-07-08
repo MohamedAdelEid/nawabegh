@@ -3934,12 +3934,18 @@
         },
         "messages": {
           "createSuccess": "تم إنشاء ملف التلخيص بنجاح",
-          "createError": "تعذر إنشاء ملف التلخيص"
+          "createError": "تعذر إنشاء ملف التلخيص",
+          "partialSuccess": "تم نشر {success} من أصل {total} ملف بنجاح."
         },
         "upload": {
           "title": "اسحب الملفات التعليمية هنا",
           "subtitle": "أو اختر ملفات من جهازك",
-          "uploading": "جاري رفع الملف..."
+          "uploading": "جاري رفع الملف...",
+          "uploadedCount": "تم رفع {count} ملف بنجاح.",
+          "loadingHint": "جاري تجهيز الملفات ورفعها...",
+          "listTitle": "الملفات المرفوعة",
+          "delete": "حذف",
+          "deleteSuccess": "تم حذف الملف المرفوع بنجاح."
         },
         "access": {
           "public": {

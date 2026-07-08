@@ -53,6 +53,20 @@ export type UploadAdminFileResult =
   | { ok: true; filePath: string; message?: string }
   | { ok: false; errorMessage: string };
 
+export type UploadAdminMultiFileItem = {
+  filePath: string;
+  originalFileName: string;
+  contentType: string;
+  fileSize: number | null;
+};
+
+export type UploadAdminFilesResult =
+  | { ok: true; files: UploadAdminMultiFileItem[]; message?: string }
+  | { ok: false; errorMessage: string };
+export type DeleteAdminUploadedFileResult =
+  | { ok: true; message?: string }
+  | { ok: false; errorMessage: string };
+
 /**
  * Uploads a file via the shared FileUpload endpoint (same contract as user image upload).
  */
@@ -89,6 +103,106 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
     return { ok: true, filePath: filePath.trim(), message: message.trim() || undefined };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Upload failed";
+    return { ok: false, errorMessage: msg };
+  }
+}
+
+function readNumber(record: UnknownRecord | null, keys: string[], fallback: number | null): number | null {
+  if (!record) return fallback;
+  for (const key of keys) {
+    const value = record[key];
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    if (typeof value === "string" && value.trim() !== "" && !Number.isNaN(Number(value))) {
+      return Number(value);
+    }
+  }
+  return fallback;
+}
+
+function extractUploadMultipleItems(data: unknown): UnknownRecord[] {
+  const root = asRecord(data);
+  if (!root) return [];
+
+  const candidates: unknown[] = [root.files, asRecord(root.data)?.files, asRecord(asRecord(root.data)?.data)?.files];
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      return candidate.map((item) => asRecord(item)).filter((item): item is UnknownRecord => Boolean(item));
+    }
+  }
+
+  return [];
+}
+
+export async function uploadAdminFiles(files: File[], folder: string): Promise<UploadAdminFilesResult> {
+  if (files.length === 0) {
+    return { ok: false, errorMessage: "No files selected" };
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("folder", folder);
+    for (const file of files) {
+      formData.append("files", file);
+    }
+
+    const response = await httpClient.post<unknown>({
+      url: "/api/FileUpload/upload-multiple",
+      data: formData,
+      isFormData: true,
+    });
+
+    const rootRecord = asRecord(response);
+    const message = readString(rootRecord, ["message"], "");
+    const items = extractUploadMultipleItems(response)
+      .map((item) => ({
+        success: readBoolean(item, ["success"], false),
+        filePath: readString(item, ["filePath", "fileUrl", "url", "path"], "").trim(),
+        originalFileName: readString(item, ["originalFileName", "storedFileName"], "").trim(),
+        contentType: readString(item, ["contentType"], "").trim(),
+        fileSize: readNumber(item, ["fileSize"], null),
+      }))
+      .filter((item) => item.success && item.filePath);
+
+    if (items.length === 0) {
+      return { ok: false, errorMessage: message || "Upload failed" };
+    }
+
+    return {
+      ok: true,
+      files: items,
+      message: message || undefined,
+    };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Upload failed";
+    return { ok: false, errorMessage: msg };
+  }
+}
+
+export async function deleteAdminUploadedFile(
+  filePath: string,
+): Promise<DeleteAdminUploadedFileResult> {
+  const normalizedPath = filePath.trim();
+  if (!normalizedPath) {
+    return { ok: false, errorMessage: "File path is required" };
+  }
+
+  try {
+    const response = await httpClient.delete<unknown>({
+      url: "/api/FileUpload/delete",
+      params: { filePath: normalizedPath },
+    });
+
+    const record = asRecord(response);
+    const success = readBoolean(record, ["success"], false);
+    const message = readString(record, ["message"], "").trim();
+
+    if (!success) {
+      return { ok: false, errorMessage: message || "Delete failed" };
+    }
+
+    return { ok: true, message: message || undefined };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Delete failed";
     return { ok: false, errorMessage: msg };
   }
 }
