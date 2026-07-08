@@ -118,6 +118,7 @@ export function mapTeacherDetailToFormValues(
 
   return {
     fullName: detail.fullName,
+    email: detail.email,
     phoneNumber: detail.phoneNumber,
     countryId,
     educationLevelId: detail.educationLevelId ? String(detail.educationLevelId) : "",

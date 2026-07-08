@@ -103,30 +103,30 @@ export const addUserGradeLevelOptions: AddUserOption<AddUserGradeLevelId>[] = [
 ];
 
 export const addUserPermissionOptions: AddUserOption<AddUserPermissionId>[] = [
-  {
-    id: "createLessons",
-    labelKey: "userManagement.addUser.teacher.permissions.createLessons.title",
-    descriptionKey:
-      "userManagement.addUser.teacher.permissions.createLessons.description",
-  },
-  {
-    id: "liveBroadcast",
-    labelKey: "userManagement.addUser.teacher.permissions.liveBroadcast.title",
-    descriptionKey:
-      "userManagement.addUser.teacher.permissions.liveBroadcast.description",
-  },
-  {
-    id: "uploadFiles",
-    labelKey: "userManagement.addUser.teacher.permissions.uploadFiles.title",
-    descriptionKey:
-      "userManagement.addUser.teacher.permissions.uploadFiles.description",
-  },
-  {
-    id: "addTests",
-    labelKey: "userManagement.addUser.teacher.permissions.addTests.title",
-    descriptionKey:
-      "userManagement.addUser.teacher.permissions.addTests.description",
-  },
+  // {
+  //   id: "createLessons",
+  //   labelKey: "userManagement.addUser.teacher.permissions.createLessons.title",
+  //   descriptionKey:
+  //     "userManagement.addUser.teacher.permissions.createLessons.description",
+  // },
+  // {
+  //   id: "liveBroadcast",
+  //   labelKey: "userManagement.addUser.teacher.permissions.liveBroadcast.title",
+  //   descriptionKey:
+  //     "userManagement.addUser.teacher.permissions.liveBroadcast.description",
+  // },
+  // {
+  //   id: "uploadFiles",
+  //   labelKey: "userManagement.addUser.teacher.permissions.uploadFiles.title",
+  //   descriptionKey:
+  //     "userManagement.addUser.teacher.permissions.uploadFiles.description",
+  // },
+  // {
+  //   id: "addTests",
+  //   labelKey: "userManagement.addUser.teacher.permissions.addTests.title",
+  //   descriptionKey:
+  //     "userManagement.addUser.teacher.permissions.addTests.description",
+  // },
   {
     id: "manageChats",
     labelKey: "userManagement.addUser.teacher.permissions.manageChats.title",
@@ -188,6 +188,7 @@ export const defaultStudentAccountValues: StudentAccountFormValues = {
 
 export const defaultTeacherAccountValues: TeacherAccountFormValues = {
   fullName: "",
+  email: "",
   phoneNumber: "",
   countryId: "",
   educationLevelId: "",

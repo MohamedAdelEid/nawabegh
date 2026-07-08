@@ -3,7 +3,6 @@ import type {
   AddUserGradeLevelId,
   AddUserPermissionId,
   AddUserStageId,
-  AddUserSubjectId,
   ParentAccountFormValues,
   StudentAccountFormValues,
   TeacherAccountFormValues,
@@ -1211,17 +1210,7 @@ function mapTeacherAssignedGrades(gradeIds: string[]): number[] {
     .filter((id) => Number.isFinite(id));
 }
 
-function mapTeacherPermissions(permissionIds: AddUserPermissionId[]) {
-  return {
-    canCreateLessons: permissionIds.includes("createLessons"),
-    canStartLiveSessions: permissionIds.includes("liveBroadcast"),
-    canUploadFiles: permissionIds.includes("uploadFiles"),
-    canAddExams: permissionIds.includes("addTests"),
-    canManageConversations: permissionIds.includes("manageChats"),
-  };
-}
-
-function mapTeacherUpdatePermissions(permissionIds: AddUserPermissionId[]) {
+function mapTeacherPermissionFlags(permissionIds: AddUserPermissionId[]) {
   const canManageLessons = permissionIds.includes("createLessons");
 
   return {
@@ -1232,10 +1221,6 @@ function mapTeacherUpdatePermissions(permissionIds: AddUserPermissionId[]) {
     canAddExams: permissionIds.includes("addTests"),
     canManageConversations: permissionIds.includes("manageChats"),
   };
-}
-
-function mapTeacherSubjects(subjectIds: AddUserSubjectId[]): string[] {
-  return subjectIds.map((subjectId) => subjectId);
 }
 
 async function createUser<TPayload>(
@@ -1289,13 +1274,11 @@ export async function createStudentUser(values: StudentAccountFormValues) {
 }
 
 export async function createTeacherUser(values: TeacherAccountFormValues) {
-  const permissions = mapTeacherPermissions(values.permissionIds);
-
   return createUser(
     "/api/v1/UserManagement/teacher/create",
     {
       fullName: values.fullName,
-      email: "",
+      email: values.email,
       password: values.password,
       phoneNumber: values.phoneNumber,
       phoneCountryCode: 20,
@@ -1305,9 +1288,8 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
       schoolId: values.schoolId,
       profileImageUrl: values.avatarFilePath ?? "",
       address: values.address,
-      subjects: mapTeacherSubjects(values.subjectIds),
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
-      ...permissions,
+      ...mapTeacherPermissionFlags(values.permissionIds),
     },
     "Failed to create teacher",
   );
@@ -1423,10 +1405,10 @@ export async function updateTeacherUser(
       jobTitle: values.jobTitle,
       schoolName: values.schoolName,
       schoolId: values.schoolId,
-      email: context.email ?? "",
+      email: values.email || context.email || "",
       address: values.address,
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
-      ...mapTeacherUpdatePermissions(values.permissionIds),
+      ...mapTeacherPermissionFlags(values.permissionIds),
       about: context.about ?? "",
       yearsOfExperience: context.yearsOfExperience ?? 0,
       city: context.city ?? "",

@@ -415,6 +415,12 @@ export function AdminAddTeacherPage() {
                 value={values.phoneNumber}
                 onChange={(event) => setField("phoneNumber", event.target.value)}
               />
+              <AddUserInputField
+                label={t("userManagement.addUser.shared.fields.email")}
+                placeholder={t("userManagement.addUser.shared.placeholders.email")}
+                value={values.email}
+                onChange={(event) => setField("email", event.target.value)}
+              />
               <AddUserSelectField
                 label={t("userManagement.addUser.shared.fields.country")}
                 value={values.countryId}
