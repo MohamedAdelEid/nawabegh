@@ -61,6 +61,7 @@ export interface StudentAccountFormValues {
 
 export interface TeacherAccountFormValues {
   fullName: string;
+  email: string;
   phoneNumber: string;
   /** Numeric id from Countries dropdown. */
   countryId: string;

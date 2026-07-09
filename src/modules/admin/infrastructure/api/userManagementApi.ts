@@ -21,6 +21,7 @@ import { FILE_UPLOAD_URL, resolveFileUrl } from "@/shared/infrastructure/files/f
 import { unwrapUploadRecord } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
+import { splitPhoneForApi } from "@/shared/domain/utils/phoneCountry.utils";
 
 export const USER_MANAGEMENT_PLACEHOLDER_IDS = {
   countries: {
@@ -1262,23 +1263,33 @@ async function createUser<TPayload>(
   }
 }
 
+function resolvePhonePayload(e164Phone: string, fallbackCountryCode = 20) {
+  const phone = splitPhoneForApi(e164Phone);
+  return {
+    phoneNumber: phone?.phoneNumber ?? e164Phone.replace(/\D/g, ""),
+    phoneCountryCode: phone?.phoneCountryCode ?? fallbackCountryCode,
+  };
+}
+
 export async function createStudentUser(values: StudentAccountFormValues) {
+  const phone = resolvePhonePayload(values.phoneNumber);
+
   return createUser(
     "/api/v1/UserManagement/student/create",
     {
       fullName: values.fullName,
       email: values.email,
       password: values.password,
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode: 20,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       educationLevelId: Number(values.educationLevelId),
       gradeId: Number(values.gradeId),
       schoolId: values.schoolId,
       address: values.schoolName || "",
-      whatsAppNumber: values.phoneNumber,
-      whatsAppCountryCode: 20,
-      alternativePhone: values.phoneNumber,
+      whatsAppNumber: phone.phoneNumber,
+      whatsAppCountryCode: phone.phoneCountryCode,
+      alternativePhone: phone.phoneNumber,
       parentPhone: "",
       username: values.email || values.phoneNumber,
       parentUserId: values.selectedParentId ?? "",
@@ -1290,15 +1301,16 @@ export async function createStudentUser(values: StudentAccountFormValues) {
 
 export async function createTeacherUser(values: TeacherAccountFormValues) {
   const permissions = mapTeacherPermissions(values.permissionIds);
+  const phone = resolvePhonePayload(values.phoneNumber);
 
   return createUser(
     "/api/v1/UserManagement/teacher/create",
     {
       fullName: values.fullName,
-      email: "",
+      email: values.email,
       password: values.password,
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode: 20,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       jobTitle: values.jobTitle,
       schoolName: values.schoolName,
@@ -1314,14 +1326,16 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
 }
 
 export async function createParentUser(values: ParentAccountFormValues) {
+  const phone = resolvePhonePayload(values.phoneNumber);
+
   return createUser(
     "/api/v1/UserManagement/parent/create",
     {
       fullName: values.fullName,
       email: values.email,
       password: values.password,
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode: 20,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       profileImageUrl: values.avatarFilePath ?? "",
       address: values.address,
@@ -1370,6 +1384,7 @@ export async function updateStudentUser(
   context: StudentUserUpdateContext = {},
 ) {
   const phoneCountryCode = context.phoneCountryCode ?? 20;
+  const phone = resolvePhonePayload(values.phoneNumber, phoneCountryCode);
 
   return updateUser(
     `/api/v1/UserManagement/student/${userId}/update`,
@@ -1377,17 +1392,17 @@ export async function updateStudentUser(
       userId,
       fullName: values.fullName,
       profileImageUrl: values.avatarFilePath ?? "",
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       educationLevelId: Number(values.educationLevelId),
       gradeId: Number(values.gradeId),
       schoolId: values.schoolId,
       email: values.email,
       address: context.address ?? values.schoolName ?? "",
-      whatsAppNumber: context.whatsAppNumber ?? values.phoneNumber,
-      whatsAppCountryCode: context.whatsAppCountryCode ?? phoneCountryCode,
-      alternativePhone: context.alternativePhone ?? values.phoneNumber,
+      whatsAppNumber: context.whatsAppNumber ?? phone.phoneNumber,
+      whatsAppCountryCode: context.whatsAppCountryCode ?? phone.phoneCountryCode,
+      alternativePhone: context.alternativePhone ?? phone.phoneNumber,
       parentPhone: context.parentPhone ?? "",
     },
     "Failed to update student",
@@ -1410,6 +1425,7 @@ export async function updateTeacherUser(
   context: TeacherUserUpdateContext = {},
 ) {
   const phoneCountryCode = context.phoneCountryCode ?? 20;
+  const phone = resolvePhonePayload(values.phoneNumber, phoneCountryCode);
 
   return updateUser(
     `/api/v1/UserManagement/teacher/${userId}/update`,
@@ -1417,13 +1433,13 @@ export async function updateTeacherUser(
       userId,
       fullName: values.fullName,
       profileImageUrl: values.avatarFilePath ?? "",
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       jobTitle: values.jobTitle,
       schoolName: values.schoolName,
       schoolId: values.schoolId,
-      email: context.email ?? "",
+      email: values.email || context.email || "",
       address: values.address,
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
       ...mapTeacherUpdatePermissions(values.permissionIds),
@@ -1447,6 +1463,7 @@ export async function updateParentUser(
   context: ParentUserUpdateContext = {},
 ) {
   const phoneCountryCode = context.phoneCountryCode ?? 20;
+  const phone = resolvePhonePayload(values.phoneNumber, phoneCountryCode);
 
   return updateUser(
     `/api/v1/UserManagement/parent/${userId}/update`,
@@ -1454,8 +1471,8 @@ export async function updateParentUser(
       userId,
       fullName: values.fullName,
       profileImageUrl: values.avatarFilePath ?? "",
-      phoneNumber: values.phoneNumber,
-      phoneCountryCode,
+      phoneNumber: phone.phoneNumber,
+      phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       email: values.email,
       address: values.address,

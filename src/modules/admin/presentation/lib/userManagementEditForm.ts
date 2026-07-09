@@ -22,6 +22,7 @@ import {
   type UserManagementParentStudentOption,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { fetchSchoolDropdownRowsForCountryId } from "@/modules/admin/presentation/lib/loadSchoolsForCountry";
+import { buildE164FromApiParts } from "@/shared/domain/utils/phoneCountry.utils";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 export function getUserManagementEditPath(role: string, userId: string) {
@@ -90,7 +91,7 @@ export function mapStudentDetailToFormValues(
     countryId,
     educationLevelId,
     gradeId,
-    phoneNumber: detail.phoneNumber,
+    phoneNumber: buildE164FromApiParts(detail.phoneNumber, detail.phoneCountryCode),
     schoolId,
     schoolName: detail.schoolName?.trim() || schoolRow?.name || "",
     email: detail.email,
@@ -118,7 +119,8 @@ export function mapTeacherDetailToFormValues(
 
   return {
     fullName: detail.fullName,
-    phoneNumber: detail.phoneNumber,
+    email: detail.email,
+    phoneNumber: buildE164FromApiParts(detail.phoneNumber, detail.phoneCountryCode),
     countryId,
     educationLevelId: detail.educationLevelId ? String(detail.educationLevelId) : "",
     jobTitle: detail.jobTitle,
@@ -140,7 +142,7 @@ export function mapTeacherDetailToFormValues(
 export function mapParentDetailToFormValues(detail: ParentUserDetail): ParentAccountFormValues {
   return {
     fullName: detail.fullName,
-    phoneNumber: detail.phoneNumber,
+    phoneNumber: buildE164FromApiParts(detail.phoneNumber, detail.phoneCountryCode),
     countryId: detail.countryId ? String(detail.countryId) : "",
     address: detail.address,
     email: detail.email,

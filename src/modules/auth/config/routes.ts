@@ -1,6 +1,8 @@
 /** Auth module route paths — owned by the auth module, not the global registry. */
 export const AUTH_ROUTES = {
   LOGIN: "/auth/login",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/auth/reset-password",
   REGISTER: "/auth/register",
   REGISTER_STUDENT: "/auth/register/student",
   REGISTER_SCHOOL: "/auth/register/school",

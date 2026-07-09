@@ -208,12 +208,12 @@ export function LoginPage() {
                   />
 
                   <div className="flex justify-end">
-                    <button
-                      type="button"
+                    <Link
+                      href={AUTH_ROUTES.FORGOT_PASSWORD}
                       className="text-xs font-medium text-slate-500 underline underline-offset-2 transition-colors hover:text-[var(--dashboard-primary)]"
                     >
                       {t("form.forgotPassword")}
-                    </button>
+                    </Link>
                   </div>
                 </div>
 

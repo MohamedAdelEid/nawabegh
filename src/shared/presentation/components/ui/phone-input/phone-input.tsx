@@ -44,10 +44,27 @@ export function PhoneInput({
   const [nationalDigits, setNationalDigits] = useState("");
 
   useEffect(() => {
-    const parsed = parseE164Phone(value, defaultCountry);
+    if (!defaultCountry) return;
+    if (!value?.trim()) {
+      setCountry(defaultCountry);
+      return;
+    }
+    const parsed = parseE164Phone(value, country);
     setCountry(parsed.country);
     setNationalDigits(parsed.nationalDigits);
-  }, [value, defaultCountry]);
+  }, [defaultCountry]);
+
+  useEffect(() => {
+    if (!value?.trim()) {
+      setNationalDigits("");
+      return;
+    }
+    const parsed = parseE164Phone(value, country);
+    if (parsed.country !== country) {
+      setCountry(parsed.country);
+    }
+    setNationalDigits(parsed.nationalDigits);
+  }, [value]);
 
   const emitChange = useCallback(
     (nextCountry: Country, nextNational: string) => {

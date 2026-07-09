@@ -188,6 +188,7 @@ export const defaultStudentAccountValues: StudentAccountFormValues = {
 
 export const defaultTeacherAccountValues: TeacherAccountFormValues = {
   fullName: "",
+  email: "",
   phoneNumber: "",
   countryId: "",
   educationLevelId: "",

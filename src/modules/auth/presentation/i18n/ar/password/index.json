@@ -1,0 +1,65 @@
+{
+  "auth": {
+    "password": {
+      "forgot": {
+        "meta": {
+          "title": "نسيت كلمة المرور"
+        },
+        "brandAlt": "شعار أكاديمية نوابغ",
+        "title": "نسيت كلمة المرور؟",
+        "description": "أدخل بريدك الإلكتروني وسنرسل لك رمزًا لإعادة تعيين كلمة المرور.",
+        "emailLabel": "البريد الإلكتروني",
+        "emailPlaceholder": "example@email.com",
+        "submit": "إرسال رمز التحقق",
+        "submitting": "جارٍ الإرسال...",
+        "backToLogin": "العودة لتسجيل الدخول",
+        "successTitle": "تحقق من بريدك",
+        "successDescription": "إذا كان البريد الإلكتروني مسجلاً، ستصلك رسالة تحتوي على رمز إعادة التعيين.",
+        "continueToReset": "إدخال الرمز"
+      },
+      "reset": {
+        "meta": {
+          "title": "إعادة تعيين كلمة المرور"
+        },
+        "brandAlt": "شعار أكاديمية نوابغ",
+        "title": "إعادة تعيين كلمة المرور",
+        "description": "أدخل الرمز المرسل إلى بريدك الإلكتروني وكلمة المرور الجديدة.",
+        "emailLabel": "البريد الإلكتروني",
+        "otpLabel": "رمز التحقق",
+        "newPasswordLabel": "كلمة المرور الجديدة",
+        "newPasswordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "••••••••",
+        "submit": "تغيير كلمة المرور",
+        "submitting": "جارٍ التغيير...",
+        "backToLogin": "العودة لتسجيل الدخول",
+        "resend": "إعادة إرسال الرمز",
+        "resending": "جارٍ الإرسال...",
+        "resendCountdown": "إعادة الإرسال خلال {seconds} ث",
+        "resendSuccess": "تم إرسال رمز جديد إلى بريدك الإلكتروني.",
+        "successTitle": "تم تغيير كلمة المرور",
+        "successDescription": "يمكنك الآن تسجيل الدخول بكلمة المرور الجديدة."
+      },
+      "validation": {
+        "emailRequired": "يرجى إدخال البريد الإلكتروني.",
+        "emailInvalid": "يرجى إدخال بريد إلكتروني صالح.",
+        "otpRequired": "يرجى إدخال رمز التحقق.",
+        "otpIncomplete": "يرجى إدخال رمز مكوّن من {length} أرقام.",
+        "passwordRequired": "يرجى إدخال كلمة المرور.",
+        "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل.",
+        "passwordUppercase": "يجب أن تحتوي على حرف كبير.",
+        "passwordLowercase": "يجب أن تحتوي على حرف صغير.",
+        "passwordNumber": "يجب أن تحتوي على رقم.",
+        "passwordSymbol": "يجب أن تحتوي على رمز خاص.",
+        "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+        "genericError": "حدث خطأ. حاول مرة أخرى."
+      },
+      "actions": {
+        "backHome": "العودة إلى الرئيسية",
+        "showPassword": "إظهار كلمة المرور",
+        "hidePassword": "إخفاء كلمة المرور",
+        "login": "تسجيل الدخول"
+      }
+    }
+  }
+}
