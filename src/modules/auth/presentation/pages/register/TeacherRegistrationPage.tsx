@@ -38,6 +38,7 @@ import {
 import { submitTeacherRegistration } from "@/modules/auth/infrastructure/api/teacher-registration.api";
 import { AuthFormHeader } from "@/modules/auth/presentation/components/shared/AuthFormHeader";
 import { CountrySelectField } from "@/modules/auth/presentation/components/shared/CountrySelectField";
+import { useRegistrationStore } from "@/modules/auth/presentation/store/registrationStore";
 
 type TeacherRegistrationPageProps = {
   countries: Country[];
@@ -59,6 +60,7 @@ export function TeacherRegistrationPage({
   const t = useTranslations("auth.teacherRegistration");
   const locale = useLocale();
   const router = useRouter();
+  const setVerification = useRegistrationStore((state) => state.setVerification);
   const isArabic = locale === "ar";
   const direction = isArabic ? "rtl" : "ltr";
   const SubmitIcon = isArabic ? ArrowLeft : ArrowRight;
@@ -125,8 +127,9 @@ export function TeacherRegistrationPage({
         },
         fallbackMessage,
       );
+      setVerification({ target: "email", email: values.email.trim() });
       toast.success(t("messages.submitSuccess"));
-      router.push(AUTH_ROUTES.LOGIN);
+      router.push(AUTH_ROUTES.REGISTER_VERIFY);
     } catch (error) {
       const message = error instanceof Error ? error.message : fallbackMessage;
       setSubmitError(message);

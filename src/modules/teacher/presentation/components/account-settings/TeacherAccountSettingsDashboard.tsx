@@ -11,17 +11,18 @@ import {
   Lock,
   Mail,
   MapPin,
-  Phone,
   Shield,
   Tag,
   UserRound,
 } from "lucide-react";
 import { AddUserFormSectionCard } from "@/modules/admin/presentation/components/add-user/AddUserFormSectionCard";
 import { AddUserInputField } from "@/modules/admin/presentation/components/add-user/AddUserInputField";
+import { AddUserPhoneField } from "@/modules/admin/presentation/components/add-user/AddUserPhoneField";
 import { AddUserSelectField } from "@/modules/admin/presentation/components/add-user/AddUserSelectField";
 import { useTeacherAccountSettings } from "@/modules/teacher/application/hooks/useTeacherAccountSettings";
 import type { TeacherAccountFormValues } from "@/modules/teacher/domain/types/teacherAccount.types";
 import { getCountriesDropdown } from "@/shared/infrastructure/api/country.api";
+import { buildE164FromApiParts, splitPhoneForApi } from "@/shared/domain/utils/phoneCountry.utils";
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
@@ -237,12 +238,20 @@ export function TeacherAccountSettingsDashboard() {
           <AddUserFormSectionCard title={t("sections.contact")} icon={AtSign}>
             {isEditMode ? (
               <div className="grid gap-4 md:grid-cols-2">
-                <AddUserInputField
+                <AddUserPhoneField
                   label={t("fields.phoneNumber")}
                   placeholder={t("placeholders.phoneNumber")}
-                  value={values.phoneNumber}
-                  icon={Phone}
-                  onChange={(event) => setField("phoneNumber", event.target.value)}
+                  value={buildE164FromApiParts(values.phoneNumber, Number(values.phoneCountryCode))}
+                  countryId={values.countryId}
+                  onChange={(e164) => {
+                    const phone = splitPhoneForApi(e164);
+                    if (phone) {
+                      setField("phoneNumber", phone.phoneNumber);
+                      setField("phoneCountryCode", String(phone.phoneCountryCode));
+                      return;
+                    }
+                    setField("phoneNumber", "");
+                  }}
                 />
                 <AddUserInputField
                   label={t("fields.email")}
@@ -250,12 +259,6 @@ export function TeacherAccountSettingsDashboard() {
                   icon={Mail}
                   readOnly
                   disabled
-                />
-                <AddUserInputField
-                  label={t("fields.phoneCountryCode")}
-                  placeholder={t("placeholders.phoneCountryCode")}
-                  value={values.phoneCountryCode}
-                  onChange={(event) => setField("phoneCountryCode", event.target.value)}
                 />
                 <AddUserSelectField
                   label={t("fields.country")}

@@ -1,0 +1,65 @@
+{
+  "auth": {
+    "password": {
+      "forgot": {
+        "meta": {
+          "title": "Forgot password"
+        },
+        "brandAlt": "Nawabegh academy logo",
+        "title": "Forgot your password?",
+        "description": "Enter your email and we will send you a code to reset your password.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "submit": "Send verification code",
+        "submitting": "Sending...",
+        "backToLogin": "Back to sign in",
+        "successTitle": "Check your email",
+        "successDescription": "If the email is registered, you will receive a message with a reset code.",
+        "continueToReset": "Enter code"
+      },
+      "reset": {
+        "meta": {
+          "title": "Reset password"
+        },
+        "brandAlt": "Nawabegh academy logo",
+        "title": "Reset password",
+        "description": "Enter the code sent to your email and your new password.",
+        "emailLabel": "Email",
+        "otpLabel": "Verification code",
+        "newPasswordLabel": "New password",
+        "newPasswordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirm password",
+        "confirmPasswordPlaceholder": "••••••••",
+        "submit": "Change password",
+        "submitting": "Changing...",
+        "backToLogin": "Back to sign in",
+        "resend": "Resend code",
+        "resending": "Sending...",
+        "resendCountdown": "Resend in {seconds}s",
+        "resendSuccess": "A new code was sent to your email.",
+        "successTitle": "Password changed",
+        "successDescription": "You can now sign in with your new password."
+      },
+      "validation": {
+        "emailRequired": "Please enter your email address.",
+        "emailInvalid": "Please enter a valid email address.",
+        "otpRequired": "Please enter the verification code.",
+        "otpIncomplete": "Please enter the full {length}-digit code.",
+        "passwordRequired": "Please enter a password.",
+        "passwordMin": "Password must be at least 8 characters.",
+        "passwordUppercase": "Must include an uppercase letter.",
+        "passwordLowercase": "Must include a lowercase letter.",
+        "passwordNumber": "Must include a number.",
+        "passwordSymbol": "Must include a special character.",
+        "passwordMismatch": "Passwords do not match.",
+        "genericError": "Something went wrong. Please try again."
+      },
+      "actions": {
+        "backHome": "Back to home",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password",
+        "login": "Sign in"
+      }
+    }
+  }
+}

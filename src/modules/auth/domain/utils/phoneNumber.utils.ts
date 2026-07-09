@@ -24,3 +24,13 @@ export function splitE164ForApi(value: string): PhoneApiParts | null {
 export function emptyPhoneApiParts(): PhoneApiParts {
   return { phoneNumber: "", phoneCountryCode: 0, country: "EG" };
 }
+
+export function buildE164FromApiParts(
+  phoneNumber: string,
+  phoneCountryCode: number | null | undefined,
+): string {
+  const digits = phoneNumber.replace(/\D/g, "");
+  if (!digits) return "";
+  const code = phoneCountryCode ?? 20;
+  return `+${code}${digits}`;
+}

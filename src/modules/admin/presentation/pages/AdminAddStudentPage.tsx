@@ -39,6 +39,7 @@ import {
   AddUserDateField,
   AddUserFormSectionCard,
   AddUserInputField,
+  AddUserPhoneField,
   AddUserPageShell,
   AddUserSelectField,
   AddUserSubscriptionCards,
@@ -474,11 +475,13 @@ export function AdminAddStudentPage() {
                 disabled={!values.educationLevelId}
                 onChange={(value) => setField("gradeId", value)}
               />
-              <AddUserInputField
+              <AddUserPhoneField
                 label={t("userManagement.addUser.shared.fields.phoneNumber")}
                 placeholder={t("userManagement.addUser.shared.placeholders.phoneNumber")}
                 value={values.phoneNumber}
-                onChange={(event) => setField("phoneNumber", event.target.value)}
+                countryId={values.countryId}
+                disabled={isSubmitting || uploadingAvatar}
+                onChange={(value) => setField("phoneNumber", value)}
               />
               <div className="space-y-2">
                 <AddUserSelectField

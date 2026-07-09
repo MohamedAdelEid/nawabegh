@@ -3,6 +3,7 @@ export { AddUserField } from "./AddUserField";
 export { AddUserFormActions } from "./AddUserFormActions";
 export { AddUserFormSectionCard } from "./AddUserFormSectionCard";
 export { AddUserInputField } from "./AddUserInputField";
+export { AddUserPhoneField } from "./AddUserPhoneField";
 export { AddUserDateField } from "./AddUserDateField";
 export { AddUserLinkedEntityList } from "./AddUserLinkedEntityList";
 export { AddUserOptionGrid } from "./AddUserOptionGrid";
