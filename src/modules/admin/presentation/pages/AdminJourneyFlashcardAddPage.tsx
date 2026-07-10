@@ -331,15 +331,15 @@ export function AdminJourneyFlashcardAddPage({
           },
           { label: t("breadcrumbs.addFlashcard") },
         ]}
-        action={
-          <Button
-            className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
-            onClick={() => setAiOpen(true)}
-          >
-            <Sparkles className="h-4 w-4" />
-            {t("flashcardAdd.aiGenerate")}
-          </Button>
-        }
+        // action={
+        //   <Button
+        //     className="h-12 gap-2 rounded-xl bg-[#C8AC59] px-6 text-white hover:bg-[#B79A46] shadow-[0px_4px_0px_0px_#8F6C0B]"
+        //     onClick={() => setAiOpen(true)}
+        //   >
+        //     <Sparkles className="h-4 w-4" />
+        //     {t("flashcardAdd.aiGenerate")}
+        //   </Button>
+        // }
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
@@ -374,14 +374,14 @@ export function AdminJourneyFlashcardAddPage({
             <CardContent className="p-5">
 
               {/* AI button inline */}
-              <Button
+              {/* <Button
                 variant="outline"
                 className="mb-4 h-10 gap-2 rounded-xl border-[#C8AC59] text-[#C8AC59] hover:bg-[#FFF9EC]"
                 onClick={() => setAiOpen(true)}
               >
                 <Sparkles className="h-4 w-4" />
                 {t("flashcardAdd.aiGenerate")}
-              </Button>
+              </Button> */}
               {/* Front */}
               <div className="mt-4 space-y-4">
                 <label className="text-sm font-semibold text-slate-600">

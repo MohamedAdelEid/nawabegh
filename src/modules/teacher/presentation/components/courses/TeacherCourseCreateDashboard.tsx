@@ -358,7 +358,7 @@ export function TeacherCourseCreateDashboard({ courseId }: { courseId?: string }
                 {t("courses.create.sections.pricing")}
               </h2>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 {PRICING_OPTIONS.map((option) => {
                   const Icon = option.icon;
                   const selected = form.pricingType === option.id;

@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import {
   createResourceFile,
   getResourceFileCoursesDropdown,
+  inferResourceMediaKind,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { getStation } from "@/modules/admin/infrastructure/api/stationsApi";
 import { fetchTeacherMyCoursesOptions } from "@/modules/teacher/infrastructure/api/teacherCoursesApi";
@@ -39,8 +40,10 @@ interface AdminHelperFileManagementAddPageProps {
 
 type UploadedFileEntry = {
   fileName: string;
+  originalFileName: string;
   fileType: string;
   fileUrl: string;
+  fileSizeBytes?: number | null;
   isDeleting?: boolean;
 };
 
@@ -174,16 +177,39 @@ export function AdminHelperFileManagementAddPage({
 
     const nextUploadedFiles = upload.files.map((item) => ({
       fileName: item.originalFileName.replace(/\.[^/.]+$/, "") || item.originalFileName,
+      originalFileName: item.originalFileName,
       fileType: item.contentType.trim() || inferFileType(item.originalFileName),
       fileUrl: item.filePath,
+      fileSizeBytes: item.fileSize,
     }));
 
-    setUploadedFiles(nextUploadedFiles);
+    setUploadedFiles((prev) => {
+      const merged = [...prev, ...nextUploadedFiles];
+      const seen = new Set<string>();
+      return merged.filter((file) => {
+        if (seen.has(file.fileUrl)) return false;
+        seen.add(file.fileUrl);
+        return true;
+      });
+    });
+
     const firstUploadedFile = nextUploadedFiles[0];
-    if (firstUploadedFile) {
+    if (firstUploadedFile && uploadedFiles.length === 0) {
       setFileUrl(firstUploadedFile.fileUrl);
       setFileName(firstUploadedFile.fileName);
       setFileType(firstUploadedFile.fileType);
+    }
+
+    if (upload.message) {
+      if (selectedFiles.length > upload.files.length) {
+        notify.error(upload.message);
+      } else {
+        notify.success(upload.message);
+      }
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -225,7 +251,7 @@ export function AdminHelperFileManagementAddPage({
 
   const submit = async () => {
     if (submitting) return;
-    if (!courseId.trim() && !stationContext?.journeyId) {
+    if (!stationContext && !courseId.trim()) {
       notify.error(t("form.validation.courseRequired"));
       return;
     }
@@ -244,7 +270,10 @@ export function AdminHelperFileManagementAddPage({
 
     setSubmitting(true);
     try {
-      const targetCourseId = (stationContext?.journeyId ?? courseId).trim();
+      const isStationResource = Boolean(stationContext?.stationId);
+      const targetCourseId = isStationResource
+        ? null
+        : (stationContext?.journeyId ?? courseId).trim() || null;
       const filesToCreate: UploadedFileEntry[] =
         uploadedFiles.length > 0
           ? uploadedFiles.map((file) => ({
@@ -252,7 +281,7 @@ export function AdminHelperFileManagementAddPage({
               fileName:
                 uploadedFiles.length === 1 && fileName.trim()
                   ? fileName.trim()
-                  : file.fileName,
+                  : file.originalFileName || file.fileName,
               fileType:
                 uploadedFiles.length === 1 && fileType.trim()
                   ? fileType.trim()
@@ -262,55 +291,48 @@ export function AdminHelperFileManagementAddPage({
           : [
               {
                 fileName: fileName.trim(),
+                originalFileName: fileName.trim(),
                 fileType: fileType.trim() || inferFileType(fileName),
                 fileUrl: fileUrl.trim(),
+                fileSizeBytes: null,
               },
             ];
 
-      const results = await Promise.allSettled(
-        filesToCreate.map((file) =>
-          createResourceFile({
-            stationId: stationContext?.stationId,
-            courseId: targetCourseId,
-            fileName: file.fileName,
-            fileUrl: file.fileUrl,
-            fileType: file.fileType.toUpperCase(),
-            accessPolicy,
-            resourceFileType: stationContext
-              ? ResourceFileType.ForStation
-              : ResourceFileType.ForCourse,
-          }),
-        ),
-      );
-
-      const succeeded = results.filter(
-        (result) => result.status === "fulfilled" && result.value.data?.id && !result.value.errorMessage,
-      ).length;
-      const failed = filesToCreate.length - succeeded;
-
-      if (succeeded === 0) {
-        const firstError = results.find(
-          (result) => result.status === "fulfilled" && result.value.errorMessage,
-        );
+      if (filesToCreate.length > 20) {
         notify.error(
-          firstError && firstError.status === "fulfilled"
-            ? firstError.value.errorMessage ?? t("form.messages.createError")
-            : t("form.messages.createError"),
+          locale.startsWith("ar")
+            ? "الحد الأقصى 20 ملفًا في الطلب الواحد."
+            : "Maximum 20 files per create request.",
         );
         return;
       }
 
-      if (failed > 0) {
-        notify.error(
-          t("form.messages.partialSuccess", {
-            success: succeeded,
-            total: filesToCreate.length,
-          }),
-        );
-      } else {
-        notify.success(t("form.messages.createSuccess"));
+      const result = await createResourceFile({
+        stationId: isStationResource ? stationContext?.stationId : null,
+        courseId: targetCourseId,
+        accessPolicy,
+        resourceFileType: isStationResource
+          ? ResourceFileType.ForStation
+          : ResourceFileType.ForCourse,
+        files: filesToCreate.map((file) => ({
+          fileName: file.originalFileName || file.fileName,
+          fileUrl: file.fileUrl,
+          fileType: file.fileType,
+          fileSizeBytes: file.fileSizeBytes ?? null,
+          thumbnailUrl: null,
+          mediaKind: inferResourceMediaKind(
+            file.originalFileName || file.fileName,
+            file.fileType,
+          ),
+        })),
+      });
+
+      if (result.errorMessage || !result.data) {
+        notify.error(result.errorMessage ?? t("form.messages.createError"));
+        return;
       }
 
+      notify.success(result.message?.trim() || t("form.messages.createSuccess"));
       router.push(stationContext?.returnHref ?? routeConfig.LIST);
     } finally {
       setSubmitting(false);
@@ -383,7 +405,6 @@ export function AdminHelperFileManagementAddPage({
               <input
                 ref={fileInputRef}
                 type="file"
-                multiple
                 className="hidden"
                 onChange={(event) => void handleFilePick(event.target.files)}
               />
@@ -404,6 +425,11 @@ export function AdminHelperFileManagementAddPage({
                   </p>
                 ) : null}
               </button>
+              <p className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-right text-xs leading-5 text-amber-800">
+                {locale.startsWith("ar")
+                  ? "نصيحة: ارفع الملفات ملفًا بملف لتجنب تجاوز الحد الأقصى لحجم الرفع."
+                  : "Tip: Upload one file at a time to avoid upload size limits."}
+              </p>
               {uploading ? (
                 <div className="rounded-xl border border-[#D6E3F5] bg-[#F4F8FF] p-3">
                   <div className="mb-2 flex items-center justify-between text-xs text-[#1E3A66]">

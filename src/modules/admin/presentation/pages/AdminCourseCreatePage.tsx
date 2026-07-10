@@ -32,7 +32,6 @@ import { AccessDurationField } from "@/shared/presentation/components/ui/access-
 import { ModalDescription, ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
 import { cn } from "@/shared/application/lib/cn";
 import { MoneyIcon } from "../assets/icons/Money";
-import { ReCycleIcon } from "../assets/icons/ReCycle";
 import { GiftIcon } from "../assets/icons/Gift";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
@@ -48,10 +47,6 @@ const pricingOptions: CoursePricingType[] = [
   {
     text: "oneTime",
     icon: <MoneyIcon className="h-6 w-6" />,
-    iconTone: "primary",
-  }, {
-    text: "monthly",
-    icon: <ReCycleIcon className="h-6 w-6" />,
     iconTone: "primary",
   },
 ]
@@ -88,13 +83,11 @@ function priceToNumber(value: string): number {
 
 function pricingTypeToAccessType(pricingType: CourseCreateDraft["pricingType"]): CourseAccessType {
   if (pricingType === "free") return CourseAccessType.Free;
-  if (pricingType === "monthly") return CourseAccessType.Subscription;
   return CourseAccessType.Paid;
 }
 
 function accessTypeToPricingType(accessType: CourseAccessType): CourseCreateDraft["pricingType"] {
   if (accessType === CourseAccessType.Free) return "free";
-  if (accessType === CourseAccessType.Subscription) return "monthly";
   return "oneTime";
 }
 
@@ -587,7 +580,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
           </CourseSectionCard>
 
           <CourseSectionCard title={t("create.sections.pricing")} icon={Tag}>
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-2">
               {pricingOptions.map((option) => (
                 <button
                   key={option.text}

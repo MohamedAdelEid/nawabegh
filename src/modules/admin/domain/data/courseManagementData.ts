@@ -15,7 +15,7 @@ import type {
 
 export type { CourseAccessTypeId, CourseReviewReasonId, CourseStatusId };
 
-export type CoursePricingTypeId = "oneTime" | "monthly" | "free";
+export type CoursePricingTypeId = "oneTime" | "free";
 export type CoursePricingType = {
   text: string;
   icon: React.ReactNode;

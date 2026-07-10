@@ -119,63 +119,139 @@ function readNumber(record: UnknownRecord | null, keys: string[], fallback: numb
   return fallback;
 }
 
-function extractUploadMultipleItems(data: unknown): UnknownRecord[] {
+function unwrapUploadMultipleEnvelope(data: unknown): UnknownRecord | null {
   const root = asRecord(data);
-  if (!root) return [];
+  if (!root) return null;
 
-  const candidates: unknown[] = [root.files, asRecord(root.data)?.files, asRecord(asRecord(root.data)?.data)?.files];
-  for (const candidate of candidates) {
-    if (Array.isArray(candidate)) {
-      return candidate.map((item) => asRecord(item)).filter((item): item is UnknownRecord => Boolean(item));
-    }
-  }
+  if (Array.isArray(root.files)) return root;
 
-  return [];
+  const level1 = asRecord(root.data);
+  if (level1 && Array.isArray(level1.files)) return level1;
+
+  const level2 = level1 ? asRecord(level1.data) : null;
+  if (level2 && Array.isArray(level2.files)) return level2;
+
+  return root;
 }
 
+function extractUploadMultipleItems(data: unknown): UnknownRecord[] {
+  const envelope = unwrapUploadMultipleEnvelope(data);
+  if (!envelope || !Array.isArray(envelope.files)) return [];
+
+  return envelope.files
+    .map((item) => asRecord(item))
+    .filter((item): item is UnknownRecord => Boolean(item));
+}
+
+function mapUploadMultipleItems(data: unknown): UploadAdminMultiFileItem[] {
+  return extractUploadMultipleItems(data)
+    .map((item) => ({
+      success: readBoolean(item, ["success"], true),
+      filePath: readString(item, ["filePath", "fileUrl", "url", "path"], "").trim(),
+      originalFileName: readString(item, ["originalFileName", "storedFileName"], "").trim(),
+      contentType: readString(item, ["contentType"], "").trim(),
+      fileSize: readNumber(item, ["fileSize"], null),
+    }))
+    .filter((item) => item.success && item.filePath)
+    .map(({ filePath, originalFileName, contentType, fileSize }) => ({
+      filePath,
+      originalFileName,
+      contentType,
+      fileSize,
+    }));
+}
+
+function isRequestEntityTooLargeError(error: unknown): boolean {
+  const axiosError = asRecord(error);
+  const response = asRecord(axiosError?.response);
+  const status = readNumber(response, ["status"], null);
+  if (status === 413) return true;
+
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return /413|request entity too large|payload too large/i.test(message);
+}
+
+async function uploadAdminFilesBatch(
+  files: File[],
+  folder: string,
+): Promise<UploadAdminFilesResult> {
+  const formData = new FormData();
+  formData.append("folder", folder);
+  for (const file of files) {
+    formData.append("files", file);
+  }
+
+  const response = await httpClient.post<unknown>({
+    url: "/api/FileUpload/upload-multiple",
+    data: formData,
+    isFormData: true,
+    timeout: 0,
+  });
+
+  const envelope = unwrapUploadMultipleEnvelope(response);
+  const message =
+    readString(envelope, ["message"], "") ||
+    readString(asRecord(response), ["message"], "");
+  const items = mapUploadMultipleItems(response);
+
+  if (items.length === 0) {
+    return { ok: false, errorMessage: message.trim() || "Upload failed" };
+  }
+
+  return {
+    ok: true,
+    files: items,
+    message: message.trim() || undefined,
+  };
+}
+
+/**
+ * Uploads multiple files via `/api/FileUpload/upload-multiple`.
+ * Sends files one-by-one to avoid 413 (Request Entity Too Large) from reverse proxies.
+ */
 export async function uploadAdminFiles(files: File[], folder: string): Promise<UploadAdminFilesResult> {
   if (files.length === 0) {
     return { ok: false, errorMessage: "No files selected" };
   }
 
-  try {
-    const formData = new FormData();
-    formData.append("folder", folder);
-    for (const file of files) {
-      formData.append("files", file);
+  const uploaded: UploadAdminMultiFileItem[] = [];
+
+  for (const file of files) {
+    try {
+      const result = await uploadAdminFilesBatch([file], folder);
+      if (!result.ok) {
+        if (uploaded.length === 0) {
+          return result;
+        }
+        continue;
+      }
+      uploaded.push(...result.files);
+    } catch (error) {
+      if (isRequestEntityTooLargeError(error)) {
+        return {
+          ok: false,
+          errorMessage:
+            uploaded.length > 0
+              ? `${uploaded.length} file(s) uploaded, then failed: "${file.name}" is too large for the server limit.`
+              : `File "${file.name}" is too large for the server upload limit (413).`,
+        };
+      }
+      const msg = error instanceof Error ? error.message : "Upload failed";
+      if (uploaded.length === 0) {
+        return { ok: false, errorMessage: msg };
+      }
     }
-
-    const response = await httpClient.post<unknown>({
-      url: "/api/FileUpload/upload-multiple",
-      data: formData,
-      isFormData: true,
-    });
-
-    const rootRecord = asRecord(response);
-    const message = readString(rootRecord, ["message"], "");
-    const items = extractUploadMultipleItems(response)
-      .map((item) => ({
-        success: readBoolean(item, ["success"], false),
-        filePath: readString(item, ["filePath", "fileUrl", "url", "path"], "").trim(),
-        originalFileName: readString(item, ["originalFileName", "storedFileName"], "").trim(),
-        contentType: readString(item, ["contentType"], "").trim(),
-        fileSize: readNumber(item, ["fileSize"], null),
-      }))
-      .filter((item) => item.success && item.filePath);
-
-    if (items.length === 0) {
-      return { ok: false, errorMessage: message || "Upload failed" };
-    }
-
-    return {
-      ok: true,
-      files: items,
-      message: message || undefined,
-    };
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : "Upload failed";
-    return { ok: false, errorMessage: msg };
   }
+
+  if (uploaded.length === 0) {
+    return { ok: false, errorMessage: "Upload failed" };
+  }
+
+  return {
+    ok: true,
+    files: uploaded,
+    message: `${uploaded.length} out of ${files.length} files uploaded successfully`,
+  };
 }
 
 export async function deleteAdminUploadedFile(

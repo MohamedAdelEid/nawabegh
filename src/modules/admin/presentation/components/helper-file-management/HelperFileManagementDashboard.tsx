@@ -1,13 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
-import { Eye, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Eye, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  deleteResourceFile,
-  getResourceFiles,
-  type ResourceFileListItem,
+  deleteResourceFileBatch,
+  getResourceFileBatches,
+  type ResourceFileBatchItem,
 } from "@/modules/admin/infrastructure/api/resourceFileApi";
 import { ContentFileDeleteModal } from "@/modules/admin/presentation/components/content-management/ContentFileDeleteModal";
 import { HelperFileManagementAnimatedSection } from "./HelperFileManagementAnimatedSection";
@@ -46,18 +46,19 @@ export function HelperFileManagementDashboard() {
   const routes = useScopedDashboardRoutes();
   const routeConfig = routes.helperFileManagement;
   const isTeacherScope = routes.scope === "teacher";
-  const [rows, setRows] = useState<ResourceFileListItem[]>([]);
+  const [rows, setRows] = useState<ResourceFileBatchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<HelperFileManagementFilterState>(DEFAULT_FILTERS);
   const [page, setPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [deleteTarget, setDeleteTarget] = useState<ResourceFileListItem | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<ResourceFileBatchItem | null>(null);
+  const [expandedBatchIds, setExpandedBatchIds] = useState<Set<string>>(new Set());
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const loadRows = useCallback(async () => {
     setLoading(true);
-    const result = await getResourceFiles({
+    const result = await getResourceFileBatches({
       ...(filters.stationId !== "all" ? { stationId: filters.stationId } : {}),
       ...(filters.courseId !== "all" ? { courseId: filters.courseId } : {}),
       ...(filters.resourceFileType !== "all"
@@ -133,17 +134,81 @@ export function HelperFileManagementDashboard() {
     });
   };
 
-  const tableColumns = useMemo<Array<DashboardDataTableColumn<ResourceFileListItem>>>(
+  const toggleExpanded = (uploadBatchId: string) => {
+    setExpandedBatchIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(uploadBatchId)) next.delete(uploadBatchId);
+      else next.add(uploadBatchId);
+      return next;
+    });
+  };
+
+  const batchTitle = (row: ResourceFileBatchItem) => {
+    if (row.files.length === 1) return row.files[0]?.fileName || row.category || row.uploadBatchId;
+    if (row.category?.trim()) return row.category.trim();
+    return t("table.batchTitle", { count: row.fileCount });
+  };
+
+  const tableColumns = useMemo<Array<DashboardDataTableColumn<ResourceFileBatchItem>>>(
     () => [
       {
-        id: "fileName",
+        id: "batch",
         header: t("table.columns.fileName"),
-        renderCell: (row) => (
-          <div className="space-y-1 text-right">
-            <p className="font-semibold text-slate-800">{row.fileName}</p>
-            <p className="text-xs text-slate-400">{row.fileType || "—"}</p>
-          </div>
-        ),
+        renderCell: (row) => {
+          const expanded = expandedBatchIds.has(row.uploadBatchId);
+          return (
+            <div className="space-y-2 text-right">
+              <button
+                type="button"
+                className="flex w-full items-start justify-between gap-2 text-right"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  toggleExpanded(row.uploadBatchId);
+                }}
+              >
+                <div className="min-w-0 space-y-1">
+                  <p className="font-semibold text-slate-800">{batchTitle(row)}</p>
+                  <p className="text-xs text-slate-400">
+                    {t("table.fileCount", { count: row.fileCount })}
+                    {row.category ? ` · ${row.category}` : ""}
+                  </p>
+                </div>
+                {row.files.length > 1 ? (
+                  expanded ? (
+                    <ChevronUp className="mt-1 h-4 w-4 shrink-0 text-slate-400" />
+                  ) : (
+                    <ChevronDown className="mt-1 h-4 w-4 shrink-0 text-slate-400" />
+                  )
+                ) : null}
+              </button>
+              {expanded && row.files.length > 0 ? (
+                <ul className="space-y-1 rounded-xl border border-slate-100 bg-slate-50 p-2">
+                  {row.files.map((file) => (
+                    <li
+                      key={file.id}
+                      className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-1.5"
+                    >
+                      <div className="min-w-0 text-right">
+                        <p className="truncate text-xs font-semibold text-slate-700">
+                          {file.fileName}
+                        </p>
+                        <p className="truncate text-[11px] text-slate-400">
+                          {file.mediaKind || file.fileType || "—"}
+                        </p>
+                      </div>
+                      <IconActionButton
+                        label={t("table.actions.view")}
+                        onClick={() => router.push(routeConfig.VIEW(file.id))}
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                      </IconActionButton>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          );
+        },
       },
       {
         id: "course",
@@ -182,17 +247,21 @@ export function HelperFileManagementDashboard() {
         renderCell: (row) => formatDate(row.createdAt),
       },
     ],
-    [t],
+    [expandedBatchIds, routeConfig, router, t],
   );
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    const result = await deleteResourceFile(deleteTarget.id);
-    if (result.errorMessage) {
+    const result = await deleteResourceFileBatch(deleteTarget);
+    if (result.errorMessage && !result.data) {
       notify.error(result.errorMessage);
       return;
     }
-    notify.success(t("table.deleteSuccess"));
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+    } else {
+      notify.success(t("table.deleteSuccess"));
+    }
     setDeleteTarget(null);
     void loadRows();
   };
@@ -276,28 +345,32 @@ export function HelperFileManagementDashboard() {
             <DashboardDataTable
               rows={rows}
               columns={tableColumns}
-              getRowKey={(row) => row.id}
+              getRowKey={(row) => row.uploadBatchId}
               emptyMessage={t("table.empty")}
-              // onRowClick={(row) => router.push(routeConfig.VIEW(row.id))}
               rowClassName="hover:bg-slate-50/80"
               actionsHeader={t("table.columns.actions")}
-              renderActions={(row) => (
-                <div className="flex items-center gap-2">
-                  <IconActionButton
-                    label={t("table.actions.view")}
-                    onClick={() => router.push(routeConfig.VIEW(row.id))}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </IconActionButton>
-                  <IconActionButton
-                    label={t("table.actions.delete")}
-                    danger
-                    onClick={() => setDeleteTarget(row)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </IconActionButton>
-                </div>
-              )}
+              renderActions={(row) => {
+                const primaryFileId = row.files[0]?.id;
+                return (
+                  <div className="flex items-center gap-2">
+                    {primaryFileId ? (
+                      <IconActionButton
+                        label={t("table.actions.view")}
+                        onClick={() => router.push(routeConfig.VIEW(primaryFileId))}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </IconActionButton>
+                    ) : null}
+                    <IconActionButton
+                      label={t("table.actions.delete")}
+                      danger
+                      onClick={() => setDeleteTarget(row)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </IconActionButton>
+                  </div>
+                );
+              }}
             />
           )}
         </DashboardTableCard>
@@ -309,7 +382,9 @@ export function HelperFileManagementDashboard() {
           if (!open) setDeleteTarget(null);
         }}
         title={t("deleteModal.title")}
-        description={t("deleteModal.description", { fileName: deleteTarget?.fileName ?? "" })}
+        description={t("deleteModal.description", {
+          fileName: deleteTarget ? batchTitle(deleteTarget) : "",
+        })}
         confirmLabel={t("deleteModal.confirm")}
         cancelLabel={t("deleteModal.cancel")}
         onConfirm={handleDelete}

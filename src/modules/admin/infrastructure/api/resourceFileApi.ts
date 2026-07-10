@@ -1,4 +1,5 @@
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
+import { AccessPolicy, ResourceFileType } from "@/shared/domain/enums/cms.enums";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 
@@ -10,6 +11,14 @@ export type ResourceFileApiResult<T> = {
   errorMessage?: string;
   data: T | null;
 };
+
+export type ResourceFileMediaKind =
+  | "Pdf"
+  | "Presentation"
+  | "Word"
+  | "Image"
+  | "Video"
+  | "Other";
 
 export type ResourceFileListItem = {
   id: string;
@@ -24,6 +33,7 @@ export type ResourceFileListItem = {
   accessPolicy: string;
   resourceFileType: string;
   createdAt: string;
+  uploadBatchId?: string | null;
   thumbnailUrl?: string | null;
   mediaKind?: string | null;
   category?: string | null;
@@ -34,10 +44,37 @@ export type ResourceFileDetails = ResourceFileListItem & {
   updatedAt: string;
 };
 
+export type ResourceFileBatchFile = {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  thumbnailUrl?: string | null;
+  mediaKind?: string | null;
+  fileSizeBytes?: number | null;
+  createdAt: string;
+};
+
+export type ResourceFileBatchItem = {
+  uploadBatchId: string;
+  courseId: string;
+  courseTitle: string;
+  stationId: string | null;
+  stationName: string | null;
+  stationType: number | null;
+  resourceFileType: string;
+  accessPolicy: string;
+  category: string | null;
+  fileCount: number;
+  createdAt: string;
+  files: ResourceFileBatchFile[];
+};
+
 export type ResourceFileListParams = {
   stationId?: string;
   courseId?: string;
-  resourceFileType?: number;
+  uploadBatchId?: string;
+  resourceFileType?: number | string;
   keyword?: string;
   pageNumber?: number;
   pageSize?: number;
@@ -45,6 +82,14 @@ export type ResourceFileListParams = {
 
 export type ResourceFileListPage = {
   items: ResourceFileListItem[];
+  totalItems: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export type ResourceFileBatchListPage = {
+  items: ResourceFileBatchItem[];
   totalItems: number;
   pageNumber: number;
   pageSize: number;
@@ -63,14 +108,28 @@ export type ResourceFileStationOption = {
   learningPathTitle: string;
 };
 
-export type CreateResourceFilePayload = {
-  stationId?: string;
-  courseId: string;
+export type CreateResourceFileItem = {
   fileName: string;
   fileUrl: string;
   fileType: string;
-  accessPolicy: number;
-  resourceFileType: number;
+  fileSizeBytes?: number | null;
+  thumbnailUrl?: string | null;
+  mediaKind?: ResourceFileMediaKind | string | null;
+};
+
+export type CreateResourceFilePayload = {
+  stationId?: string | null;
+  courseId?: string | null;
+  category?: string | null;
+  accessPolicy: number | string;
+  resourceFileType: number | string;
+  files: CreateResourceFileItem[];
+};
+
+export type CreateResourceFileResult = {
+  uploadBatchId: string;
+  count: number;
+  items: ResourceFileListItem[];
 };
 
 function asRecord(value: unknown): UnknownRecord | null {
@@ -155,6 +214,51 @@ function buildErrorResult<T>(error: unknown, fallbackMessage: string): ResourceF
   };
 }
 
+export function accessPolicyToApi(value: number | string): string {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (value === AccessPolicy.Subscribers) return "Subscribers";
+  return "All";
+}
+
+export function resourceFileTypeToApi(value: number | string): string {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (value === ResourceFileType.ForCourse) return "ForCourse";
+  return "ForStation";
+}
+
+export function inferResourceMediaKind(
+  fileName: string,
+  contentType?: string | null,
+): ResourceFileMediaKind {
+  const mime = (contentType ?? "").toLowerCase();
+  const ext = fileName.split(".").pop()?.trim().toLowerCase() ?? "";
+
+  if (mime.includes("pdf") || ext === "pdf") return "Pdf";
+  if (
+    mime.includes("presentation") ||
+    mime.includes("powerpoint") ||
+    ext === "pptx" ||
+    ext === "ppt"
+  ) {
+    return "Presentation";
+  }
+  if (
+    mime.includes("word") ||
+    mime.includes("officedocument.wordprocessingml") ||
+    ext === "docx" ||
+    ext === "doc"
+  ) {
+    return "Word";
+  }
+  if (mime.startsWith("image/") || ["png", "jpg", "jpeg", "gif", "webp", "svg", "bmp"].includes(ext)) {
+    return "Image";
+  }
+  if (mime.startsWith("video/") || ["mp4", "webm", "mov", "m4v"].includes(ext)) {
+    return "Video";
+  }
+  return "Other";
+}
+
 function mapResourceFileListItem(item: unknown): ResourceFileListItem | null {
   const record = asRecord(item);
   if (!record) return null;
@@ -174,10 +278,57 @@ function mapResourceFileListItem(item: unknown): ResourceFileListItem | null {
     accessPolicy: readString(record, ["accessPolicy"], ""),
     resourceFileType: readString(record, ["resourceFileType"], ""),
     createdAt: readString(record, ["createdAt"], ""),
+    uploadBatchId: readString(record, ["uploadBatchId"], "") || null,
     thumbnailUrl: readString(record, ["thumbnailUrl"], "") || null,
     mediaKind: readString(record, ["mediaKind"], "") || null,
     category: readString(record, ["category"], "") || null,
     fileSizeBytes: readNumber(record, ["fileSizeBytes"]),
+  };
+}
+
+function mapResourceFileBatchFile(item: unknown): ResourceFileBatchFile | null {
+  const record = asRecord(item);
+  if (!record) return null;
+  const id = readString(record, ["id"], "").trim();
+  if (!id) return null;
+
+  return {
+    id,
+    fileName: readString(record, ["fileName"], ""),
+    fileUrl: readString(record, ["fileUrl"], ""),
+    fileType: readString(record, ["fileType"], ""),
+    thumbnailUrl: readString(record, ["thumbnailUrl"], "") || null,
+    mediaKind: readString(record, ["mediaKind"], "") || null,
+    fileSizeBytes: readNumber(record, ["fileSizeBytes"]),
+    createdAt: readString(record, ["createdAt"], ""),
+  };
+}
+
+function mapResourceFileBatchItem(item: unknown): ResourceFileBatchItem | null {
+  const record = asRecord(item);
+  if (!record) return null;
+
+  const files = (Array.isArray(record.files) ? record.files : [])
+    .map(mapResourceFileBatchFile)
+    .filter((file): file is ResourceFileBatchFile => file !== null);
+
+  const uploadBatchId =
+    readString(record, ["uploadBatchId"], "").trim() || files[0]?.id || "";
+  if (!uploadBatchId) return null;
+
+  return {
+    uploadBatchId,
+    courseId: readString(record, ["courseId"], ""),
+    courseTitle: readString(record, ["courseTitle"], ""),
+    stationId: readString(record, ["stationId"], "") || null,
+    stationName: readString(record, ["stationName"], "") || null,
+    stationType: readNumber(record, ["stationType"]),
+    resourceFileType: readString(record, ["resourceFileType"], ""),
+    accessPolicy: readString(record, ["accessPolicy"], ""),
+    category: readString(record, ["category"], "") || null,
+    fileCount: readNumber(record, ["fileCount"]) ?? files.length,
+    createdAt: readString(record, ["createdAt"], "") || files[0]?.createdAt || "",
+    files,
   };
 }
 
@@ -192,17 +343,16 @@ function mapResourceFileDetails(data: unknown): ResourceFileDetails | null {
   };
 }
 
-function mapResourceFileListPage(
+function mapPaginatedPage<T>(
   data: unknown,
   params: ResourceFileListParams,
+  mapItem: (item: unknown) => T | null,
   headerMeta?: XPaginationMeta | null,
-): ResourceFileListPage | null {
+): { items: T[]; totalItems: number; pageNumber: number; pageSize: number; totalPages: number } | null {
   const root = asRecord(data);
   const payload = asRecord(root?.data) ?? root;
   const itemsRaw = payload ? extractListRows(payload) : extractListRows(data);
-  const items = itemsRaw
-    .map(mapResourceFileListItem)
-    .filter((row): row is ResourceFileListItem => row !== null);
+  const items = itemsRaw.map(mapItem).filter((row): row is T => row !== null);
 
   if (headerMeta) {
     return {
@@ -258,33 +408,63 @@ function mapStationOption(item: unknown): ResourceFileStationOption | null {
   };
 }
 
-function mapCreatedResourceFile(data: unknown): { id: string } | null {
-  const record = asRecord(extractEnvelopeData(data));
+function mapCreatedResourceFile(data: unknown): CreateResourceFileResult | null {
+  const unwrapped = extractEnvelopeData(data);
+  const record = asRecord(unwrapped);
   if (!record) return null;
-  const id = readString(record, ["id"], "").trim();
-  return id ? { id } : null;
+
+  const nestedItems = Array.isArray(record.items)
+    ? record.items
+    : Array.isArray(record.files)
+      ? record.files
+      : [];
+
+  const items = nestedItems
+    .map(mapResourceFileListItem)
+    .filter((item): item is ResourceFileListItem => item !== null);
+
+  const uploadBatchId =
+    readString(record, ["uploadBatchId"], "").trim() ||
+    items[0]?.uploadBatchId ||
+    items[0]?.id ||
+    "";
+  const count = readNumber(record, ["count"]) ?? items.length;
+
+  if (!uploadBatchId && items.length === 0) return null;
+
+  return {
+    uploadBatchId,
+    count,
+    items,
+  };
 }
 
+function buildListQueryParams(params: ResourceFileListParams): Record<string, unknown> {
+  return {
+    ...(params.stationId ? { stationId: params.stationId } : {}),
+    ...(params.courseId ? { courseId: params.courseId } : {}),
+    ...(params.uploadBatchId ? { uploadBatchId: params.uploadBatchId } : {}),
+    ...(params.resourceFileType !== undefined
+      ? { resourceFileType: resourceFileTypeToApi(params.resourceFileType) }
+      : {}),
+    ...(params.keyword?.trim() ? { keyword: params.keyword.trim() } : {}),
+    pageNumber: params.pageNumber ?? 1,
+    pageSize: params.pageSize ?? 10,
+  };
+}
+
+/** Flat list (optional). Prefer `getResourceFileBatches` for the management list. */
 export async function getResourceFiles(
   params: ResourceFileListParams,
 ): Promise<ResourceFileApiResult<ResourceFileListPage>> {
   try {
     const response = await httpClient.get<unknown>({
       url: "/api/v1/ResourceFile",
-      params: {
-        ...(params.stationId ? { stationId: params.stationId } : {}),
-        ...(params.courseId ? { courseId: params.courseId } : {}),
-        ...(params.resourceFileType !== undefined
-          ? { resourceFileType: params.resourceFileType }
-          : {}),
-        ...(params.keyword?.trim() ? { keyword: params.keyword.trim() } : {}),
-        pageNumber: params.pageNumber ?? 1,
-        pageSize: params.pageSize ?? 10,
-      },
+      params: buildListQueryParams(params),
     });
 
     const headerMeta = parseXPaginationHeader(response.headers ?? {});
-    const page = mapResourceFileListPage(response.data, params, headerMeta);
+    const page = mapPaginatedPage(response.data, params, mapResourceFileListItem, headerMeta);
     if (!page) {
       return {
         status: response.status,
@@ -302,6 +482,38 @@ export async function getResourceFiles(
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load resource files");
+  }
+}
+
+/** Grouped list — one row per upload batch. Use this on the files management list. */
+export async function getResourceFileBatches(
+  params: ResourceFileListParams,
+): Promise<ResourceFileApiResult<ResourceFileBatchListPage>> {
+  try {
+    const response = await httpClient.get<unknown>({
+      url: "/api/v1/ResourceFile/batches",
+      params: buildListQueryParams(params),
+    });
+
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const page = mapPaginatedPage(response.data, params, mapResourceFileBatchItem, headerMeta);
+    if (!page) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: "Invalid resource file batches response",
+        data: null,
+      };
+    }
+
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data: page,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to load resource file batches");
   }
 }
 
@@ -325,26 +537,74 @@ export async function getResourceFileById(
 
 export async function createResourceFile(
   payload: CreateResourceFilePayload,
-): Promise<ResourceFileApiResult<{ id: string }>> {
+): Promise<ResourceFileApiResult<CreateResourceFileResult>> {
   try {
-    const stationId = payload.stationId?.trim();
+    const files = payload.files
+      .map((file) => {
+        const fileName = file.fileName.trim();
+        const fileUrl = file.fileUrl.trim();
+        const fileType = file.fileType.trim();
+        if (!fileName || !fileUrl) return null;
+
+        return {
+          fileName,
+          fileUrl,
+          fileType,
+          ...(file.fileSizeBytes != null ? { fileSizeBytes: file.fileSizeBytes } : {}),
+          ...(file.thumbnailUrl != null ? { thumbnailUrl: file.thumbnailUrl } : {}),
+          mediaKind:
+            file.mediaKind?.toString().trim() ||
+            inferResourceMediaKind(fileName, fileType),
+        };
+      })
+      .filter((file): file is NonNullable<typeof file> => file !== null);
+
+    if (files.length === 0) {
+      return {
+        status: "BadRequest",
+        errorMessage: "At least one file is required",
+        data: null,
+      };
+    }
+
+    if (files.length > 20) {
+      return {
+        status: "BadRequest",
+        errorMessage: "Maximum 20 files per create request",
+        data: null,
+      };
+    }
+
+    const resourceFileType = resourceFileTypeToApi(payload.resourceFileType);
+    const stationId = payload.stationId?.trim() || null;
+    const courseId = payload.courseId?.trim() || null;
+    const category = payload.category?.trim() || null;
+
     const response = await httpClient.post<unknown>({
       url: "/api/v1/ResourceFile",
       data: {
-        courseId: payload.courseId,
-        fileName: payload.fileName,
-        fileUrl: payload.fileUrl,
-        fileType: payload.fileType,
-        accessPolicy: payload.accessPolicy,
-        resourceFileType: payload.resourceFileType,
-        ...(stationId ? { stationId } : {}),
+        accessPolicy: accessPolicyToApi(payload.accessPolicy),
+        resourceFileType,
+        files,
+        stationId: resourceFileType === "ForStation" ? stationId : null,
+        courseId: resourceFileType === "ForCourse" ? courseId : null,
+        ...(category ? { category } : {}),
       },
     });
+
+    const mapped = mapCreatedResourceFile(response.data);
+    const hasError = Boolean(response.error?.message);
     return {
       status: response.status,
       message: response.message,
       errorMessage: response.error?.message,
-      data: mapCreatedResourceFile(response.data),
+      data: hasError
+        ? null
+        : mapped ?? {
+            uploadBatchId: "",
+            count: files.length,
+            items: [],
+          },
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to create resource file");
@@ -365,6 +625,39 @@ export async function deleteResourceFile(resourceFileId: string): Promise<Resour
   } catch (error) {
     return buildErrorResult(error, "Failed to delete resource file");
   }
+}
+
+/** Deletes every file in a batch (one DELETE per nested file). */
+export async function deleteResourceFileBatch(
+  batch: Pick<ResourceFileBatchItem, "files">,
+): Promise<ResourceFileApiResult<{ deleted: number; failed: number }>> {
+  const ids = batch.files.map((file) => file.id).filter(Boolean);
+  if (ids.length === 0) {
+    return {
+      status: "BadRequest",
+      errorMessage: "Batch has no files to delete",
+      data: null,
+    };
+  }
+
+  const results = await Promise.all(ids.map((id) => deleteResourceFile(id)));
+  const failed = results.filter((result) => result.errorMessage || !result.data).length;
+  const deleted = ids.length - failed;
+
+  if (deleted === 0) {
+    return {
+      status: "Error",
+      errorMessage: results[0]?.errorMessage ?? "Failed to delete resource file batch",
+      data: null,
+    };
+  }
+
+  return {
+    status: failed > 0 ? "Error" : "Success",
+    errorMessage:
+      failed > 0 ? `${deleted} deleted, ${failed} failed` : undefined,
+    data: { deleted, failed },
+  };
 }
 
 export async function getResourceFileCoursesDropdown(): Promise<

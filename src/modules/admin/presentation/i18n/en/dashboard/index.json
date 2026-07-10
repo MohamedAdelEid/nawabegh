@@ -3815,6 +3815,8 @@
       },
       "table": {
         "title": "Content files list",
+        "batchTitle": "Upload group ({count} files)",
+        "fileCount": "{count} file(s)",
         "columns": {
           "fileName": "File name",
           "course": "Course",
@@ -3937,6 +3939,7 @@
         "upload": {
           "title": "Drag files here",
           "subtitle": "or select from your device",
+          "advice": "Tip: Upload one file at a time to avoid upload size limits.",
           "uploading": "Uploading file...",
           "uploadedCount": "{count} file(s) uploaded successfully.",
           "loadingHint": "Preparing and uploading files...",
@@ -3967,6 +3970,14 @@
         "description": "View summarization file details (read-only).",
         "readOnlyBadge": "View only",
         "openFile": "Open file",
+        "batch": {
+          "title": "Files in this upload",
+          "hint": "{total} files were uploaded together. Select a file to preview it.",
+          "description": "File {current} of {total} in this upload group.",
+          "badge": "{current} / {total}",
+          "previous": "Previous",
+          "next": "Next"
+        },
         "viewer": {
           "title": "File preview",
           "loading": "Loading file preview...",
