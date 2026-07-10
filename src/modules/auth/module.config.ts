@@ -15,6 +15,8 @@ import arTeacherRegistration from "./presentation/i18n/ar/teacher-registration/i
 import enTeacherRegistration from "./presentation/i18n/en/teacher-registration/index.json";
 import arDiscover from "./presentation/i18n/ar/discover/index.json";
 import enDiscover from "./presentation/i18n/en/discover/index.json";
+import arPassword from "./presentation/i18n/ar/password/index.json";
+import enPassword from "./presentation/i18n/en/password/index.json";
 
 function loginForLocale(locale: AppLocale) {
   return locale === "ar" ? arLogin.auth.login : enLogin.auth.login;
@@ -54,6 +56,10 @@ function discoverForLocale(locale: AppLocale) {
   return locale === "ar" ? arDiscover.auth.discover : enDiscover.auth.discover;
 }
 
+function passwordForLocale(locale: AppLocale) {
+  return locale === "ar" ? arPassword.auth.password : enPassword.auth.password;
+}
+
 export const authModule = {
   name: "auth",
   i18nNamespaces: [
@@ -64,6 +70,7 @@ export const authModule = {
     "parentRegistration",
     "teacherRegistration",
     "discover",
+    "password",
   ],
   async getMessagesForLocale(locale: AppLocale) {
     return {
@@ -74,6 +81,7 @@ export const authModule = {
       parentRegistration: parentRegistrationForLocale(locale),
       teacherRegistration: teacherRegistrationForLocale(locale),
       discover: discoverForLocale(locale),
+      password: passwordForLocale(locale),
     };
   },
 } satisfies ModuleConfig;

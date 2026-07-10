@@ -33,6 +33,7 @@ import {
   AddUserAnimatedSection,
   AddUserFormSectionCard,
   AddUserInputField,
+  AddUserPhoneField,
   AddUserOptionGrid,
   AddUserPageShell,
   AddUserPermissionChecklist,
@@ -409,11 +410,13 @@ export function AdminAddTeacherPage() {
                 value={values.fullName}
                 onChange={(event) => setField("fullName", event.target.value)}
               />
-              <AddUserInputField
+              <AddUserPhoneField
                 label={t("userManagement.addUser.shared.fields.phoneNumber")}
                 placeholder={t("userManagement.addUser.shared.placeholders.phoneNumber")}
                 value={values.phoneNumber}
-                onChange={(event) => setField("phoneNumber", event.target.value)}
+                countryId={values.countryId}
+                disabled={isSubmitting || uploadingAvatar}
+                onChange={(value) => setField("phoneNumber", value)}
               />
               <AddUserInputField
                 label={t("userManagement.addUser.shared.fields.email")}
