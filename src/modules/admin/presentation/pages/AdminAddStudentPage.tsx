@@ -503,6 +503,12 @@ export function AdminAddStudentPage() {
                 value={values.email}
                 onChange={(event) => setField("email", event.target.value)}
               />
+              <AddUserInputField
+                label={t("userManagement.addUser.student.fields.username")}
+                placeholder={t("userManagement.addUser.student.placeholders.username")}
+                value={values.username}
+                onChange={(event) => setField("username", event.target.value)}
+              />
               {!isEditMode ? (
                 <AddUserInputField
                   label={t("userManagement.addUser.shared.fields.password")}

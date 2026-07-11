@@ -536,10 +536,12 @@
           "fields": {
             "educationalStage": "المستوى التعليمي",
             "schoolYear": "الصف",
-            "schoolName": "المدرسة"
+            "schoolName": "المدرسة",
+            "username": "اسم المستخدم"
           },
           "placeholders": {
-            "schoolName": "اختر مدرسة من القائمة"
+            "schoolName": "اختر مدرسة من القائمة",
+            "username": "مثال: sara.ahmed"
           },
           "parentSection": {
             "title": "ربط ولي أمر",

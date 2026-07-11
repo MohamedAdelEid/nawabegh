@@ -536,10 +536,12 @@
           "fields": {
             "educationalStage": "Education level",
             "schoolYear": "Grade",
-            "schoolName": "School"
+            "schoolName": "School",
+            "username": "Username"
           },
           "placeholders": {
-            "schoolName": "Choose a school from the list"
+            "schoolName": "Choose a school from the list",
+            "username": "Example: sara.ahmed"
           },
           "parentSection": {
             "title": "Link parent",

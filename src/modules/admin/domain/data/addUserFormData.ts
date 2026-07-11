@@ -174,6 +174,7 @@ export const defaultStudentAccountValues: StudentAccountFormValues = {
   schoolId: "",
   schoolName: "",
   email: "",
+  username: "",
   password: "",
   avatarFile: null,
   avatarPreviewUrl: null,
