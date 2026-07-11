@@ -95,6 +95,7 @@ export function mapStudentDetailToFormValues(
     schoolId,
     schoolName: detail.schoolName?.trim() || schoolRow?.name || "",
     email: detail.email,
+    username: detail.username,
     password: "",
     avatarFile: null,
     avatarPreviewUrl: detail.profileImageUrl,

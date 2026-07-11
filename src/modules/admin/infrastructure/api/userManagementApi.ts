@@ -1224,13 +1224,59 @@ function mapTeacherPermissionFlags(permissionIds: AddUserPermissionId[]) {
   };
 }
 
+export type CreatedUserResult = {
+  userId: string;
+  fullName: string;
+  email: string;
+  role: string;
+};
+
+function nullableString(value: string | null | undefined): string | null {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+function nullableGuid(value: string | null | undefined): string | null {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : null;
+}
+
+function resolveStudentUsername(
+  username: string,
+  email: string,
+  phoneNumber: string,
+): string {
+  const trimmed = username.trim();
+  if (trimmed) return trimmed.slice(0, 100);
+
+  const emailLocal = email.trim().split("@")[0]?.replace(/[^a-zA-Z0-9._-]/g, "");
+  if (emailLocal) return emailLocal.slice(0, 100);
+
+  return phoneNumber.replace(/\D/g, "").slice(0, 100);
+}
+
+function mapCreatedUserResult(data: unknown): CreatedUserResult | null {
+  const record = asRecord(data);
+  if (!record) return null;
+
+  const userId = readString(record, ["userId", "id"]);
+  if (!userId) return null;
+
+  return {
+    userId,
+    fullName: readString(record, ["fullName"]),
+    email: readString(record, ["email"]),
+    role: readString(record, ["role"]),
+  };
+}
+
 async function createUser<TPayload>(
   url: string,
   payload: TPayload,
   fallbackMessage: string,
-): Promise<UserManagementApiResult<string>> {
+): Promise<UserManagementApiResult<CreatedUserResult>> {
   try {
-    const response = await httpClient.post<string>({
+    const response = await httpClient.post<unknown>({
       url,
       data: payload,
     });
@@ -1241,7 +1287,7 @@ async function createUser<TPayload>(
       message: response.message,
       errorMessage: getFirstValidationErrorMessage(validationErrors) ?? response.error?.message,
       validationErrors,
-      data: response.data,
+      data: mapCreatedUserResult(response.data),
     };
   } catch (error) {
     return buildErrorResult(error, fallbackMessage);
@@ -1258,27 +1304,33 @@ function resolvePhonePayload(e164Phone: string, fallbackCountryCode = 20) {
 
 export async function createStudentUser(values: StudentAccountFormValues) {
   const phone = resolvePhonePayload(values.phoneNumber);
+  const parentUserId =
+    values.linkParentEnabled && values.selectedParentId
+      ? values.selectedParentId
+      : null;
 
   return createUser(
     "/api/v1/UserManagement/student/create",
     {
-      fullName: values.fullName,
-      email: values.email,
+      fullName: values.fullName.trim(),
+      email: values.email.trim(),
       password: values.password,
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       educationLevelId: Number(values.educationLevelId),
       gradeId: Number(values.gradeId),
-      schoolId: values.schoolId,
-      address: values.schoolName || "",
+      schoolId: nullableGuid(values.schoolId),
+      profileImageUrl: nullableString(values.avatarFilePath),
+      address: nullableString(values.schoolName),
       whatsAppNumber: phone.phoneNumber,
       whatsAppCountryCode: phone.phoneCountryCode,
-      alternativePhone: phone.phoneNumber,
-      parentPhone: "",
-      username: values.email || values.phoneNumber,
-      parentUserId: values.selectedParentId ?? "",
-      profileImageUrl: values.avatarFilePath ?? "",
+      alternativePhone: nullableString(phone.phoneNumber),
+      parentPhone: null,
+      username: resolveStudentUsername(values.username, values.email, values.phoneNumber),
+      parentUserId,
+      autoConfirmEmail: true,
+      academicTerm: 1,
     },
     "Failed to create student",
   );
@@ -1290,17 +1342,17 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
   return createUser(
     "/api/v1/UserManagement/teacher/create",
     {
-      fullName: values.fullName,
-      email: values.email,
+      fullName: values.fullName.trim(),
+      email: values.email.trim(),
       password: values.password,
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
-      jobTitle: values.jobTitle,
-      schoolName: values.schoolName,
-      schoolId: values.schoolId,
-      profileImageUrl: values.avatarFilePath ?? "",
-      address: values.address,
+      jobTitle: values.jobTitle.trim(),
+      schoolName: values.schoolName.trim(),
+      schoolId: nullableGuid(values.schoolId),
+      profileImageUrl: nullableString(values.avatarFilePath),
+      address: nullableString(values.address),
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
       ...mapTeacherPermissionFlags(values.permissionIds),
     },
@@ -1310,19 +1362,20 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
 
 export async function createParentUser(values: ParentAccountFormValues) {
   const phone = resolvePhonePayload(values.phoneNumber);
+  const childStudentUserIds = values.selectedStudentIds.filter(Boolean);
 
   return createUser(
     "/api/v1/UserManagement/parent/create",
     {
-      fullName: values.fullName,
-      email: values.email,
+      fullName: values.fullName.trim(),
+      email: values.email.trim(),
       password: values.password,
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
-      profileImageUrl: values.avatarFilePath ?? "",
-      address: values.address,
-      childStudentUserIds: values.selectedStudentIds,
+      profileImageUrl: nullableString(values.avatarFilePath),
+      address: nullableString(values.address),
+      childStudentUserIds,
     },
     "Failed to create parent",
   );
@@ -1373,20 +1426,21 @@ export async function updateStudentUser(
     `/api/v1/UserManagement/student/${userId}/update`,
     {
       userId,
-      fullName: values.fullName,
-      profileImageUrl: values.avatarFilePath ?? "",
+      fullName: values.fullName.trim(),
+      profileImageUrl: nullableString(values.avatarFilePath),
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
       educationLevelId: Number(values.educationLevelId),
       gradeId: Number(values.gradeId),
-      schoolId: values.schoolId,
-      email: values.email,
-      address: context.address ?? values.schoolName ?? "",
+      schoolId: nullableGuid(values.schoolId),
+      email: values.email.trim(),
+      address: nullableString(context.address ?? values.schoolName),
       whatsAppNumber: context.whatsAppNumber ?? phone.phoneNumber,
       whatsAppCountryCode: context.whatsAppCountryCode ?? phone.phoneCountryCode,
-      alternativePhone: context.alternativePhone ?? phone.phoneNumber,
-      parentPhone: context.parentPhone ?? "",
+      alternativePhone: nullableString(context.alternativePhone ?? phone.phoneNumber),
+      parentPhone: nullableString(context.parentPhone),
+      username: resolveStudentUsername(values.username, values.email, values.phoneNumber),
     },
     "Failed to update student",
   );
@@ -1414,23 +1468,23 @@ export async function updateTeacherUser(
     `/api/v1/UserManagement/teacher/${userId}/update`,
     {
       userId,
-      fullName: values.fullName,
-      profileImageUrl: values.avatarFilePath ?? "",
+      fullName: values.fullName.trim(),
+      profileImageUrl: nullableString(values.avatarFilePath),
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
-      jobTitle: values.jobTitle,
-      schoolName: values.schoolName,
-      schoolId: values.schoolId,
-      email: values.email || context.email || "",
-      address: values.address,
+      jobTitle: values.jobTitle.trim(),
+      schoolName: values.schoolName.trim(),
+      schoolId: nullableGuid(values.schoolId),
+      email: values.email.trim() || nullableString(context.email) || "",
+      address: nullableString(values.address),
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
       ...mapTeacherPermissionFlags(values.permissionIds),
-      about: context.about ?? "",
-      yearsOfExperience: context.yearsOfExperience ?? 0,
-      city: context.city ?? "",
-      rating: context.rating ?? 0,
-      certificatesJson: context.certificatesJson ?? "",
+      about: nullableString(context.about),
+      yearsOfExperience: context.yearsOfExperience ?? null,
+      city: nullableString(context.city),
+      rating: context.rating ?? null,
+      certificatesJson: nullableString(context.certificatesJson),
     },
     "Failed to update teacher",
   );
@@ -1452,14 +1506,14 @@ export async function updateParentUser(
     `/api/v1/UserManagement/parent/${userId}/update`,
     {
       userId,
-      fullName: values.fullName,
-      profileImageUrl: values.avatarFilePath ?? "",
+      fullName: values.fullName.trim(),
+      profileImageUrl: nullableString(values.avatarFilePath),
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
-      email: values.email,
-      address: values.address,
-      childStudentUserIds: values.selectedStudentIds,
+      email: values.email.trim(),
+      address: nullableString(values.address),
+      childStudentUserIds: values.selectedStudentIds.filter(Boolean),
     },
     "Failed to update parent",
   );
