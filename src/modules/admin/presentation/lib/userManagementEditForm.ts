@@ -1,5 +1,7 @@
+import { addUserSubjectOptions } from "@/modules/admin/domain/data/addUserFormData";
 import type {
   AddUserPermissionId,
+  AddUserSubjectId,
   ParentAccountFormValues,
   StudentAccountFormValues,
   TeacherAccountFormValues,
@@ -51,6 +53,17 @@ function resolveDropdownIdByName<T extends string | number>(
 
   const match = rows.find((row) => row.name.trim() === name.trim());
   return match ? String(match.id) : "";
+}
+
+function mapApiSubjectsToFormIds(subjects: string[]): AddUserSubjectId[] {
+  const knownIds = addUserSubjectOptions.map((option) => option.id);
+
+  return subjects
+    .map((subject) => {
+      const normalized = subject.trim().toLowerCase();
+      return knownIds.find((id) => id.toLowerCase() === normalized) ?? null;
+    })
+    .filter((id): id is AddUserSubjectId => id !== null);
 }
 
 function mapTeacherPermissionsToFormIds(
@@ -132,7 +145,7 @@ export function mapTeacherDetailToFormValues(
     avatarFile: null,
     avatarPreviewUrl: detail.profileImageUrl,
     avatarFilePath: detail.profileImagePath,
-    subjectIds: [],
+    subjectIds: mapApiSubjectsToFormIds(detail.courses),
     gradeLevelIds: detail.assignedGrades
       .map((grade) => String(grade.gradeId))
       .filter((gradeId) => gradeId !== "0"),

@@ -3,6 +3,7 @@ import type {
   AddUserGradeLevelId,
   AddUserPermissionId,
   AddUserStageId,
+  AddUserSubjectId,
   ParentAccountFormValues,
   StudentAccountFormValues,
   TeacherAccountFormValues,
@@ -887,6 +888,35 @@ function mapStudentDetail(data: unknown): StudentUserDetail {
   };
 }
 
+function mapTeacherAssignedGradesFromDetail(
+  record: UnknownRecord | null,
+): TeacherUserDetail["assignedGrades"] {
+  const assignedGrades = readArray(record, ["assignedGrades"]);
+  if (assignedGrades.length > 0) {
+    return assignedGrades.map((item) => {
+      if (typeof item === "string") {
+        return {
+          gradeId: 0,
+          gradeName: item,
+        };
+      }
+
+      const gradeRecord = asRecord(item);
+      return {
+        gradeId: readNumber(gradeRecord, ["gradeId"]) ?? 0,
+        gradeName: readString(gradeRecord, ["gradeName"]),
+      };
+    });
+  }
+
+  return readArray(record, ["assignedGradeIds"])
+    .map((item) => {
+      const gradeId = typeof item === "number" ? item : Number(item);
+      return Number.isFinite(gradeId) ? { gradeId, gradeName: "" } : null;
+    })
+    .filter((grade): grade is TeacherUserDetail["assignedGrades"][number] => grade !== null);
+}
+
 function mapTeacherDetail(data: unknown): TeacherUserDetail {
   const record = unwrapDetailRecord(data);
   const permissions = asRecord(record?.permissions);
@@ -913,20 +943,7 @@ function mapTeacherDetail(data: unknown): TeacherUserDetail {
     rating: readNumber(record, ["rating"]),
     certificatesJson: readString(record, ["certificatesJson"]),
     courses: readArray(record, ["courses", "subjects"]).map((item) => String(item)),
-    assignedGrades: readArray(record, ["assignedGrades"]).map((item) => {
-      if (typeof item === "string") {
-        return {
-          gradeId: 0,
-          gradeName: item,
-        };
-      }
-
-      const gradeRecord = asRecord(item);
-      return {
-        gradeId: readNumber(gradeRecord, ["gradeId"]) ?? 0,
-        gradeName: readString(gradeRecord, ["gradeName"]),
-      };
-    }),
+    assignedGrades: mapTeacherAssignedGradesFromDetail(record),
     permissions: {
       canManageLearningPaths: readBoolean(permissions, ["canManageLearningPaths"], false),
       canCreateLearningPaths: readBoolean(permissions, ["canCreateLearningPaths"], false),
@@ -1211,6 +1228,10 @@ function mapTeacherAssignedGrades(gradeIds: string[]): number[] {
     .filter((id) => Number.isFinite(id));
 }
 
+function mapTeacherSubjects(subjectIds: AddUserSubjectId[]): string[] {
+  return subjectIds.filter(Boolean);
+}
+
 function mapTeacherPermissionFlags(permissionIds: AddUserPermissionId[]) {
   const canManageLessons = permissionIds.includes("createLessons");
 
@@ -1354,6 +1375,7 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
       profileImageUrl: nullableString(values.avatarFilePath),
       address: nullableString(values.address),
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
+      subjects: mapTeacherSubjects(values.subjectIds),
       ...mapTeacherPermissionFlags(values.permissionIds),
     },
     "Failed to create teacher",
@@ -1479,6 +1501,7 @@ export async function updateTeacherUser(
       email: values.email.trim() || nullableString(context.email) || "",
       address: nullableString(values.address),
       assignedGradeIds: mapTeacherAssignedGrades(values.gradeLevelIds),
+      subjects: mapTeacherSubjects(values.subjectIds),
       ...mapTeacherPermissionFlags(values.permissionIds),
       about: nullableString(context.about),
       yearsOfExperience: context.yearsOfExperience ?? null,

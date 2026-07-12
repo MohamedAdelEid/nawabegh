@@ -191,11 +191,16 @@ export const ROUTES = {
     STUDENT: {
       HOME: "/student/dashboard",
       COURSES: "/student/courses",
+      TEACHERS: "/student/teachers",
+      TEACHER_PROFILE: (teacherId: string) =>
+        `/student/teachers/${encodeURIComponent(teacherId)}`,
       COURSE_DETAIL: (courseId: string) => `/student/courses/${courseId}`,
       COURSE_CHECKOUT: (courseId: string) => `/student/courses/${courseId}/checkout`,
       CHECKOUT_RESULT: "/student/checkout/result",
       JOURNEY: "/student/journey",
+      SUBSCRIPTIONS: "/student/subscriptions",
       DAILY_TASKS: "/student/daily-tasks",
+      SCHEDULE: "/student/schedule",
       ONBOARDING_QUIZ: "/student/onboarding-quiz",
       FRIEND_CHALLENGES: {
         HUB: "/student/friend-challenges",

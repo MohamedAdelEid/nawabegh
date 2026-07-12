@@ -15,6 +15,7 @@ import {
   deriveStudentLevelSubtitle,
 } from "@/modules/student/domain/home/student-home.utils";
 import { cn } from "@/shared/application/lib/cn";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { useAuth } from "@/shared/application/hooks/useAuth";
 import {
@@ -130,6 +131,7 @@ export const StudentDashboardHeader: React.FC<StudentDashboardHeaderProps> = ({
             icon={CalendarDays}
             label={tHome("calendar")}
             className="hidden md:inline-flex"
+            onClick={() => router.push(ROUTES.USER.STUDENT.SCHEDULE)}
           />
           <HeaderActionButton icon={Mail} label={tHome("messages")} className="hidden md:inline-flex" />
           <div className="relative">

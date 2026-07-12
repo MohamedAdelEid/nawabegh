@@ -14,6 +14,8 @@ export type SubscriptionsDashboardStatsDto = {
   betterThanPeersPercentile: number | null;
 };
 
+export type EnrollmentStatus = "active" | "expired" | "inactive";
+
 export type EnrolledCourseCardDto = {
   enrollmentId: string;
   courseId: string;
@@ -23,6 +25,9 @@ export type EnrolledCourseCardDto = {
   subjectNameEn: string;
   instructorName: string;
   instructorImageUrl: string | null;
+  status: EnrollmentStatus;
+  startsAt: string | null;
+  endsAt: string | null;
   progressPercentage: number;
   isCompleted: boolean;
   canViewCertificate: boolean;

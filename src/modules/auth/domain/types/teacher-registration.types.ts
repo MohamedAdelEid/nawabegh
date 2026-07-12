@@ -4,6 +4,7 @@ export type TeacherRegistrationRequest = {
   countryId: number;
   email: string;
   password: string;
+  passwordConfirm: string;
   phoneNumber: string;
   phoneCountryCode: number;
   address: string;

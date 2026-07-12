@@ -29,3 +29,13 @@ export type Teacher = {
 export type TeachersQueryParams = PaginatedQueryParams & {
   subjectId?: number;
 };
+
+export type TeachersPage = {
+  rows: Teacher[];
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  totalCount: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+};

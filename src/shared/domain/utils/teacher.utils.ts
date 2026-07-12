@@ -1,5 +1,40 @@
 import type { Teacher } from "@/shared/domain/types/teacher.types";
 
+export type TeacherBadgeVariant = "expert" | "pioneer" | null;
+
+export function getTeacherBadgeVariant(teacher: Teacher): TeacherBadgeVariant {
+  const label = teacher.expertBadgeLabel.trim();
+  if (teacher.isExpert && label === "EXPERT") return "expert";
+  if (label === "رائد") return "pioneer";
+  return null;
+}
+
+export function formatTeacherStudentCount(count: number, locale: string): string {
+  if (count >= 1000) {
+    const value = count / 1000;
+    const formatted =
+      value >= 10
+        ? String(Math.round(value))
+        : value.toFixed(1).replace(/\.0$/, "");
+    return locale.startsWith("ar") ? `+${formatted}ك` : `+${formatted}k`;
+  }
+
+  const formatter = new Intl.NumberFormat(locale.startsWith("ar") ? "ar" : "en");
+  return `+${formatter.format(count)}`;
+}
+
+export function formatTeacherRating(rating: number, locale: string): string {
+  return new Intl.NumberFormat(locale.startsWith("ar") ? "ar" : "en", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(rating);
+}
+
+export function buildTeacherSubtitle(teacher: Teacher): string {
+  const parts = [teacher.jobTitle, teacher.primarySubjectNameAr].filter(Boolean);
+  return parts.join(" • ");
+}
+
 type TeacherApiRow = Partial<Teacher> & {
   teacherId?: string;
   profileImageUrl?: string | null;
