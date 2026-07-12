@@ -68,13 +68,21 @@ import {DashboardDataTable,
 import { Button } from "@/shared/presentation/components/ui/button";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE_OPTIONS = [12, 24, 48, 96] as const;
+const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0];
 
 function formatAbbrevInt(value: number) {
   return new Intl.NumberFormat(undefined, {
     notation: value >= 10_000 ? "compact" : "standard",
     maximumFractionDigits: 1,
   }).format(value);
+}
+
+function resolveCourseTermLabelKey(term: number | undefined) {
+  if (term === CourseTerm.SecondTerm) return "second";
+  if (term === CourseTerm.ThirdTerm) return "third";
+  if (term === CourseTerm.FirstTerm) return "first";
+  return null;
 }
 
 function courseDtoToDashboardRow(
@@ -96,6 +104,7 @@ function courseDtoToDashboardRow(
     coverTone: "blue",
     coverLabel: "CRS",
     coverImageUrl: row.coverImageUrl,
+    term: row.term,
     revenue: row.discountedPrice || row.originalPrice ? formatAbbrevInt(row.discountedPrice || row.originalPrice) : "—",
     lessonCount: 0,
     studentCount: 0,
@@ -129,6 +138,7 @@ export function CourseManagementDashboard() {
   });
   const [loadState, setLoadState] = useState<"loading" | "success" | "error">("loading");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [filters, setFilters] = useState<CourseFilterState>({
     stageId: "all",
     subjectId: "all",
@@ -179,6 +189,7 @@ export function CourseManagementDashboard() {
     filters.accessType,
     filters.isPublished,
     debouncedKeyword,
+    pageSize,
   ]);
 
   useEffect(() => {
@@ -296,7 +307,7 @@ export function CourseManagementDashboard() {
       ...(typeof isPublishedParam === "boolean" ? { isPublished: isPublishedParam } : {}),
       ...(debouncedKeyword ? { keyword: debouncedKeyword } : {}),
       pageNumber: currentPage,
-      pageSize: PAGE_SIZE,
+      pageSize,
     });
 
     if (!listResult.data) {
@@ -326,6 +337,7 @@ export function CourseManagementDashboard() {
     filters.isPublished,
     debouncedKeyword,
     currentPage,
+    pageSize,
     t,
   ]);
 
@@ -489,11 +501,9 @@ export function CourseManagementDashboard() {
     [t],
   );
 
-  const pages = useMemo(
-    () =>
-      Array.from({ length: Math.max(coursePaging.totalPages, 1) }, (_, index) => index + 1),
-    [coursePaging.totalPages],
-  );
+  const summaryVisible = dashboardRows.length;
+  const summaryTotal = coursePaging.totalItems;
+  const activePage = Math.min(currentPage, Math.max(coursePaging.totalPages, 1));
 
   const approveCourseRow = async (courseId: string) => {
     const result = await approveCourse(courseId);
@@ -572,7 +582,9 @@ export function CourseManagementDashboard() {
     {
       id: "title",
       header: t("courseManagement.table.columns.title"),
-      renderCell: (row) => (
+      renderCell: (row) => {
+        const termKey = resolveCourseTermLabelKey(row.term);
+        return (
         <div className="flex min-w-0 items-center gap-3 sm:min-w-[12rem]">
           <CourseCoverPreview
             tone={row.coverTone}
@@ -582,10 +594,15 @@ export function CourseManagementDashboard() {
           />
           <div className="space-y-1 text-right">
             <p className="font-bold text-slate-800">{row.title}</p>
-            <p className="text-xs text-slate-400">{row.id}</p>
+            {termKey ? (
+              <p className="text-xs text-slate-400">
+                {t(`courseManagement.filters.terms.${termKey}`)}
+              </p>
+            ) : null}
           </div>
         </div>
-      ),
+        );
+      },
     },
     {
       id: "teacher",
@@ -766,20 +783,33 @@ export function CourseManagementDashboard() {
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <p className="text-right text-sm text-slate-400">
               {t("courseManagement.table.pagination.summary", {
-                visible:
-                  coursePaging.totalItems > 0
-                    ? coursePaging.visibleItems || dashboardRows.length
-                    : 0,
-                total: coursePaging.totalItems || dashboardRows.length,
+                visible: summaryVisible,
+                total: summaryTotal,
               })}
             </p>
-            <DashboardPagination
-              pages={pages}
-              currentPage={currentPage}
-              previousLabel={t("courseManagement.table.pagination.previous")}
-              nextLabel={t("courseManagement.table.pagination.next")}
-              onPageChange={setCurrentPage}
-            />
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2 text-sm text-slate-500">
+                <select
+                  value={pageSize}
+                  onChange={(event) => setPageSize(Number(event.target.value))}
+                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm"
+                  aria-label={t("courseManagement.table.pagination.pageSize", { size: pageSize })}
+                >
+                  {PAGE_SIZE_OPTIONS.map((size) => (
+                    <option key={size} value={size}>
+                      {t("courseManagement.table.pagination.pageSize", { size })}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <DashboardPagination
+                totalPages={coursePaging.totalPages}
+                currentPage={activePage}
+                previousLabel={t("courseManagement.table.pagination.previous")}
+                nextLabel={t("courseManagement.table.pagination.next")}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
         }
       >

@@ -46,7 +46,9 @@ export function buildProfileView(
     const data = remoteDetail.data;
     return {
       fullName: data.fullName,
-      subtitle: [t("userManagement.roles.teacher"), data.jobTitle].filter(Boolean).join(" - "),
+      subtitle: [t("userManagement.roles.teacher"), data.jobTitle, data.educationLevelName]
+        .filter(Boolean)
+        .join(" - "),
       schoolLabel: data.schoolName || emptyLabel,
       statusLabel: t(`userManagement.status.${data.isActive ? "active" : "inactive"}`),
       subscriptionLabel: t("userManagement.subscriptions.active"),

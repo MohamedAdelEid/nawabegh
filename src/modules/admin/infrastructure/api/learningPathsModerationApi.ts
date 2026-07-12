@@ -7,6 +7,10 @@ import {
   type LearningPathReviewListSnapshot,
 } from "@/modules/admin/domain/utils/learningPathModeration";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import {
+  parseXPaginationHeader,
+  resolveListPageMeta,
+} from "@/shared/infrastructure/http/xPagination";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -159,23 +163,18 @@ function extractListRows(data: unknown): unknown[] {
   return [];
 }
 
-function extractPageMeta(data: unknown, params: LearningPathModerationListParams, rowCount: number) {
-  const record = asRecord(data);
-  const totalItems =
-    readNumber(record, ["totalCount", "total", "count", "totalItems"]) ?? rowCount;
-  const currentPage =
-    readNumber(record, ["pageNumber", "page", "currentPage"]) ?? params.pageNumber;
-  const pageSize = readNumber(record, ["pageSize", "limit", "size"]) ?? params.pageSize;
-  const totalPages =
-    readNumber(record, ["totalPages", "pagesCount"]) ??
-    Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
-
-  return {
-    currentPage,
-    pageSize,
-    totalItems,
-    totalPages,
-  };
+function extractPageMeta(
+  data: unknown,
+  params: LearningPathModerationListParams,
+  rowCount: number,
+  headerMeta: ReturnType<typeof parseXPaginationHeader>,
+) {
+  return resolveListPageMeta(
+    { pageNumber: params.pageNumber, pageSize: params.pageSize },
+    rowCount,
+    headerMeta,
+    data,
+  );
 }
 
 function mapListItem(record: UnknownRecord): LearningPathModerationListItemDto | null {
@@ -347,7 +346,8 @@ export async function getLearningPathsModerationPage(
     const rows = extractListRows(response.data)
       .map((item) => mapListItem(asRecord(item) ?? {}))
       .filter((row): row is LearningPathModerationListItemDto => row !== null);
-    const meta = extractPageMeta(response.data, params, rows.length);
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const meta = extractPageMeta(response.data, params, rows.length, headerMeta);
 
     return {
       status: response.status,

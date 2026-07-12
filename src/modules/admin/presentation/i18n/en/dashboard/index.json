@@ -940,7 +940,7 @@
           "summary": "Showing {visible} of {total} courses",
           "previous": "Previous page",
           "next": "Next page",
-          "pageSize": "Rows per page"
+          "pageSize": "{size} per page"
         },
         "confirmArchive": "Archive this course? It will be retired and hidden from the catalog.",
         "confirmUnpublish": "Unpublish this course? It will stay approved but hidden from the student catalog."
@@ -1071,6 +1071,8 @@
         "fields": {
           "title": "Course title",
           "description": "Course description",
+          "country": "Country",
+          "educationLevel": "Education level",
           "grade": "Grade",
           "term": "Term",
           "teacher": "Teacher",
@@ -1082,6 +1084,8 @@
           "title": "Example: Advanced mathematics for grade 11",
           "description": "Write a complete description of objectives and learning outcomes...",
           "subject": "Select subject",
+          "country": "Select country",
+          "educationLevel": "Select education level",
           "grade": "Select grade",
           "term": "Select term",
           "teacher": "Select teacher"
@@ -1123,7 +1127,10 @@
           "title": "Summary preview",
           "titleFallback": "Course name",
           "subject": "Subject",
+          "country": "Country",
+          "educationLevel": "Education level",
           "grade": "Grade",
+          "teacher": "Teacher",
           "lessons": "lessons",
           "paths": "paths",
           "viewPath": "View learning path",
@@ -1137,7 +1144,7 @@
         },
         "tip": "Expert tip: adding a strong cover image increases registration and engagement.",
         "messages": {
-          "validation": "Please fill course title, description, subject, grade, term, and teacher.",
+          "validation": "Please fill course title, description, subject, country, education level, grade, term, and teacher.",
           "error": "Could not create the course. Please try again.",
           "updateSuccess": "Course updated successfully.",
           "updateError": "Could not update the course. Please try again."

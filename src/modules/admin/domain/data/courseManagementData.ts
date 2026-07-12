@@ -49,6 +49,7 @@ export interface CourseManagementRow {
   /** When set with a usable URL, `CourseCoverPreview` shows the remote image instead of gradients. */
   coverImageUrl?: string | null;
   courseId?: string;
+  term?: number;
   revenue: string;
   lessonCount: number;
   studentCount: number;
@@ -96,6 +97,8 @@ export interface CourseCreateDraft {
   title: string;
   description: string;
   subject: string;
+  country: string;
+  educationLevel: string;
   grade: string;
   term: string;
   teacher: string;
@@ -313,6 +316,8 @@ export const courseManagementData: CourseManagementData = {
     title: "الرياضيات المتقدمة للصف الثاني الثانوي",
     description: "",
     subject: "mathematics",
+    country: "",
+    educationLevel: "",
     grade: "secondary2",
     term: "term2",
     teacher: "teacher-ahmed",

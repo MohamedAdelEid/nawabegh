@@ -125,9 +125,15 @@ export function mapStudentDetailToFormValues(
 export function mapTeacherDetailToFormValues(
   detail: TeacherUserDetail,
   countries: UserManagementDropdownOption<number>[],
+  educationLevels: UserManagementDropdownOption<number>[],
   schools: UserManagementDropdownOption<string>[],
 ): TeacherAccountFormValues {
   const countryId = resolveDropdownIdByName(countries, detail.countryId, detail.countryName);
+  const educationLevelId = resolveDropdownIdByName(
+    educationLevels,
+    detail.educationLevelId,
+    detail.educationLevelName,
+  );
   const schoolId = resolveDropdownIdByName(schools, detail.schoolId, detail.schoolName);
   const schoolRow = schools.find((row) => String(row.id) === schoolId);
 
@@ -136,7 +142,7 @@ export function mapTeacherDetailToFormValues(
     email: detail.email,
     phoneNumber: buildE164FromApiParts(detail.phoneNumber, detail.phoneCountryCode),
     countryId,
-    educationLevelId: detail.educationLevelId ? String(detail.educationLevelId) : "",
+    educationLevelId,
     jobTitle: detail.jobTitle,
     schoolId,
     schoolName: detail.schoolName?.trim() || schoolRow?.name || "",
@@ -273,15 +279,16 @@ export async function loadTeacherEditForm(userId: string): Promise<TeacherEditFo
 
   let educationLevels: UserManagementDropdownOption<number>[] = [];
   let grades: UserManagementDropdownOption<number>[] = [];
-  let educationLevelId = teacher.educationLevelId ? String(teacher.educationLevelId) : "";
 
   if (countryId) {
     const educationLevelsResult = await getEducationLevelsDropdown(Number(countryId));
     educationLevels = educationLevelsResult.data ?? [];
 
-    if (!educationLevelId && educationLevels.length === 1) {
-      educationLevelId = String(educationLevels[0]?.id ?? "");
-    }
+    const educationLevelId = resolveDropdownIdByName(
+      educationLevels,
+      teacher.educationLevelId,
+      teacher.educationLevelName,
+    );
 
     if (educationLevelId) {
       const gradesResult = await getUserManagementGradesDropdown(Number(educationLevelId));
@@ -289,10 +296,7 @@ export async function loadTeacherEditForm(userId: string): Promise<TeacherEditFo
     }
   }
 
-  const formValues = mapTeacherDetailToFormValues(teacher, countries, schools);
-  if (!formValues.educationLevelId && educationLevelId) {
-    formValues.educationLevelId = educationLevelId;
-  }
+  const formValues = mapTeacherDetailToFormValues(teacher, countries, educationLevels, schools);
 
   return {
     formValues,

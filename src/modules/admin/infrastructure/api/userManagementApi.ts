@@ -204,6 +204,7 @@ export type TeacherUserDetail = {
   countryId: number | null;
   countryName: string;
   educationLevelId: number | null;
+  educationLevelName: string;
   jobTitle: string;
   schoolId: string | null;
   schoolName: string;
@@ -933,6 +934,7 @@ function mapTeacherDetail(data: unknown): TeacherUserDetail {
     countryId: readNumber(record, ["countryId"]),
     countryName: readString(record, ["countryName"]),
     educationLevelId: readNumber(record, ["educationLevelId"]),
+    educationLevelName: readString(record, ["educationLevelName"]),
     jobTitle: readString(record, ["jobTitle"]),
     schoolId: readString(record, ["schoolId"], "") || null,
     schoolName: readString(record, ["schoolName"]),
@@ -1369,6 +1371,7 @@ export async function createTeacherUser(values: TeacherAccountFormValues) {
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
+      educationLevelId: Number(values.educationLevelId),
       jobTitle: values.jobTitle.trim(),
       schoolName: values.schoolName.trim(),
       schoolId: nullableGuid(values.schoolId),
@@ -1495,6 +1498,7 @@ export async function updateTeacherUser(
       phoneNumber: phone.phoneNumber,
       phoneCountryCode: phone.phoneCountryCode,
       countryId: Number(values.countryId),
+      educationLevelId: Number(values.educationLevelId),
       jobTitle: values.jobTitle.trim(),
       schoolName: values.schoolName.trim(),
       schoolId: nullableGuid(values.schoolId),
