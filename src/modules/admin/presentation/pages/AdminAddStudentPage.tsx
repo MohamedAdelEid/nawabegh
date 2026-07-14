@@ -5,7 +5,6 @@ import { Loader2, Search, UserRound } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  addUserSubscriptionOptions,
   availableParentOptions,
   defaultStudentAccountValues,
 } from "@/modules/admin/domain/data/addUserFormData";
@@ -27,7 +26,7 @@ import {
 } from "@/modules/admin/presentation/lib/userManagementEditForm";
 import { useAvatarUploadOnSelect } from "@/modules/admin/presentation/lib/useAvatarUploadOnSelect";
 import {
-  validateRequiredCountryAndSchool,
+  validateRequiredCountry,
   withResolvedStudentSchoolName,
 } from "@/modules/admin/presentation/lib/validateUserFormLocation";
 import { notify } from "@/shared/application/lib/toast";
@@ -36,20 +35,15 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import {
   AddUserAnimatedSection,
-  AddUserDateField,
   AddUserFormSectionCard,
   AddUserInputField,
   AddUserPhoneField,
   AddUserPageShell,
   AddUserSelectField,
-  AddUserSubscriptionCards,
   AddUserToggle,
   AddUserUploadField,
 } from "@/modules/admin/presentation/components/add-user";
 import Parents from "../assets/icons/Parents";
-import Credit from "../assets/icons/Credit";
-import CalenderIcon from "../assets/icons/CalenderIcon";
-import ExpireCalender from "../assets/icons/ExpireCalender";
 
 type DropdownRow = { id: string; label: string };
 
@@ -208,6 +202,7 @@ export function AdminAddStudentPage() {
   }, [editUserId, isEditMode, t]);
 
   const handleCountryChange = (value: string) => {
+    const countryName = countryRows.find((row) => String(row.id) === value)?.name ?? "";
     setValues((current) => ({
       ...current,
       countryId: value,
@@ -220,7 +215,7 @@ export function AdminAddStudentPage() {
     setGradeRows([]);
     setSchoolRows([]);
     void loadEducationLevels(value);
-    void loadSchools(value);
+    void loadSchools(value, countryName);
   };
 
   const handleEducationLevelChange = (value: string) => {
@@ -303,7 +298,7 @@ export function AdminAddStudentPage() {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    const locationError = validateRequiredCountryAndSchool(values.countryId, values.schoolId);
+    const locationError = validateRequiredCountry(values.countryId);
     if (locationError) {
       const message = t(`userManagement.addUser.shared.messages.${locationError}`);
       notify.error(message);
@@ -488,7 +483,7 @@ export function AdminAddStudentPage() {
                   label={t("userManagement.addUser.shared.fields.school")}
                   value={values.schoolId}
                   options={schoolOptions}
-                  disabled={!values.countryId || schoolsLoading || schoolEmpty}
+                  disabled={!values.countryId || schoolsLoading}
                   onChange={handleSchoolChange}
                 />
                 {schoolEmpty && values.countryId ? (
@@ -605,42 +600,6 @@ export function AdminAddStudentPage() {
 
           </div>
         </div>
-        </AddUserFormSectionCard>
-      </AddUserAnimatedSection>
-      ) : null}
-
-      {!isEditMode ? (
-      <AddUserAnimatedSection delay={0.15}>
-        <AddUserFormSectionCard
-          title={t("userManagement.addUser.student.subscriptionSection.title")}
-          icon={Credit}
-        >
-          <div className="space-y-5 border-t-2 border-[#F6F7F7] pt-5">
-            <AddUserSubscriptionCards
-              selectedId={values.subscriptionPlanId}
-              onChange={(id) => setField("subscriptionPlanId", id)}
-              options={addUserSubscriptionOptions.map((option) => ({
-                id: option.id,
-                label: t(option.labelKey),
-                description: option.descriptionKey ? t(option.descriptionKey) : undefined,
-              }))}
-            />
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <AddUserDateField
-                label={t("userManagement.addUser.student.subscriptionSection.startDate")}
-                icon={CalenderIcon}
-                value={values.subscriptionStartDate}
-                onChange={(value) => setField("subscriptionStartDate", value)}
-              />
-              <AddUserDateField
-                label={t("userManagement.addUser.student.subscriptionSection.endDate")}
-                value={values.subscriptionEndDate}
-                icon={ExpireCalender}
-                onChange={(value) => setField("subscriptionEndDate", value)}
-              />
-            </div>
-          </div>
         </AddUserFormSectionCard>
       </AddUserAnimatedSection>
       ) : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpenCheck, EyeIcon, Loader2, LockKeyhole, UserRound } from "lucide-react";
+import { BookOpenCheck, Loader2, LockKeyhole, UserRound } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -26,7 +26,7 @@ import {
 } from "@/modules/admin/presentation/lib/userManagementEditForm";
 import { useAvatarUploadOnSelect } from "@/modules/admin/presentation/lib/useAvatarUploadOnSelect";
 import {
-  validateRequiredCountryAndSchool,
+  validateRequiredCountry,
   withResolvedTeacherSchoolName,
 } from "@/modules/admin/presentation/lib/validateUserFormLocation";
 import {
@@ -188,6 +188,7 @@ export function AdminAddTeacherPage() {
   }, [editUserId, isEditMode, t]);
 
   const handleCountryChange = (value: string) => {
+    const countryName = countryRows.find((row) => String(row.id) === value)?.name ?? "";
     setValues((current) => ({
       ...current,
       countryId: value,
@@ -200,7 +201,7 @@ export function AdminAddTeacherPage() {
     setGradeRows([]);
     setSchoolRows([]);
     void loadEducationLevels(value);
-    void loadSchools(value);
+    void loadSchools(value, countryName);
   };
 
   const handleEducationLevelChange = (value: string) => {
@@ -258,7 +259,7 @@ export function AdminAddTeacherPage() {
   const handleSubmit = async () => {
     if (isSubmitting) return;
 
-    const locationError = validateRequiredCountryAndSchool(values.countryId, values.schoolId);
+    const locationError = validateRequiredCountry(values.countryId);
     if (locationError) {
       const message = t(`userManagement.addUser.shared.messages.${locationError}`);
       notify.error(message);
@@ -442,7 +443,7 @@ export function AdminAddTeacherPage() {
                   label={t("userManagement.addUser.shared.fields.school")}
                   value={values.schoolId}
                   options={schoolOptions}
-                  disabled={!values.countryId || schoolsLoading || schoolEmpty}
+                  disabled={!values.countryId || schoolsLoading}
                   onChange={handleSchoolChange}
                 />
                 {schoolEmpty && values.countryId ? (
@@ -462,7 +463,6 @@ export function AdminAddTeacherPage() {
                   label={t("userManagement.addUser.shared.fields.password")}
                   placeholder={t("userManagement.addUser.shared.placeholders.password")}
                   type="password"
-                  icon={EyeIcon}
                   value={values.password}
                   onChange={(event) => setField("password", event.target.value)}
                 />

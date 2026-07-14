@@ -642,14 +642,23 @@ export async function deleteUserManagementUser(
     const response = await httpClient.delete<unknown>({
       url: `/api/v1/UserManagement/${userId}/delete`,
     });
-    const record = asRecord(response.data);
+
+    if (response.error?.message) {
+      return {
+        status: response.status,
+        message: response.message,
+        errorMessage: response.error.message,
+        validationErrors: response.error.validationErrors ?? null,
+        data: null,
+      };
+    }
 
     return {
       status: response.status,
       message: response.message,
-      errorMessage: response.error?.message,
-      validationErrors: response.error?.validationErrors ?? null,
-      data: record ? ({} as Record<string, never>) : null,
+      errorMessage: undefined,
+      validationErrors: null,
+      data: {} as Record<string, never>,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to delete user");

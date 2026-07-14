@@ -178,7 +178,7 @@
         },
         "stages": {
           "elementary": "Elementary",
-          "middle": "Middle",
+          "middle": "Preparatory",
           "secondary": "Secondary"
         },
         "location": {
@@ -388,7 +388,9 @@
         },
         "actions": {
           "more": "More actions",
-          "delete": "Delete user"
+          "delete": "Delete user",
+          "deleteSuccess": "User deleted successfully.",
+          "deleteError": "Failed to delete user."
         },
         "pagination": {
           "summary": "Showing {visible} of {total} users",
@@ -486,7 +488,7 @@
             "selectCountry": "Select country",
             "selectEducationLevel": "Select education level",
             "selectGrade": "Select grade",
-            "selectSchool": "Select school"
+            "selectSchool": "Select school (optional)"
           },
           "messages": {
             "noSchools": "No schools were found. Try again later or contact support.",

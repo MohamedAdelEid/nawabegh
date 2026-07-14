@@ -178,7 +178,7 @@
         },
         "stages": {
           "elementary": "الابتدائية",
-          "middle": "المتوسطة",
+          "middle": "الاعدادية",
           "secondary": "الثانوية"
         },
         "location": {
@@ -388,7 +388,9 @@
         },
         "actions": {
           "more": "إجراءات إضافية",
-          "delete": "حذف المستخدم"
+          "delete": "حذف المستخدم",
+          "deleteSuccess": "تم حذف المستخدم بنجاح.",
+          "deleteError": "تعذر حذف المستخدم."
         },
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مستخدم",
@@ -486,7 +488,7 @@
             "selectCountry": "اختر الدولة",
             "selectEducationLevel": "اختر المستوى التعليمي",
             "selectGrade": "اختر الصف",
-            "selectSchool": "اختر المدرسة"
+            "selectSchool": "اختر المدرسة (اختياري)"
           },
           "messages": {
             "noSchools": "لا توجد مدارس متاحة. حاول لاحقاً أو تواصل مع الدعم.",
