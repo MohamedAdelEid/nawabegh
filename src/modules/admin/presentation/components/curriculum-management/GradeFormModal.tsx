@@ -8,6 +8,7 @@ import {
   getEducationLevelsDropdown,
 } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import {
   ModalDescription,
   ModalShell,
@@ -133,47 +134,42 @@ export function GradeFormModal({
       </ModalDescription>
 
       <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-        <label className="block space-y-2 text-right">
-          <span className="text-sm font-semibold text-slate-600">{t("country")}</span>
-          <select
+        <LabeledSelect
+            label={t("country")}
             value={values.countryId}
-            onChange={(event) =>
+            onChange={(countryId) =>
               setValues((prev) => ({
                 ...prev,
-                countryId: event.target.value,
+                countryId,
                 educationLevelId: "",
               }))
             }
             disabled={loading}
-            className={inputClassName}
-          >
-            <option value="">{t("countryPlaceholder")}</option>
-            {countryOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            options={[
+              { value: "", label: t("countryPlaceholder") },
+              ...countryOptions.map((option) => ({ value: option.id, label: option.label })),
+            ]}
+            labelClassName="text-sm font-semibold text-slate-600"
+            selectClassName={inputClassName}
+        />
 
-        <label className="block space-y-2 text-right">
-          <span className="text-sm font-semibold text-slate-600">{t("educationLevel")}</span>
-          <select
+        <LabeledSelect
+            label={t("educationLevel")}
             value={values.educationLevelId}
-            onChange={(event) =>
-              setValues((prev) => ({ ...prev, educationLevelId: event.target.value }))
+            onChange={(educationLevelId) =>
+              setValues((prev) => ({ ...prev, educationLevelId }))
             }
             disabled={loading || !values.countryId}
-            className={inputClassName}
-          >
-            <option value="">{t("educationLevelPlaceholder")}</option>
-            {educationLevelOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            options={[
+              { value: "", label: t("educationLevelPlaceholder") },
+              ...educationLevelOptions.map((option) => ({
+                value: option.id,
+                label: option.label,
+              })),
+            ]}
+            labelClassName="text-sm font-semibold text-slate-600"
+            selectClassName={inputClassName}
+        />
 
         <label className="block space-y-2 text-right">
           <span className="text-sm font-semibold text-slate-600">{t("nameAr")}</span>

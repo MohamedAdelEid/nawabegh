@@ -24,7 +24,7 @@ export function SchoolAnnouncementCreatePage() {
         <h1 className="text-2xl font-bold text-slate-800">{t("listPage.createNew")}</h1>
       </header>
       <SchoolAnnouncementComposer
-        onCreated={() => router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.LIST)}
+        onSaved={() => router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.LIST)}
       />
     </div>
   );

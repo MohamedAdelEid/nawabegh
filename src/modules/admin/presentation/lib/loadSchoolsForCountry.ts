@@ -12,6 +12,7 @@ export function resolveCountryNameFromRows(
 
 export async function fetchSchoolDropdownRowsForCountry(
   countryName: string,
+  keyword = "",
 ): Promise<{
   rows: UserManagementDropdownOption<string>[];
   errorMessage?: string;
@@ -21,7 +22,10 @@ export async function fetchSchoolDropdownRowsForCountry(
     return { rows: [] };
   }
 
-  const result = await getSchoolFilterOptions({ country: trimmed });
+  const result = await getSchoolFilterOptions({
+    keyword: keyword.trim() || undefined,
+    pageSize: 50,
+  });
   if (result.errorMessage) {
     return { rows: [], errorMessage: result.errorMessage };
   }
@@ -38,11 +42,12 @@ export async function fetchSchoolDropdownRowsForCountryId(
   countryRows: UserManagementDropdownOption<number>[],
   countryId: string,
   countryNameFallback = "",
+  keyword = "",
 ): Promise<{
   rows: UserManagementDropdownOption<string>[];
   errorMessage?: string;
 }> {
   const countryName =
     resolveCountryNameFromRows(countryRows, countryId) || countryNameFallback.trim();
-  return fetchSchoolDropdownRowsForCountry(countryName);
+  return fetchSchoolDropdownRowsForCountry(countryName, keyword);
 }

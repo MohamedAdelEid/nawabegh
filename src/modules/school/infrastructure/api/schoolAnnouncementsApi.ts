@@ -6,6 +6,7 @@ import type {
   CreateSchoolAnnouncementResult,
   SchoolAnnouncementAttachment,
   SchoolAnnouncementAttachmentInput,
+  SchoolAnnouncementApiAudience,
   SchoolAnnouncementAudience,
   SchoolAnnouncementChannel,
   SchoolAnnouncementDetail,
@@ -14,6 +15,7 @@ import type {
   SchoolAnnouncementListItem,
   SchoolAnnouncementListPage,
   SchoolAnnouncementOperationLogEntry,
+  SchoolAnnouncementReport,
   SchoolAnnouncementStatusTone,
   SchoolAnnouncementType,
   SchoolDashboardActivityItem,
@@ -109,13 +111,13 @@ function normalizeType(raw: string): SchoolAnnouncementType {
 }
 
 function normalizeStatusTone(raw: string, isUrgent: boolean): SchoolAnnouncementStatusTone {
-  if (isUrgent) return "urgent";
   const l = raw.toLowerCase();
   if (l.includes("draft")) return "draft";
   if (l.includes("schedul")) return "scheduled";
   if (l.includes("fail")) return "failed";
   if (l.includes("process") || l.includes("sending") || l.includes("pending")) return "sending";
   if (l.includes("success")) return "success";
+  if (isUrgent) return "urgent";
   return "published";
 }
 
@@ -133,7 +135,7 @@ function normalizeAudience(raw: string): SchoolAnnouncementAudience {
   return "all";
 }
 
-function audienceToApiCode(audience: SchoolAnnouncementAudience): string {
+function audienceToApiCode(audience: SchoolAnnouncementAudience): SchoolAnnouncementApiAudience {
   switch (audience) {
     case "students":
       return "students";
@@ -394,6 +396,40 @@ function mapDetail(data: unknown): SchoolAnnouncementDetail | null {
   };
 }
 
+function mapReport(data: unknown): SchoolAnnouncementReport | null {
+  const record = asRecord(data);
+  if (!record) return null;
+  const referenceCode = readString(record, ["referenceCode"]);
+  if (!referenceCode) return null;
+  const statistics = asRecord(record.statistics);
+  const content = asRecord(record.content);
+  const targetGroups = asRecord(record.targetGroups);
+
+  return {
+    referenceCode,
+    title: readString(record, ["title"], "—"),
+    sentAt: readString(record, ["sentAt"]) || null,
+    generatedAt: readString(record, ["generatedAt"]) || null,
+    statistics: {
+      deliveryRate: readNumber(statistics, ["deliveryRate"]),
+      totalRecipients: readNumber(statistics, ["totalRecipients"]),
+      successCount: readNumber(statistics, ["successCount"]),
+      failureCount: readNumber(statistics, ["failureCount"]),
+      inProgressCount: readNumber(statistics, ["inProgressCount"]),
+      reachPercentage: readNumber(statistics, ["reachPercentage"]),
+    },
+    body: readString(content, ["body"]),
+    bodyHtml: readString(content, ["bodyHtml", "body"]),
+    displayDurationHours: readNumber(content, ["displayDurationHours"], 24),
+    audience: normalizeAudience(readString(targetGroups, ["audience"], "all")),
+    audienceLabel: readString(targetGroups, ["audienceLabel"]),
+    studentsCount: readNumber(targetGroups, ["studentsCount"]),
+    parentsCount: readNumber(targetGroups, ["parentsCount"]),
+    teachersCount: readNumber(targetGroups, ["teachersCount"]),
+    channels: mapChannels(targetGroups?.channels),
+  };
+}
+
 function isFailure(response: { status?: string | number; isSuccess?: boolean }): boolean {
   if (response.isSuccess === true) return false;
   return response.status !== "Success";
@@ -493,6 +529,37 @@ export async function getSchoolAnnouncementById(id: string): Promise<SchoolAnnou
   const detail = mapDetail(response.data);
   if (!detail) throw new Error("Invalid announcement response");
   return detail;
+}
+
+export async function getSchoolAnnouncementReport(id: string): Promise<SchoolAnnouncementReport> {
+  if (USE_MOCK) {
+    const detail = getSchoolAnnouncementSeedDetail(id);
+    return {
+      referenceCode: detail.referenceCode,
+      title: detail.title,
+      sentAt: detail.sentAt,
+      generatedAt: new Date().toISOString(),
+      statistics: detail.statistics,
+      body: detail.body,
+      bodyHtml: detail.bodyHtml,
+      displayDurationHours: detail.displayDurationHours,
+      audience: detail.audience,
+      audienceLabel: detail.audienceLabel,
+      studentsCount: detail.studentsCount,
+      parentsCount: detail.parentsCount,
+      teachersCount: detail.teachersCount,
+      channels: detail.channels,
+    };
+  }
+  const response = await httpClient.get<unknown>({
+    url: `${BASE}/${encodeURIComponent(id)}/report`,
+  });
+  if (isFailure(response)) {
+    throw new Error(response.error?.message ?? "Failed to load announcement report");
+  }
+  const report = mapReport(response.data);
+  if (!report) throw new Error("Invalid announcement report response");
+  return report;
 }
 
 export async function createSchoolAnnouncement(

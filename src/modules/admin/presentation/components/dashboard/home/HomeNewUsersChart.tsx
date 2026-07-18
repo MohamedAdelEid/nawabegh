@@ -11,6 +11,7 @@ import {
   type ChartConfig,
 } from "@/shared/presentation/components/ui/chart";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import type { AdminHomeNewUsersPoint } from "@/modules/admin/domain/types/adminHomeDashboard.types";
 
 const MONTH_OPTIONS = [3, 6, 12] as const;
@@ -39,18 +40,16 @@ export function HomeNewUsersChart({ points, months, onMonthsChange }: HomeNewUse
       <CardContent className="space-y-6 p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-lg font-bold text-slate-800 sm:text-xl">{t("title")}</h2>
-          <select
+          <SearchableSelect
             value={months}
-            onChange={(event) => onMonthsChange(Number(event.target.value) as NewUsersChartMonths)}
-            className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs text-slate-600 outline-none focus:border-[#2C4260]"
-            aria-label={t("title")}
-          >
-            {MONTH_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {t(`months.${option}`)}
-              </option>
-            ))}
-          </select>
+            onChange={onMonthsChange}
+            options={MONTH_OPTIONS.map((option) => ({
+              value: option,
+              label: t(`months.${option}`),
+            }))}
+            className="w-32 gap-0"
+            triggerClassName="h-9 rounded-xl border-slate-200 bg-white px-3 text-xs text-slate-600 shadow-none focus-visible:ring-[#2C4260]/20"
+          />
         </div>
 
         <ChartContainer config={chartConfig} className={cn("aspect-[16/8]", chartResponsiveHeightClass)}>

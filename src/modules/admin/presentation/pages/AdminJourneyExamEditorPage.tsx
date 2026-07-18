@@ -42,6 +42,7 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard"
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 interface Props {
   journeyId: string;
@@ -464,21 +465,19 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
                   />
                 </div>
 
-                <div className="space-y-1.5 text-right">
-                  <label className="text-sm font-semibold text-slate-600">
-                    {t("settings.attempts")}
-                  </label>
-                  <select
+                <div className="text-right">
+                  <SearchableSelect
+                    label={t("settings.attempts")}
                     value={exam.maxAttempts}
-                    onChange={(e) => update("maxAttempts", e.target.value as ExamStation["maxAttempts"])}
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-                  >
-                    {ATTEMPTS_OPTIONS.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {t(`settings.attemptsOptions.${opt}`)}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => update("maxAttempts", value as ExamStation["maxAttempts"])}
+                    options={ATTEMPTS_OPTIONS.map((option) => ({
+                      value: option,
+                      label: t(`settings.attemptsOptions.${option}`),
+                    }))}
+                    className="gap-1.5"
+                    labelClassName="text-sm font-semibold text-slate-600"
+                    triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                  />
                 </div>
               </div>
 

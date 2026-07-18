@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { EducationLevelListItem } from "@/modules/admin/infrastructure/api/educationLevelsApi";
 import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import {
   ModalDescription,
   ModalShell,
@@ -104,22 +105,18 @@ export function EducationLevelFormModal({
       </ModalDescription>
 
       <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-        <label className="block space-y-2 text-right">
-          <span className="text-sm font-semibold text-slate-600">{t("country")}</span>
-          <select
+        <LabeledSelect
+            label={t("country")}
             value={values.countryId}
-            onChange={(event) => setValues((prev) => ({ ...prev, countryId: event.target.value }))}
+            onChange={(countryId) => setValues((prev) => ({ ...prev, countryId }))}
             disabled={loading}
-            className={inputClassName}
-          >
-            <option value="">{t("countryPlaceholder")}</option>
-            {countryOptions.map((option) => (
-              <option key={option.id} value={option.id}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
+            options={[
+              { value: "", label: t("countryPlaceholder") },
+              ...countryOptions.map((option) => ({ value: option.id, label: option.label })),
+            ]}
+            labelClassName="text-sm font-semibold text-slate-600"
+            selectClassName={inputClassName}
+        />
 
         <label className="block space-y-2 text-right">
           <span className="text-sm font-semibold text-slate-600">{t("nameAr")}</span>

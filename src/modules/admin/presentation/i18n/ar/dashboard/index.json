@@ -78,6 +78,7 @@
         "actions": {
           "submit": "حفظ التغييرات"
         },
+        "passwordHint": "اترك كلمة المرور فارغة للإبقاء على كلمة المرور الحالية.",
         "messages": {
           "loadError": "تعذر تحميل بيانات المدرسة.",
           "updateSuccess": "تم تحديث المدرسة بنجاح.",
@@ -211,7 +212,14 @@
         },
         "performanceLevel": {
           "label": "مستوى الأداء",
-          "all": "كل المستويات"
+          "all": "كل المستويات",
+          "excellent": "ممتاز",
+          "veryGood": "جيد جداً",
+          "good": "جيد"
+        },
+        "status": {
+          "label": "الحالة",
+          "all": "كل الحالات"
         }
       },
       "stats": {
@@ -246,11 +254,16 @@
         },
         "actions": {
           "export": "تصدير",
+          "import": "استيراد من إكسل",
           "filter": "تصفية",
           "more": "إجراءات إضافية",
           "edit": "تعديل المدرسة",
+          "sendCredentials": "إرسال بيانات الدخول",
           "delete": "حذف المدرسة"
         },
+        "statusUpdateSuccess": "تم تحديث حالة المدرسة بنجاح.",
+        "credentialsSuccess": "تم إرسال بيانات الدخول بنجاح.",
+        "exportError": "تعذر تصدير المدارس.",
         "pagination": {
           "summary": "عرض {visible} من أصل {total} مدرسة",
           "previous": "الصفحة السابقة",
@@ -282,6 +295,74 @@
             "retry": "إعادة المحاولة",
             "goToLogin": "الانتقال لتسجيل الدخول"
           }
+        }
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "pending": "قيد التأكيد"
+      },
+      "import": {
+        "title": "استيراد المدارس",
+        "description": "ارفع ملف إكسل أو CSV، راجع البيانات، ثم ابدأ الاستيراد.",
+        "breadcrumbs": {
+          "home": "الرئيسية",
+          "schools": "إدارة المدارس"
+        },
+        "actions": {
+          "template": "تحميل القالب",
+          "back": "العودة إلى المدارس",
+          "upload": "رفع ومعاينة الملف",
+          "uploading": "جارٍ رفع الملف...",
+          "start": "بدء الاستيراد",
+          "importing": "جارٍ الاستيراد..."
+        },
+        "upload": {
+          "title": "رفع ملف المدارس",
+          "placeholder": "اختر ملفاً أو اسحبه هنا",
+          "hint": "XLSX أو CSV، بحد أقصى 50 ميجابايت و1000 صف"
+        },
+        "preview": {
+          "title": "معاينة بيانات المدارس"
+        },
+        "filters": {
+          "keyword": "بحث بالاسم أو البريد",
+          "country": "الدولة",
+          "performance": "مستوى الأداء",
+          "allStatuses": "كل الحالات"
+        },
+        "columns": {
+          "select": "اختيار",
+          "row": "الصف",
+          "name": "اسم المدرسة",
+          "email": "البريد الإلكتروني",
+          "country": "الدولة",
+          "city": "المدينة",
+          "status": "الحالة",
+          "errors": "الأخطاء"
+        },
+        "statuses": {
+          "Valid": "صالح",
+          "Invalid": "غير صالح",
+          "Imported": "تم الاستيراد",
+          "Failed": "فشل"
+        },
+        "pagination": {
+          "previous": "الصفحة السابقة",
+          "next": "الصفحة التالية"
+        },
+        "progress": {
+          "processing": "جارٍ معالجة المدارس...",
+          "completed": "اكتمل الاستيراد: {succeeded} ناجح، {failed} فاشل."
+        },
+        "messages": {
+          "fileTooLarge": "حجم الملف يتجاوز 50 ميجابايت.",
+          "uploadError": "تعذر رفع ملف المدارس.",
+          "uploadSuccess": "تم رفع الملف وتجهيز المعاينة.",
+          "loadError": "تعذر تحميل معاينة الاستيراد.",
+          "templateError": "تعذر تحميل قالب الاستيراد.",
+          "streamError": "انقطع اتصال متابعة الاستيراد.",
+          "completed": "اكتمل استيراد المدارس."
         }
       },
       "rows": {

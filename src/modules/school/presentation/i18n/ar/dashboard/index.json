@@ -35,13 +35,172 @@
       "nav": {
         "home": "الرئيسية",
         "announcements": "الإعلانات والتنبيهات",
+        "honorBoard": "لوحة الشرف",
+        "honoredStudents": "الطلاب المكرّمون",
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج"
       }
     },
     "settingsPage": {
-      "title": "إعدادات الحساب",
-      "description": "إدارة بيانات حساب المدرسة."
+      "title": "بيانات المدرسة والإعدادات",
+      "description": "إدارة بيانات المدرسة، تفضيلات الإشعارات، وأمان الحساب.",
+      "profile": {
+        "completion": "اكتمال الملف الشخصي: {value}%"
+      },
+      "sections": {
+        "schoolData": "بيانات المدرسة",
+        "account": "إعدادات الحساب",
+        "changePassword": "تغيير كلمة المرور",
+        "notifications": "الإشعارات",
+        "security": "الأمان والخصوصية"
+      },
+      "fields": {
+        "schoolName": "اسم المدرسة",
+        "city": "المدينة",
+        "description": "وصف المدرسة",
+        "address": "العنوان",
+        "country": "الدولة",
+        "phoneNumber": "رقم الهاتف",
+        "educationLevels": "المراحل التعليمية",
+        "organizationEmail": "البريد الإلكتروني للمؤسسة",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور"
+      },
+      "placeholders": {
+        "schoolName": "أدخل اسم المدرسة",
+        "city": "أدخل المدينة",
+        "description": "اكتب وصفاً مختصراً عن المدرسة...",
+        "address": "أدخل العنوان بالتفصيل",
+        "country": "اختر الدولة",
+        "phoneNumber": "أدخل رقم الهاتف",
+        "currentPassword": "أدخل كلمة المرور الحالية",
+        "newPassword": "أدخل كلمة المرور الجديدة",
+        "confirmPassword": "أعد إدخال كلمة المرور الجديدة"
+      },
+      "media": {
+        "coverAlt": "غلاف {name}",
+        "logoAlt": "شعار {name}"
+      },
+      "notifications": {
+        "enableAlerts": "تفعيل التنبيهات",
+        "enableEmail": "تنبيهات البريد",
+        "enableSms": "الرسائل النصية",
+        "enableSubscriptionRenewal": "تجديد الاشتراك",
+        "on": "مفعّل",
+        "off": "معطّل"
+      },
+      "security": {
+        "description": "إدارة الأجهزة النشطة وجلسات تسجيل الدخول المرتبطة بحساب المدرسة.",
+        "columns": {
+          "device": "الجهاز / المتصفح",
+          "location": "الموقع",
+          "lastSeen": "آخر ظهور",
+          "status": "الحالة"
+        },
+        "ip": "IP: {ip}",
+        "ipUnknown": "IP غير معروف",
+        "active": "نشط",
+        "empty": "لا توجد جلسات نشطة حالياً.",
+        "defaultHint": "لحماية حسابك، استخدم كلمة مرور قوية تتضمن {min} أحرف على الأقل مع مزيج من الأحرف والأرقام."
+      },
+      "actions": {
+        "save": "حفظ البيانات",
+        "saving": "جارٍ الحفظ...",
+        "retry": "إعادة المحاولة",
+        "changeCover": "تغيير الغلاف",
+        "changeLogo": "تغيير الشعار",
+        "removeDevice": "إزالة الجهاز",
+        "removing": "جارٍ الإزالة...",
+        "revokeAll": "تسجيل الخروج من كل الأجهزة",
+        "revoking": "جارٍ تسجيل الخروج..."
+      },
+      "validation": {
+        "passwordRequired": "يرجى إدخال كلمة المرور الحالية والجديدة.",
+        "passwordMinLength": "يجب أن تتكون كلمة المرور الجديدة من {min} أحرف على الأقل.",
+        "passwordMismatch": "كلمة المرور الجديدة وتأكيدها غير متطابقتين."
+      },
+      "messages": {
+        "saveSuccess": "تم حفظ بيانات المدرسة بنجاح",
+        "saveError": "تعذّر حفظ بيانات المدرسة",
+        "notificationsSaved": "تم تحديث تفضيلات الإشعارات",
+        "notificationsError": "تعذّر تحديث تفضيلات الإشعارات",
+        "sessionRemoved": "تمت إزالة الجهاز بنجاح",
+        "sessionRemoveError": "تعذّرت إزالة الجهاز",
+        "sessionsRevoked": "تم تسجيل الخروج من الأجهزة الأخرى",
+        "sessionsRevokeError": "تعذّر تسجيل الخروج من الأجهزة",
+        "invalidImage": "يرجى اختيار صورة بصيغة PNG أو JPG أو WEBP وبحجم أقل من 5 ميجابايت"
+      }
+    },
+    "homePage": {
+      "welcome": "مرحباً بك",
+      "schoolFallback": "المدرسة",
+      "unreadNotifications": "لديك إشعارات غير مقروءة",
+      "kpis": {
+        "students": "عدد الطلاب المسجلين",
+        "studentGrowth": "+{value}% هذا الشهر",
+        "rank": "ترتيب المدرسة",
+        "totalSchools": "من أصل {total} مدرسة",
+        "activeCourses": "الدورات النشطة",
+        "courseProgress": "{value}% من الطلاب نشطون",
+        "todayRegistrations": "تسجيلات اليوم"
+      },
+      "competition": {
+        "title": "مركز التنافس",
+        "rank": "المركز",
+        "medals": "{count} أوسمة",
+        "points": "{current} من {top} نقطة"
+      },
+      "announcements": {
+        "title": "آخر الإعلانات والتنبيهات",
+        "subtitle": "أحدث رسائل المدرسة",
+        "viewAll": "مشاهدة الكل",
+        "empty": "لا توجد إعلانات حديثة."
+      },
+      "articles": {
+        "title": "آخر المقالات المنشورة",
+        "managementTitle": "إدارة مقالات طلاب المدرسة",
+        "managementSubtitle": "راجع المقالات المنشورة من طلاب المدرسة وقم بإخفائها أو حذفها حسب الصلاحيات.",
+        "viewAll": "عرض جميع المقالات",
+        "summary": "عرض {visible} من أصل {total} مقال",
+        "previous": "السابق",
+        "next": "التالي",
+        "empty": "لا توجد مقالات مطابقة.",
+        "columns": {
+          "title": "عنوان المقال",
+          "author": "المؤلف",
+          "interaction": "التفاعل",
+          "date": "تاريخ النشر",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "filters": {
+          "status": "حالة المقال",
+          "all": "كل الحالات"
+        },
+        "status": {
+          "Draft": "مسودة",
+          "PendingReview": "قيد المراجعة",
+          "NeedsEdits": "يحتاج تعديلات",
+          "Published": "تم النشر",
+          "Hidden": "مخفي"
+        },
+        "actions": {
+          "hide": "إخفاء المقال",
+          "delete": "حذف المقال"
+        },
+        "messages": {
+          "hidden": "تم إخفاء المقال",
+          "deleted": "تم حذف المقال",
+          "actionError": "تعذّر تنفيذ الإجراء"
+        },
+        "delete": {
+          "title": "حذف المقال",
+          "description": "هل أنت متأكد من حذف «{title}»؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirm": "نعم، احذف",
+          "cancel": "إلغاء"
+        }
+      }
     },
     "common": {
       "loading": "جارٍ التحميل...",
@@ -110,7 +269,8 @@
           "all": "الجميع (طلاب وأولياء أمور)",
           "students": "الطلاب",
           "parents": "أولياء الأمور",
-          "teachers": "المعلمون"
+          "teachers": "المعلمون",
+          "studentsTeachersParents": "الجميع (طلاب ومعلمون وأولياء أمور)"
         },
         "durationOptions": {
           "h24": "24 ساعة",
@@ -123,17 +283,25 @@
           "scheduled": "إرسال مجدول"
         },
         "scheduledAt": "موعد الإرسال",
+        "schedulePicker": {
+          "placeholder": "اختر التاريخ والوقت",
+          "time": "وقت الإرسال",
+          "confirm": "تأكيد"
+        },
         "submit": "إرسال الإعلان الآن",
+        "update": "حفظ التعديلات",
         "saveDraft": "حفظ كمسودة",
         "validation": {
           "titleRequired": "عنوان الرسالة مطلوب.",
           "bodyRequired": "محتوى الرسالة مطلوب.",
+          "scheduledRequired": "يرجى تحديد موعد الإرسال.",
           "scheduledInFuture": "موعد الجدولة يجب أن يكون في المستقبل."
         },
         "messages": {
           "draftSaved": "تم حفظ المسودة",
           "scheduled": "تم جدولة الإعلان",
           "sent": "تم إنشاء الإعلان وبدء الإرسال",
+          "updated": "تم تحديث الإعلان",
           "error": "تعذّر إرسال الإعلان",
           "uploadError": "تعذّر رفع الملف"
         }
@@ -232,6 +400,8 @@
       "notFound": "لم يتم العثور على هذا الإعلان.",
       "actions": {
         "resend": "إعادة إرسال",
+        "sendDraft": "إرسال المسودة",
+        "edit": "تعديل",
         "printReport": "طباعة التقرير",
         "archive": "أرشفة التنبيه",
         "delete": "حذف السجل"
@@ -261,12 +431,172 @@
         "download": "تنزيل"
       },
       "messages": {
+        "sendSuccess": "تم بدء إرسال المسودة",
+        "sendError": "تعذّر إرسال المسودة",
         "resendSuccess": "تمت إعادة الإرسال",
         "resendError": "تعذّرت إعادة الإرسال",
         "archiveSuccess": "تمت أرشفة الإعلان",
         "archiveError": "تعذّرت الأرشفة",
         "deleteSuccess": "تم حذف الإعلان",
         "deleteError": "تعذّر حذف الإعلان"
+      }
+    },
+    "editPage": {
+      "title": "تعديل الإعلان",
+      "notAllowed": "لا يمكن تعديل هذا الإعلان بعد بدء الإرسال."
+    },
+    "reportPage": {
+      "eyebrow": "تقرير الإعلان",
+      "reference": "رقم المرجع: #{code}",
+      "print": "طباعة",
+      "loadError": "تعذّر تحميل تقرير الإعلان.",
+      "content": "محتوى الرسالة",
+      "audience": "الجمهور المستهدف",
+      "duration": "مدة الظهور",
+      "durationHours": "{value} ساعة",
+      "generatedAt": "تم إنشاء التقرير في {date}",
+      "stats": {
+        "deliveryRate": "معدل التسليم",
+        "totalRecipients": "إجمالي المستلمين",
+        "delivered": "تم التسليم بنجاح"
+      }
+    },
+    "honorBoard": {
+      "nav": {
+        "label": "أقسام لوحة الشرف",
+        "leaderboard": "المتصدرون",
+        "honors": "المكرّمون يدوياً"
+      },
+      "common": {
+        "loading": "جارٍ التحميل...",
+        "loadError": "تعذّر تحميل البيانات.",
+        "actionError": "تعذّر تنفيذ الإجراء.",
+        "retry": "إعادة المحاولة",
+        "previous": "السابق",
+        "next": "التالي",
+        "back": "رجوع",
+        "cancel": "إلغاء",
+        "saving": "جارٍ الحفظ..."
+      },
+      "leaderboard": {
+        "title": "متصدرو المدرسة",
+        "subtitle": "تابع أداء الطلاب وتفوّقهم الأكاديمي خلال الفترة المحددة",
+        "kpis": {
+          "participants": "إجمالي المشاركين",
+          "totalScore": "إجمالي النقاط",
+          "participation": "نسبة المشاركة",
+          "topSchool": "أعلى مدرسة"
+        },
+        "period": {
+          "label": "الفترة",
+          "weekly": "أسبوعي",
+          "monthly": "شهري",
+          "term": "الفصل الدراسي",
+          "all": "كل الفترات"
+        },
+        "metric": {
+          "points": "النقاط",
+          "achievements": "الإنجازات",
+          "grades": "الدرجات"
+        },
+        "remaining": {
+          "title": "بقية المتصدرين",
+          "range": "المرتبة {from} - {to}"
+        },
+        "table": {
+          "rank": "الترتيب",
+          "student": "الطالب",
+          "grade": "الفصل",
+          "score": "النتيجة",
+          "change": "التقدم"
+        },
+        "meta": {
+          "competitors": "إجمالي المتنافسين",
+          "nextUpdate": "التحديث القادم"
+        },
+        "empty": "لا توجد نتائج لهذه الفترة بعد."
+      },
+      "honors": {
+        "title": "المكرّمون يدوياً",
+        "subtitle": "إدارة الطلاب المكرّمين وأسباب ومدة ظهور التكريم",
+        "create": "إضافة تكريم",
+        "search": "ابحث بالاسم أو الرقم المرجعي...",
+        "empty": "لا توجد تكريمات مطابقة.",
+        "durationDays": "{count} يوم",
+        "filters": {
+          "all": "الكل",
+          "active": "نشط",
+          "hidden": "مخفي"
+        },
+        "kpis": {
+          "total": "إجمالي المكرّمين",
+          "active": "التكريمات النشطة",
+          "thisMonth": "هذا الشهر",
+          "averageRating": "متوسط التقييم"
+        },
+        "table": {
+          "student": "الطالب",
+          "reason": "سبب التكريم",
+          "date": "تاريخ التكريم",
+          "duration": "المدة",
+          "status": "الحالة",
+          "actions": "الإجراءات"
+        },
+        "status": {
+          "active": "نشط",
+          "hidden": "مخفي",
+          "expired": "منتهي"
+        },
+        "actions": {
+          "show": "إظهار التكريم",
+          "hide": "إخفاء التكريم",
+          "edit": "تعديل",
+          "delete": "حذف"
+        },
+        "messages": {
+          "visibilityUpdated": "تم تحديث ظهور التكريم",
+          "deleted": "تم حذف التكريم"
+        },
+        "delete": {
+          "title": "حذف التكريم",
+          "description": "هل أنت متأكد من حذف تكريم {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+          "confirm": "نعم، احذف"
+        }
+      },
+      "form": {
+        "createTitle": "إضافة طالب مكرّم",
+        "editTitle": "تعديل التكريم",
+        "subtitle": "أدخل بيانات التكريم وحدد مدة ظهوره في لوحة الشرف",
+        "fields": {
+          "student": "الطالب",
+          "studentSearch": "اكتب حرفين على الأقل للبحث عن طالب...",
+          "reason": "سبب التكريم",
+          "reasonPlaceholder": "مثلاً: التميز في مسابقة الرياضيات",
+          "details": "تفاصيل التكريم",
+          "detailsPlaceholder": "أضف معلومات توضح الإنجاز...",
+          "duration": "مدة التكريم بالأيام",
+          "order": "ترتيب العرض",
+          "image": "صورة الإنجاز (اختياري)",
+          "publishNow": "نشر التكريم وإظهاره الآن"
+        },
+        "studentEmpty": "لم يتم العثور على طلاب.",
+        "clearStudent": "إلغاء اختيار الطالب",
+        "upload": "رفع صورة",
+        "imagePreview": "معاينة صورة الإنجاز",
+        "publish": "نشر التكريم",
+        "save": "حفظ التعديلات",
+        "validation": {
+          "student": "يرجى اختيار طالب.",
+          "reason": "سبب التكريم مطلوب.",
+          "duration": "يجب أن تكون المدة بين يوم و365 يوماً.",
+          "order": "ترتيب العرض يجب أن يكون رقماً صحيحاً موجباً.",
+          "image": "يرجى اختيار ملف صورة صالح."
+        },
+        "messages": {
+          "created": "تم إنشاء التكريم ونشره",
+          "updated": "تم تحديث التكريم",
+          "uploadError": "تعذّر رفع الصورة"
+        }
       }
     }
   }

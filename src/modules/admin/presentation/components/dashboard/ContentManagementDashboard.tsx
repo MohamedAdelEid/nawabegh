@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Eye, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -21,6 +21,7 @@ import {DashboardBadge,
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/presentation/components/ui/card";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 const PAGE_SIZE = 10;
 
@@ -343,23 +344,15 @@ interface FilterSelectProps {
 
 function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
   return (
-    <label className="space-y-2 text-right">
-      <span className="text-xs font-medium text-slate-500">{label}</span>
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          className="h-12 w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 text-right text-sm text-slate-700 outline-none focus:ring-2 focus:ring-[var(--dashboard-gold)]/25"
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
-    </label>
+    <SearchableSelect
+      label={label}
+      value={value}
+      onChange={onChange}
+      options={options}
+      className="gap-2 text-right"
+      labelClassName="text-xs font-medium text-slate-500"
+      triggerClassName="h-12 rounded-xl border-slate-200 bg-slate-50 px-4 text-right text-sm text-slate-700 shadow-none focus-visible:ring-[var(--dashboard-gold)]/25"
+    />
   );
 }
 

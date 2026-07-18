@@ -45,9 +45,9 @@ export const DashboardContent: React.FC<DashboardContentProps> = ({
           : { marginInlineStart: 0 }
       }
       transition={{ duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE }}
-      className={cn("flex-1", isMobile && isMobileMenuOpen && "overflow-hidden")}
+      className={cn("flex-1 print:!m-0", isMobile && isMobileMenuOpen && "overflow-hidden")}
     >
-      <div className="sticky top-0 z-20">
+      <div className="sticky top-0 z-20 print:hidden">
         <HeaderComponent
           translationNamespace={translationNamespace}
           onMobileMenuToggle={onMobileMenuToggle}

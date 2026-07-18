@@ -23,6 +23,7 @@ import { DifficultyLevel } from "@/shared/domain/enums/cms.enums";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import {
   ModalDescription,
   ModalShell,
@@ -738,17 +739,16 @@ export function AdminJourneyFlashcardAddPage({
                 {t("aiGenerateModal.reviewTime")}
               </p>
               <div className="flex items-center gap-2">
-                <select
+                <SearchableSelect
                   value={aiTime}
-                  onChange={(e) => setAiTime(Number(e.target.value))}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-right text-sm outline-none"
-                >
-                  {REVIEW_TIME_OPTIONS.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setAiTime}
+                  options={REVIEW_TIME_OPTIONS.map((time) => ({
+                    value: time,
+                    label: String(time),
+                  }))}
+                  className="w-full gap-0"
+                  triggerClassName="h-11 rounded-xl border-slate-200 bg-slate-50 px-3 text-right text-sm shadow-none"
+                />
                 <span className="shrink-0 text-sm text-slate-400">
                   {t("aiGenerateModal.seconds")}
                 </span>
@@ -760,17 +760,16 @@ export function AdminJourneyFlashcardAddPage({
                 {t("aiGenerateModal.count")}
               </p>
               <div className="flex items-center gap-2">
-                <select
+                <SearchableSelect
                   value={aiCount}
-                  onChange={(e) => setAiCount(Number(e.target.value))}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-right text-sm outline-none"
-                >
-                  {CARD_COUNT_OPTIONS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setAiCount}
+                  options={CARD_COUNT_OPTIONS.map((count) => ({
+                    value: count,
+                    label: String(count),
+                  }))}
+                  className="w-full gap-0"
+                  triggerClassName="h-11 rounded-xl border-slate-200 bg-slate-50 px-3 text-right text-sm shadow-none"
+                />
                 <span className="shrink-0 text-sm text-slate-400">
                   {t("aiGenerateModal.cards")}
                 </span>

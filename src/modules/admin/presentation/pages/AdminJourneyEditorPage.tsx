@@ -70,6 +70,7 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard"
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 interface Props {
   journeyId: string;
@@ -612,27 +613,25 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                 </div>
               </div>
 
-              <label className="block space-y-1.5 text-right">
-                <span className="text-sm font-semibold text-slate-600">
-                  {t("editor.sidebar.completionRule")}
-                </span>
-                <select
+              <div className="text-right">
+                <SearchableSelect
+                  label={t("editor.sidebar.completionRule")}
                   value={draft.completionRule}
-                  onChange={(e) =>
+                  onChange={(value) =>
                     updateDraft(
                       "completionRule",
-                      e.target.value as JourneyStationCompletionRuleId,
+                      value as JourneyStationCompletionRuleId,
                     )
                   }
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-                >
-                  {COMPLETION_RULE_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id}>
-                      {t(`editor.completionRules.${opt.id}`)}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  options={COMPLETION_RULE_OPTIONS.map((option) => ({
+                    value: option.id,
+                    label: t(`editor.completionRules.${option.id}`),
+                  }))}
+                  className="gap-1.5"
+                  labelClassName="text-sm font-semibold text-slate-600"
+                  triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                />
+              </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <label className="block space-y-1.5 text-right">
@@ -667,22 +666,20 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                 </label>
               </div>
 
-              <label className="block space-y-1.5 text-right">
-                <span className="text-sm font-semibold text-slate-600">
-                  {t("editor.sidebar.path")}
-                </span>
-                <select
+              <div className="text-right">
+                <SearchableSelect
+                  label={t("editor.sidebar.path")}
                   value={draft.pathId}
-                  onChange={(e) => updateDraft("pathId", e.target.value)}
-                  className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-                >
-                  {data.paths.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onChange={(pathId) => updateDraft("pathId", pathId)}
+                  options={data.paths.map((path) => ({
+                    value: path.id,
+                    label: path.title,
+                  }))}
+                  className="gap-1.5"
+                  labelClassName="text-sm font-semibold text-slate-600"
+                  triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                />
+              </div>
 
               <label className="flex cursor-pointer items-center gap-2">
                 <span className="text-sm font-semibold text-slate-600">

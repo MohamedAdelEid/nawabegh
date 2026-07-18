@@ -7,6 +7,8 @@ import {
   createSchoolAnnouncement,
   deleteSchoolAnnouncement,
   resendSchoolAnnouncement,
+  sendSchoolAnnouncementDraft,
+  updateSchoolAnnouncement,
 } from "@/modules/school/infrastructure/api/schoolAnnouncementsApi";
 import type { UpsertSchoolAnnouncementPayload } from "@/modules/school/domain/types/schoolAnnouncements.types";
 
@@ -26,6 +28,17 @@ export function useSchoolAnnouncementMutations() {
     onSuccess: invalidateAll,
   });
 
+  const update = useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: UpsertSchoolAnnouncementPayload }) =>
+      updateSchoolAnnouncement(id, payload),
+    onSuccess: invalidateAll,
+  });
+
+  const sendDraft = useMutation({
+    mutationFn: (id: string) => sendSchoolAnnouncementDraft(id),
+    onSuccess: invalidateAll,
+  });
+
   const resend = useMutation({
     mutationFn: (id: string) => resendSchoolAnnouncement(id),
     onSuccess: invalidateAll,
@@ -36,5 +49,5 @@ export function useSchoolAnnouncementMutations() {
     onSuccess: invalidateAll,
   });
 
-  return { create, remove, resend, archive };
+  return { create, update, sendDraft, remove, resend, archive };
 }

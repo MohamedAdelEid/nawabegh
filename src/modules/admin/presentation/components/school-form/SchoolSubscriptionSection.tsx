@@ -10,7 +10,7 @@ import { cn } from "@/shared/application/lib/cn";
 import { SchoolFormSectionCard } from "./SchoolFormSectionCard";
 import CheckIcon from "@/modules/admin/presentation/assets/icons/checked.svg";
 
-interface LocalizedOption<T extends string> extends SchoolSelectOption<T> {
+interface LocalizedOption<T extends string | number> extends SchoolSelectOption<T> {
   label: string;
   description?: string;
 }

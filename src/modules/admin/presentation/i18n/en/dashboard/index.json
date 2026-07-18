@@ -78,6 +78,7 @@
         "actions": {
           "submit": "Save changes"
         },
+        "passwordHint": "Leave the password blank to keep the current password.",
         "messages": {
           "loadError": "Could not load school details.",
           "updateSuccess": "School updated successfully.",
@@ -211,7 +212,14 @@
         },
         "performanceLevel": {
           "label": "Performance level",
-          "all": "All levels"
+          "all": "All levels",
+          "excellent": "Excellent",
+          "veryGood": "Very good",
+          "good": "Good"
+        },
+        "status": {
+          "label": "Status",
+          "all": "All statuses"
         }
       },
       "stats": {
@@ -246,11 +254,16 @@
         },
         "actions": {
           "export": "Export",
+          "import": "Import from Excel",
           "filter": "Filter",
           "more": "More actions",
           "edit": "Edit school",
+          "sendCredentials": "Send credentials",
           "delete": "Delete school"
         },
+        "statusUpdateSuccess": "School status updated successfully.",
+        "credentialsSuccess": "Login credentials sent successfully.",
+        "exportError": "Could not export schools.",
         "pagination": {
           "summary": "Showing {visible} of {total} schools",
           "previous": "Previous page",
@@ -282,6 +295,74 @@
             "retry": "Try again",
             "goToLogin": "Go to login"
           }
+        }
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "pending": "Pending confirmation"
+      },
+      "import": {
+        "title": "Import schools",
+        "description": "Upload an Excel or CSV file, review the data, then start importing.",
+        "breadcrumbs": {
+          "home": "Home",
+          "schools": "School management"
+        },
+        "actions": {
+          "template": "Download template",
+          "back": "Back to schools",
+          "upload": "Upload and preview",
+          "uploading": "Uploading...",
+          "start": "Start import",
+          "importing": "Importing..."
+        },
+        "upload": {
+          "title": "Upload schools file",
+          "placeholder": "Choose a file or drop it here",
+          "hint": "XLSX or CSV, up to 50 MB and 1,000 rows"
+        },
+        "preview": {
+          "title": "Schools import preview"
+        },
+        "filters": {
+          "keyword": "Search name or email",
+          "country": "Country",
+          "performance": "Performance level",
+          "allStatuses": "All statuses"
+        },
+        "columns": {
+          "select": "Select",
+          "row": "Row",
+          "name": "School name",
+          "email": "Email",
+          "country": "Country",
+          "city": "City",
+          "status": "Status",
+          "errors": "Errors"
+        },
+        "statuses": {
+          "Valid": "Valid",
+          "Invalid": "Invalid",
+          "Imported": "Imported",
+          "Failed": "Failed"
+        },
+        "pagination": {
+          "previous": "Previous page",
+          "next": "Next page"
+        },
+        "progress": {
+          "processing": "Processing schools...",
+          "completed": "Import complete: {succeeded} succeeded, {failed} failed."
+        },
+        "messages": {
+          "fileTooLarge": "The file is larger than 50 MB.",
+          "uploadError": "Could not upload the schools file.",
+          "uploadSuccess": "The file was uploaded and the preview is ready.",
+          "loadError": "Could not load the import preview.",
+          "templateError": "Could not download the import template.",
+          "streamError": "The import progress connection was interrupted.",
+          "completed": "School import completed."
         }
       },
       "rows": {

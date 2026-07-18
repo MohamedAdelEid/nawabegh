@@ -76,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           : { duration: SIDEBAR_DURATION, ease: SIDEBAR_EASE }
       }
       className={cn(
-        "fixed start-0 top-0 h-screen bg-sidebar overflow-hidden",
+        "fixed start-0 top-0 h-screen bg-sidebar overflow-hidden print:hidden",
         "flex flex-col border-s border-sidebar-border text-sidebar-foreground",
         !isCollapsed ? "px-4 sm:px-5" : "px-3 sm:px-4",
         isMobile

@@ -1,3 +1,9 @@
 {
-  "common": {}
+  "common": {
+    "select": {
+      "placeholder": "Select an option",
+      "searchPlaceholder": "Search options...",
+      "empty": "No matching options"
+    }
+  }
 }

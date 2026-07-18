@@ -7,4 +7,5 @@ export const schoolAnnouncementsQueryKeys = {
   list: (params: GetSchoolAnnouncementsParams) =>
     [...schoolAnnouncementsQueryKeys.all, "list", params] as const,
   detail: (id: string) => [...schoolAnnouncementsQueryKeys.all, "detail", id] as const,
+  report: (id: string) => [...schoolAnnouncementsQueryKeys.all, "report", id] as const,
 };

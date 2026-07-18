@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { schoolEducationStages } from "@/modules/admin/domain/data/schoolFormOptions";
 import type { SchoolManagementFilterState } from "@/modules/admin/domain/types/schoolManagementFilters.types";
 import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
 import {
@@ -49,10 +48,9 @@ export function SchoolManagementFilterBar({
   const performanceOptions = useMemo(
     () => [
       { id: "all", label: t("schoolManagement.filters.performanceLevel.all") },
-      ...schoolEducationStages.map((stage) => ({
-        id: stage.id,
-        label: t(stage.labelKey),
-      })),
+      { id: "Excellent", label: t("schoolManagement.filters.performanceLevel.excellent") },
+      { id: "VeryGood", label: t("schoolManagement.filters.performanceLevel.veryGood") },
+      { id: "Good", label: t("schoolManagement.filters.performanceLevel.good") },
     ],
     [t],
   );
@@ -74,17 +72,28 @@ export function SchoolManagementFilterBar({
         onChange={(country) => onChange({ ...value, country })}
       />
       <DashboardSearchFilter
-        label={t("schoolManagement.filters.points.label")}
-        placeholder={t("schoolManagement.filters.points.placeholder")}
-        value={value.points}
-        onChange={(points) => onChange({ ...value, points })}
-        className="min-w-[8rem] max-w-[10rem]"
+        label={t("schoolManagement.filters.city.label")}
+        placeholder={t("schoolManagement.filters.city.placeholder")}
+        value={value.city}
+        onChange={(city) => onChange({ ...value, city })}
+        className="min-w-[10rem] max-w-[12rem]"
       />
       <DashboardFilterSelect
         label={t("schoolManagement.filters.performanceLevel.label")}
         value={value.performanceLevel}
         options={performanceOptions}
         onChange={(performanceLevel) => onChange({ ...value, performanceLevel })}
+      />
+      <DashboardFilterSelect
+        label={t("schoolManagement.filters.status.label")}
+        value={value.status}
+        options={[
+          { id: "all", label: t("schoolManagement.filters.status.all") },
+          { id: "1", label: t("schoolManagement.status.active") },
+          { id: "2", label: t("schoolManagement.status.inactive") },
+          { id: "0", label: t("schoolManagement.status.pending") },
+        ]}
+        onChange={(status) => onChange({ ...value, status })}
       />
       <DashboardSearchFilter
         label={t("schoolManagement.filters.keyword.label")}

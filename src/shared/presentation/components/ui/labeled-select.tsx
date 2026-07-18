@@ -1,9 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/shared/application/lib/cn";
-import { Label } from "@/shared/presentation/components/ui/label";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 export type LabeledSelectOption = {
   value: string;
@@ -37,29 +36,19 @@ export function LabeledSelect({
   const id = idProp ?? `labeled-select-${reactId}`;
 
   return (
-    <div className={cn("space-y-2 text-right", className)}>
-      <Label htmlFor={id} className={cn("text-[#64748B]", labelClassName)}>
-        {label}
-      </Label>
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.value)}
-          className={cn(
-            "h-14 w-full appearance-none rounded-2xl border border-slate-100 bg-slate-50 px-4 text-right text-base text-slate-700 outline-none transition focus:border-[#C7AF6E] focus:ring-2 focus:ring-[#C7AF6E]/20 disabled:cursor-not-allowed disabled:opacity-60",
-            selectClassName,
-          )}
-        >
-          {options.map((option) => (
-            <option key={option.value || "empty"} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
-    </div>
+    <SearchableSelect
+      id={id}
+      label={label}
+      options={options}
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      className={cn("gap-2 text-right", className)}
+      labelClassName={cn("text-[#64748B]", labelClassName)}
+      triggerClassName={cn(
+        "h-14 rounded-2xl border border-slate-100 bg-slate-50 px-4 text-right text-base text-slate-700 shadow-none focus-visible:ring-[#C7AF6E]/20",
+        selectClassName,
+      )}
+    />
   );
 }

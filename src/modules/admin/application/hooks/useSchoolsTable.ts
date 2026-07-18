@@ -8,7 +8,10 @@ import {
 } from "@/shared/application/lib/tableQueryState";
 
 import { useLocale } from "next-intl";
-import { getSchools } from "@/modules/admin/infrastructure/api/schoolApi";
+import {
+  getSchools,
+  SchoolStatus,
+} from "@/modules/admin/infrastructure/api/schoolApi";
 import {
   DEFAULT_SCHOOL_MANAGEMENT_FILTERS,
   type SchoolManagementFilterState,
@@ -28,13 +31,6 @@ function buildPages(currentPage: number, totalPages: number): number[] {
     { length: end - adjustedStart + 1 },
     (_, index) => adjustedStart + index,
   );
-}
-
-function parsePointsFilter(value: string): number | undefined {
-  const trimmed = value.trim();
-  if (!trimmed) return undefined;
-  const parsed = Number(trimmed);
-  return Number.isFinite(parsed) ? parsed : undefined;
 }
 
 export function useSchoolsTable() {
@@ -66,8 +62,8 @@ export function useSchoolsTable() {
     debouncedKeyword,
     debouncedCity,
     filters.country,
-    filters.points,
     filters.performanceLevel,
+    filters.status,
   ]);
 
   const queryParams = useMemo(
@@ -75,9 +71,12 @@ export function useSchoolsTable() {
       keyword: debouncedKeyword || undefined,
       city: debouncedCity || undefined,
       country: filters.country.trim() || undefined,
-      points: parsePointsFilter(filters.points),
       performanceLevel:
         filters.performanceLevel === "all" ? undefined : filters.performanceLevel,
+      status:
+        filters.status === "all"
+          ? undefined
+          : (Number(filters.status) as SchoolStatus),
       pageNumber,
       pageSize: DEFAULT_PAGE_SIZE,
     }),
@@ -85,8 +84,8 @@ export function useSchoolsTable() {
       debouncedKeyword,
       debouncedCity,
       filters.country,
-      filters.points,
       filters.performanceLevel,
+      filters.status,
       pageNumber,
     ],
   );
@@ -123,5 +122,6 @@ export function useSchoolsTable() {
     pages,
     filters,
     setFilters,
+    queryParams,
   };
 }

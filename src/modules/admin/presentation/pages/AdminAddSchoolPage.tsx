@@ -10,7 +10,6 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard"
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
   defaultSchoolFormValues,
-  schoolEducationStages,
   schoolLocationPreviewData,
   schoolSubscriptionPlans,
 } from "@/modules/admin/domain/data/schoolFormOptions";
@@ -26,7 +25,12 @@ import {
   type SchoolDetail,
   type UpdateSchoolPayload,
 } from "@/modules/admin/infrastructure/api/schoolApi";
-import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
+import {
+  getCountriesDropdown,
+  getEducationLevelsDropdown,
+} from "@/modules/admin/infrastructure/api/userManagementApi";
+import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { notify } from "@/shared/application/lib/toast";
 import { mapSchoolDetailToFormValues } from "@/modules/admin/presentation/lib/schoolFormMappers";
 import { SchoolFormActions } from "@/modules/admin/presentation/components/school-form/SchoolFormActions";
@@ -63,57 +67,40 @@ function normalizeDigitsToLatin(value: string): string {
   });
 }
 
-function buildPerformanceLevel(values: SchoolFormValues): string {
-  return values.educationStageIds.length > 0
-    ? values.educationStageIds.join(", ")
-    : "standard";
-}
-
-function resolveLogoUrl(values: SchoolFormValues): string {
-  const rawLogo = values.schoolLogoPreviewUrl ?? "";
-  return rawLogo.startsWith("http://") || rawLogo.startsWith("https://") ? rawLogo : "";
-}
-
-function buildCreateSchoolPayload(values: SchoolFormValues): CreateSchoolPayload {
+function buildCreateSchoolPayload(
+  values: SchoolFormValues,
+  logoUrl: string,
+): CreateSchoolPayload {
   return {
     name: normalizeTextInput(values.schoolName),
-    logoUrl: resolveLogoUrl(values),
+    logoUrl,
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
     address: normalizeTextInput(values.address),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
     description: normalizeTextInput(values.schoolDescription),
     city: normalizeTextInput(values.city),
-    country: normalizeTextInput(values.country),
     countryId: Number(values.countryId),
-    points: 0,
-    performanceLevel: buildPerformanceLevel(values),
-    establishmentDate: new Date().toISOString(),
-    loginEmail: normalizeDigitsToLatin(normalizeTextInput(values.loginEmail)).toLowerCase(),
     loginPassword: values.loginPassword,
+    educationLevelIds: values.educationStageIds,
   };
 }
 
 function buildUpdateSchoolPayload(
   values: SchoolFormValues,
   detail: SchoolDetail,
+  logoUrl: string,
 ): UpdateSchoolPayload {
-  const plan = schoolSubscriptionPlans.find((p) => p.id === values.subscriptionPlanId);
-
   return {
-    id: detail.id,
     name: normalizeTextInput(values.schoolName),
-    logoUrl: resolveLogoUrl(values),
+    logoUrl,
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
     address: normalizeTextInput(values.address),
     description: normalizeTextInput(values.schoolDescription),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
     city: normalizeTextInput(values.city),
-    country: normalizeTextInput(values.country),
     countryId: Number(values.countryId),
-    points: detail.points,
-    performanceLevel: buildPerformanceLevel(values),
-    establishmentDate: detail.establishmentDate || new Date().toISOString(),
-    // subscriptionPlanId: plan?.apiId ?? detail.subscriptionPlanId,
+    educationLevelIds: values.educationStageIds,
+    ...(values.loginPassword ? { loginPassword: values.loginPassword } : {}),
     status: detail.statusCode,
   };
 }
@@ -136,6 +123,9 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
     validationErrors?: Record<string, string[]> | null;
   } | null>(null);
   const [countryOptions, setCountryOptions] = useState<Array<{ id: string; label: string }>>([]);
+  const [educationLevelOptions, setEducationLevelOptions] = useState<
+    Array<{ id: number; label: string }>
+  >([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -157,6 +147,30 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const countryId = Number(values.countryId);
+    if (!countryId) {
+      setEducationLevelOptions([]);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      const result = await getEducationLevelsDropdown(countryId);
+      if (cancelled) return;
+      if (result.data) {
+        setEducationLevelOptions(
+          result.data.map((level) => ({ id: level.id, label: level.name })),
+        );
+      } else {
+        setEducationLevelOptions([]);
+        if (result.errorMessage) notify.error(result.errorMessage);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [values.countryId]);
 
   useEffect(() => {
     if (!schoolId) return;
@@ -202,6 +216,7 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
       ...current,
       countryId: value,
       country: row?.label ?? "",
+      educationStageIds: current.countryId === value ? current.educationStageIds : [],
     }));
   };
 
@@ -230,8 +245,20 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
     setSubmitError(null);
     setIsSubmitting(true);
 
+    let logoUrl = values.schoolLogoPreviewUrl ?? "";
+    if (values.schoolLogoFile) {
+      const upload = await uploadAdminFile(values.schoolLogoFile, "schools/logos");
+      if (!upload.ok) {
+        setSubmitError({ message: upload.errorMessage });
+        notify.error(upload.errorMessage);
+        setIsSubmitting(false);
+        return;
+      }
+      logoUrl = resolveFileUrl(upload.filePath) ?? upload.filePath;
+    }
+
     if (isEditMode && schoolId && loadedSchool) {
-      const payload = buildUpdateSchoolPayload(values, loadedSchool);
+      const payload = buildUpdateSchoolPayload(values, loadedSchool, logoUrl);
       const result = await updateSchool(schoolId, payload);
       const isSuccess = Boolean(result.data?.id) || (result.status === "Success" && !result.errorMessage);
 
@@ -250,7 +277,7 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
       return;
     }
 
-    const payload = buildCreateSchoolPayload(values);
+    const payload = buildCreateSchoolPayload(values, logoUrl);
     const result = await createSchool(payload);
     const created = result.data;
     const isSuccess = Boolean(created?.id) || (result.status === "Success" && !result.errorMessage);
@@ -421,28 +448,25 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           onEmailChange={(value) => setField("email", value)}
         />
 
-        {!isEditMode ? (
-          <SchoolFormSectionCard
-            icon={KeyRound}
-            title={t("schoolManagement.addForm.sections.login")}
-          >
-            <div className="grid gap-5 md:grid-cols-2">
-              <LabeledInput
-                label={t("schoolManagement.addForm.fields.loginEmail.label")}
-                value={values.loginEmail}
-                placeholder={t("schoolManagement.addForm.fields.loginEmail.placeholder")}
-                onChange={(value) => setField("loginEmail", value)}
-              />
-              <LabeledInput
-                label={t("schoolManagement.addForm.fields.loginPassword.label")}
-                type="password"
-                value={values.loginPassword}
-                placeholder={t("schoolManagement.addForm.fields.loginPassword.placeholder")}
-                onChange={(value) => setField("loginPassword", value)}
-              />
-            </div>
-          </SchoolFormSectionCard>
-        ) : null}
+        <SchoolFormSectionCard
+          icon={KeyRound}
+          title={t("schoolManagement.addForm.sections.login")}
+        >
+          <div className="max-w-xl">
+            <LabeledInput
+              label={t("schoolManagement.addForm.fields.loginPassword.label")}
+              type="password"
+              value={values.loginPassword}
+              placeholder={t("schoolManagement.addForm.fields.loginPassword.placeholder")}
+              onChange={(value) => setField("loginPassword", value)}
+            />
+            {isEditMode ? (
+              <p className="mt-2 text-xs text-slate-400">
+                {t("schoolManagement.editForm.passwordHint")}
+              </p>
+            ) : null}
+          </div>
+        </SchoolFormSectionCard>
 
         <SchoolSubscriptionSection
           icon={SubscriptionIcon}
@@ -452,9 +476,9 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           selectedPlanId={values.subscriptionPlanId}
           selectedStageIds={values.educationStageIds}
           plans={plansForUi}
-          stages={schoolEducationStages.map((stage) => ({
+          stages={educationLevelOptions.map((stage) => ({
             ...stage,
-            label: t(stage.labelKey),
+            labelKey: "",
           }))}
           onPlanChange={(planId) => setField("subscriptionPlanId", planId)}
           onStageToggle={toggleStage}

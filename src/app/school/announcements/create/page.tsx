@@ -1,1 +1,1 @@
-export { SchoolAnnouncementCreatePage as default } from "@/modules/school/presentation/pages/SchoolAnnouncementCreatePage";
+export { SchoolDashboardPage as default } from "@/modules/school/presentation/pages/SchoolDashboardPage";

@@ -30,20 +30,7 @@ export const schoolSubscriptionPlans: Array<
   },
 ];
 
-export const schoolEducationStages: SchoolSelectOption<SchoolEducationStageId>[] = [
-  {
-    id: "elementary",
-    labelKey: "schoolManagement.addForm.stages.elementary",
-  },
-  {
-    id: "middle",
-    labelKey: "schoolManagement.addForm.stages.middle",
-  },
-  {
-    id: "secondary",
-    labelKey: "schoolManagement.addForm.stages.secondary",
-  },
-];
+export const schoolEducationStages: SchoolSelectOption<SchoolEducationStageId>[] = [];
 
 export const defaultSchoolFormValues: SchoolFormValues = {
   schoolName: "",
@@ -56,10 +43,9 @@ export const defaultSchoolFormValues: SchoolFormValues = {
   address: "",
   phoneNumber: "",
   email: "",
-  loginEmail: "",
   loginPassword: "",
   subscriptionPlanId: "interactive",
-  educationStageIds: ["elementary"],
+  educationStageIds: [],
 };
 
 export const schoolLocationPreviewData: SchoolLocationPreviewData = {

@@ -27,6 +27,7 @@ import { Label } from "@/shared/presentation/components/ui/label";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 const DEFAULT_VALUES: FinalExamFormValues = {
   courseId: "",
@@ -455,19 +456,15 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
 
                 <div className="space-y-2 md:col-span-2">
                   <Label>{t("fields.course.label")}</Label>
-                  <select
+                  <SearchableSelect
                     value={values.courseId}
                     disabled={mode === "edit" || readOnly}
-                    onChange={(event) => patchValues({ courseId: event.target.value })}
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none disabled:opacity-60"
-                  >
-                    <option value="">{t("fields.course.placeholder")}</option>
-                    {courseOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(courseId) => patchValues({ courseId })}
+                    placeholder={t("fields.course.placeholder")}
+                    options={courseOptions}
+                    className="gap-0"
+                    triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -515,18 +512,17 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
 
                 <div className="space-y-2">
                   <Label>{t("fields.difficulty.label")}</Label>
-                  <select
+                  <SearchableSelect
                     value={String(values.difficulty)}
                     disabled={readOnly}
-                    onChange={(event) => patchValues({ difficulty: Number(event.target.value) })}
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none disabled:opacity-60"
-                  >
-                    {(["0", "1", "2"] as const).map((level) => (
-                      <option key={level} value={level}>
-                        {t(`difficulty.${level}`)}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(difficulty) => patchValues({ difficulty: Number(difficulty) })}
+                    options={(["0", "1", "2"] as const).map((level) => ({
+                      value: level,
+                      label: t(`difficulty.${level}`),
+                    }))}
+                    className="gap-0"
+                    triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                  />
                 </div>
 
                 <div className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 md:col-span-2">

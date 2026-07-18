@@ -14,6 +14,7 @@ interface DashboardStatCardProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   iconTone?: IconTone;
   className?: string;
+  textClassName?: string;
 }
 
 export function DashboardStatCard({
@@ -24,6 +25,7 @@ export function DashboardStatCard({
   icon: Icon,
   iconTone = "primary",
   className,
+  textClassName,
 }: DashboardStatCardProps) {
   return (
     <Card
@@ -44,7 +46,7 @@ export function DashboardStatCard({
           )}
           <div className="space-y-1.5">
             <p className="text-sm text-slate-500">{label}</p>
-            <p className="text-4xl font-bold tracking-tight text-slate-800">{value}</p>
+            <p className={cn("text-4xl font-bold tracking-tight text-slate-800", textClassName)}>{value}</p>
           </div>
         </div>
         <div

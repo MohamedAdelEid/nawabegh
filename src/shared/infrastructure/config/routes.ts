@@ -17,6 +17,7 @@ export const ROUTES = {
     },
     SCHOOL_MANAGEMENT: {
       ADD: "/admin/school-management/add",
+      IMPORT: "/admin/school-management/import",
       EDIT: (id: string) => `/admin/school-management/${id}/edit`,
       DELETE: (id: string) => `/admin/school-management/${id}/delete`,
       VIEW: (id: string) => `/admin/school-management/${id}`,
@@ -315,6 +316,14 @@ export const ROUTES = {
     SCHOOL: {
       HOME: "/school/dashboard",
       SETTINGS: "/school/settings",
+      ARTICLES: "/school/articles",
+      HONOR_BOARD: {
+        LEADERBOARD: "/school/honor-board",
+        HONORED_STUDENTS: "/school/honor-board/honored-students",
+        HONORED_STUDENTS_CREATE: "/school/honor-board/honored-students/create",
+        HONORED_STUDENTS_EDIT: (id: string) =>
+          `/school/honor-board/honored-students/${encodeURIComponent(id)}/edit`,
+      },
       ANNOUNCEMENTS: {
         LIST: "/school/announcements",
         CREATE: "/school/announcements/create",
@@ -322,6 +331,8 @@ export const ROUTES = {
           `/school/announcements/${encodeURIComponent(announcementId)}`,
         EDIT: (announcementId: string) =>
           `/school/announcements/${encodeURIComponent(announcementId)}/edit`,
+        REPORT: (announcementId: string) =>
+          `/school/announcements/${encodeURIComponent(announcementId)}/report`,
       },
     },
   },

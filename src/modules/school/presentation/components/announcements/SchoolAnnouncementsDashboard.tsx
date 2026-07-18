@@ -4,22 +4,31 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { Eye, Lightbulb, Megaphone, Pencil, Plus, Search, SlidersHorizontal, Trash2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Eye, Lightbulb, Megaphone, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/shared/presentation/components/ui/button";
-import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { Input } from "@/shared/presentation/components/ui/input";
-import { DashboardPagination } from "@/shared/presentation/components/dashboard/DashboardPagination";
+import {
+  DashboardDataTable,
+  DashboardFiltersPanel,
+  DashboardInsightCard,
+  DashboardPageHeader,
+  DashboardPagination,
+  DashboardSearchFilter,
+  DashboardSegmentedControl,
+  DashboardTableCard,
+  type DashboardDataTableColumn,
+} from "@/shared/presentation/components/dashboard";
 import {
   ModalShell,
   ModalTitle,
 } from "@/shared/presentation/components/ui/modal-shell";
-import { cn } from "@/shared/application/lib/cn";
 import { formatDate, formatNumber } from "@/shared/application/lib/format";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { useSchoolAnnouncementsKpis } from "@/modules/school/application/hooks/useSchoolAnnouncementsKpis";
 import { useSchoolAnnouncementsList } from "@/modules/school/application/hooks/useSchoolAnnouncementsList";
 import { useSchoolAnnouncementMutations } from "@/modules/school/application/hooks/useSchoolAnnouncementMutations";
+import { useSchoolDashboard } from "@/modules/school/application/hooks/useSchoolDashboard";
 import { SchoolKpiCards } from "@/modules/school/presentation/components/shared/SchoolKpiCards";
 import { SchoolStatusBadge } from "@/modules/school/presentation/components/shared/SchoolStatusBadge";
 import { audienceText } from "@/modules/school/presentation/lib/schoolAnnouncementLabels";
@@ -45,6 +54,7 @@ export function SchoolAnnouncementsDashboard() {
   const router = useRouter();
 
   const kpisQuery = useSchoolAnnouncementsKpis();
+  const dashboardQuery = useSchoolDashboard();
   const list = useSchoolAnnouncementsList();
   const { remove } = useSchoolAnnouncementMutations();
   const [pendingDelete, setPendingDelete] = useState<SchoolAnnouncementListItem | null>(null);
@@ -62,13 +72,84 @@ export function SchoolAnnouncementsDashboard() {
     return { from, to, total: page.totalCount };
   }, [page]);
 
+  const filterOptions = useMemo(
+    () =>
+      FILTER_TABS.map((tab) => ({
+        id: tab,
+        label: t(`listPage.filters.tabs.${tab === "all" ? "all" : tab.toLowerCase()}`),
+      })),
+    [t],
+  );
+
+  const columns = useMemo<DashboardDataTableColumn<SchoolAnnouncementListItem>[]>(
+    () => [
+      {
+        id: "title",
+        header: t("listPage.table.columns.title"),
+        renderCell: (item) => (
+          <div className="flex min-w-[14rem] items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#DCE6F5] text-[#2C4260]">
+              <Megaphone className="h-4 w-4" />
+            </span>
+            <span className="font-bold text-slate-800">{item.title}</span>
+          </div>
+        ),
+      },
+      {
+        id: "audience",
+        header: t("listPage.table.columns.audience"),
+        renderCell: (item) => (
+          <span className="text-sm text-slate-600">
+            {audienceText(t, item.audience, item.audienceLabel)}
+          </span>
+        ),
+      },
+      {
+        id: "status",
+        header: t("listPage.table.columns.status"),
+        renderCell: (item) => (
+          <SchoolStatusBadge tone={item.statusTone} label={item.statusLabel} />
+        ),
+      },
+      {
+        id: "date",
+        header: t("listPage.table.columns.date"),
+        renderCell: (item) => (
+          <span className="text-sm text-slate-500">
+            {item.date ? formatDate(item.date, locale) : "—"}
+          </span>
+        ),
+      },
+      {
+        id: "reach",
+        header: t("listPage.table.columns.reach"),
+        renderCell: (item) => (
+          <div className="flex min-w-[8rem] items-center gap-2">
+            <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(100, item.reachPercentage)}%` }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+                className="h-full rounded-full bg-[#58CC02]"
+              />
+            </div>
+            <span className="text-sm font-bold text-[#58CC02]">
+              {formatNumber(item.reachPercentage, locale)}%
+            </span>
+          </div>
+        ),
+      },
+    ],
+    [locale, t],
+  );
+
   const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
     try {
       await remove.mutateAsync(pendingDelete.id);
       notify.success(t("listPage.delete.success"));
-    } catch {
-      notify.error(t("listPage.delete.error"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("listPage.delete.error"));
     } finally {
       setPendingDelete(null);
     }
@@ -80,177 +161,43 @@ export function SchoolAnnouncementsDashboard() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <Button
-          asChild
-          className="h-12 rounded-2xl bg-[#2C4260] px-5 font-bold text-white hover:bg-[#243751]"
-        >
-          <Link href={ROUTES.USER.SCHOOL.ANNOUNCEMENTS.CREATE}>
-            <Plus className="h-5 w-5" />
-            {t("listPage.createNew")}
-          </Link>
-        </Button>
-        <div className="text-right">
-          <h1 className="text-2xl font-bold text-slate-800">{t("listPage.title")}</h1>
-          <p className="mt-1 text-sm text-slate-500">{t("listPage.subtitle")}</p>
-        </div>
-      </header>
+      <DashboardPageHeader
+        title={t("listPage.title")}
+        description={t("listPage.subtitle")}
+        action={
+          <Button
+            asChild
+            className="h-14 rounded-2xl bg-[#2C4260] px-6 text-base font-semibold text-white shadow-[var(--dashboard-shadow-button)] hover:bg-[#243751]"
+          >
+            <Link href={ROUTES.USER.SCHOOL.ANNOUNCEMENTS.CREATE}>
+              <Plus className="h-5 w-5" />
+              {t("listPage.createNew")}
+            </Link>
+          </Button>
+        }
+      />
 
       {kpisQuery.data ? <SchoolKpiCards kpis={kpisQuery.data} /> : null}
 
-      <Card className="rounded-[1.75rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-        <CardContent className="space-y-5 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="h-11 w-11 rounded-2xl border-slate-200"
-                aria-label={t("listPage.filters.openFilter")}
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-              </Button>
-              <div className="relative">
-                <Search className="pointer-events-none absolute end-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                <Input
-                  value={list.search}
-                  onChange={(event) => list.setSearch(event.target.value)}
-                  placeholder={t("listPage.filters.searchPlaceholder")}
-                  className="h-11 w-64 rounded-2xl border-slate-100 bg-slate-50 pe-11 ps-4 text-right"
-                />
-              </div>
-            </div>
+      <DashboardFiltersPanel isLoading={list.isFetching}>
+        <DashboardSegmentedControl
+          options={filterOptions}
+          value={list.statusFilter}
+          onChange={list.setStatusFilter}
+        />
+        <DashboardSearchFilter
+          label={t("listPage.filters.openFilter")}
+          value={list.search}
+          onChange={list.setSearch}
+          placeholder={t("listPage.filters.searchPlaceholder")}
+        />
+      </DashboardFiltersPanel>
 
-            <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-slate-50 p-1.5">
-              {FILTER_TABS.map((tab) => (
-                <button
-                  key={tab}
-                  type="button"
-                  onClick={() => list.setStatusFilter(tab)}
-                  className={cn(
-                    "rounded-xl px-4 py-2 text-sm font-semibold transition-colors",
-                    list.statusFilter === tab
-                      ? "bg-[#2C4260] text-white"
-                      : "text-slate-500 hover:text-slate-700",
-                  )}
-                >
-                  {t(`listPage.filters.tabs.${tab === "all" ? "all" : tab.toLowerCase()}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-right">
-              <thead>
-                <tr className="border-b border-slate-100 text-sm text-slate-400">
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.title")}</th>
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.audience")}</th>
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.status")}</th>
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.date")}</th>
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.reach")}</th>
-                  <th className="px-3 py-3 font-medium">{t("listPage.table.columns.actions")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {list.isError ? (
-                  <tr>
-                    <td colSpan={6} className="px-3 py-10 text-center text-sm text-red-600">
-                      {t("listPage.table.loadError")}
-                    </td>
-                  </tr>
-                ) : page && page.items.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="px-3 py-10 text-center text-sm text-slate-500">
-                      {t("listPage.table.empty")}
-                    </td>
-                  </tr>
-                ) : (
-                  page?.items.map((item) => (
-                    <tr key={item.id} className="border-b border-slate-50 last:border-0">
-                      <td className="px-3 py-4">
-                        <div className="flex items-center justify-end gap-3">
-                          <span className="font-bold text-slate-800">{item.title}</span>
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#DCE6F5] text-[#2C4260]">
-                            <Megaphone className="h-4 w-4" />
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-4 text-sm text-slate-600">
-                        {audienceText(t, item.audience, item.audienceLabel)}
-                      </td>
-                      <td className="px-3 py-4">
-                        <SchoolStatusBadge tone={item.statusTone} label={item.statusLabel} />
-                      </td>
-                      <td className="px-3 py-4 text-sm text-slate-500">
-                        {item.date ? formatDate(item.date, locale) : "—"}
-                      </td>
-                      <td className="px-3 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100">
-                            <div
-                              className="h-full rounded-full bg-[#58CC02]"
-                              style={{ width: `${Math.min(100, item.reachPercentage)}%` }}
-                            />
-                          </div>
-                          <span className="text-sm font-bold text-[#58CC02]">
-                            {formatNumber(item.reachPercentage, locale)}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-3 py-4">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.VIEW(item.id))
-                            }
-                            className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-                            aria-label={t("listPage.table.actions.view")}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          {item.canEdit ? (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.EDIT(item.id))
-                              }
-                              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-                              aria-label={t("listPage.table.actions.edit")}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                          ) : null}
-                          {item.canDelete ? (
-                            <button
-                              type="button"
-                              onClick={() => setPendingDelete(item)}
-                              className="flex h-9 w-9 items-center justify-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600"
-                              aria-label={t("listPage.table.actions.delete")}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          ) : null}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {summary ? (
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-              <DashboardPagination
-                pages={pages}
-                currentPage={list.pageNumber}
-                onPageChange={list.setPageNumber}
-                previousLabel={t("listPage.pagination.previous")}
-                nextLabel={t("listPage.pagination.next")}
-              />
+      <DashboardTableCard
+        className={list.isFetching ? "opacity-60 transition-opacity" : undefined}
+        footer={
+          summary ? (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <p className="text-sm text-slate-500">
                 {t("listPage.pagination.summary", {
                   from: summary.from,
@@ -258,37 +205,112 @@ export function SchoolAnnouncementsDashboard() {
                   total: formatNumber(summary.total, locale),
                 })}
               </p>
+              <DashboardPagination
+                pages={pages}
+                currentPage={list.pageNumber}
+                onPageChange={list.setPageNumber}
+                previousLabel={t("listPage.pagination.previous")}
+                nextLabel={t("listPage.pagination.next")}
+              />
             </div>
+          ) : null
+        }
+      >
+        <DashboardDataTable
+          rows={page?.items ?? []}
+          columns={columns}
+          getRowKey={(item) => item.id}
+          emptyMessage={
+            list.isError ? t("listPage.table.loadError") : t("listPage.table.empty")
+          }
+          actionsHeader={t("listPage.table.columns.actions")}
+          renderActions={(item) => (
+            <div className="flex items-center justify-end gap-1">
+              {item.canView ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl text-slate-500"
+                  onClick={() =>
+                    router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.VIEW(item.id))
+                  }
+                  aria-label={t("listPage.table.actions.view")}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              ) : null}
+              {item.canEdit ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl text-slate-500"
+                  onClick={() =>
+                    router.push(ROUTES.USER.SCHOOL.ANNOUNCEMENTS.EDIT(item.id))
+                  }
+                  aria-label={t("listPage.table.actions.edit")}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              ) : null}
+              {item.canDelete ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-xl text-red-500 hover:text-red-600"
+                  onClick={() => setPendingDelete(item)}
+                  aria-label={t("listPage.table.actions.delete")}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              ) : null}
+            </div>
+          )}
+        />
+      </DashboardTableCard>
+
+      {dashboardQuery.data?.tips || dashboardQuery.data?.smartRecommendations ? (
+        <div className="grid gap-6 lg:grid-cols-[1fr_1.6fr]">
+          {dashboardQuery.data.tips ? (
+            <DashboardInsightCard
+              title={dashboardQuery.data.tips.title}
+              description={dashboardQuery.data.tips.body}
+              icon={Lightbulb}
+              actionLabel={
+                dashboardQuery.data.tips.actionUrl
+                  ? dashboardQuery.data.tips.actionLabel
+                  : undefined
+              }
+              onAction={
+                dashboardQuery.data.tips.actionUrl
+                  ? () => router.push(dashboardQuery.data!.tips!.actionUrl!)
+                  : undefined
+              }
+            />
           ) : null}
-        </CardContent>
-      </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_1.6fr]">
-        <Card className="rounded-[1.75rem] border-white/80 bg-white shadow-[var(--dashboard-shadow-soft)]">
-          <CardContent className="space-y-3 p-6 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#F8EFD5] text-[#8F6C0B]">
-              <Lightbulb className="h-6 w-6" />
-            </div>
-            <h3 className="font-bold text-slate-800">{t("listPage.tips.title")}</h3>
-            <p className="text-sm leading-relaxed text-slate-500">{t("listPage.tips.body")}</p>
-            <button type="button" className="text-sm font-semibold text-[#8F6C0B]">
-              {t("listPage.tips.action")}
-            </button>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-[1.75rem] border-transparent bg-[#2C4260] text-white shadow-[var(--dashboard-shadow-soft)]">
-          <CardContent className="space-y-4 p-6 text-right">
-            <h3 className="text-lg font-bold">{t("listPage.smartRecommendations.title")}</h3>
-            <p className="text-sm leading-relaxed text-white/70">
-              {t("listPage.smartRecommendations.body")}
-            </p>
-            <Button className="rounded-xl bg-[#C9A227] text-[#2C4260] hover:bg-[#C9A227]/90">
-              {t("listPage.smartRecommendations.action")}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          {dashboardQuery.data.smartRecommendations ? (
+            <DashboardInsightCard
+              variant="primary"
+              title={dashboardQuery.data.smartRecommendations.title}
+              description={dashboardQuery.data.smartRecommendations.body}
+              icon={Megaphone}
+              actionLabel={
+                dashboardQuery.data.smartRecommendations.actionUrl
+                  ? dashboardQuery.data.smartRecommendations.actionLabel
+                  : undefined
+              }
+              onAction={
+                dashboardQuery.data.smartRecommendations.actionUrl
+                  ? () => router.push(dashboardQuery.data!.smartRecommendations!.actionUrl!)
+                  : undefined
+              }
+            />
+          ) : null}
+        </div>
+      ) : null}
 
       <ModalShell open={pendingDelete !== null} onOpenChange={(open) => !open && setPendingDelete(null)}>
         <div className="space-y-5 text-right">

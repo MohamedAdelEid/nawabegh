@@ -1,0 +1,114 @@
+{
+  "dashboard": {
+    "title": "Parent dashboard",
+    "header": {
+      "searchPlaceholder": "Search...",
+      "actions": {
+        "settings": "Profile",
+        "notifications": "Notifications"
+      },
+      "mobileMenu": {
+        "open": "Open menu",
+        "close": "Close menu"
+      },
+      "menu": {
+        "settings": "Profile",
+        "logout": "Log out"
+      },
+      "user": {
+        "menuLabel": "Open account menu",
+        "guestName": "Parent",
+        "roles": {
+          "admin": "System administrator",
+          "student": "Student",
+          "teacher": "Teacher",
+          "parent": "Parent",
+          "school": "School"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "Main",
+      "footerSection": "Help & account",
+      "toggleExpand": "Expand sidebar",
+      "toggleCollapse": "Collapse sidebar",
+      "nav": {
+        "home": "Home",
+        "journey": "Excellence journey",
+        "dailyTasks": "Today's tasks",
+        "friendChallenges": "Friend challenge",
+        "allCourses": "Available courses",
+        "interactiveBook": "Interactive book",
+        "helpFiles": "Help files",
+        "helper": "Help",
+        "profile": "Profile",
+        "logout": "Log out"
+      }
+    },
+    "profilePage": {
+      "title": "Profile",
+      "breadcrumb": "Home / Profile",
+      "actions": {
+        "edit": "Edit profile",
+        "changePassword": "Change password",
+        "addChild": "Add new child",
+        "viewDetails": "View details",
+        "viewAll": "View all",
+        "copyId": "Copy user ID",
+        "retry": "Try again",
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "saving": "Saving..."
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "labels": {
+        "userId": "User ID",
+        "memberSince": "Member since {date}",
+        "children": "My children",
+        "notifications": "Latest notifications",
+        "performance": "Performance overview",
+        "attendance": "Attendance & discipline",
+        "homework": "Homework completion",
+        "exams": "Exam results",
+        "academicProgress": "Academic progress",
+        "childrenCount": "Children",
+        "tracksCount": "Preferred tracks",
+        "totalPoints": "Total points",
+        "sessionsCount": "Upcoming sessions",
+        "noChildren": "No linked children yet",
+        "noNotifications": "No recent notifications"
+      },
+      "fields": {
+        "fullName": "Full name",
+        "email": "Email",
+        "phoneNumber": "Phone number",
+        "phoneCountryCode": "Country code",
+        "country": "Country",
+        "address": "Address",
+        "profileImageUrl": "Profile image URL",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password"
+      },
+      "dialogs": {
+        "editTitle": "Edit profile",
+        "editDescription": "Update your personal and contact information.",
+        "passwordTitle": "Change password",
+        "passwordDescription": "Use at least 8 characters for your new password."
+      },
+      "messages": {
+        "loadError": "We couldn't load your profile.",
+        "updateSuccess": "Profile updated successfully.",
+        "passwordSuccess": "Password changed successfully.",
+        "passwordMismatch": "The new passwords do not match.",
+        "passwordMin": "The new password must contain at least 8 characters.",
+        "requiredFields": "Please complete all required fields.",
+        "copied": "User ID copied.",
+        "comingSoon": "This feature is coming soon."
+      }
+    }
+  }
+}

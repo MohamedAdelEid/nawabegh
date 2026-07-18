@@ -23,6 +23,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Label } from "@/shared/presentation/components/ui/label";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { cn } from "@/shared/application/lib/cn";
 
 export function AdminLiveBroadcastCreatePage() {
@@ -32,6 +33,8 @@ export function AdminLiveBroadcastCreatePage() {
   const [countdownOn, setCountdownOn] = useState(false);
   const [recordingMode, setRecordingMode] = useState<"auto" | "manual">("auto");
   const [sessionTab, setSessionTab] = useState<"upcoming" | "finished">("upcoming");
+  const [subject, setSubject] = useState("");
+  const [course, setCourse] = useState("");
 
   return (
     <div className="space-y-8">
@@ -108,15 +111,25 @@ export function AdminLiveBroadcastCreatePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2 text-right">
                 <Label>{t("liveBroadcast.create.form.subject")}</Label>
-                <select className="h-12 w-full rounded-xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm">
-                  <option>{t("liveBroadcast.create.form.subjectPlaceholder")}</option>
-                </select>
+                <SearchableSelect
+                  value={subject}
+                  onChange={setSubject}
+                  options={[]}
+                  placeholder={t("liveBroadcast.create.form.subjectPlaceholder")}
+                  className="gap-0"
+                  triggerClassName="h-12 rounded-xl border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm shadow-none"
+                />
               </div>
               <div className="space-y-2 text-right">
                 <Label>{t("liveBroadcast.create.form.course")}</Label>
-                <select className="h-12 w-full rounded-xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm">
-                  <option>{t("liveBroadcast.create.form.coursePlaceholder")}</option>
-                </select>
+                <SearchableSelect
+                  value={course}
+                  onChange={setCourse}
+                  options={[]}
+                  placeholder={t("liveBroadcast.create.form.coursePlaceholder")}
+                  className="gap-0"
+                  triggerClassName="h-12 rounded-xl border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm shadow-none"
+                />
               </div>
             </div>
 

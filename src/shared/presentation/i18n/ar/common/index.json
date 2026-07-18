@@ -1,3 +1,9 @@
 {
-  "common": {}
+  "common": {
+    "select": {
+      "placeholder": "اختر خيارًا",
+      "searchPlaceholder": "ابحث في الخيارات...",
+      "empty": "لا توجد خيارات مطابقة"
+    }
+  }
 }

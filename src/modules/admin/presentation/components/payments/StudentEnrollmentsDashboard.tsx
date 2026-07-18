@@ -20,6 +20,7 @@ import {
 } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { PaymentPersonCell, PaymentsSubNav } from "./PaymentsSubNav";
 import {
   DEFAULT_STUDENT_ENROLLMENTS_FILTERS,
@@ -228,19 +229,16 @@ export function StudentEnrollmentsDashboard() {
               })}
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-sm text-slate-500">
-                <select
-                  value={pageSize}
-                  onChange={(event) => setPageSize(Number(event.target.value))}
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm"
-                >
-                  {PAGE_SIZE_OPTIONS.map((size) => (
-                    <option key={size} value={size}>
-                      {t("overview.pagination.pageSize", { size })}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <SearchableSelect
+                value={pageSize}
+                onChange={setPageSize}
+                options={PAGE_SIZE_OPTIONS.map((size) => ({
+                  value: size,
+                  label: t("overview.pagination.pageSize", { size }),
+                }))}
+                className="w-32 gap-0"
+                triggerClassName="h-10 rounded-xl border-slate-200 bg-white px-3 text-sm shadow-none"
+              />
               <DashboardPagination
                 pages={Array.from({ length: totalPages }, (_, index) => index + 1)}
                 currentPage={page}

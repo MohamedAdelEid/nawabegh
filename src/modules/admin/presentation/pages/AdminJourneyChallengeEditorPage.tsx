@@ -4,7 +4,6 @@ import {
   CalendarDays,
   Clock,
   FileUp,
-  Globe,
   Lock,
   Plus,
   Save,
@@ -52,6 +51,7 @@ import { useElapsedSeconds } from "@/shared/application/hooks/useElapsedSeconds"
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 interface Props {
   journeyId: string;
@@ -785,24 +785,22 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
               </div>
               <div className="space-y-2 text-right">
                 <p className="text-sm font-semibold text-slate-600">{t("settings.duration")}</p>
-                <div className="relative">
-                  <Timer className="absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
-                  <select
+                <div>
+                  <SearchableSelect
                     value={station.durationMin}
-                    onChange={(e) =>
+                    onChange={(value) =>
                       update(
                         "durationMin",
-                        Number(e.target.value) as ChallengeStation["durationMin"],
+                        value as ChallengeStation["durationMin"],
                       )
                     }
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-                  >
-                    {DURATION_OPTIONS.map((d) => (
-                      <option key={d} value={d}>
-                        {d}
-                      </option>
-                    ))}
-                  </select>
+                    options={DURATION_OPTIONS.map((duration) => ({
+                      value: duration,
+                      label: String(duration),
+                    }))}
+                    className="gap-0"
+                    triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                  />
                 </div>
               </div>
             </CardContent>
@@ -867,24 +865,20 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
                 <label className="text-sm font-semibold text-slate-600" htmlFor="challenge-timezone">
                   {t("schedule.timezone")}
                 </label>
-                <div className="relative">
-                  <Globe className="absolute left-4 top-3.5 h-4 w-4 text-slate-400" />
-                  <select
+                <div>
+                  <SearchableSelect
                     id="challenge-timezone"
                     value={timeZoneId}
-                    onChange={(e) => setTimeZoneId(e.target.value)}
+                    onChange={setTimeZoneId}
                     disabled={!timezones.length}
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {!timeZoneId ? (
-                      <option value="">{t("schedule.timezonePlaceholder")}</option>
-                    ) : null}
-                    {timezones.map((tz) => (
-                      <option key={tz} value={tz}>
-                        {tz}
-                      </option>
-                    ))}
-                  </select>
+                    placeholder={t("schedule.timezonePlaceholder")}
+                    options={timezones.map((timezone) => ({
+                      value: timezone,
+                      label: timezone,
+                    }))}
+                    className="gap-0"
+                    triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+                  />
                 </div>
               </div>
             </CardContent>

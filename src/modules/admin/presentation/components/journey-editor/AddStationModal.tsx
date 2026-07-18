@@ -30,6 +30,7 @@ import {
 import { cn } from "@/shared/application/lib/cn";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
 
 interface Props {
@@ -202,24 +203,20 @@ export function AddStationModal({
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <label className="block space-y-2 text-right">
-            <span className="text-sm font-semibold text-slate-600">
-              {t("completionRule")}
-            </span>
-            <select
+          <SearchableSelect
+              label={t("completionRule")}
               value={draft.completionRule}
-              onChange={(e) =>
-                update("completionRule", e.target.value as JourneyStationCompletionRuleId)
+              onChange={(value) =>
+                update("completionRule", value as JourneyStationCompletionRuleId)
               }
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59] transition-colors"
-            >
-              {COMPLETION_RULE_OPTIONS.map((opt) => (
-                <option key={opt.id} value={opt.id}>
-                  {tEditor(`completionRules.${opt.id}`)}
-                </option>
-              ))}
-            </select>
-          </label>
+              options={COMPLETION_RULE_OPTIONS.map((opt) => ({
+                value: opt.id,
+                label: tEditor(`completionRules.${opt.id}`),
+              }))}
+              className="gap-2 text-right"
+              labelClassName="text-sm font-semibold text-slate-600"
+              triggerClassName="h-12 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+          />
 
           <label className="block space-y-2 text-right">
             <span className="text-sm font-semibold text-slate-600">

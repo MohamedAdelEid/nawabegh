@@ -6,12 +6,10 @@ import { Sidebar } from "./Sidebar";
 import { MobileOverlay, DashboardContent } from "./components";
 import { useMobileDetection, useDashboardState } from "./hooks";
 import { adminSidebarItems } from "@/modules/admin/domain/data/adminSidebarItems";
-import {
-  buildStudentShellSidebar,
-  studentSidebarItems,
-} from "@/modules/student/domain/data/studentSidebarItems";
+import { studentSidebarItems } from "@/modules/student/domain/data/studentSidebarItems";
 import { teacherSidebarItems } from "@/modules/teacher/domain/data/teacherSidebarItems";
 import { schoolSidebarItems } from "@/modules/school/domain/data/schoolSidebarItems";
+import { parentSidebarItems } from "@/modules/parent/domain/data/parentSidebarItems";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 
 export type DashboardShellVariant =
@@ -34,9 +32,7 @@ function sidebarForVariant(variant: DashboardShellVariant): SidebarItems {
   if (variant === "admin") return adminSidebarItems;
   if (variant === "teacher") return teacherSidebarItems;
   if (variant === "school") return schoolSidebarItems;
-  if (variant === "parent") {
-    return buildStudentShellSidebar("/parent/dashboard", "/parent/settings");
-  }
+  if (variant === "parent") return parentSidebarItems;
   return studentSidebarItems;
 }
 
@@ -44,6 +40,7 @@ function intlNamespaceForVariant(variant: DashboardShellVariant): string {
   if (variant === "admin") return "admin.dashboard";
   if (variant === "teacher") return "teacher.dashboard";
   if (variant === "school") return "school.dashboard";
+  if (variant === "parent") return "parent.dashboard";
   return "student.dashboard";
 }
 

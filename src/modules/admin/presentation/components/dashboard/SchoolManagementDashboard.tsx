@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, EllipsisVertical } from "lucide-react";
+import { Download, EllipsisVertical, FileSpreadsheet } from "lucide-react";
 import AddSchoolIcon from "@/modules/admin/presentation/assets/icons/AddSchool.svg";
 import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -21,7 +21,10 @@ import { useSchoolsTable } from "@/modules/admin/application/hooks/useSchoolsTab
 import { schoolManagementDashboardData } from "@/modules/admin/domain/data/schoolManagementDashboardData";
 import {
   deleteSchool,
+  exportSchools,
   getSchoolKpis,
+  sendSchoolCredentials,
+  updateSchoolStatus,
   type SchoolKpis,
   type SchoolTableRow,
 } from "@/modules/admin/infrastructure/api/schoolApi";
@@ -30,12 +33,7 @@ import { SchoolManagementFilterBar } from "@/modules/admin/presentation/componen
 import { notify } from "@/shared/application/lib/toast";
 import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-
-function statusTone(status: string) {
-  const normalized = status.toLowerCase();
-  if (normalized.includes("active") || normalized.includes("نشط")) return "success" as const;
-  return "neutral" as const;
-}
+import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 
 function performanceTone(
   status: "excellent" | "veryGood" | "good" | "neutral",
@@ -108,6 +106,28 @@ export function SchoolManagementDashboard() {
   const [menuOpenSchoolId, setMenuOpenSchoolId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<SchoolTableRow | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+  const [pendingCredentialsId, setPendingCredentialsId] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleToggleStatus = useCallback(
+    async (row: SchoolTableRow, isActive: boolean) => {
+      setPendingStatusId(row.id);
+      const result = await updateSchoolStatus(row.id, isActive);
+      setPendingStatusId(null);
+      if (result.errorMessage) {
+        notify.error(result.errorMessage);
+        return;
+      }
+      notify.success(
+        result.message ?? t("schoolManagement.table.statusUpdateSuccess"),
+      );
+      await schoolsTable.refetch();
+      const kpiResult = await getSchoolKpis();
+      if (kpiResult.data) setKpis(kpiResult.data);
+    },
+    [schoolsTable.refetch, t],
+  );
   const schoolTableColumns = useMemo<Array<DashboardDataTableColumn<any>>>(
     () => [
       {
@@ -115,12 +135,20 @@ export function SchoolManagementDashboard() {
         header: t("schoolManagement.table.columns.school"),
         renderCell: (row) => (
           <div className="flex min-w-[15rem] items-center justify-start gap-3">
-            <div className="text-3xl" aria-hidden>
-              {row.flag}
-            </div>
+            {row.logoUrl ? (
+              <img
+                src={row.logoUrl}
+                alt=""
+                className="h-11 w-11 rounded-xl object-cover"
+              />
+            ) : (
+              <div className="text-3xl" aria-hidden>{row.flag}</div>
+            )}
             <div className="space-y-1 text-right">
               <p className="font-semibold text-slate-800">{row.schoolName}</p>
-              <p className="text-xs text-slate-400">{row.city}</p>
+              <p className="text-xs text-slate-400">
+                {[row.city, row.address, row.country].filter(Boolean).join(" · ")}
+              </p>
             </div>
           </div>
         ),
@@ -169,13 +197,18 @@ export function SchoolManagementDashboard() {
         id: "status",
         header: t("schoolManagement.table.columns.status"),
         renderCell: (row) => (
-          <DashboardBadge tone={statusTone(row.status)} withDot>
-            {row.status}
-          </DashboardBadge>
+          <StatusSwitch
+            checked={row.isActive}
+            disabled={pendingStatusId === row.id}
+            activeLabel={t("schoolManagement.status.active")}
+            inactiveLabel={t("schoolManagement.status.inactive")}
+            activeClassName="bg-emerald-500"
+            onChange={(isActive) => void handleToggleStatus(row, isActive)}
+          />
         ),
       },
     ],
-    [t],
+    [handleToggleStatus, pendingStatusId, t],
   );
 
   const formatKpiValue = useCallback(
@@ -260,6 +293,41 @@ export function SchoolManagementDashboard() {
     await Promise.all([schoolsTable.refetch(), loadKpis()]);
   };
 
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await exportSchools({
+        keyword: schoolsTable.queryParams.keyword,
+        city: schoolsTable.queryParams.city,
+        country: schoolsTable.queryParams.country,
+        performanceLevel: schoolsTable.queryParams.performanceLevel,
+        status: schoolsTable.queryParams.status,
+      });
+    } catch (error) {
+      notify.error(
+        error instanceof Error
+          ? error.message
+          : t("schoolManagement.table.exportError"),
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleSendCredentials = async (row: SchoolTableRow) => {
+    setPendingCredentialsId(row.id);
+    const result = await sendSchoolCredentials(row.id);
+    setPendingCredentialsId(null);
+    if (result.errorMessage) {
+      notify.error(result.errorMessage);
+      return;
+    }
+    notify.success(
+      result.message ?? t("schoolManagement.table.credentialsSuccess"),
+    );
+    setMenuOpenSchoolId(null);
+  };
+
   return (
     <div className="space-y-8">
             <div className="space-y-2">
@@ -306,6 +374,27 @@ export function SchoolManagementDashboard() {
 
       <DashboardTableCard
         title={t("schoolManagement.table.title")}
+        actions={
+          <>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isExporting}
+              onClick={() => void handleExport()}
+            >
+              <Download className="h-4 w-4" aria-hidden />
+              {t("schoolManagement.table.actions.export")}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push(ROUTES.ADMIN.SCHOOL_MANAGEMENT.IMPORT)}
+            >
+              <FileSpreadsheet className="h-4 w-4" aria-hidden />
+              {t("schoolManagement.table.actions.import")}
+            </Button>
+          </>
+        }
         className={schoolsTable.isRefetching ? "opacity-60 transition-opacity" : undefined}
         footer={
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -398,6 +487,14 @@ export function SchoolManagementDashboard() {
                       }}
                     >
                       {t("schoolManagement.table.actions.edit")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pendingCredentialsId === row.id}
+                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
+                      onClick={() => void handleSendCredentials(row)}
+                    >
+                      {t("schoolManagement.table.actions.sendCredentials")}
                     </button>
                     <button
                       type="button"

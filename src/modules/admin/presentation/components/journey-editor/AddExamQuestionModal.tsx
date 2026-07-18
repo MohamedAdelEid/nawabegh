@@ -12,6 +12,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 type ChoiceForm = {
   id: string;
@@ -192,19 +193,19 @@ export function AddExamQuestionModal({ open, quizId, onClose, onAdded }: Props) 
               className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none focus:border-[#C8AC59]"
             />
           </div>
-          <div className="space-y-1.5 text-right">
-            <label className="text-sm font-semibold text-slate-600">{t("difficulty")}</label>
-            <select
+          <div className="text-right">
+            <SearchableSelect
+              label={t("difficulty")}
               value={difficulty}
-              onChange={(event) => setDifficulty(event.target.value as FlashcardDifficultyId)}
-              className="h-11 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-            >
-              {DIFFICULTY_OPTIONS.map((level) => (
-                <option key={level} value={level}>
-                  {tDiff(level)}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => setDifficulty(value as FlashcardDifficultyId)}
+              options={DIFFICULTY_OPTIONS.map((level) => ({
+                value: level,
+                label: tDiff(level),
+              }))}
+              className="gap-1.5"
+              labelClassName="text-sm font-semibold text-slate-600"
+              triggerClassName="h-11 rounded-2xl border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+            />
           </div>
         </div>
 

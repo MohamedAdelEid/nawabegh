@@ -1,11 +1,5 @@
-import { Suspense } from "react";
-import { SchoolDashboardPage } from "@/modules/school/presentation/pages/SchoolDashboardPage";
-import { SchoolDashboardSkeleton } from "@/modules/school/presentation/components/dashboard/SchoolDashboardSkeleton";
+import { SchoolHomePage } from "@/modules/school/presentation/pages/SchoolHomePage";
 
 export default function SchoolDashboardRoutePage() {
-  return (
-    <Suspense fallback={<SchoolDashboardSkeleton />}>
-      <SchoolDashboardPage />
-    </Suspense>
-  );
+  return <SchoolHomePage />;
 }

@@ -27,6 +27,7 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard"
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
+import { LabeledSelect } from "@/shared/presentation/components/ui/labeled-select";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
 import { AccessDurationField } from "@/shared/presentation/components/ui/access-duration-field";
 import { ModalDescription, ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
@@ -502,21 +503,21 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                   ? []
                   : [{ field: "teacher" as const, options: teacherSelectOptions }]),
               ].map(({ field, options }) => (
-                <label key={field} className="space-y-2 text-right">
-                  <span className="text-sm font-semibold text-slate-600">{t(`create.fields.${field}`)}</span>
-                  <select
-                    value={draft[field]}
-                    onChange={(event) => update(field, event.target.value)}
-                    className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-                  >
-                    <option value="">{t(`create.placeholders.${field}`)}</option>
-                    {options.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <LabeledSelect
+                  key={field}
+                  label={t(`create.fields.${field}`)}
+                  value={draft[field]}
+                  onChange={(value) => update(field, value)}
+                  options={[
+                    { value: "", label: t(`create.placeholders.${field}`) },
+                    ...options.map((option) => ({
+                      value: option.id,
+                      label: option.label,
+                    })),
+                  ]}
+                  labelClassName="text-sm font-semibold text-slate-600"
+                  selectClassName="h-12 border-slate-200 text-sm"
+                />
               ))}
             </div>
             <input

@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpenCheck, EyeIcon, Loader2, LockKeyhole, UserRound } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -69,6 +69,8 @@ export function AdminAddTeacherPage() {
   const [gradeRows, setGradeRows] = useState<UserManagementDropdownOption<number>[]>([]);
   const [schoolRows, setSchoolRows] = useState<UserManagementDropdownOption<string>[]>([]);
   const [schoolsLoading, setSchoolsLoading] = useState(false);
+  const [schoolSearch, setSchoolSearch] = useState("");
+  const schoolRequestIdRef = useRef(0);
 
   const setField = <K extends keyof typeof values>(
     key: K,
@@ -108,7 +110,8 @@ export function AdminAddTeacherPage() {
   }, []);
 
   const loadSchools = useCallback(
-    async (countryId: string, countryNameFallback = "") => {
+    async (countryId: string, countryNameFallback = "", keyword = "") => {
+      const requestId = ++schoolRequestIdRef.current;
       if (!countryId.trim()) {
         setSchoolRows([]);
         setSchoolsLoading(false);
@@ -120,8 +123,10 @@ export function AdminAddTeacherPage() {
         countryRows,
         countryId,
         countryNameFallback,
+        keyword,
       );
 
+      if (requestId !== schoolRequestIdRef.current) return;
       if (errorMessage) {
         notify.error(errorMessage);
       }
@@ -130,6 +135,16 @@ export function AdminAddTeacherPage() {
     },
     [countryRows],
   );
+
+  useEffect(() => {
+    if (!values.countryId) return;
+
+    const timeoutId = window.setTimeout(() => {
+      void loadSchools(values.countryId, "", schoolSearch);
+    }, 300);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [loadSchools, schoolSearch, values.countryId]);
 
   useEffect(() => {
     if (isEditMode) return;
@@ -188,6 +203,7 @@ export function AdminAddTeacherPage() {
   }, [editUserId, isEditMode, t]);
 
   const handleCountryChange = (value: string) => {
+    schoolRequestIdRef.current += 1;
     setValues((current) => ({
       ...current,
       countryId: value,
@@ -199,8 +215,9 @@ export function AdminAddTeacherPage() {
     setEducationLevelRows([]);
     setGradeRows([]);
     setSchoolRows([]);
+    setSchoolSearch("");
+    setSchoolsLoading(Boolean(value));
     void loadEducationLevels(value);
-    void loadSchools(value);
   };
 
   const handleEducationLevelChange = (value: string) => {
@@ -442,7 +459,10 @@ export function AdminAddTeacherPage() {
                   label={t("userManagement.addUser.shared.fields.school")}
                   value={values.schoolId}
                   options={schoolOptions}
-                  disabled={!values.countryId || schoolsLoading || schoolEmpty}
+                  disabled={!values.countryId}
+                  isLoading={schoolsLoading}
+                  searchValue={schoolSearch}
+                  onSearchValueChange={setSchoolSearch}
                   onChange={handleSchoolChange}
                 />
                 {schoolEmpty && values.countryId ? (

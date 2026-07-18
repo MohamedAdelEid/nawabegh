@@ -1,0 +1,114 @@
+{
+  "dashboard": {
+    "title": "لوحة تحكم ولي الأمر",
+    "header": {
+      "searchPlaceholder": "بحث...",
+      "actions": {
+        "settings": "الملف الشخصي",
+        "notifications": "الإشعارات"
+      },
+      "mobileMenu": {
+        "open": "فتح القائمة",
+        "close": "إغلاق القائمة"
+      },
+      "menu": {
+        "settings": "الملف الشخصي",
+        "logout": "تسجيل الخروج"
+      },
+      "user": {
+        "menuLabel": "فتح قائمة الحساب",
+        "guestName": "ولي الأمر",
+        "roles": {
+          "admin": "مدير النظام",
+          "student": "طالب",
+          "teacher": "معلم",
+          "parent": "ولي أمر",
+          "school": "مدرسة"
+        }
+      }
+    },
+    "sidebar": {
+      "mainSection": "الرئيسية",
+      "footerSection": "المساعدة والحساب",
+      "toggleExpand": "توسيع القائمة",
+      "toggleCollapse": "طي القائمة",
+      "nav": {
+        "home": "الرئيسية",
+        "journey": "رحلة التميز",
+        "dailyTasks": "مهام اليوم",
+        "friendChallenges": "تحدي الأصدقاء",
+        "allCourses": "الدورات المتاحة",
+        "interactiveBook": "الكتاب التفاعلي",
+        "helpFiles": "ملفات المساعدة",
+        "helper": "المساعدة",
+        "profile": "الملف الشخصي",
+        "logout": "تسجيل الخروج"
+      }
+    },
+    "profilePage": {
+      "title": "الملف الشخصي",
+      "breadcrumb": "الرئيسية / الملف الشخصي",
+      "actions": {
+        "edit": "تعديل الملف الشخصي",
+        "changePassword": "تغيير كلمة المرور",
+        "addChild": "إضافة ابن جديد",
+        "viewDetails": "عرض التفاصيل",
+        "viewAll": "مشاهدة الكل",
+        "copyId": "نسخ معرّف المستخدم",
+        "retry": "إعادة المحاولة",
+        "cancel": "إلغاء",
+        "save": "حفظ التغييرات",
+        "saving": "جاري الحفظ..."
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "labels": {
+        "userId": "معرّف المستخدم",
+        "memberSince": "عضو منذ {date}",
+        "children": "أبنائي",
+        "notifications": "آخر التنبيهات",
+        "performance": "نظرة عامة على الأداء",
+        "attendance": "الحضور والانضباط",
+        "homework": "إكمال الواجبات",
+        "exams": "نتائج الاختبارات",
+        "academicProgress": "التقدم الدراسي",
+        "childrenCount": "عدد الأبناء",
+        "tracksCount": "المسارات المفضلة",
+        "totalPoints": "إجمالي النقاط",
+        "sessionsCount": "جلسات قادمة",
+        "noChildren": "لا يوجد أبناء مرتبطون بالحساب",
+        "noNotifications": "لا توجد تنبيهات حديثة"
+      },
+      "fields": {
+        "fullName": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "phoneNumber": "رقم الجوال",
+        "phoneCountryCode": "رمز الدولة",
+        "country": "الدولة",
+        "address": "العنوان",
+        "profileImageUrl": "رابط الصورة الشخصية",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور الجديدة"
+      },
+      "dialogs": {
+        "editTitle": "تعديل الملف الشخصي",
+        "editDescription": "حدّث بياناتك الشخصية وبيانات التواصل.",
+        "passwordTitle": "تغيير كلمة المرور",
+        "passwordDescription": "استخدم 8 أحرف على الأقل لكلمة المرور الجديدة."
+      },
+      "messages": {
+        "loadError": "تعذّر تحميل الملف الشخصي.",
+        "updateSuccess": "تم تحديث الملف الشخصي بنجاح.",
+        "passwordSuccess": "تم تغيير كلمة المرور بنجاح.",
+        "passwordMismatch": "كلمتا المرور الجديدتان غير متطابقتين.",
+        "passwordMin": "يجب ألا تقل كلمة المرور الجديدة عن 8 أحرف.",
+        "requiredFields": "يرجى إكمال جميع الحقول المطلوبة.",
+        "copied": "تم نسخ معرّف المستخدم.",
+        "comingSoon": "هذه الميزة متاحة قريبًا."
+      }
+    }
+  }
+}

@@ -1,9 +1,6 @@
 export type SchoolSubscriptionPlanId = "basic" | "gold" | "interactive";
 
-export type SchoolEducationStageId =
-  | "elementary"
-  | "middle"
-  | "secondary";
+export type SchoolEducationStageId = number;
 
 export interface SchoolFormValues {
   schoolName: string;
@@ -18,13 +15,12 @@ export interface SchoolFormValues {
   address: string;
   phoneNumber: string;
   email: string;
-  loginEmail: string;
   loginPassword: string;
   subscriptionPlanId: SchoolSubscriptionPlanId;
   educationStageIds: SchoolEducationStageId[];
 }
 
-export interface SchoolSelectOption<T extends string = string> {
+export interface SchoolSelectOption<T extends string | number = string> {
   id: T;
   labelKey: string;
   descriptionKey?: string;

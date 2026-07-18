@@ -1,7 +1,7 @@
 import { SidebarHomeIcon } from "@/shared/presentation/icons/sidebar";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
-import { LogOut, Megaphone, Settings } from "lucide-react";
+import { Award, LogOut, Megaphone, Settings, Trophy } from "lucide-react";
 
 export const schoolSidebarItems: SidebarItems = {
   main: [
@@ -17,6 +17,20 @@ export const schoolSidebarItems: SidebarItems = {
       href: ROUTES.USER.SCHOOL.ANNOUNCEMENTS.LIST,
       activePathPrefixes: [ROUTES.USER.SCHOOL.ANNOUNCEMENTS.LIST],
       icon: Megaphone,
+    },
+    {
+      id: "honored-students",
+      labelKey: "sidebar.nav.honoredStudents",
+      href: ROUTES.USER.SCHOOL.HONOR_BOARD.HONORED_STUDENTS,
+      activePathPrefixes: [ROUTES.USER.SCHOOL.HONOR_BOARD.HONORED_STUDENTS],
+      icon: Award,
+    },
+    {
+      id: "honor-board",
+      labelKey: "sidebar.nav.honorBoard",
+      href: ROUTES.USER.SCHOOL.HONOR_BOARD.LEADERBOARD,
+      activePathPrefixes: [ROUTES.USER.SCHOOL.HONOR_BOARD.LEADERBOARD],
+      icon: Trophy,
     },
   ],
   secondary: [

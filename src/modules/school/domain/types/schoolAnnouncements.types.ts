@@ -10,6 +10,13 @@ export type SchoolAnnouncementAudience =
   | "teachers"
   | "studentsTeachersParents";
 
+export type SchoolAnnouncementApiAudience =
+  | "all"
+  | "students"
+  | "parents"
+  | "teachers"
+  | "students_teachers_parents";
+
 /** Normalized status used for badge styling and i18n labels. */
 export type SchoolAnnouncementStatusTone =
   | "published"
@@ -131,6 +138,23 @@ export interface SchoolAnnouncementDetail {
   actions: SchoolAnnouncementActions;
 }
 
+export interface SchoolAnnouncementReport {
+  referenceCode: string;
+  title: string;
+  sentAt: string | null;
+  generatedAt: string | null;
+  statistics: SchoolAnnouncementStatistics;
+  body: string;
+  bodyHtml: string;
+  displayDurationHours: number;
+  audience: SchoolAnnouncementAudience;
+  audienceLabel: string;
+  studentsCount: number;
+  parentsCount: number;
+  teachersCount: number;
+  channels: SchoolAnnouncementChannel[];
+}
+
 export interface SchoolRealtimeTracking {
   isActive: boolean;
   announcementId: string;
@@ -199,7 +223,7 @@ export interface UpsertSchoolAnnouncementPayload {
   type: SchoolAnnouncementType;
   title: string;
   body: string;
-  audience: SchoolAnnouncementAudience;
+  audience: SchoolAnnouncementApiAudience;
   sendMethod: "Instant" | "Scheduled";
   scheduledAtUtc: string | null;
   displayDurationHours: number;

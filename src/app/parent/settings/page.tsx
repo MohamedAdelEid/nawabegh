@@ -1,1 +1,1 @@
-export { StudentSettingsPage as default } from "@/modules/student/presentation/pages/StudentSettingsPage";
+export { ParentProfilePage as default } from "@/modules/parent/presentation/pages/ParentProfilePage";

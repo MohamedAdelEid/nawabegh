@@ -18,6 +18,7 @@ import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDa
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 const IMAGE_FOLDER = "community/articles";
 const FILE_FOLDER = "community/attachments";
@@ -211,27 +212,27 @@ export function TeacherCommunityCreatePostView() {
             />
           </label>
 
-          <label className="block space-y-2 text-right">
-            <span className="text-sm font-semibold text-slate-700">{t("fields.category")}</span>
-            <select
+          <div className="text-right">
+            <SearchableSelect
+              label={t("fields.category")}
               value={draft.categoryId}
-              onChange={(event) => {
-                const option = categories.find((item) => item.id === event.target.value);
+              onChange={(categoryId) => {
+                const option = categories.find((item) => item.id === categoryId);
                 updateDraft({
-                  categoryId: event.target.value,
+                  categoryId,
                   categoryLabel: option?.label ?? "",
                 });
               }}
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm outline-none"
-            >
-              <option value="">{t("fields.categoryPlaceholder")}</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
-          </label>
+              placeholder={t("fields.categoryPlaceholder")}
+              options={categories.map((category) => ({
+                value: category.id,
+                label: category.label,
+              }))}
+              className="gap-2"
+              labelClassName="text-sm font-semibold text-slate-700"
+              triggerClassName="h-12 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-right text-sm shadow-none"
+            />
+          </div>
 
           <div className="space-y-2 text-right">
             <span className="text-sm font-semibold text-slate-700">{t("fields.content")}</span>

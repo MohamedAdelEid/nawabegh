@@ -9,6 +9,7 @@ import { cn } from "@/shared/application/lib/cn";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Label } from "@/shared/presentation/components/ui/label";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 type BookStatusUi = "draft" | "published";
 
@@ -111,34 +112,36 @@ export function AddInteractiveBookModal({
                       <Label htmlFor="ib-subject" className="text-slate-600">
                         {t("fields.subject.label")}
                       </Label>
-                      <div className="relative">
-                        <select
+                      <div>
+                        <SearchableSelect
                           id="ib-subject"
                           value={subjectId}
-                          onChange={(e) => setSubjectId(e.target.value)}
-                          className="h-12 w-full appearance-none rounded-xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm text-slate-800 outline-none focus:ring-2 focus:ring-[var(--dashboard-gold)]/30"
-                        >
-                          <option value="math">{t("fields.subject.options.math")}</option>
-                          <option value="arabic">{t("fields.subject.options.arabic")}</option>
-                          <option value="science">{t("fields.subject.options.science")}</option>
-                        </select>
+                          onChange={setSubjectId}
+                          options={(["math", "arabic", "science"] as const).map((option) => ({
+                            value: option,
+                            label: t(`fields.subject.options.${option}`),
+                          }))}
+                          className="gap-0"
+                          triggerClassName="h-12 rounded-xl border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm text-slate-800 shadow-none focus-visible:ring-[var(--dashboard-gold)]/30"
+                        />
                       </div>
                     </div>
                     <div className="space-y-2 text-right">
                       <Label htmlFor="ib-grade" className="text-slate-600">
                         {t("fields.grade.label")}
                       </Label>
-                      <div className="relative">
-                        <select
+                      <div>
+                        <SearchableSelect
                           id="ib-grade"
                           value={gradeId}
-                          onChange={(e) => setGradeId(e.target.value)}
-                          className="h-12 w-full appearance-none rounded-xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm text-slate-800 outline-none focus:ring-2 focus:ring-[var(--dashboard-gold)]/30"
-                        >
-                          <option value="grade10">{t("fields.grade.options.grade10")}</option>
-                          <option value="grade11">{t("fields.grade.options.grade11")}</option>
-                          <option value="grade12">{t("fields.grade.options.grade12")}</option>
-                        </select>
+                          onChange={setGradeId}
+                          options={(["grade10", "grade11", "grade12"] as const).map((option) => ({
+                            value: option,
+                            label: t(`fields.grade.options.${option}`),
+                          }))}
+                          className="gap-0"
+                          triggerClassName="h-12 rounded-xl border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-muted)] px-3 text-right text-sm text-slate-800 shadow-none focus-visible:ring-[var(--dashboard-gold)]/30"
+                        />
                       </div>
                     </div>
                   </div>

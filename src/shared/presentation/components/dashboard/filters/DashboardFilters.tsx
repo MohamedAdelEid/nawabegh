@@ -1,7 +1,8 @@
 "use client";
 
 import { cn } from "@/shared/application/lib/cn";
-import { ChevronDown, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 
 export type DashboardFilterOption<T extends string> = {
   id: T;
@@ -22,24 +23,19 @@ export function DashboardFilterSelect<T extends string>({
   disabled?: boolean;
 }) {
   return (
-    <label className="min-w-0 w-full space-y-2 text-start sm:min-w-[10rem] sm:w-auto">
-      <span className="block text-xs font-medium text-slate-400">{label}</span>
-      <div className="relative">
-        <select
-          value={value}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.value as T)}
-          className="h-14 w-full appearance-none rounded-2xl border border-slate-100 bg-white px-4 text-start text-base text-slate-700 shadow-sm outline-none transition focus:border-[#C7AF6E] focus:ring-2 focus:ring-[#C7AF6E]/20 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute end-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
-    </label>
+    <SearchableSelect
+      label={label}
+      value={value}
+      disabled={disabled}
+      onChange={onChange}
+      options={options.map((option) => ({
+        value: option.id,
+        label: option.label,
+      }))}
+      className="min-w-0 w-full gap-2 text-start sm:min-w-[10rem] sm:w-auto"
+      labelClassName="text-xs font-medium text-slate-400"
+      triggerClassName="h-14 rounded-2xl border border-slate-100 bg-white px-4 text-start text-base text-slate-700 shadow-sm focus-visible:ring-[#C7AF6E]/20"
+    />
   );
 }
 

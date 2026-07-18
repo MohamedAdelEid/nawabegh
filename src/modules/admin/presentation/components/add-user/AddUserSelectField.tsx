@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { AddUserField } from "./AddUserField";
 
 export function AddUserSelectField<T extends string>({
@@ -10,6 +10,9 @@ export function AddUserSelectField<T extends string>({
   options,
   onChange,
   disabled = false,
+  isLoading = false,
+  searchValue,
+  onSearchValueChange,
 }: {
   label: string;
   hint?: string;
@@ -17,24 +20,26 @@ export function AddUserSelectField<T extends string>({
   options: Array<{ id: T; label: string }>;
   onChange: (value: T) => void;
   disabled?: boolean;
+  isLoading?: boolean;
+  searchValue?: string;
+  onSearchValueChange?: (value: string) => void;
 }) {
   return (
     <AddUserField label={label} hint={hint}>
-      <div className="relative">
-        <select
-          value={value}
-          disabled={disabled}
-          onChange={(event) => onChange(event.target.value as T)}
-          className="h-14 w-full appearance-none rounded-2xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-soft)] px-4 text-right text-base text-slate-700 outline-none transition focus:border-[var(--dashboard-gold)] focus:ring-2 focus:ring-[var(--dashboard-gold)]/20 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-      </div>
+      <SearchableSelect
+        value={value}
+        disabled={disabled}
+        isLoading={isLoading}
+        searchValue={searchValue}
+        onSearchValueChange={onSearchValueChange}
+        onChange={onChange}
+        options={options.map((option) => ({
+          value: option.id,
+          label: option.label,
+        }))}
+        className="gap-0"
+        triggerClassName="h-14 rounded-2xl border border-[var(--dashboard-border-soft)] bg-[var(--dashboard-surface-soft)] px-4 text-right text-base text-slate-700 shadow-none focus-visible:ring-[var(--dashboard-gold)]/20"
+      />
     </AddUserField>
   );
 }

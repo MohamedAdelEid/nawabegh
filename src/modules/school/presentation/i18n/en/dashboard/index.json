@@ -35,13 +35,172 @@
       "nav": {
         "home": "Home",
         "announcements": "Announcements & alerts",
+        "honorBoard": "Honor board",
+        "honoredStudents": "Honored students",
         "settings": "Settings",
         "logout": "Log out"
       }
     },
     "settingsPage": {
-      "title": "Account settings",
-      "description": "Manage your school account details."
+      "title": "School data & settings",
+      "description": "Manage school profile details, notification preferences, and account security.",
+      "profile": {
+        "completion": "Profile completion: {value}%"
+      },
+      "sections": {
+        "schoolData": "School data",
+        "account": "Account settings",
+        "changePassword": "Change password",
+        "notifications": "Notifications",
+        "security": "Security & privacy"
+      },
+      "fields": {
+        "schoolName": "School name",
+        "city": "City",
+        "description": "School description",
+        "address": "Address",
+        "country": "Country",
+        "phoneNumber": "Phone number",
+        "educationLevels": "Education levels",
+        "organizationEmail": "Organization email",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password"
+      },
+      "placeholders": {
+        "schoolName": "Enter school name",
+        "city": "Enter city",
+        "description": "Write a short description about the school...",
+        "address": "Enter the full address",
+        "country": "Select country",
+        "phoneNumber": "Enter phone number",
+        "currentPassword": "Enter current password",
+        "newPassword": "Enter new password",
+        "confirmPassword": "Re-enter new password"
+      },
+      "media": {
+        "coverAlt": "{name} cover image",
+        "logoAlt": "{name} logo"
+      },
+      "notifications": {
+        "enableAlerts": "Enable alerts",
+        "enableEmail": "Email notifications",
+        "enableSms": "SMS messages",
+        "enableSubscriptionRenewal": "Subscription renewal",
+        "on": "On",
+        "off": "Off"
+      },
+      "security": {
+        "description": "Manage active devices and login sessions linked to the school account.",
+        "columns": {
+          "device": "Device / browser",
+          "location": "Location",
+          "lastSeen": "Last seen",
+          "status": "Status"
+        },
+        "ip": "IP: {ip}",
+        "ipUnknown": "Unknown IP",
+        "active": "Active",
+        "empty": "No active sessions right now.",
+        "defaultHint": "Use a strong password with at least {min} characters, mixing letters and numbers."
+      },
+      "actions": {
+        "save": "Save data",
+        "saving": "Saving...",
+        "retry": "Retry",
+        "changeCover": "Change cover",
+        "changeLogo": "Change logo",
+        "removeDevice": "Remove device",
+        "removing": "Removing...",
+        "revokeAll": "Log out from all devices",
+        "revoking": "Logging out..."
+      },
+      "validation": {
+        "passwordRequired": "Enter both the current and new password.",
+        "passwordMinLength": "The new password must be at least {min} characters.",
+        "passwordMismatch": "The new password and confirmation do not match."
+      },
+      "messages": {
+        "saveSuccess": "School data saved successfully",
+        "saveError": "Could not save school data",
+        "notificationsSaved": "Notification preferences updated",
+        "notificationsError": "Could not update notification preferences",
+        "sessionRemoved": "Device removed successfully",
+        "sessionRemoveError": "Could not remove the device",
+        "sessionsRevoked": "Logged out from other devices",
+        "sessionsRevokeError": "Could not log out from other devices",
+        "invalidImage": "Please choose a PNG, JPG, or WEBP image smaller than 5MB"
+      }
+    },
+    "homePage": {
+      "welcome": "Welcome",
+      "schoolFallback": "School",
+      "unreadNotifications": "You have unread notifications",
+      "kpis": {
+        "students": "Registered students",
+        "studentGrowth": "+{value}% this month",
+        "rank": "School rank",
+        "totalSchools": "Out of {total} schools",
+        "activeCourses": "Active courses",
+        "courseProgress": "{value}% of students are active",
+        "todayRegistrations": "Today's registrations"
+      },
+      "competition": {
+        "title": "Competition center",
+        "rank": "Rank",
+        "medals": "{count} medals",
+        "points": "{current} of {top} points"
+      },
+      "announcements": {
+        "title": "Latest announcements & alerts",
+        "subtitle": "Your school's latest messages",
+        "viewAll": "View all",
+        "empty": "No recent announcements."
+      },
+      "articles": {
+        "title": "Latest published articles",
+        "managementTitle": "Manage school student articles",
+        "managementSubtitle": "Review articles by your school's students and hide or delete them when permitted.",
+        "viewAll": "View all articles",
+        "summary": "Showing {visible} of {total} articles",
+        "previous": "Previous",
+        "next": "Next",
+        "empty": "No matching articles.",
+        "columns": {
+          "title": "Article title",
+          "author": "Author",
+          "interaction": "Engagement",
+          "date": "Publish date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "filters": {
+          "status": "Article status",
+          "all": "All statuses"
+        },
+        "status": {
+          "Draft": "Draft",
+          "PendingReview": "Pending review",
+          "NeedsEdits": "Needs edits",
+          "Published": "Published",
+          "Hidden": "Hidden"
+        },
+        "actions": {
+          "hide": "Hide article",
+          "delete": "Delete article"
+        },
+        "messages": {
+          "hidden": "Article hidden",
+          "deleted": "Article deleted",
+          "actionError": "Could not complete the action"
+        },
+        "delete": {
+          "title": "Delete article",
+          "description": "Are you sure you want to delete “{title}”? This action cannot be undone.",
+          "confirm": "Yes, delete",
+          "cancel": "Cancel"
+        }
+      }
     },
     "common": {
       "loading": "Loading...",
@@ -110,7 +269,8 @@
           "all": "Everyone (students & parents)",
           "students": "Students",
           "parents": "Parents",
-          "teachers": "Teachers"
+          "teachers": "Teachers",
+          "studentsTeachersParents": "Everyone (students, teachers & parents)"
         },
         "durationOptions": {
           "h24": "24 hours",
@@ -123,17 +283,25 @@
           "scheduled": "Schedule"
         },
         "scheduledAt": "Send time",
+        "schedulePicker": {
+          "placeholder": "Select date and time",
+          "time": "Send time",
+          "confirm": "Confirm"
+        },
         "submit": "Send announcement now",
+        "update": "Save changes",
         "saveDraft": "Save as draft",
         "validation": {
           "titleRequired": "Message title is required.",
           "bodyRequired": "Message content is required.",
+          "scheduledRequired": "Select a scheduled send time.",
           "scheduledInFuture": "The schedule time must be in the future."
         },
         "messages": {
           "draftSaved": "Draft saved",
           "scheduled": "Announcement scheduled",
           "sent": "Announcement created and sending started",
+          "updated": "Announcement updated",
           "error": "Could not send the announcement",
           "uploadError": "Could not upload the file"
         }
@@ -232,6 +400,8 @@
       "notFound": "This announcement was not found.",
       "actions": {
         "resend": "Resend",
+        "sendDraft": "Send draft",
+        "edit": "Edit",
         "printReport": "Print report",
         "archive": "Archive alert",
         "delete": "Delete record"
@@ -261,12 +431,172 @@
         "download": "Download"
       },
       "messages": {
+        "sendSuccess": "Draft sending started",
+        "sendError": "Could not send the draft",
         "resendSuccess": "Resend started",
         "resendError": "Could not resend",
         "archiveSuccess": "Announcement archived",
         "archiveError": "Could not archive",
         "deleteSuccess": "Announcement deleted",
         "deleteError": "Could not delete the announcement"
+      }
+    },
+    "editPage": {
+      "title": "Edit announcement",
+      "notAllowed": "This announcement cannot be edited after sending has started."
+    },
+    "reportPage": {
+      "eyebrow": "Announcement report",
+      "reference": "Reference: #{code}",
+      "print": "Print",
+      "loadError": "Could not load the announcement report.",
+      "content": "Message content",
+      "audience": "Target audience",
+      "duration": "Display duration",
+      "durationHours": "{value} hours",
+      "generatedAt": "Report generated on {date}",
+      "stats": {
+        "deliveryRate": "Delivery rate",
+        "totalRecipients": "Total recipients",
+        "delivered": "Delivered successfully"
+      }
+    },
+    "honorBoard": {
+      "nav": {
+        "label": "Honor board sections",
+        "leaderboard": "Leaderboard",
+        "honors": "Manual honors"
+      },
+      "common": {
+        "loading": "Loading...",
+        "loadError": "Could not load the data.",
+        "actionError": "Could not complete the action.",
+        "retry": "Retry",
+        "previous": "Previous",
+        "next": "Next",
+        "back": "Back",
+        "cancel": "Cancel",
+        "saving": "Saving..."
+      },
+      "leaderboard": {
+        "title": "School leaders",
+        "subtitle": "Track student performance and academic excellence for the selected period",
+        "kpis": {
+          "participants": "Total participants",
+          "totalScore": "Total points",
+          "participation": "Participation rate",
+          "topSchool": "Top school"
+        },
+        "period": {
+          "label": "Period",
+          "weekly": "Weekly",
+          "monthly": "Monthly",
+          "term": "Term",
+          "all": "All time"
+        },
+        "metric": {
+          "points": "Points",
+          "achievements": "Achievements",
+          "grades": "Grades"
+        },
+        "remaining": {
+          "title": "Remaining leaders",
+          "range": "Ranks {from} - {to}"
+        },
+        "table": {
+          "rank": "Rank",
+          "student": "Student",
+          "grade": "Grade",
+          "score": "Score",
+          "change": "Change"
+        },
+        "meta": {
+          "competitors": "Total competitors",
+          "nextUpdate": "Next update"
+        },
+        "empty": "No results are available for this period yet."
+      },
+      "honors": {
+        "title": "Manual honors",
+        "subtitle": "Manage honored students, reasons, and display duration",
+        "create": "Add honor",
+        "search": "Search by name or reference...",
+        "empty": "No matching honors.",
+        "durationDays": "{count} days",
+        "filters": {
+          "all": "All",
+          "active": "Active",
+          "hidden": "Hidden"
+        },
+        "kpis": {
+          "total": "Total honored",
+          "active": "Active honors",
+          "thisMonth": "This month",
+          "averageRating": "Average rating"
+        },
+        "table": {
+          "student": "Student",
+          "reason": "Honor reason",
+          "date": "Honor date",
+          "duration": "Duration",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "active": "Active",
+          "hidden": "Hidden",
+          "expired": "Expired"
+        },
+        "actions": {
+          "show": "Show honor",
+          "hide": "Hide honor",
+          "edit": "Edit",
+          "delete": "Delete"
+        },
+        "messages": {
+          "visibilityUpdated": "Honor visibility updated",
+          "deleted": "Honor deleted"
+        },
+        "delete": {
+          "title": "Delete honor",
+          "description": "Delete the honor for {name}? This action cannot be undone.",
+          "confirm": "Yes, delete"
+        }
+      },
+      "form": {
+        "createTitle": "Add honored student",
+        "editTitle": "Edit honor",
+        "subtitle": "Enter the honor details and choose how long it appears",
+        "fields": {
+          "student": "Student",
+          "studentSearch": "Type at least two characters to find a student...",
+          "reason": "Honor reason",
+          "reasonPlaceholder": "e.g. Excellence in the mathematics competition",
+          "details": "Honor details",
+          "detailsPlaceholder": "Add information explaining the achievement...",
+          "duration": "Duration in days",
+          "order": "Display order",
+          "image": "Achievement image (optional)",
+          "publishNow": "Publish and show this honor now"
+        },
+        "studentEmpty": "No students found.",
+        "clearStudent": "Clear selected student",
+        "upload": "Upload image",
+        "imagePreview": "Achievement image preview",
+        "publish": "Publish honor",
+        "save": "Save changes",
+        "validation": {
+          "student": "Select a student.",
+          "reason": "Honor reason is required.",
+          "duration": "Duration must be between 1 and 365 days.",
+          "order": "Display order must be a positive whole number.",
+          "image": "Select a valid image file."
+        },
+        "messages": {
+          "created": "Honor created and published",
+          "updated": "Honor updated",
+          "uploadError": "Could not upload the image"
+        }
       }
     }
   }

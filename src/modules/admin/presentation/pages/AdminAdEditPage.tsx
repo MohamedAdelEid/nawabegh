@@ -50,8 +50,8 @@ export function AdminAdEditPage({ adId }: AdminAdEditPageProps) {
   const gradeOptions = useMemo(
     () =>
       schoolEducationStages.map((stage) => ({
-        value: stage.id,
-        label: stage.id,
+        value: String(stage.id),
+        label: String(stage.id),
       })),
     [],
   );
