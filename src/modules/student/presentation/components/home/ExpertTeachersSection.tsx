@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ChevronLeft, Star } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { Teacher } from "@/shared/domain/types/teacher.types";
@@ -16,6 +17,7 @@ function ExpertTeacherCard({ teacher }: ExpertTeacherCardProps) {
   const t = useTranslations("student.dashboard.home.teachers");
   const locale = useLocale();
   const countFormatter = new Intl.NumberFormat(locale.startsWith("ar") ? "ar" : "en");
+  const profileHref = ROUTES.USER.STUDENT.TEACHER_PROFILE(teacher.teacherId);
 
   return (
     <article className="flex items-center gap-6 rounded-3xl border border-[#e2e8f0] bg-white p-6">
@@ -33,13 +35,13 @@ function ExpertTeacherCard({ teacher }: ExpertTeacherCardProps) {
             {t("students", { count: countFormatter.format(teacher.studentCount) })}
           </span>
         </div>
-        <button
-          type="button"
-          className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#2c4260]"
+        <Link
+          href={profileHref}
+          className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-[#2c4260] transition-colors hover:text-[#1f3048]"
         >
           {t("viewProfile")}
           <ChevronLeft className="size-3.5" aria-hidden />
-        </button>
+        </Link>
       </div>
 
       <div className="relative shrink-0">
@@ -97,7 +99,7 @@ export function ExpertTeachersSection({ teachers, isLoading }: ExpertTeachersSec
     <section className="space-y-6">
       <HomeSectionHeader
         title={t("title")}
-        viewAllHref={ROUTES.USER.STUDENT.COURSES}
+        viewAllHref={ROUTES.USER.STUDENT.TEACHERS}
         viewAllLabel={t("browseAll")}
       />
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

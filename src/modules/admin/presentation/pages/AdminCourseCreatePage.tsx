@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BookOpen, CheckCircle2, Eye, FileUp, Lightbulb, Tag } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -56,6 +56,8 @@ const initialDraft: CourseCreateDraft = {
   title: "",
   description: "",
   subject: "",
+  country: "",
+  educationLevel: "",
   grade: "",
   term: String(CourseTerm.FirstTerm),
   teacher: "",
@@ -117,11 +119,78 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
   const [createdCourseId, setCreatedCourseId] = useState<string | null>(null);
   const [accessDurationDays, setAccessDurationDays] = useState<AccessDurationDays>(null);
   const [subjects, setSubjects] = useState<SubjectListItem[]>([]);
+  const [countryOptions, setCountryOptions] = useState<SelectOption[]>([]);
+  const [educationLevelOptions, setEducationLevelOptions] = useState<SelectOption[]>([]);
   const [gradeOptions, setGradeOptions] = useState<SelectOption[]>([]);
+  const [educationLevelsLoading, setEducationLevelsLoading] = useState(false);
+  const [gradesLoading, setGradesLoading] = useState(false);
   const [teacherOptions, setTeacherOptions] = useState<UserManagementListRow[]>([]);
+  const editGradeHydratedRef = useRef(false);
 
   const update = (key: keyof typeof draft, value: string) => {
     setDraft((prev) => ({ ...prev, [key]: value }) as typeof prev);
+  };
+
+  const loadGrades = useCallback(async (educationLevelId: string) => {
+    const id = Number(educationLevelId);
+    if (!educationLevelId || Number.isNaN(id)) {
+      setGradeOptions([]);
+      return;
+    }
+
+    setGradesLoading(true);
+    const result = await getUserManagementGradesDropdown(id);
+    setGradeOptions(
+      (result.data ?? []).map((grade) => ({
+        id: String(grade.id),
+        label: grade.name,
+      })),
+    );
+    setGradesLoading(false);
+  }, []);
+
+  const loadEducationLevels = useCallback(async (countryId: string) => {
+    const id = Number(countryId);
+    if (!countryId || Number.isNaN(id)) {
+      setEducationLevelOptions([]);
+      return [];
+    }
+
+    setEducationLevelsLoading(true);
+    const levelsRes = await getEducationLevelsDropdown(id);
+    const options = (levelsRes.data ?? []).map((level) => ({
+      id: String(level.id),
+      label: level.name,
+    }));
+    setEducationLevelOptions(options);
+    setEducationLevelsLoading(false);
+    return options;
+  }, []);
+
+  const loadCountries = useCallback(async () => {
+    const countries = await getCountriesDropdown();
+    const options = (countries.data ?? []).map((country) => ({
+      id: String(country.id),
+      label: country.name,
+    }));
+    setCountryOptions(options);
+    return options;
+  }, []);
+
+  const handleCountryChange = (value: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      country: value,
+      educationLevel: "",
+      grade: "",
+    }));
+    setGradeOptions([]);
+    void loadEducationLevels(value);
+  };
+
+  const handleEducationLevelChange = (value: string) => {
+    setDraft((prev) => ({ ...prev, educationLevel: value, grade: "" }));
+    void loadGrades(value);
   };
 
   useEffect(() => {
@@ -144,6 +213,8 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
         title: course.title,
         description: course.description,
         subject: course.subjectId ? String(course.subjectId) : "",
+        country: "",
+        educationLevel: "",
         grade: course.gradeId ? String(course.gradeId) : "",
         term: String(course.term),
         teacher: course.teacherId,
@@ -153,6 +224,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
         lessonCount: "",
         pathCount: "",
       });
+      editGradeHydratedRef.current = false;
       setAccessDurationDays(course.accessDurationDays);
       setExistingCoverImageUrl(course.coverImageUrl);
       if (course.coverImageUrl) {
@@ -201,35 +273,59 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
   }, []);
 
   useEffect(() => {
+    void loadCountries();
+  }, [loadCountries]);
+
+  useEffect(() => {
+    if (!isEditMode || !draft.grade || draft.country || countryOptions.length === 0) {
+      return;
+    }
+    if (editGradeHydratedRef.current) return;
+
     let alive = true;
-    const load = async () => {
-      const countries = await getCountriesDropdown();
-      if (!alive || countries.errorMessage || !countries.data?.length) return;
-      const country = countries.data[0];
-      if (!country) return;
-      const levelsRes = await getEducationLevelsDropdown(country.id);
-      if (!alive) return;
-      const levels = levelsRes.data ?? [];
-      const batches = await Promise.all(levels.map((level) => getUserManagementGradesDropdown(level.id)));
-      const byId = new Map<number, string>();
-      batches.forEach((batch, index) => {
-        const levelName = levels[index]?.name ?? "";
-        const prefix = levelName.trim() ? `${levelName.trim()} — ` : "";
-        (batch.data ?? []).forEach((grade) => {
-          const id = typeof grade.id === "number" ? grade.id : Number(grade.id);
-          if (!Number.isNaN(id) && !byId.has(id)) {
-            byId.set(id, `${prefix}${grade.name}`);
-          }
-        });
-      });
-      if (!alive) return;
-      setGradeOptions(Array.from(byId.entries()).map(([id, label]) => ({ id: String(id), label })));
-    };
-    void load();
+    const gradeId = Number(draft.grade);
+
+    void (async () => {
+      for (const country of countryOptions) {
+        const levelsResult = await getEducationLevelsDropdown(Number(country.id));
+        if (!alive) return;
+
+        const levels = levelsResult.data ?? [];
+        for (const level of levels) {
+          const gradesResult = await getUserManagementGradesDropdown(level.id);
+          if (!alive) return;
+
+          const grades = gradesResult.data ?? [];
+          const hasGrade = grades.some((grade) => Number(grade.id) === gradeId);
+          if (!hasGrade) continue;
+
+          setEducationLevelOptions(
+            levels.map((item) => ({
+              id: String(item.id),
+              label: item.name,
+            })),
+          );
+          setDraft((prev) => ({
+            ...prev,
+            country: country.id,
+            educationLevel: String(level.id),
+          }));
+          setGradeOptions(
+            grades.map((grade) => ({
+              id: String(grade.id),
+              label: grade.name,
+            })),
+          );
+          editGradeHydratedRef.current = true;
+          return;
+        }
+      }
+    })();
+
     return () => {
       alive = false;
     };
-  }, []);
+  }, [countryOptions, draft.country, draft.grade, isEditMode]);
 
   const subjectOptions = useMemo<SelectOption[]>(
     () => subjects.map((subject) => ({ id: String(subject.id), label: subject.nameAr || subject.nameEn })),
@@ -251,18 +347,33 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
   );
 
   const selectedSubjectLabel = subjectOptions.find((option) => option.id === draft.subject)?.label ?? "—";
+  const selectedCountryLabel = countryOptions.find((option) => option.id === draft.country)?.label ?? "—";
+  const selectedEducationLevelLabel =
+    educationLevelOptions.find((option) => option.id === draft.educationLevel)?.label ?? "—";
   const selectedGradeLabel = gradeOptions.find((option) => option.id === draft.grade)?.label ?? "—";
+  const selectedTeacherLabel =
+    teacherSelectOptions.find((option) => option.id === draft.teacher)?.label ?? "—";
 
   const submit = async () => {
     if (submitting) return;
     const subjectId = toNumber(draft.subject);
+    const countryId = toNumber(draft.country);
+    const educationLevelId = toNumber(draft.educationLevel);
     const gradeId = toNumber(draft.grade);
     const term = toNumber(draft.term);
-    if (!draft.title.trim() || !draft.description.trim() || subjectId === null || gradeId === null || term === null) {
+    if (
+      !draft.title.trim() ||
+      !draft.description.trim() ||
+      subjectId === null ||
+      countryId === null ||
+      educationLevelId === null ||
+      gradeId === null ||
+      term === null
+    ) {
       notify.error(t("create.messages.validation"));
       return;
     }
-    if (!isEditMode && !draft.teacher) {
+    if (!draft.teacher) {
       notify.error(t("create.messages.validation"));
       return;
     }
@@ -304,6 +415,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
         subjectId,
         gradeId,
         term: term as CourseTerm,
+        teacherId: draft.teacher,
         coverImageUrl,
         accessType,
         accessDurationDays: resolvedAccessDurationDays,
@@ -495,22 +607,86 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
               rows={4}
             />
             <div className="grid gap-4 md:grid-cols-2">
-              {[
-                { field: "subject" as const, options: subjectOptions },
-                { field: "grade" as const, options: gradeOptions },
-                { field: "term" as const, options: termOptions },
-                ...(isEditMode
-                  ? []
-                  : [{ field: "teacher" as const, options: teacherSelectOptions }]),
-              ].map(({ field, options }) => (
+              <LabeledSelect
+                label={t("create.fields.subject")}
+                value={draft.subject}
+                onChange={(value) => update("subject", value)}
+                options={[
+                  { value: "", label: t("create.placeholders.subject") },
+                  ...subjectOptions.map((option) => ({
+                    value: option.id,
+                    label: option.label,
+                  })),
+                ]}
+                labelClassName="text-sm font-semibold text-slate-600"
+                selectClassName="h-12 border-slate-200 text-sm"
+              />
+              <LabeledSelect
+                label={t("create.fields.country")}
+                value={draft.country}
+                onChange={handleCountryChange}
+                options={[
+                  { value: "", label: t("create.placeholders.country") },
+                  ...countryOptions.map((option) => ({
+                    value: option.id,
+                    label: option.label,
+                  })),
+                ]}
+                labelClassName="text-sm font-semibold text-slate-600"
+                selectClassName="h-12 border-slate-200 text-sm"
+              />
+              <LabeledSelect
+                label={t("create.fields.educationLevel")}
+                value={draft.educationLevel}
+                onChange={handleEducationLevelChange}
+                disabled={!draft.country || educationLevelsLoading}
+                options={[
+                  { value: "", label: t("create.placeholders.educationLevel") },
+                  ...educationLevelOptions.map((option) => ({
+                    value: option.id,
+                    label: option.label,
+                  })),
+                ]}
+                labelClassName="text-sm font-semibold text-slate-600"
+                selectClassName="h-12 border-slate-200 text-sm"
+              />
+              <LabeledSelect
+                label={t("create.fields.grade")}
+                value={draft.grade}
+                onChange={(value) => update("grade", value)}
+                disabled={!draft.educationLevel || gradesLoading}
+                options={[
+                  { value: "", label: t("create.placeholders.grade") },
+                  ...gradeOptions.map((option) => ({
+                    value: option.id,
+                    label: option.label,
+                  })),
+                ]}
+                labelClassName="text-sm font-semibold text-slate-600"
+                selectClassName="h-12 border-slate-200 text-sm"
+              />
+              <LabeledSelect
+                label={t("create.fields.term")}
+                value={draft.term}
+                onChange={(value) => update("term", value)}
+                options={[
+                  { value: "", label: t("create.placeholders.term") },
+                  ...termOptions.map((option) => ({
+                    value: option.id,
+                    label: option.label,
+                  })),
+                ]}
+                labelClassName="text-sm font-semibold text-slate-600"
+                selectClassName="h-12 border-slate-200 text-sm"
+              />
+              {!isEditMode ? (
                 <LabeledSelect
-                  key={field}
-                  label={t(`create.fields.${field}`)}
-                  value={draft[field]}
-                  onChange={(value) => update(field, value)}
+                  label={t("create.fields.teacher")}
+                  value={draft.teacher}
+                  onChange={(value) => update("teacher", value)}
                   options={[
-                    { value: "", label: t(`create.placeholders.${field}`) },
-                    ...options.map((option) => ({
+                    { value: "", label: t("create.placeholders.teacher") },
+                    ...teacherSelectOptions.map((option) => ({
                       value: option.id,
                       label: option.label,
                     })),
@@ -518,7 +694,7 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                   labelClassName="text-sm font-semibold text-slate-600"
                   selectClassName="h-12 border-slate-200 text-sm"
                 />
-              ))}
+              ) : null}
             </div>
             <input
               ref={coverInputRef}
@@ -663,8 +839,20 @@ export function AdminCourseCreatePage({ courseId }: Props = {}) {
                   <p className="font-semibold">{selectedSubjectLabel}</p>
                 </div>
                 <div className="rounded-xl bg-white/10 p-3">
+                  <p className="text-xs text-white/60">{t("create.preview.country")}</p>
+                  <p className="font-semibold">{selectedCountryLabel}</p>
+                </div>
+                <div className="rounded-xl bg-white/10 p-3">
+                  <p className="text-xs text-white/60">{t("create.preview.educationLevel")}</p>
+                  <p className="font-semibold">{selectedEducationLevelLabel}</p>
+                </div>
+                <div className="rounded-xl bg-white/10 p-3">
                   <p className="text-xs text-white/60">{t("create.preview.grade")}</p>
                   <p className="font-semibold">{selectedGradeLabel}</p>
+                </div>
+                <div className="rounded-xl bg-white/10 p-3 md:col-span-2">
+                  <p className="text-xs text-white/60">{t("create.preview.teacher")}</p>
+                  <p className="font-semibold">{selectedTeacherLabel}</p>
                 </div>
               </div>
               <div className="rounded-xl bg-[#C8AC59] p-3 text-center font-bold flex gap-2 justify-between">

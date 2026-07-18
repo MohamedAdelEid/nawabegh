@@ -60,6 +60,13 @@ function mapPathStationProgress(row: unknown): PathStationProgressDto | null {
   };
 }
 
+function mapEnrollmentStatus(value: unknown): EnrolledCourseCardDto["status"] {
+  const normalized = toOptionalString(value).toLowerCase();
+  if (normalized === "expired") return "expired";
+  if (normalized === "inactive") return "inactive";
+  return "active";
+}
+
 export function mapEnrolledCourseCard(row: unknown): EnrolledCourseCardDto | null {
   const record = asRecord(row);
   if (!record) return null;
@@ -76,11 +83,39 @@ export function mapEnrolledCourseCard(row: unknown): EnrolledCourseCardDto | nul
     instructorName: toOptionalString(record.instructorName),
     instructorImageUrl:
       record.instructorImageUrl != null ? toOptionalString(record.instructorImageUrl) : null,
+    status: mapEnrollmentStatus(record.status),
+    startsAt: record.startsAt != null ? toOptionalString(record.startsAt) : null,
+    endsAt: record.endsAt != null ? toOptionalString(record.endsAt) : null,
     progressPercentage: toNumber(record.progressPercentage),
     isCompleted: Boolean(record.isCompleted),
     canViewCertificate: Boolean(record.canViewCertificate),
     certificateUrl: record.certificateUrl != null ? toOptionalString(record.certificateUrl) : null,
   };
+}
+
+export function sortSubscriptionCourses(courses: EnrolledCourseCardDto[]): EnrolledCourseCardDto[] {
+  return [...courses].sort((a, b) => {
+    if (a.isCompleted !== b.isCompleted) return a.isCompleted ? -1 : 1;
+    return b.progressPercentage - a.progressPercentage;
+  });
+}
+
+export function sumCourseStationCounts(
+  paths: CoursePathProgressDto[],
+): { completed: number; total: number } {
+  return paths.reduce(
+    (acc, path) => ({
+      completed: acc.completed + path.completedStations,
+      total: acc.total + path.totalStations,
+    }),
+    { completed: 0, total: 0 },
+  );
+}
+
+export function isLifetimeEnrollmentEnd(endsAt: string | null): boolean {
+  if (!endsAt) return true;
+  const year = new Date(endsAt).getUTCFullYear();
+  return Number.isFinite(year) && year >= 9999;
 }
 
 export function mapSubscriptionsDashboardDto(item: unknown): SubscriptionsDashboardDto | null {

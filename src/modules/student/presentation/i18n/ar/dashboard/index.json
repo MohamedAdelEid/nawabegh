@@ -34,7 +34,10 @@
       "toggleCollapse": "طي الشريط الجانبي",
       "nav": {
         "home": "الرئيسية",
+        "subscriptions": "اشتراكاتي",
+        "teachers": "المعلمون",
         "journey": "رحلة التفوق",
+        "schedule": "الجدول",
         "dailyTasks": "مهام اليوم",
         "friendChallenges": "عندي صديق",
         "studyMaterials": "المواد الدراسية",
@@ -203,6 +206,43 @@
       "errors": {
         "courses": "تعذر تحميل الدورات. يرجى المحاولة مرة أخرى.",
         "retry": "إعادة المحاولة"
+      }
+    },
+    "teachersDiscovery": {
+      "page": {
+        "title": "نخبة المعلمين في نوابغ",
+        "description": "تعلم من أفضل الخبراء في مختلف المجالات الأكاديمية والمهارية، المختارين بعناية لضمان تفوقك.",
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbCurrent": "المعلمون"
+      },
+      "filters": {
+        "allSubjects": "الكل",
+        "sortTopRated": "الأعلى تقييماً",
+        "sortLabel": "ترتيب النتائج"
+      },
+      "card": {
+        "students": "{count} طالب",
+        "viewCourses": "عرض الدورات",
+        "badgeExpert": "EXPERT",
+        "badgePioneer": "PRO"
+      },
+      "joinCard": {
+        "title": "انضم إلينا كمعلم",
+        "descriptionLine1": "هل تملك الخبرة؟ شارك معرفتك مع آلاف",
+        "descriptionLine2": "الطلاب"
+      },
+      "empty": {
+        "title": "لا يوجد معلمون",
+        "description": "لا يوجد معلمون مطابقون للبحث حالياً. جرّب مادة أخرى أو استكشف الدورات.",
+        "exploreCourses": "استكشف الدورات"
+      },
+      "errors": {
+        "teachers": "تعذر تحميل المعلمين. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة"
+      },
+      "pagination": {
+        "previous": "الصفحة السابقة",
+        "next": "الصفحة التالية"
       }
     },
     "courseDetails": {
@@ -413,32 +453,49 @@
       }
     },
     "subscriptions": {
+      "page": {
+        "title": "اشتراكاتي",
+        "description": "لوحة دوراتك المسجّل فيها وتقدّمك التعليمي."
+      },
       "title": "اشتراكاتي",
-      "welcome": "مرحباً بك مجدداً يا {name}",
-      "weeklyProgress": "لقد أكملت {percent}% من أهدافك التعليمية لهذا الأسبوع.",
+      "welcome": "مرحباً بك مجدداً يا {name} 👋",
+      "fallbackName": "طالب",
       "stats": {
         "totalCourses": "إجمالي الكورسات",
+        "newCoursesThisMonth": "+{count} كورس هذا الشهر",
         "thisMonth": "هذا الشهر",
         "overallProgress": "التقدم العام",
+        "overallProgressLabel": "معدل الإنجاز الكلي",
         "learningHours": "ساعات التعلم",
-        "completedCourses": "كورسات مكتملة"
+        "completedCourses": "كورسات مكتملة",
+        "peerCongrats": "تهانينا! أنت متقدم على {percent}% من الطلاب"
       },
       "actions": {
         "leaderboard": "المتصدرين",
-        "explore": "استكشف المزيد"
+        "explore": "استكشف مسارات جديدة"
       },
       "courses": {
         "title": "كورساتك الحالية",
         "count": "{count} كورسات",
         "empty": "لم تُسجَّل في أي دورة بعد.",
         "continue": "متابعة التعلم",
-        "certificate": "عرض الشهادة",
+        "continuing": "جاري التحميل...",
+        "certificate": "عرض الشهادة المعتمدة",
+        "certificatePending": "جاري إعداد الشهادة…",
         "completed": "مكتمل",
-        "progress": "التقدم"
+        "progress": "التقدم",
+        "progressValue": "التقدم: {percent}%",
+        "lessonProgress": "{completed} من {total} درس",
+        "expired": "منتهي",
+        "inactive": "موقوف",
+        "inactiveMessage": "هذا الاشتراك موقوف. تواصل مع الدعم للمساعدة.",
+        "expiresAt": "ينتهي في {date}",
+        "renew": "تجديد الاشتراك"
       },
       "errors": {
         "load": "تعذر تحميل الاشتراكات. يرجى المحاولة مرة أخرى.",
-        "retry": "إعادة المحاولة"
+        "retry": "إعادة المحاولة",
+        "continue": "تعذر بدء متابعة التعلم. يرجى المحاولة مرة أخرى."
       }
     },
     "dailyTasks": {
@@ -495,6 +552,49 @@
         "retry": "إعادة المحاولة",
         "joinLive": "تعذر الانضمام إلى الحصة المباشرة.",
         "enterChallenge": "تعذر الدخول إلى التحدي."
+      }
+    },
+    "weeklySchedule": {
+      "page": {
+        "title": "جدول الحصص الأسبوعي",
+        "description": "جدول حصصك الأسبوعي من الأحد إلى الخميس."
+      },
+      "weekRange": "{start} – {end}",
+      "navigation": {
+        "previousWeek": "الأسبوع السابق",
+        "nextWeek": "الأسبوع التالي",
+        "currentWeek": "هذا الأسبوع"
+      },
+      "badges": {
+        "liveNow": "مباشر الآن",
+        "upcoming": "قادم",
+        "exam": "اختبار",
+        "ended": "منتهي"
+      },
+      "actions": {
+        "enterLive": "دخول الحصة",
+        "startExam": "بدء الاختبار",
+        "viewDetails": "التفاصيل",
+        "notStartedYet": "لم تبدأ بعد",
+        "joining": "جاري الانضمام..."
+      },
+      "emptyDay": {
+        "message": "لا يوجد حصص مجدولة"
+      },
+      "nextSession": {
+        "label": "المادة القادمة",
+        "startsIn": "تبدأ بعد {minutes} دقيقة"
+      },
+      "stats": {
+        "title": "إحصائيات الأسبوع",
+        "totalSessions": "حصة إجمالية",
+        "attendance": "نسبة الحضور",
+        "remainingHours": "ساعات متبقية"
+      },
+      "errors": {
+        "load": "تعذر تحميل الجدول الأسبوعي. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "joinLive": "تعذر الانضمام إلى الحصة المباشرة."
       }
     },
     "common": {

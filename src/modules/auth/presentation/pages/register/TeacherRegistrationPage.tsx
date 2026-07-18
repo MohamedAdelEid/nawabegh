@@ -47,8 +47,8 @@ type TeacherRegistrationPageProps = {
 
 function SectionHeader({ children }: { children: ReactNode }) {
   return (
-    <div className="flex w-full items-center justify-end border-r-4 border-[var(--dashboard-gold)] pe-5">
-      <h2 className="text-xl font-bold text-[#021c37]">{children}</h2>
+    <div className="flex w-full items-center justify-start border-s-4 border-[var(--dashboard-gold)] ps-5">
+      <h2 className="text-start text-xl font-bold text-[#021c37]">{children}</h2>
     </div>
   );
 }
@@ -121,6 +121,7 @@ export function TeacherRegistrationPage({
           countryId: values.countryId,
           email: values.email.trim(),
           password: values.password,
+          passwordConfirm: values.confirmPassword,
           phoneNumber: phone.phoneNumber,
           phoneCountryCode: phone.phoneCountryCode,
           address: (values.address ?? "").trim(),
@@ -340,7 +341,7 @@ export function TeacherRegistrationPage({
                 render={({ field }) => (
                   <label
                     className={cn(
-                      "flex cursor-pointer items-center justify-end gap-3 rounded-xl bg-[rgba(244,236,216,0.3)] px-5 py-4 text-sm",
+                      "flex cursor-pointer items-center justify-start gap-3 rounded-xl bg-[rgba(244,236,216,0.3)] px-5 py-4 text-sm",
                       acceptTermsError && "ring-1 ring-[var(--dashboard-danger)]",
                     )}
                   >

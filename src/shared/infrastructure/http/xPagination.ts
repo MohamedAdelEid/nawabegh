@@ -42,6 +42,46 @@ export type XPaginationMeta = {
   hasNext: boolean;
 };
 
+export type ListPageMeta = {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+};
+
+export function resolveListPageMeta(
+  params: { pageNumber: number; pageSize: number },
+  rowCount: number,
+  headerMeta: XPaginationMeta | null,
+  body?: unknown,
+): ListPageMeta {
+  if (headerMeta) {
+    return {
+      currentPage: headerMeta.currentPage,
+      pageSize: headerMeta.pageSize,
+      totalItems: headerMeta.totalCount,
+      totalPages: headerMeta.totalPages,
+    };
+  }
+
+  const record = asRecord(body);
+  const totalItems =
+    readNumber(record, ["totalCount", "total", "count", "totalItems"]) ?? rowCount;
+  const currentPage =
+    readNumber(record, ["pageNumber", "page", "currentPage"]) ?? params.pageNumber;
+  const pageSize = readNumber(record, ["pageSize", "limit", "size"]) ?? params.pageSize;
+  const totalPages =
+    readNumber(record, ["totalPages", "pagesCount"]) ??
+    Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
+
+  return {
+    currentPage,
+    pageSize,
+    totalItems,
+    totalPages,
+  };
+}
+
 export function parseXPaginationHeader(
   headers: Record<string, string | undefined>,
 ): XPaginationMeta | null {

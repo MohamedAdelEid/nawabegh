@@ -24,6 +24,10 @@ import {
 } from "@/shared/domain/enums/cms.mappers";
 import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+import {
+  parseXPaginationHeader,
+  resolveListPageMeta,
+} from "@/shared/infrastructure/http/xPagination";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -122,6 +126,7 @@ export type UpdateCoursePayload = {
   subjectId: number;
   gradeId: number;
   term: CourseTerm;
+  teacherId: string;
   coverImageUrl: string;
   accessType: CourseAccessType;
   originalPrice?: number;
@@ -267,23 +272,14 @@ function extractPageMeta(
   data: unknown,
   params: CourseListParams,
   rowCount: number,
+  headerMeta: ReturnType<typeof parseXPaginationHeader>,
 ): Omit<CourseListPage, "rows"> {
-  const record = asRecord(extractEnvelopeData(data));
-  const totalItems =
-    readNumber(record, ["totalCount", "total", "count", "totalItems"]) ?? rowCount;
-  const currentPage =
-    readNumber(record, ["pageNumber", "page", "currentPage"]) ?? params.pageNumber;
-  const pageSize = readNumber(record, ["pageSize", "limit", "size"]) ?? params.pageSize;
-  const totalPages =
-    readNumber(record, ["totalPages", "pagesCount"]) ??
-    Math.max(1, Math.ceil(totalItems / Math.max(pageSize, 1)));
-
-  return {
-    currentPage,
-    pageSize,
-    totalItems,
-    totalPages,
-  };
+  return resolveListPageMeta(
+    { pageNumber: params.pageNumber, pageSize: params.pageSize },
+    rowCount,
+    headerMeta,
+    extractEnvelopeData(data),
+  );
 }
 
 function readRecordValue(record: UnknownRecord | null, key: string): unknown {
@@ -462,7 +458,8 @@ export async function getCoursesPage(
     const rows = extractListRows(response.data)
       .map(mapCourseListItem)
       .filter((row): row is CourseListItemDto => row !== null);
-    const meta = extractPageMeta(response.data, params, rows.length);
+    const headerMeta = parseXPaginationHeader(response.headers ?? {});
+    const meta = extractPageMeta(response.data, params, rows.length, headerMeta);
 
     return {
       status: response.status,

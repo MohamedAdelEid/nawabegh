@@ -724,12 +724,13 @@ export function UserManagementDashboard() {
     setPendingDeleteUserId(userId);
     const result = await deleteUserManagementUser(userId);
 
-    if (+result.status !== +"200" || !result.data) {
-      notify.error(result.errorMessage ?? "Failed to delete user");
+    if (result.status !== "Success" || !result.data) {
+      notify.error(result.errorMessage ?? t("userManagement.table.actions.deleteError"));
       setPendingDeleteUserId(null);
       return;
     }
 
+    notify.success(result.message ?? t("userManagement.table.actions.deleteSuccess"));
     setMenuOpenUserId(null);
     setDeleteModalUser(null);
     if (visibleRows.length === 1 && currentPage > 1) {

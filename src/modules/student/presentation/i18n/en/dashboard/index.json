@@ -34,7 +34,10 @@
       "toggleCollapse": "Collapse sidebar",
       "nav": {
         "home": "Home",
+        "subscriptions": "My Subscriptions",
+        "teachers": "Teachers",
         "journey": "Excellence Journey",
+        "schedule": "Schedule",
         "dailyTasks": "Today's tasks",
         "friendChallenges": "Friend challenge",
         "studyMaterials": "Study materials",
@@ -182,6 +185,43 @@
       "errors": {
         "courses": "Could not load courses. Please try again.",
         "retry": "Retry"
+      }
+    },
+    "teachersDiscovery": {
+      "page": {
+        "title": "Elite teachers at Nawabegh",
+        "description": "Learn from top experts across academic and skill areas, carefully selected to help you excel.",
+        "breadcrumbHome": "Home",
+        "breadcrumbCurrent": "Teachers"
+      },
+      "filters": {
+        "allSubjects": "All",
+        "sortTopRated": "Top rated",
+        "sortLabel": "Sort results"
+      },
+      "card": {
+        "students": "{count} students",
+        "viewCourses": "View courses",
+        "badgeExpert": "EXPERT",
+        "badgePioneer": "PRO"
+      },
+      "joinCard": {
+        "title": "Join us as a teacher",
+        "descriptionLine1": "Have expertise? Share your knowledge with thousands",
+        "descriptionLine2": "of students"
+      },
+      "empty": {
+        "title": "No teachers found",
+        "description": "No teachers match your filters right now. Try another subject or explore courses.",
+        "exploreCourses": "Explore courses"
+      },
+      "errors": {
+        "teachers": "Could not load teachers. Please try again.",
+        "retry": "Retry"
+      },
+      "pagination": {
+        "previous": "Previous page",
+        "next": "Next page"
       }
     },
     "courseDetails": {
@@ -392,32 +432,49 @@
       }
     },
     "subscriptions": {
+      "page": {
+        "title": "My Subscriptions",
+        "description": "Your enrolled courses and learning progress."
+      },
       "title": "My Subscriptions",
-      "welcome": "Welcome back, {name}",
-      "weeklyProgress": "You have completed {percent}% of your learning goals this week.",
+      "welcome": "Welcome back, {name} 👋",
+      "fallbackName": "Student",
       "stats": {
         "totalCourses": "Total courses",
+        "newCoursesThisMonth": "+{count} courses this month",
         "thisMonth": "this month",
         "overallProgress": "Overall progress",
+        "overallProgressLabel": "Overall achievement rate",
         "learningHours": "Learning hours",
-        "completedCourses": "Completed courses"
+        "completedCourses": "Completed courses",
+        "peerCongrats": "Congrats! You are ahead of {percent}% of students"
       },
       "actions": {
         "leaderboard": "Leaderboard",
-        "explore": "Explore more"
+        "explore": "Explore new paths"
       },
       "courses": {
         "title": "Your current courses",
         "count": "{count} courses",
         "empty": "You are not enrolled in any courses yet.",
         "continue": "Continue learning",
-        "certificate": "View certificate",
+        "continuing": "Loading...",
+        "certificate": "View certified certificate",
+        "certificatePending": "Certificate is being prepared…",
         "completed": "Completed",
-        "progress": "Progress"
+        "progress": "Progress",
+        "progressValue": "Progress: {percent}%",
+        "lessonProgress": "{completed} of {total} lessons",
+        "expired": "Expired",
+        "inactive": "Inactive",
+        "inactiveMessage": "This subscription is inactive. Contact support for help.",
+        "expiresAt": "Expires on {date}",
+        "renew": "Renew subscription"
       },
       "errors": {
         "load": "Could not load your subscriptions. Please try again.",
-        "retry": "Retry"
+        "retry": "Retry",
+        "continue": "Could not start continue learning. Please try again."
       }
     },
     "dailyTasks": {
@@ -474,6 +531,49 @@
         "retry": "Retry",
         "joinLive": "Could not join the live session.",
         "enterChallenge": "Could not enter the challenge."
+      }
+    },
+    "weeklySchedule": {
+      "page": {
+        "title": "Weekly class schedule",
+        "description": "Your weekly schedule from Sunday through Thursday."
+      },
+      "weekRange": "{start} – {end}",
+      "navigation": {
+        "previousWeek": "Previous week",
+        "nextWeek": "Next week",
+        "currentWeek": "This week"
+      },
+      "badges": {
+        "liveNow": "Live now",
+        "upcoming": "Upcoming",
+        "exam": "Exam",
+        "ended": "Ended"
+      },
+      "actions": {
+        "enterLive": "Join class",
+        "startExam": "Start exam",
+        "viewDetails": "Details",
+        "notStartedYet": "Not started yet",
+        "joining": "Joining..."
+      },
+      "emptyDay": {
+        "message": "No scheduled classes"
+      },
+      "nextSession": {
+        "label": "Next subject",
+        "startsIn": "Starts in {minutes} min"
+      },
+      "stats": {
+        "title": "Weekly statistics",
+        "totalSessions": "Total classes",
+        "attendance": "Attendance rate",
+        "remainingHours": "Hours remaining"
+      },
+      "errors": {
+        "load": "Could not load the weekly schedule. Please try again.",
+        "retry": "Retry",
+        "joinLive": "Could not join the live session."
       }
     },
     "common": {

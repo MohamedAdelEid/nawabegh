@@ -6,11 +6,21 @@ import type { UserManagementDropdownOption } from "@/modules/admin/infrastructur
 
 export type UserLocationValidationKey = "countryRequired" | "schoolRequired";
 
+/** Country is required; school is optional (backend accepts null). */
+export function validateRequiredCountry(
+  countryId: string,
+): UserLocationValidationKey | null {
+  if (!countryId.trim()) return "countryRequired";
+  return null;
+}
+
+/** @deprecated Prefer validateRequiredCountry — school is optional. */
 export function validateRequiredCountryAndSchool(
   countryId: string,
   schoolId: string,
 ): UserLocationValidationKey | null {
-  if (!countryId.trim()) return "countryRequired";
+  const countryError = validateRequiredCountry(countryId);
+  if (countryError) return countryError;
   if (!schoolId.trim()) return "schoolRequired";
   return null;
 }

@@ -7,7 +7,7 @@ import {
 } from "@/shared/presentation/icons/sidebar";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { CalendarDays, CircleHelp, LogOut, Newspaper, Settings, Swords } from "lucide-react";
+import { CalendarDays, CircleHelp, GraduationCap, Layers, ListTodo, LogOut, Newspaper, Settings, Swords } from "lucide-react";
 
 export function buildStudentShellSidebar(dashboardBase: string, settingsHref: string): SidebarItems {
   return {
@@ -19,6 +19,20 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
         icon: SidebarHomeIcon,
       },
       {
+        id: "subscriptions",
+        labelKey: "sidebar.nav.subscriptions",
+        href: ROUTES.USER.STUDENT.SUBSCRIPTIONS,
+        activePathPrefixes: [ROUTES.USER.STUDENT.SUBSCRIPTIONS],
+        icon: Layers,
+      },
+      {
+        id: "teachers",
+        labelKey: "sidebar.nav.teachers",
+        href: ROUTES.USER.STUDENT.TEACHERS,
+        activePathPrefixes: [ROUTES.USER.STUDENT.TEACHERS],
+        icon: GraduationCap,
+      },
+      {
         id: "journey",
         labelKey: "sidebar.nav.journey",
         href: "/student/journey",
@@ -26,11 +40,18 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
         icon: SidebarMapIcon,
       },
       {
+        id: "schedule",
+        labelKey: "sidebar.nav.schedule",
+        href: ROUTES.USER.STUDENT.SCHEDULE,
+        activePathPrefixes: [ROUTES.USER.STUDENT.SCHEDULE],
+        icon: CalendarDays,
+      },
+      {
         id: "dailyTasks",
         labelKey: "sidebar.nav.dailyTasks",
         href: ROUTES.USER.STUDENT.DAILY_TASKS,
         activePathPrefixes: [ROUTES.USER.STUDENT.DAILY_TASKS],
-        icon: CalendarDays,
+        icon: ListTodo,
       },
       {
         id: "friendChallenges",

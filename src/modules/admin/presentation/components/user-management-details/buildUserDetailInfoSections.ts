@@ -136,6 +136,7 @@ export function buildUserDetailInfoSections(
         title: t("userManagement.details.info.professionalTitle"),
         fields: [
           field(t("userManagement.details.info.jobTitle"), data.jobTitle, emptyLabel),
+          field(t("userManagement.details.info.educationLevel"), data.educationLevelName, emptyLabel),
           field(t("userManagement.details.info.school"), data.schoolName, emptyLabel),
           field(t("userManagement.details.info.about"), data.about, emptyLabel),
           field(

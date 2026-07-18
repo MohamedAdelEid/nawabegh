@@ -46,6 +46,7 @@ export interface StudentAccountFormValues {
   /** Selected school display name (sent as address / context). */
   schoolName: string;
   email: string;
+  username: string;
   password: string;
   avatarFile: File | null;
   avatarPreviewUrl: string | null;
