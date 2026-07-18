@@ -242,10 +242,9 @@ export function SchoolHonoredStudentsDashboard() {
           columns={columns}
           getRowKey={(item) => item.id}
           emptyMessage={query.isError ? t("common.loadError") : t("honors.empty")}
-          tableClassName="min-w-[900px]"
           actionsHeader={t("honors.table.actions")}
           renderActions={(item) => (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center justify-center gap-1">
               {item.canToggleVisibility ? (
                 <Button
                   type="button"
