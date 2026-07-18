@@ -68,7 +68,8 @@
       },
       "addPage": {
         "title": "Add a new school",
-        "description": "Fill in the required school data to register it on the platform."
+        "description": "Fill in the required school data to register it on the platform.",
+        "importFromExcel": "Import from Excel file"
       },
       "editPage": {
         "title": "Edit school",
@@ -258,11 +259,12 @@
           "filter": "Filter",
           "more": "More actions",
           "edit": "Edit school",
-          "sendCredentials": "Send credentials",
+          "sendCredentials": "Send password",
+          "sendCredentialsTooltip": "Send the password to the school email",
           "delete": "Delete school"
         },
         "statusUpdateSuccess": "School status updated successfully.",
-        "credentialsSuccess": "Login credentials sent successfully.",
+        "credentialsSuccess": "Password sent to the school email successfully.",
         "exportError": "Could not export schools.",
         "pagination": {
           "summary": "Showing {visible} of {total} schools",
@@ -303,11 +305,14 @@
         "pending": "Pending confirmation"
       },
       "import": {
-        "title": "Import schools",
-        "description": "Upload an Excel or CSV file, review the data, then start importing.",
+        "title": "Excel file data preview",
+        "description": "Upload an Excel or CSV file, then review the data before adding it to the system.",
+        "descriptionReady": "Data extracted successfully. Please review it before adding it to the system.",
         "breadcrumbs": {
           "home": "Home",
-          "schools": "School management"
+          "schools": "School management",
+          "import": "Import schools",
+          "preview": "Preview data"
         },
         "actions": {
           "template": "Download template",
@@ -315,18 +320,19 @@
           "upload": "Upload and preview",
           "uploading": "Uploading...",
           "start": "Start import",
+          "save": "Save data",
           "importing": "Importing..."
         },
         "upload": {
           "title": "Upload schools file",
-          "placeholder": "Choose a file or drop it here",
-          "hint": "XLSX or CSV, up to 50 MB and 1,000 rows"
+          "placeholder": "Drag the file here or click to upload",
+          "hint": "Supports Excel and CSV files up to 50 MB. Make sure the file columns match the system."
         },
         "preview": {
           "title": "Schools import preview"
         },
         "filters": {
-          "keyword": "Search name or email",
+          "keyword": "Search for a school by name or email...",
           "country": "Country",
           "performance": "Performance level",
           "allStatuses": "All statuses"
@@ -349,7 +355,8 @@
         },
         "pagination": {
           "previous": "Previous page",
-          "next": "Next page"
+          "next": "Next page",
+          "summary": "Showing {from}-{to} of {total} schools"
         },
         "progress": {
           "processing": "Processing schools...",
@@ -357,12 +364,15 @@
         },
         "messages": {
           "fileTooLarge": "The file is larger than 50 MB.",
+          "invalidFileType": "Please choose a valid Excel or CSV file.",
           "uploadError": "Could not upload the schools file.",
           "uploadSuccess": "The file was uploaded and the preview is ready.",
           "loadError": "Could not load the import preview.",
           "templateError": "Could not download the import template.",
           "streamError": "The import progress connection was interrupted.",
-          "completed": "School import completed."
+          "completed": "School import completed.",
+          "emptyPreview": "No rows were found in the file. Make sure the first sheet is named Schools and has a data row under the headers.",
+          "emptyPreviewPage": "No rows on this page. Try changing filters or the page number."
         }
       },
       "rows": {

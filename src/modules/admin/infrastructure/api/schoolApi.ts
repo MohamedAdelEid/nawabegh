@@ -105,6 +105,7 @@ export type SchoolDetailResult = {
 };
 
 export type UpdateSchoolPayload = {
+  id?: string;
   name: string;
   description?: string;
   logoUrl?: string;
@@ -824,44 +825,145 @@ export async function downloadSchoolImportTemplate(): Promise<void> {
   downloadBlob(response.data, "schools-import-template.xlsx");
 }
 
-function mapSchoolImportRow(value: unknown): SchoolImportPreviewRow | null {
+function readRecordValue(record: UnknownRecord | null, keys: string[]): unknown {
+  if (!record) return undefined;
+  const lowerKeyMap = new Map(
+    Object.keys(record).map((key) => [key.toLowerCase(), key] as const),
+  );
+  for (const key of keys) {
+    if (key in record) return record[key];
+    const actualKey = lowerKeyMap.get(key.toLowerCase());
+    if (actualKey) return record[actualKey];
+  }
+  return undefined;
+}
+
+function readFlexibleString(record: UnknownRecord | null, keys: string[]): string | null {
+  const value = readRecordValue(record, keys);
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (typeof value === "number" && Number.isFinite(value)) return String(value);
+  return null;
+}
+
+function readFlexibleNumber(record: UnknownRecord | null, keys: string[]): number | null {
+  const value = readRecordValue(record, keys);
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() && !Number.isNaN(Number(value))) {
+    return Number(value);
+  }
+  return null;
+}
+
+function readFlexibleArray(record: UnknownRecord | null, keys: string[]): unknown[] | null {
+  const value = readRecordValue(record, keys);
+  return Array.isArray(value) ? value : null;
+}
+
+function readFlexibleStringArray(record: UnknownRecord | null, keys: string[]): string[] {
+  const value = readRecordValue(record, keys);
+  if (!Array.isArray(value)) {
+    if (typeof value === "string" && value.trim()) return [value.trim()];
+    return [];
+  }
+  return value
+    .map((item) => {
+      if (typeof item === "string") return item;
+      const itemRecord = asRecord(item);
+      return (
+        readFlexibleString(itemRecord, ["message", "error", "description", "text"]) ?? ""
+      );
+    })
+    .filter((item) => item.trim().length > 0);
+}
+
+function unwrapImportPayload(data: unknown): UnknownRecord | null {
+  let current = asRecord(data);
+  for (let depth = 0; depth < 3 && current; depth += 1) {
+    const jobId = readFlexibleString(current, ["jobId", "id"]);
+    const rows = readFlexibleArray(current, [
+      "rows",
+      "items",
+      "records",
+      "previewRows",
+      "preview",
+      "schools",
+    ]);
+    if (jobId || rows) return current;
+    current = asRecord(current.data);
+  }
+  return asRecord(data);
+}
+
+function mapSchoolImportRow(
+  value: unknown,
+  fallbackIndex: number,
+): SchoolImportPreviewRow | null {
   const record = asRecord(value);
-  const rowIndex = readNumber(record, ["rowIndex"]);
-  if (rowIndex === null) return null;
-  const rawStatus = readString(record, ["status"]) ?? "Invalid";
+  if (!record) return null;
+  const rowIndex =
+    readFlexibleNumber(record, [
+      "rowIndex",
+      "row",
+      "index",
+      "lineNumber",
+      "rowNumber",
+      "excelRow",
+    ]) ?? fallbackIndex;
+  const rawStatus = readFlexibleString(record, ["status", "rowStatus", "state"]) ?? "Invalid";
+  const normalizedStatus = rawStatus.trim();
   const allowedStatuses: SchoolImportRowStatus[] = [
     "Valid",
     "Invalid",
     "Imported",
     "Failed",
   ];
-  const status = allowedStatuses.includes(rawStatus as SchoolImportRowStatus)
-    ? (rawStatus as SchoolImportRowStatus)
-    : "Invalid";
+  const statusMatch = allowedStatuses.find(
+    (status) => status.toLowerCase() === normalizedStatus.toLowerCase(),
+  );
+  const status = statusMatch ?? "Invalid";
   return {
     rowIndex,
-    name: readString(record, ["name"]) ?? "",
-    email: readString(record, ["email"]) ?? "",
-    country: readString(record, ["country"]) ?? "",
-    city: readString(record, ["city"]) ?? "",
-    performanceLevel: readString(record, ["performanceLevel"]) ?? "",
+    name: readFlexibleString(record, ["name", "schoolName", "nameAr"]) ?? "",
+    email: readFlexibleString(record, ["email", "schoolEmail", "mail"]) ?? "",
+    country: readFlexibleString(record, ["country", "countryName", "countryCode"]) ?? "",
+    city: readFlexibleString(record, ["city", "cityName"]) ?? "",
+    performanceLevel:
+      readFlexibleString(record, ["performanceLevel", "performance", "level"]) ?? "",
     status,
-    errors: readStringArray(record, ["errors"]),
+    errors: readFlexibleStringArray(record, ["errors", "errorMessages", "validationErrors"]),
   };
 }
 
+function extractImportRows(record: UnknownRecord | null): unknown[] {
+  if (!record) return [];
+  const direct = readFlexibleArray(record, [
+    "rows",
+    "items",
+    "records",
+    "previewRows",
+    "preview",
+    "schools",
+  ]);
+  if (direct) return direct;
+
+  const nestedPreview = asRecord(readRecordValue(record, ["preview", "result", "page"]));
+  return (
+    readFlexibleArray(nestedPreview, ["rows", "items", "records", "previewRows"]) ?? []
+  );
+}
+
 function mapSchoolImportJob(data: unknown, fallbackJobId = ""): SchoolImportJob | null {
-  const root = asRecord(data);
-  const nested = root ? asRecord(root.data) : null;
-  const record = nested ?? root;
+  const record = unwrapImportPayload(data);
   if (!record) return null;
-  const jobId = readString(record, ["jobId", "id"]) ?? fallbackJobId;
+  const jobId = readFlexibleString(record, ["jobId", "id"]) ?? fallbackJobId;
   if (!jobId) return null;
-  const rows = (readArray(record, ["rows", "items", "records", "previewRows"]) ?? [])
-    .map(mapSchoolImportRow)
+  const rows = extractImportRows(record)
+    .map((row, index) => mapSchoolImportRow(row, index + 1))
     .filter((row): row is SchoolImportPreviewRow => row !== null);
-  const totalCount = readNumber(record, ["totalCount", "total", "rowCount"]) ?? rows.length;
-  const pageSize = readNumber(record, ["pageSize"]) ?? Math.max(rows.length, 1);
+  const totalCount =
+    readFlexibleNumber(record, ["totalCount", "total", "rowCount", "count"]) ?? rows.length;
+  const pageSize =
+    readFlexibleNumber(record, ["pageSize", "limit", "size"]) ?? Math.max(rows.length, 1);
   const validRows = rows.filter((row) => row.status === "Valid").length;
   const invalidRows = rows.filter((row) => row.status === "Invalid").length;
   const importedRows = rows.filter((row) => row.status === "Imported").length;
@@ -869,16 +971,21 @@ function mapSchoolImportJob(data: unknown, fallbackJobId = ""): SchoolImportJob 
   return {
     jobId,
     totalCount,
-    validCount: readNumber(record, ["validCount", "valid"]) ?? validRows,
-    invalidCount: readNumber(record, ["invalidCount", "invalid"]) ?? invalidRows,
-    importedCount: readNumber(record, ["importedCount", "imported"]) ?? importedRows,
-    failedCount: readNumber(record, ["failedCount", "failed"]) ?? failedRows,
-    expiresAtUtc: readString(record, ["expiresAtUtc", "expiresAt"]) ?? "",
+    validCount:
+      readFlexibleNumber(record, ["validCount", "valid", "validRows"]) ?? validRows,
+    invalidCount:
+      readFlexibleNumber(record, ["invalidCount", "invalid", "invalidRows"]) ?? invalidRows,
+    importedCount:
+      readFlexibleNumber(record, ["importedCount", "imported", "importedRows"]) ??
+      importedRows,
+    failedCount:
+      readFlexibleNumber(record, ["failedCount", "failed", "failedRows"]) ?? failedRows,
+    expiresAtUtc: readFlexibleString(record, ["expiresAtUtc", "expiresAt"]) ?? "",
     rows,
-    currentPage: readNumber(record, ["pageNumber", "currentPage"]) ?? 1,
+    currentPage: readFlexibleNumber(record, ["pageNumber", "currentPage", "page"]) ?? 1,
     pageSize,
     totalPages:
-      readNumber(record, ["totalPages"]) ??
+      readFlexibleNumber(record, ["totalPages", "pagesCount"]) ??
       Math.max(1, Math.ceil(totalCount / Math.max(pageSize, 1))),
   };
 }
@@ -887,18 +994,22 @@ export async function uploadSchoolImport(file: File): Promise<SchoolImportJobRes
   try {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await httpClient.post<unknown>({
-      url: "/api/v1/School/import/upload",
-      data: formData,
-      isFormData: true,
-      timeout: 0,
-    });
+    // Avoid forcing Content-Type without boundary — let axios set multipart boundary.
+    const response = await axiosClient.post<BackendApiResponse<unknown>>(
+      resolveApiUrl("/api/v1/School/import/upload"),
+      formData,
+      {
+        timeout: 0,
+        headers: { "Content-Type": undefined },
+      },
+    );
+    const payload = response.data;
     return {
-      status: response.status,
-      message: response.message,
-      errorMessage: response.error?.message,
-      validationErrors: response.error?.validationErrors ?? null,
-      data: mapSchoolImportJob(response.data),
+      status: payload.status,
+      message: payload.message,
+      errorMessage: payload.error?.message,
+      validationErrors: payload.error?.validationErrors ?? null,
+      data: mapSchoolImportJob(payload.data ?? payload),
     };
   } catch (error) {
     const axiosError = asRecord(error);
@@ -989,12 +1100,138 @@ export async function startSchoolImport(
   }
 }
 
-export async function getSchoolImportStreamUrl(jobId: string): Promise<string> {
+export type SchoolImportStreamHandlers = {
+  onProgress?: (data: {
+    processed?: number;
+    total?: number;
+    percent?: number;
+    currentEmail?: string;
+  }) => void;
+  onRow?: (data: {
+    rowIndex: number;
+    success: boolean;
+    schoolId?: string;
+    email?: string;
+    error?: string;
+  }) => void;
+  onCompleted?: (data: {
+    succeeded: number;
+    failed: number;
+    total: number;
+  }) => void;
+  onError?: (error: Error) => void;
+};
+
+function buildSchoolImportStreamUrl(jobId: string): string {
   const path = resolveApiUrl(
     `/api/v1/School/import/jobs/${encodeURIComponent(jobId)}/stream`,
   );
   const baseUrl = axiosClient.defaults.baseURL || window.location.origin;
-  const url = new URL(path, `${baseUrl.replace(/\/+$/, "")}/`);
+  return new URL(path, `${baseUrl.replace(/\/+$/, "")}/`).toString();
+}
+
+function parseSseChunk(
+  chunk: string,
+  handlers: SchoolImportStreamHandlers,
+): void {
+  const blocks = chunk.split("\n\n");
+  for (const block of blocks) {
+    const trimmed = block.trim();
+    if (!trimmed) continue;
+
+    let eventName = "message";
+    const dataLines: string[] = [];
+    for (const line of trimmed.split("\n")) {
+      if (line.startsWith("event:")) {
+        eventName = line.slice(6).trim();
+      } else if (line.startsWith("data:")) {
+        dataLines.push(line.slice(5).trim());
+      }
+    }
+    if (dataLines.length === 0) continue;
+
+    try {
+      const data = JSON.parse(dataLines.join("\n")) as Record<string, unknown>;
+      if (eventName === "progress") {
+        handlers.onProgress?.(data as Parameters<NonNullable<SchoolImportStreamHandlers["onProgress"]>>[0]);
+      } else if (eventName === "row") {
+        handlers.onRow?.(data as Parameters<NonNullable<SchoolImportStreamHandlers["onRow"]>>[0]);
+      } else if (eventName === "completed") {
+        handlers.onCompleted?.(
+          data as Parameters<NonNullable<SchoolImportStreamHandlers["onCompleted"]>>[0],
+        );
+      } else if (eventName === "error") {
+        const message =
+          typeof data.message === "string"
+            ? data.message
+            : typeof data.error === "string"
+              ? data.error
+              : "Import stream error";
+        handlers.onError?.(new Error(message));
+      }
+    } catch {
+      // Ignore malformed SSE payloads and keep reading.
+    }
+  }
+}
+
+/** Prefer Bearer auth via fetch — EventSource cannot set Authorization and query-token often 401s. */
+export async function subscribeSchoolImportStream(
+  jobId: string,
+  handlers: SchoolImportStreamHandlers,
+  signal?: AbortSignal,
+): Promise<void> {
+  const token = await getToken();
+  if (!token) {
+    handlers.onError?.(new Error("Missing access token"));
+    return;
+  }
+
+  const response = await fetch(buildSchoolImportStreamUrl(jobId), {
+    method: "GET",
+    headers: {
+      Accept: "text/event-stream",
+      Authorization: `Bearer ${token}`,
+    },
+    signal,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    handlers.onError?.(
+      new Error(`Import stream failed with status ${response.status}`),
+    );
+    return;
+  }
+
+  if (!response.body) {
+    handlers.onError?.(new Error("Import stream returned an empty body"));
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop() ?? "";
+    for (const part of parts) {
+      parseSseChunk(part, handlers);
+    }
+  }
+
+  if (buffer.trim()) {
+    parseSseChunk(buffer, handlers);
+  }
+}
+
+/** @deprecated Prefer subscribeSchoolImportStream (Bearer). Kept for compatibility. */
+export async function getSchoolImportStreamUrl(jobId: string): Promise<string> {
+  const url = new URL(buildSchoolImportStreamUrl(jobId));
   const token = await getToken();
   if (token) url.searchParams.set("access_token", token);
   return url.toString();

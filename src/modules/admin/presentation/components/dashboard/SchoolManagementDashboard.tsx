@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Download, EllipsisVertical, FileSpreadsheet } from "lucide-react";
+import { Download, EllipsisVertical, FileSpreadsheet, KeyRound } from "lucide-react";
 import AddSchoolIcon from "@/modules/admin/presentation/assets/icons/AddSchool.svg";
 import { IconComp } from "@/modules/admin/presentation/assets/icons/IconComp";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,6 +17,12 @@ import {DashboardBadge,
   DashboardBreadcrumb,} from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/shared/presentation/components/ui/tooltip";
 import { useSchoolsTable } from "@/modules/admin/application/hooks/useSchoolsTable";
 import { schoolManagementDashboardData } from "@/modules/admin/domain/data/schoolManagementDashboardData";
 import {
@@ -34,6 +40,7 @@ import { notify } from "@/shared/application/lib/toast";
 import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
+import { cn } from "@/shared/application/lib/cn";
 
 function performanceTone(
   status: "excellent" | "veryGood" | "good" | "neutral",
@@ -461,7 +468,31 @@ export function SchoolManagementDashboard() {
             rowClassName="hover:bg-slate-50/80"
             actionsHeader={t("schoolManagement.table.columns.actions")}
             renderActions={(row) => (
-              <div className="relative" data-school-row-menu>
+              <div className="relative flex items-center justify-end gap-1" data-school-row-menu>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        type="button"
+                        disabled={pendingCredentialsId === row.id}
+                        className={cn(
+                          "rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700",
+                          pendingCredentialsId === row.id && "opacity-50",
+                        )}
+                        aria-label={t("schoolManagement.table.actions.sendCredentials")}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          void handleSendCredentials(row);
+                        }}
+                      >
+                        <KeyRound className="h-5 w-5" aria-hidden />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top">
+                      {t("schoolManagement.table.actions.sendCredentialsTooltip")}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <button
                   type="button"
                   className="rounded-xl p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
@@ -475,7 +506,7 @@ export function SchoolManagementDashboard() {
                 </button>
                 {menuOpenSchoolId === row.id ? (
                   <div
-                    className="absolute z-[9999] left-0 top-2 min-w-[9rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
+                    className="absolute z-[9999] left-0 top-10 min-w-[9rem] rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_14px_36px_rgba(15,23,42,0.12)]"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <button
@@ -487,14 +518,6 @@ export function SchoolManagementDashboard() {
                       }}
                     >
                       {t("schoolManagement.table.actions.edit")}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={pendingCredentialsId === row.id}
-                      className="w-full rounded-xl px-3 py-2 text-right text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:opacity-50"
-                      onClick={() => void handleSendCredentials(row)}
-                    >
-                      {t("schoolManagement.table.actions.sendCredentials")}
                     </button>
                     <button
                       type="button"

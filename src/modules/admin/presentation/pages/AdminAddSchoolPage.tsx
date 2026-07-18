@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { KeyRound, MapPinned } from "lucide-react";
+import { FileSpreadsheet, KeyRound, MapPinned } from "lucide-react";
 import { SchoolIcon } from "@/modules/admin/presentation/assets/icons/school";
 import { SubscriptionIcon } from "@/modules/admin/presentation/assets/icons/subscraption";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
@@ -41,6 +41,7 @@ import { SchoolSubscriptionSection } from "@/modules/admin/presentation/componen
 import { SchoolLocationSection } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import type { SchoolLocationInput } from "@/modules/admin/presentation/components/school-form/SchoolLocationSection";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+import { Button } from "@/shared/presentation/components/ui/button";
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 
@@ -86,11 +87,13 @@ function buildCreateSchoolPayload(
 }
 
 function buildUpdateSchoolPayload(
+  schoolId: string,
   values: SchoolFormValues,
   detail: SchoolDetail,
   logoUrl: string,
 ): UpdateSchoolPayload {
   return {
+    id: schoolId,
     name: normalizeTextInput(values.schoolName),
     logoUrl,
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
@@ -258,7 +261,7 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
     }
 
     if (isEditMode && schoolId && loadedSchool) {
-      const payload = buildUpdateSchoolPayload(values, loadedSchool, logoUrl);
+      const payload = buildUpdateSchoolPayload(schoolId, values, loadedSchool, logoUrl);
       const result = await updateSchool(schoolId, payload);
       const isSuccess = Boolean(result.data?.id) || (result.status === "Success" && !result.errorMessage);
 
@@ -372,12 +375,28 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
         ]}
         description={pageDescription}
         action={
-          <SchoolFormActions
-            cancelLabel={t("schoolManagement.addForm.actions.cancel")}
-            submitLabel={submitLabel}
-            onCancel={handleCancel}
-            onSubmit={handleSubmit}
-          />
+          <div className="flex flex-wrap items-center justify-start gap-3 md:justify-end">
+            {!isEditMode ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="dashboard-raised-button h-12 rounded-xl border-slate-200 px-6 text-slate-700"
+                style={{
+                  boxShadow: "0px 4px 0px 0px rgba(203, 213, 225, 1)",
+                }}
+                onClick={() => router.push(ROUTES.ADMIN.SCHOOL_MANAGEMENT.IMPORT)}
+              >
+                <FileSpreadsheet className="h-4 w-4" aria-hidden />
+                {t("schoolManagement.addPage.importFromExcel")}
+              </Button>
+            ) : null}
+            <SchoolFormActions
+              cancelLabel={t("schoolManagement.addForm.actions.cancel")}
+              submitLabel={submitLabel}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+            />
+          </div>
         }
       />
 

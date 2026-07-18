@@ -1,21 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Download, FileSpreadsheet, Upload } from "lucide-react";
+import { Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import {
   downloadSchoolImportTemplate,
   getSchoolImportJob,
-  getSchoolImportStreamUrl,
   startSchoolImport,
+  subscribeSchoolImportStream,
   uploadSchoolImport,
   type SchoolImportFilters,
   type SchoolImportJob,
   type SchoolImportPreviewRow,
   type SchoolImportRowStatus,
 } from "@/modules/admin/infrastructure/api/schoolApi";
+import { SchoolImportDropzone } from "@/modules/admin/presentation/components/school-management";
 import {
   DashboardPageHeader,
   DashboardPagination,
@@ -30,6 +31,7 @@ import { cn } from "@/shared/application/lib/cn";
 
 const MAX_IMPORT_SIZE_BYTES = 50 * 1024 * 1024;
 const PAGE_SIZE = 20;
+const ACCEPTED_EXTENSIONS = [".xlsx", ".csv"];
 
 type ImportProgress = {
   processed: number;
@@ -60,10 +62,15 @@ function statusClasses(status: SchoolImportRowStatus): string {
   }
 }
 
+function hasAcceptedExtension(fileName: string): boolean {
+  const lower = fileName.toLowerCase();
+  return ACCEPTED_EXTENSIONS.some((extension) => lower.endsWith(extension));
+}
+
 export function AdminSchoolImportPage() {
   const t = useTranslations("admin.dashboard.schoolManagement.import");
   const router = useRouter();
-  const eventSourceRef = useRef<EventSource | null>(null);
+  const streamAbortRef = useRef<AbortController | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [job, setJob] = useState<SchoolImportJob | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
@@ -78,7 +85,9 @@ export function AdminSchoolImportPage() {
   const [progress, setProgress] = useState<ImportProgress>(INITIAL_PROGRESS);
 
   useEffect(() => {
-    return () => eventSourceRef.current?.close();
+    return () => {
+      streamAbortRef.current?.abort();
+    };
   }, []);
 
   const loadJob = async (
@@ -95,82 +104,107 @@ export function AdminSchoolImportPage() {
     setJob(result.data);
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
-    if (file.size > MAX_IMPORT_SIZE_BYTES) {
+  const handleUpload = async (nextFile: File) => {
+    if (!hasAcceptedExtension(nextFile.name)) {
+      notify.error(t("messages.invalidFileType"));
+      return;
+    }
+    if (nextFile.size > MAX_IMPORT_SIZE_BYTES) {
       notify.error(t("messages.fileTooLarge"));
       return;
     }
+
+    setFile(nextFile);
     setIsUploading(true);
     setProgress(INITIAL_PROGRESS);
-    const result = await uploadSchoolImport(file);
-    setIsUploading(false);
+    const nextFilters: SchoolImportFilters = {
+      pageNumber: 1,
+      pageSize: PAGE_SIZE,
+    };
+    setFilters(nextFilters);
+
+    const result = await uploadSchoolImport(nextFile);
     if (!result.data) {
+      setIsUploading(false);
       notify.error(result.errorMessage ?? t("messages.uploadError"));
       return;
     }
-    setJob(result.data);
+
+    // Upload may return counts only — always load the first preview page from the job API.
+    const preview = await getSchoolImportJob(result.data.jobId, nextFilters);
+    setIsUploading(false);
+
+    const jobData = preview.data ?? result.data;
+    if (!preview.data && result.data.rows.length === 0) {
+      notify.error(preview.errorMessage ?? t("messages.loadError"));
+    } else {
+      notify.success(result.message ?? t("messages.uploadSuccess"));
+    }
+
+    setJob(jobData);
     setSelectedRows([]);
-    notify.success(result.message ?? t("messages.uploadSuccess"));
   };
 
   const connectToProgress = async (jobId: string) => {
-    eventSourceRef.current?.close();
-    const streamUrl = await getSchoolImportStreamUrl(jobId);
-    const source = new EventSource(streamUrl);
-    eventSourceRef.current = source;
+    streamAbortRef.current?.abort();
+    const controller = new AbortController();
+    streamAbortRef.current = controller;
 
-    source.addEventListener("progress", (event) => {
-      const data = JSON.parse((event as MessageEvent<string>).data) as Partial<ImportProgress>;
-      setProgress((current) => ({ ...current, ...data }));
-    });
-    source.addEventListener("row", (event) => {
-      const data = JSON.parse((event as MessageEvent<string>).data) as {
-        rowIndex: number;
-        success: boolean;
-        error?: string;
-      };
-      setJob((current) =>
-        current
-          ? {
-              ...current,
-              rows: current.rows.map((row) =>
-                row.rowIndex === data.rowIndex
-                  ? {
-                      ...row,
-                      status: data.success ? "Imported" : "Failed",
-                      errors: data.error ? [data.error] : row.errors,
-                    }
-                  : row,
-              ),
-            }
-          : current,
+    try {
+      await subscribeSchoolImportStream(
+        jobId,
+        {
+          onProgress: (data) => {
+            setProgress((current) => ({ ...current, ...data }));
+          },
+          onRow: (data) => {
+            setJob((current) =>
+              current
+                ? {
+                    ...current,
+                    rows: current.rows.map((row) =>
+                      row.rowIndex === data.rowIndex
+                        ? {
+                            ...row,
+                            status: data.success ? "Imported" : "Failed",
+                            errors: data.error ? [data.error] : row.errors,
+                          }
+                        : row,
+                    ),
+                  }
+                : current,
+            );
+          },
+          onCompleted: (data) => {
+            setProgress({
+              processed: data.total,
+              total: data.total,
+              percent: 100,
+              succeeded: data.succeeded,
+              failed: data.failed,
+              completed: true,
+            });
+            setIsStarting(false);
+            void loadJob(jobId);
+            notify.success(t("messages.completed"));
+          },
+          onError: (error) => {
+            if (controller.signal.aborted) return;
+            setIsStarting(false);
+            notify.error(error.message || t("messages.streamError"));
+          },
+        },
+        controller.signal,
       );
-    });
-    source.addEventListener("completed", (event) => {
-      const data = JSON.parse((event as MessageEvent<string>).data) as {
-        succeeded: number;
-        failed: number;
-        total: number;
-      };
-      setProgress({
-        processed: data.total,
-        total: data.total,
-        percent: 100,
-        succeeded: data.succeeded,
-        failed: data.failed,
-        completed: true,
-      });
+    } catch (error) {
+      if (controller.signal.aborted) return;
       setIsStarting(false);
-      source.close();
-      void loadJob(jobId);
-      notify.success(t("messages.completed"));
-    });
-    source.onerror = () => {
-      source.close();
-      setIsStarting(false);
-      notify.error(t("messages.streamError"));
-    };
+      notify.error(
+        error instanceof Error && error.name !== "AbortError"
+          ? error.message
+          : t("messages.streamError"),
+      );
+    }
   };
 
   const handleStart = async () => {
@@ -204,15 +238,27 @@ export function AdminSchoolImportPage() {
     );
   };
 
+  const toggleAllValidRows = () => {
+    if (!job) return;
+    const validIndexes = job.rows
+      .filter((row) => row.status === "Valid")
+      .map((row) => row.rowIndex);
+    const allSelected =
+      validIndexes.length > 0 &&
+      validIndexes.every((index) => selectedRows.includes(index));
+    setSelectedRows(allSelected ? [] : validIndexes);
+  };
+
   return (
     <div className="space-y-8">
       <DashboardPageHeader
         title={t("title")}
-        description={t("description")}
+        description={job ? t("descriptionReady") : t("description")}
         breadcrumbs={[
           { label: t("breadcrumbs.home") },
           { label: t("breadcrumbs.schools") },
-          { label: t("title") },
+          { label: t("breadcrumbs.import") },
+          { label: t("breadcrumbs.preview") },
         ]}
         action={
           <div className="flex flex-wrap gap-2">
@@ -241,33 +287,32 @@ export function AdminSchoolImportPage() {
             >
               {t("actions.back")}
             </Button>
+            {job ? (
+              <Button
+                type="button"
+                className="h-11 rounded-xl bg-[#2C4260] px-5 text-white hover:bg-[#243751]"
+                disabled={isStarting || job.validCount === 0}
+                onClick={() => void handleStart()}
+              >
+                {isStarting ? t("actions.importing") : t("actions.save")}
+              </Button>
+            ) : null}
           </div>
         }
       />
 
       <DashboardTableCard title={t("upload.title")}>
-        <div className="space-y-5 p-6">
-          <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-            <FileSpreadsheet className="h-10 w-10 text-[#2C4260]" aria-hidden />
-            <span className="font-semibold text-slate-700">
-              {file?.name ?? t("upload.placeholder")}
-            </span>
-            <span className="text-xs text-slate-400">{t("upload.hint")}</span>
-            <input
-              type="file"
-              accept=".xlsx,.csv"
-              className="hidden"
-              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-            />
-          </label>
-          <Button
-            type="button"
-            disabled={!file || isUploading}
-            onClick={() => void handleUpload()}
-          >
-            <Upload className="h-4 w-4" aria-hidden />
-            {isUploading ? t("actions.uploading") : t("actions.upload")}
-          </Button>
+        <div className="space-y-3 p-6">
+          <SchoolImportDropzone
+            fileName={file?.name}
+            placeholder={t("upload.placeholder")}
+            hint={t("upload.hint")}
+            disabled={isUploading || isStarting}
+            onFileSelected={(nextFile) => void handleUpload(nextFile)}
+          />
+          {isUploading ? (
+            <p className="text-center text-sm text-slate-500">{t("actions.uploading")}</p>
+          ) : null}
         </div>
       </DashboardTableCard>
 
@@ -277,48 +322,64 @@ export function AdminSchoolImportPage() {
           actions={
             <Button
               type="button"
+              className="h-11 rounded-xl bg-[#2C4260] px-5 text-white hover:bg-[#243751]"
               disabled={isStarting || job.validCount === 0}
               onClick={() => void handleStart()}
             >
-              {isStarting ? t("actions.importing") : t("actions.start")}
+              {isStarting ? t("actions.importing") : t("actions.save")}
             </Button>
           }
           footer={
-            <DashboardPagination
-              pages={Array.from({ length: job.totalPages }, (_, index) => index + 1)}
-              currentPage={job.currentPage}
-              previousLabel={t("pagination.previous")}
-              nextLabel={t("pagination.next")}
-              onPageChange={(pageNumber) => updateFilters({ pageNumber })}
-            />
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <p className="text-sm text-slate-400">
+                {t("pagination.summary", {
+                  from: (job.currentPage - 1) * job.pageSize + 1,
+                  to: Math.min(job.currentPage * job.pageSize, job.totalCount),
+                  total: job.totalCount,
+                })}
+              </p>
+              <DashboardPagination
+                pages={Array.from({ length: job.totalPages }, (_, index) => index + 1)}
+                currentPage={job.currentPage}
+                previousLabel={t("pagination.previous")}
+                nextLabel={t("pagination.next")}
+                onPageChange={(pageNumber) => updateFilters({ pageNumber })}
+              />
+            </div>
           }
         >
           <div className="grid gap-3 border-b border-slate-100 p-4 md:grid-cols-4">
             <Input
               value={filters.keyword ?? ""}
               placeholder={t("filters.keyword")}
-              onChange={(event) => setFilters((current) => ({
-                ...current,
-                keyword: event.target.value,
-              }))}
+              onChange={(event) =>
+                setFilters((current) => ({
+                  ...current,
+                  keyword: event.target.value,
+                }))
+              }
               onBlur={() => updateFilters({ keyword: filters.keyword, pageNumber: 1 })}
             />
             <Input
               value={filters.country ?? ""}
               placeholder={t("filters.country")}
-              onChange={(event) => setFilters((current) => ({
-                ...current,
-                country: event.target.value,
-              }))}
+              onChange={(event) =>
+                setFilters((current) => ({
+                  ...current,
+                  country: event.target.value,
+                }))
+              }
               onBlur={() => updateFilters({ country: filters.country, pageNumber: 1 })}
             />
             <Input
               value={filters.performanceLevel ?? ""}
               placeholder={t("filters.performance")}
-              onChange={(event) => setFilters((current) => ({
-                ...current,
-                performanceLevel: event.target.value,
-              }))}
+              onChange={(event) =>
+                setFilters((current) => ({
+                  ...current,
+                  performanceLevel: event.target.value,
+                }))
+              }
               onBlur={() =>
                 updateFilters({ performanceLevel: filters.performanceLevel, pageNumber: 1 })
               }
@@ -327,9 +388,7 @@ export function AdminSchoolImportPage() {
               value={filters.status ?? ""}
               onChange={(status) =>
                 updateFilters({
-                  status: (status || undefined) as
-                    | SchoolImportRowStatus
-                    | undefined,
+                  status: (status || undefined) as SchoolImportRowStatus | undefined,
                   pageNumber: 1,
                 })
               }
@@ -340,7 +399,7 @@ export function AdminSchoolImportPage() {
                   label: t(`statuses.${status}`),
                 })),
               ]}
-              className="w-44 gap-0"
+              className="w-full gap-0"
               triggerClassName="h-10 rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-600 shadow-none"
             />
           </div>
@@ -349,7 +408,19 @@ export function AdminSchoolImportPage() {
             <table className="w-full min-w-[850px] text-sm">
               <thead className="bg-slate-50 text-slate-500">
                 <tr>
-                  <th className="p-4 text-start">{t("columns.select")}</th>
+                  <th className="p-4 text-start">
+                    <input
+                      type="checkbox"
+                      aria-label={t("columns.select")}
+                      checked={
+                        job.rows.some((row) => row.status === "Valid") &&
+                        job.rows
+                          .filter((row) => row.status === "Valid")
+                          .every((row) => selectedRows.includes(row.rowIndex))
+                      }
+                      onChange={toggleAllValidRows}
+                    />
+                  </th>
                   <th className="p-4 text-start">{t("columns.row")}</th>
                   <th className="p-4 text-start">{t("columns.name")}</th>
                   <th className="p-4 text-start">{t("columns.email")}</th>
@@ -360,40 +431,57 @@ export function AdminSchoolImportPage() {
                 </tr>
               </thead>
               <tbody className={cn(isLoadingJob && "opacity-50")}>
-                {job.rows.map((row) => (
-                  <tr key={row.rowIndex} className="border-t border-slate-100">
-                    <td className="p-4">
-                      <input
-                        type="checkbox"
-                        disabled={row.status !== "Valid"}
-                        checked={selectedRows.includes(row.rowIndex)}
-                        onChange={() => toggleRow(row)}
-                      />
-                    </td>
-                    <td className="p-4">{row.rowIndex}</td>
-                    <td className="p-4 font-medium text-slate-700">{row.name || "—"}</td>
-                    <td className="p-4 text-slate-500">{row.email || "—"}</td>
-                    <td className="p-4 text-slate-500">{row.country || "—"}</td>
-                    <td className="p-4 text-slate-500">{row.city || "—"}</td>
-                    <td className="p-4">
-                      <span className={cn("rounded-full px-3 py-1 text-xs", statusClasses(row.status))}>
-                        {t(`statuses.${row.status}`)}
-                      </span>
-                    </td>
-                    <td className="max-w-xs p-4 text-xs text-rose-600">
-                      {row.errors.join("، ") || "—"}
+                {job.rows.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="p-8 text-center text-sm text-slate-500">
+                      {job.totalCount > 0
+                        ? t("messages.emptyPreviewPage")
+                        : t("messages.emptyPreview")}
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  job.rows.map((row) => (
+                    <tr key={row.rowIndex} className="border-t border-slate-100">
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          disabled={row.status !== "Valid"}
+                          checked={selectedRows.includes(row.rowIndex)}
+                          onChange={() => toggleRow(row)}
+                        />
+                      </td>
+                      <td className="p-4">{row.rowIndex}</td>
+                      <td className="p-4 font-medium text-slate-700">{row.name || "—"}</td>
+                      <td className="p-4 text-slate-500">{row.email || "—"}</td>
+                      <td className="p-4 text-slate-500">{row.country || "—"}</td>
+                      <td className="p-4 text-slate-500">{row.city || "—"}</td>
+                      <td className="p-4">
+                        <span
+                          className={cn(
+                            "rounded-full px-3 py-1 text-xs",
+                            statusClasses(row.status),
+                          )}
+                        >
+                          {t(`statuses.${row.status}`)}
+                        </span>
+                      </td>
+                      <td className="max-w-xs p-4 text-xs text-rose-600">
+                        {row.errors.join("، ") || "—"}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
-          {(isStarting || progress.completed) ? (
+          {isStarting || progress.completed ? (
             <div className="space-y-2 border-t border-slate-100 p-6">
               <div className="flex justify-between text-sm text-slate-600">
                 <span>{progress.currentEmail ?? t("progress.processing")}</span>
-                <span>{progress.processed}/{progress.total} ({progress.percent}%)</span>
+                <span>
+                  {progress.processed}/{progress.total} ({progress.percent}%)
+                </span>
               </div>
               <div className="h-3 overflow-hidden rounded-full bg-slate-100">
                 <div
