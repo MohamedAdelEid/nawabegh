@@ -678,7 +678,7 @@ function mapDropdownOptions<TId extends string | number>(
       const stringId = readString(record, ["id"]);
       const resolvedId =
         numericId !== null ? numericId : stringId !== "" ? stringId : null;
-      const name = readString(record, ["name", "title"], "");
+      const name = readString(record, ["name", "nameAr", "nameEn", "title"], "");
 
       if (resolvedId === null || !name) return null;
 
@@ -706,7 +706,7 @@ function mapCountryDropdownRows(data: unknown): UserManagementCountryDropdownIte
       const stringId = readString(record, ["id"]);
       const resolvedId =
         numericId !== null ? numericId : stringId !== "" ? stringId : null;
-      const name = readString(record, ["name", "title"], "");
+      const name = readString(record, ["name", "nameAr", "nameEn", "title"], "");
       const flagIcon = readString(record, ["flagIcon"], "") || undefined;
 
       if (resolvedId === null || !name) return null;
@@ -751,7 +751,7 @@ export async function getCountriesDropdown(
 
 export async function getEducationLevelsDropdown(
   countryId: number,
-  keyword = " ",
+  keyword = "",
 ): Promise<UserManagementApiResult<UserManagementDropdownOption<number>[]>> {
   try {
     const response = await httpClient.get<unknown>({

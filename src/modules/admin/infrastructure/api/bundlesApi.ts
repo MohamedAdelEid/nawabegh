@@ -1,3 +1,5 @@
+import type { CourseListItemDto } from "@/modules/admin/infrastructure/api/courseApi";
+import { getCoursesPage } from "@/modules/admin/infrastructure/api/courseApi";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
@@ -544,23 +546,25 @@ export async function getBundleExploreCourses(params?: {
   keyword?: string;
 }): Promise<BundlesApiResult<BundleExploreCourse[]>> {
   try {
-    const response = await httpClient.get<unknown>({
-      url: "/api/v1/Course/explore",
-      params: {
-        pageNumber: params?.pageNumber ?? 1,
-        pageSize: params?.pageSize ?? 50,
-        ...(params?.keyword?.trim() ? { keyword: params.keyword.trim() } : {}),
-      },
+    const response = await getCoursesPage({
+      pageNumber: params?.pageNumber ?? 1,
+      pageSize: params?.pageSize ?? 50,
+      ...(params?.keyword?.trim() ? { keyword: params.keyword.trim() } : {}),
     });
 
-    const courses = extractListRows(response.data)
-      .map((item) => mapExploreCourse(asRecord(item) ?? {}))
-      .filter((course): course is BundleExploreCourse => course !== null);
+    const courses =
+      response.data?.rows.map((course: CourseListItemDto) => ({
+        id: course.id,
+        title: course.title,
+        coverImageUrl: course.coverImageUrl,
+        originalPrice: course.originalPrice,
+        discountedPrice: course.discountedPrice,
+      })) ?? [];
 
     return {
       status: response.status,
       message: response.message,
-      errorMessage: response.error?.message,
+      errorMessage: response.errorMessage,
       data: courses,
     };
   } catch (error) {

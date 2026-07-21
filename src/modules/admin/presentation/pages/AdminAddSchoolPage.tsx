@@ -33,6 +33,7 @@ import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadAp
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { notify } from "@/shared/application/lib/toast";
 import { mapSchoolDetailToFormValues } from "@/modules/admin/presentation/lib/schoolFormMappers";
+import { findOmanCountry } from "@/shared/domain/utils/country.utils";
 import { SchoolFormActions } from "@/modules/admin/presentation/components/school-form/SchoolFormActions";
 import { SchoolIdentitySection } from "@/modules/admin/presentation/components/school-form/SchoolIdentitySection";
 import { SchoolContactSection } from "@/modules/admin/presentation/components/school-form/SchoolContactSection";
@@ -78,6 +79,7 @@ function buildCreateSchoolPayload(
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
     address: normalizeTextInput(values.address),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
+    coordinatorName: normalizeTextInput(values.coordinatorName) || undefined,
     description: normalizeTextInput(values.schoolDescription),
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
@@ -100,6 +102,7 @@ function buildUpdateSchoolPayload(
     address: normalizeTextInput(values.address),
     description: normalizeTextInput(values.schoolDescription),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
+    coordinatorName: normalizeTextInput(values.coordinatorName) || undefined,
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
     educationLevelIds: values.educationStageIds,
@@ -129,6 +132,7 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
   const [educationLevelOptions, setEducationLevelOptions] = useState<
     Array<{ id: number; label: string }>
   >([]);
+  const [educationLevelsLoading, setEducationLevelsLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -136,12 +140,26 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
       const result = await getCountriesDropdown();
       if (cancelled) return;
       if (result.data && result.data.length > 0) {
-        setCountryOptions(
-          result.data.map((row) => ({
-            id: String(row.id),
-            label: row.name,
-          })),
-        );
+        const options = result.data.map((row) => ({
+          id: String(row.id),
+          label: row.name,
+        }));
+        setCountryOptions(options);
+
+        if (!isEditMode) {
+          const oman = findOmanCountry(result.data);
+          if (oman) {
+            setValues((current) =>
+              current.countryId
+                ? current
+                : {
+                    ...current,
+                    countryId: String(oman.id),
+                    country: oman.name,
+                  },
+            );
+          }
+        }
       } else if (result.errorMessage) {
         notify.error(result.errorMessage);
       }
@@ -149,18 +167,21 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isEditMode]);
 
   useEffect(() => {
     const countryId = Number(values.countryId);
     if (!countryId) {
       setEducationLevelOptions([]);
+      setEducationLevelsLoading(false);
       return;
     }
     let cancelled = false;
+    setEducationLevelsLoading(true);
     void (async () => {
       const result = await getEducationLevelsDropdown(countryId);
       if (cancelled) return;
+      setEducationLevelsLoading(false);
       if (result.data) {
         setEducationLevelOptions(
           result.data.map((level) => ({ id: level.id, label: level.name })),
@@ -379,10 +400,10 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
             {!isEditMode ? (
               <Button
                 type="button"
-                variant="outline"
-                className="dashboard-raised-button h-12 rounded-xl border-slate-200 px-6 text-slate-700"
+                className="h-12 rounded-xl border-0 px-6 text-white hover:bg-[#1a5c37]"
                 style={{
-                  boxShadow: "0px 4px 0px 0px rgba(203, 213, 225, 1)",
+                  backgroundColor: "#217346",
+                  boxShadow: "0px 4px 0px 0px #185c37",
                 }}
                 onClick={() => router.push(ROUTES.ADMIN.SCHOOL_MANAGEMENT.IMPORT)}
               >
@@ -451,36 +472,45 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           cityLabel={t("schoolManagement.addForm.fields.city.label")}
           addressLabel={t("schoolManagement.addForm.fields.address.label")}
           phoneLabel={t("schoolManagement.addForm.fields.phoneNumber.label")}
-          emailLabel={t("schoolManagement.addForm.fields.email.label")}
+          coordinatorLabel={t("schoolManagement.addForm.fields.coordinatorName.label")}
           cityPlaceholder={t("schoolManagement.addForm.fields.city.placeholder")}
           addressPlaceholder={t("schoolManagement.addForm.fields.address.placeholder")}
           phonePlaceholder={t("schoolManagement.addForm.fields.phoneNumber.placeholder")}
-          emailPlaceholder={t("schoolManagement.addForm.fields.email.placeholder")}
+          coordinatorPlaceholder={t("schoolManagement.addForm.fields.coordinatorName.placeholder")}
           cityValue={values.city}
           addressValue={values.address}
           phoneValue={values.phoneNumber}
-          emailValue={values.email}
+          coordinatorValue={values.coordinatorName}
           onCountryChange={handleCountryChange}
           onCityChange={(value) => setField("city", value)}
           onAddressChange={(value) => setField("address", value)}
           onPhoneChange={(value) => setField("phoneNumber", value)}
-          onEmailChange={(value) => setField("email", value)}
+          onCoordinatorChange={(value) => setField("coordinatorName", value)}
         />
 
         <SchoolFormSectionCard
           icon={KeyRound}
           title={t("schoolManagement.addForm.sections.login")}
         >
-          <div className="max-w-xl">
-            <LabeledInput
-              label={t("schoolManagement.addForm.fields.loginPassword.label")}
-              type="password"
-              value={values.loginPassword}
-              placeholder={t("schoolManagement.addForm.fields.loginPassword.placeholder")}
-              onChange={(value) => setField("loginPassword", value)}
-            />
+          <div className="space-y-4">
+            <div className="grid w-full gap-5 md:grid-cols-2">
+              <LabeledInput
+                label={t("schoolManagement.addForm.fields.loginPassword.label")}
+                type="password"
+                value={values.loginPassword}
+                placeholder={t("schoolManagement.addForm.fields.loginPassword.placeholder")}
+                onChange={(value) => setField("loginPassword", value)}
+              />
+              <LabeledInput
+                label={t("schoolManagement.addForm.fields.email.label")}
+                type="email"
+                value={values.email}
+                placeholder={t("schoolManagement.addForm.fields.email.placeholder")}
+                onChange={(value) => setField("email", value)}
+              />
+            </div>
             {isEditMode ? (
-              <p className="mt-2 text-xs text-slate-400">
+              <p className="text-xs text-slate-400">
                 {t("schoolManagement.editForm.passwordHint")}
               </p>
             ) : null}
@@ -495,8 +525,17 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           selectedPlanId={values.subscriptionPlanId}
           selectedStageIds={values.educationStageIds}
           plans={plansForUi}
+          stagesLoading={educationLevelsLoading}
+          stagesEmptyHint={
+            !values.countryId
+              ? t("schoolManagement.addForm.fields.educationStages.selectCountryFirst")
+              : educationLevelsLoading
+                ? t("schoolManagement.addForm.fields.educationStages.loading")
+                : t("schoolManagement.addForm.fields.educationStages.empty")
+          }
           stages={educationLevelOptions.map((stage) => ({
-            ...stage,
+            id: stage.id,
+            label: stage.label,
             labelKey: "",
           }))}
           onPlanChange={(planId) => setField("subscriptionPlanId", planId)}

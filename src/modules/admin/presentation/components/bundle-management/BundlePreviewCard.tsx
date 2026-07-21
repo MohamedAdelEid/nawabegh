@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 
 type BundlePreviewCardProps = {
   name: string;
@@ -37,7 +37,7 @@ export function BundlePreviewCard({
       ? Math.round((savings / coursesTotalPrice) * 100)
       : 0;
 
-  const resolvedCoverImageUrl = resolveProtectedFileUrl(coverImageUrl);
+  const resolvedCoverImageUrl = resolveFileUrl(coverImageUrl);
 
   return (
     <Card className="overflow-hidden rounded-[1.75rem] border-none bg-[#1E3A66] text-white shadow-[0px_8px_0px_0px_#0000000D]">

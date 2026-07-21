@@ -153,11 +153,10 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
     })();
   }, [initialCourseId, mode, router, t]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(event.target.files ?? []);
-    event.target.value = "";
-    if (!selected.length || readOnly) return;
+  const [isDragOverSources, setIsDragOverSources] = useState(false);
 
+  const addFilesToSources = useCallback((selected: File[]) => {
+    if (!selected.length || readOnly) return;
     const nextFiles: PendingSourceFile[] = [];
     for (const file of selected) {
       const ext = getFileExtension(file.name).replace(".", "");
@@ -178,11 +177,35 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
         fileExtension: getFileExtension(file.name),
       });
     }
-
     if (nextFiles.length) {
       setSourceFiles((prev) => [...prev, ...nextFiles]);
     }
+  }, [readOnly, t]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    addFilesToSources(selected);
   };
+
+  const handleSourcesDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(true);
+  }, []);
+
+  const handleSourcesDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(false);
+  }, []);
+
+  const handleSourcesDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(false);
+    addFilesToSources(Array.from(event.dataTransfer.files));
+  }, [addFilesToSources]);
 
   const uploadSourceFiles = async () => {
     const uploaded: Array<{
@@ -599,8 +622,15 @@ export function FinalExamForm({ courseId: initialCourseId, mode }: FinalExamForm
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleSourcesDragOver}
+                  onDragEnter={handleSourcesDragOver}
+                  onDragLeave={handleSourcesDragLeave}
+                  onDrop={handleSourcesDrop}
                   className={cn(
-                    "flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 py-8 text-sm text-slate-400 transition-colors hover:border-[#C8AC59]/70 hover:text-[#C8AC59]",
+                    "flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed py-8 text-sm transition-colors",
+                    isDragOverSources
+                      ? "border-[#C8AC59] bg-[#FFFBF0] text-[#C8AC59]"
+                      : "border-slate-200 text-slate-400 hover:border-[#C8AC59]/70 hover:text-[#C8AC59]",
                   )}
                 >
                   <FileUp className="h-8 w-8" />

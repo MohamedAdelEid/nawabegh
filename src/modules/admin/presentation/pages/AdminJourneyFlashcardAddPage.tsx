@@ -509,7 +509,26 @@ export function AdminJourneyFlashcardAddPage({
                   </div>
                 </div>
               ) : (
-                <div className="flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 py-8 text-sm text-slate-400">
+                <div
+                  className="flex w-full flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 py-8 text-sm text-slate-400 transition-colors hover:border-[#C8AC59]/70"
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                      updateCurrentCard({
+                        attachmentFile: file,
+                        attachmentMeta: {
+                          name: file.name,
+                          size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+                          extension: getFileExtension(file.name),
+                          sizeBytes: file.size,
+                        },
+                      });
+                    }
+                  }}
+                >
                   <div
                     role="presentation"
                     className="flex cursor-pointer flex-col items-center justify-center gap-2 transition-colors hover:text-[#C8AC59]"

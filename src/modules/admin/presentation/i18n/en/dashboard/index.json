@@ -145,6 +145,10 @@
             "label": "Official email",
             "placeholder": "info@school.edu.sa"
           },
+          "coordinatorName": {
+            "label": "Coordinator name",
+            "placeholder": "e.g. Ahmed Mohammed"
+          },
           "loginEmail": {
             "label": "Login email",
             "placeholder": "admin@school.edu.sa"
@@ -161,7 +165,10 @@
             "label": "Subscription plan"
           },
           "educationStages": {
-            "label": "Available educational stages"
+            "label": "Available educational stages",
+            "selectCountryFirst": "Please select a country first to load education stages.",
+            "loading": "Loading education stages...",
+            "empty": "No education stages are configured for this country."
           }
         },
         "plans": {
@@ -197,7 +204,7 @@
       "filters": {
         "keyword": {
           "label": "Search",
-          "placeholder": "Search by school name or keyword..."
+          "placeholder": "Search by school name, coordinator, or email..."
         },
         "city": {
           "label": "City",
@@ -245,6 +252,7 @@
         "title": "Schools list",
         "columns": {
           "school": "School name",
+          "coordinator": "Coordinator name",
           "students": "Students",
           "points": "Total points",
           "rank": "Rank",
@@ -4039,10 +4047,10 @@
           "partialSuccess": "{success} out of {total} files were published successfully."
         },
         "upload": {
-          "title": "Drag files here",
-          "subtitle": "or select from your device",
-          "advice": "Tip: Upload one file at a time to avoid upload size limits.",
-          "uploading": "Uploading file...",
+          "title": "Drag and drop files here",
+          "subtitle": "or click to select from your device",
+          "advice": "You can drag and drop up to 50 files at once.",
+          "uploading": "Uploading files...",
           "uploadedCount": "{count} file(s) uploaded successfully.",
           "loadingHint": "Preparing and uploading files...",
           "listTitle": "Uploaded files",

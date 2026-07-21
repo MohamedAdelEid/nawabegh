@@ -58,7 +58,7 @@ export type CourseListItemDto = {
 };
 
 export type CourseListParams = {
-  status?: number;
+  status?: number | string;
   subjectId?: number;
   gradeId?: number;
   term?: number;
@@ -143,8 +143,18 @@ function readString(record: UnknownRecord | null, keys: string[], fallback = "")
   for (const key of keys) {
     const value = record[key];
     if (typeof value === "string") return value;
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
   }
   return fallback;
+}
+
+function readArray(record: UnknownRecord | null, keys: string[]): unknown[] | null {
+  if (!record) return null;
+  for (const key of keys) {
+    const value = record[key];
+    if (Array.isArray(value)) return value;
+  }
+  return null;
 }
 
 function readNumber(record: UnknownRecord | null, keys: string[]): number | null {
@@ -164,9 +174,11 @@ function readBoolean(record: UnknownRecord | null, keys: string[], fallback = fa
   for (const key of keys) {
     const value = record[key];
     if (typeof value === "boolean") return value;
+    if (typeof value === "number" && Number.isFinite(value)) return value !== 0;
     if (typeof value === "string") {
-      if (value.toLowerCase() === "true") return true;
-      if (value.toLowerCase() === "false") return false;
+      const normalized = value.trim().toLowerCase();
+      if (normalized === "true" || normalized === "1") return true;
+      if (normalized === "false" || normalized === "0") return false;
     }
   }
   return fallback;
@@ -261,11 +273,13 @@ function extractListRows(data: unknown): unknown[] {
   if (Array.isArray(unwrapped)) return unwrapped;
   const record = asRecord(unwrapped);
   if (!record) return [];
-  for (const key of ["items", "results", "records", "list", "rows"]) {
-    const value = record[key];
-    if (Array.isArray(value)) return value;
-  }
-  return [];
+
+  const nestedRecord = asRecord(record.data);
+  return (
+    readArray(record, ["items", "results", "records", "list", "rows", "data", "courses"]) ??
+    readArray(nestedRecord, ["items", "results", "records", "list", "rows", "data", "courses"]) ??
+    []
+  );
 }
 
 function extractPageMeta(
@@ -299,10 +313,14 @@ function formatCurrency(value: number): string {
 function mapCourseListItem(item: unknown): CourseListItemDto | null {
   const record = asRecord(item);
   if (!record) return null;
-  const id = readString(record, ["id", "courseId"], "").trim();
+  const id = readString(record, ["id", "courseId", "Id", "CourseId"], "").trim();
   if (!id) return null;
 
-  const statusId = courseStatusFromApi(readRecordValue(record, "status"));
+  const statusId = courseStatusFromApi(
+    readRecordValue(record, "status") ??
+      readRecordValue(record, "Status") ??
+      readRecordValue(record, "courseStatus"),
+  );
 
   return {
     id,
@@ -320,7 +338,7 @@ function mapCourseListItem(item: unknown): CourseListItemDto | null {
     discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
     status: courseStatusIdToApi(statusId) ?? CourseStatus.Draft,
     statusId,
-    isPublished: readBoolean(record, ["isPublished"]),
+    isPublished: readBoolean(record, ["isPublished", "IsPublished", "published"]),
   };
 }
 
@@ -433,6 +451,72 @@ function mapCourseEditData(data: unknown): CourseEditData | null {
     discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
     accessDurationDays: readNullableNumber(record, ["accessDurationDays"]),
   };
+}
+
+export type CourseStatusCounts = Record<
+  "draft" | "pending" | "approved" | "rejected" | "archived",
+  number
+> & {
+  published: number;
+  unpublished: number;
+  total: number;
+};
+
+export async function getCourseStatusCounts(): Promise<CourseApiResult<CourseStatusCounts>> {
+  try {
+    const pageSize = 100;
+    const counts: CourseStatusCounts = {
+      draft: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      archived: 0,
+      published: 0,
+      unpublished: 0,
+      total: 0,
+    };
+
+    let pageNumber = 1;
+    let totalPages = 1;
+    const collected: CourseListItemDto[] = [];
+
+    do {
+      const result = await getCoursesPage({ pageNumber, pageSize });
+      if (!result.data) {
+        if (pageNumber === 1) {
+          return {
+            status: result.status,
+            message: result.message,
+            errorMessage: result.errorMessage ?? "Failed to load course status counts",
+            data: null,
+          };
+        }
+        break;
+      }
+
+      collected.push(...result.data.rows);
+      counts.total = result.data.totalItems;
+      totalPages = Math.max(1, result.data.totalPages);
+      pageNumber += 1;
+    } while (pageNumber <= totalPages && pageNumber <= 20);
+
+    for (const row of collected) {
+      counts[row.statusId] += 1;
+      if (row.isPublished) counts.published += 1;
+      else counts.unpublished += 1;
+    }
+
+    if (counts.total < collected.length) {
+      counts.total = collected.length;
+    }
+
+    return {
+      status: "Success",
+      data: counts,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to load course status counts");
+  }
 }
 
 export async function getCoursesPage(

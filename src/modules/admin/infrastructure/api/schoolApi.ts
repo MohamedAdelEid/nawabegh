@@ -38,6 +38,7 @@ export type CreateSchoolPayload = {
   address?: string;
   phoneNumber?: string;
   email: string;
+  coordinatorName?: string;
   loginPassword: string;
   educationLevelIds?: number[];
 };
@@ -78,6 +79,7 @@ export type SchoolDetail = {
   address: string;
   description: string;
   email: string;
+  coordinatorName: string;
   city: string;
   country: string;
   countryId: number;
@@ -114,6 +116,7 @@ export type UpdateSchoolPayload = {
   address?: string;
   phoneNumber?: string;
   email: string;
+  coordinatorName?: string;
   loginPassword?: string;
   educationLevelIds?: number[];
   status?: SchoolStatus;
@@ -148,6 +151,7 @@ export interface GetSchoolsParams {
 export interface SchoolTableRow {
   id: string;
   schoolName: string;
+  coordinatorName: string;
   logoUrl: string;
   city: string;
   address: string;
@@ -385,6 +389,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
     readString(record, ["cityName", "cityNameAr", "city", "address", "regionName"]) ?? "—";
   const address = readString(record, ["address"]) ?? "";
   const country = readString(record, ["country", "countryName"]) ?? "";
+  const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const logoUrl = readString(record, ["logoUrl"]) ?? "";
   const studentCount = formatNumber(
     readNumber(record, ["studentsCount", "studentCount", "totalStudents"]),
@@ -412,6 +417,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
   return {
     id: idValue,
     schoolName,
+    coordinatorName,
     logoUrl,
     city,
     address,
@@ -479,6 +485,7 @@ function mapSchoolDetail(data: unknown): SchoolDetail | null {
     address: readString(record, ["address"]) ?? "",
     description: readString(record, ["description"]) ?? "",
     email: readString(record, ["email"]) ?? "",
+    coordinatorName: readString(record, ["coordinatorName"]) ?? "",
     city: readString(record, ["city", "cityName"]) ?? "",
     country: readString(record, ["country", "countryName"]) ?? "",
     countryId: readNumber(record, ["countryId"]) ?? 0,

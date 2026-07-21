@@ -8,6 +8,7 @@ import {
 } from "@/shared/application/lib/tableQueryState";
 
 import { useLocale } from "next-intl";
+import { normalizeSchoolSearchText } from "@/modules/admin/presentation/lib/schoolSearchText";
 import {
   getSchools,
   SchoolStatus,
@@ -44,14 +45,14 @@ export function useSchoolsTable() {
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setDebouncedKeyword(filters.keyword.trim());
+      setDebouncedKeyword(normalizeSchoolSearchText(filters.keyword));
     }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timeoutId);
   }, [filters.keyword]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
-      setDebouncedCity(filters.city.trim());
+      setDebouncedCity(normalizeSchoolSearchText(filters.city));
     }, SEARCH_DEBOUNCE_MS);
     return () => window.clearTimeout(timeoutId);
   }, [filters.city]);
@@ -70,7 +71,7 @@ export function useSchoolsTable() {
     () => ({
       keyword: debouncedKeyword || undefined,
       city: debouncedCity || undefined,
-      country: filters.country.trim() || undefined,
+      country: normalizeSchoolSearchText(filters.country) || undefined,
       performanceLevel:
         filters.performanceLevel === "all" ? undefined : filters.performanceLevel,
       status:

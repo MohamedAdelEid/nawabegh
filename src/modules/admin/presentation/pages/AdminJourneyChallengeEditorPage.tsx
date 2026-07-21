@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   ChallengeStation,
   ChallengeTypeId,
@@ -370,11 +370,10 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
     setStation((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(event.target.files ?? []);
-    event.target.value = "";
-    if (!selected.length) return;
+  const [isDragOverSources, setIsDragOverSources] = useState(false);
 
+  const addFilesToSources = useCallback((selected: File[]) => {
+    if (!selected.length) return;
     const nextFiles: PendingSourceFile[] = [];
     for (const file of selected) {
       const extension = getFileExtension(file.name);
@@ -386,7 +385,6 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         notify.error(t("upload.maxSizeExceeded"));
         continue;
       }
-
       nextFiles.push({
         id: `sf-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         name: file.name,
@@ -396,11 +394,35 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
         file,
       });
     }
-
     if (nextFiles.length) {
       setSourceFiles((prev) => [...prev, ...nextFiles]);
     }
+  }, [t]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    addFilesToSources(selected);
   };
+
+  const handleSourcesDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(true);
+  }, []);
+
+  const handleSourcesDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(false);
+  }, []);
+
+  const handleSourcesDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOverSources(false);
+    addFilesToSources(Array.from(event.dataTransfer.files));
+  }, [addFilesToSources]);
 
   const uploadSourceFiles = async (): Promise<ChallengeAttachmentPayload[] | null> => {
     const uploaded: ChallengeAttachmentPayload[] = [];
@@ -932,7 +954,16 @@ export function AdminJourneyChallengeEditorPage({ journeyId, stationId }: Props)
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-slate-200 py-8 text-sm text-slate-400 transition-colors hover:border-[#C8AC59]/70 hover:text-[#C8AC59]"
+                onDragOver={handleSourcesDragOver}
+                onDragEnter={handleSourcesDragOver}
+                onDragLeave={handleSourcesDragLeave}
+                onDrop={handleSourcesDrop}
+                className={[
+                  "flex w-full flex-col items-center gap-2 rounded-2xl border-2 border-dashed py-8 text-sm transition-colors",
+                  isDragOverSources
+                    ? "border-[#C8AC59] bg-[#FFFBF0] text-[#C8AC59]"
+                    : "border-slate-200 text-slate-400 hover:border-[#C8AC59]/70 hover:text-[#C8AC59]",
+                ].join(" ")}
               >
                 <FileUp className="h-8 w-8" />
                 <p className="font-semibold">{t("upload.drag")}</p>

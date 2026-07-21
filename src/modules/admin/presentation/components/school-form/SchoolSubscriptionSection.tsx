@@ -24,6 +24,8 @@ interface SchoolSubscriptionSectionProps {
   selectedStageIds: SchoolEducationStageId[];
   plans: LocalizedOption<SchoolSubscriptionPlanId>[];
   stages: LocalizedOption<SchoolEducationStageId>[];
+  stagesEmptyHint?: string;
+  stagesLoading?: boolean;
   onPlanChange: (planId: SchoolSubscriptionPlanId) => void;
   onStageToggle: (stageId: SchoolEducationStageId) => void;
 }
@@ -37,6 +39,8 @@ export function SchoolSubscriptionSection({
   selectedStageIds,
   plans,
   stages,
+  stagesEmptyHint,
+  stagesLoading = false,
   onPlanChange,
   onStageToggle,
 }: SchoolSubscriptionSectionProps) {
@@ -75,6 +79,13 @@ export function SchoolSubscriptionSection({
 
         <div className="space-y-3 text-right">
           <p className="text-sm font-medium text-[#64748B]">{stagesLabel}</p>
+          {stagesLoading ? (
+            <p className="text-sm text-slate-400">{stagesEmptyHint ?? "..."}</p>
+          ) : stages.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-400">
+              {stagesEmptyHint ?? "—"}
+            </p>
+          ) : (
           <div className="grid gap-4 md:grid-cols-3">
             {stages.map((stage) => {
               const isSelected = selectedStageIds.includes(stage.id);
@@ -105,6 +116,7 @@ export function SchoolSubscriptionSection({
               );
             })}
           </div>
+          )}
         </div>
       </div>
     </SchoolFormSectionCard>

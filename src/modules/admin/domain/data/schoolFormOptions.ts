@@ -43,6 +43,7 @@ export const defaultSchoolFormValues: SchoolFormValues = {
   address: "",
   phoneNumber: "",
   email: "",
+  coordinatorName: "",
   loginPassword: "",
   subscriptionPlanId: "interactive",
   educationStageIds: [],

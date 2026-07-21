@@ -67,6 +67,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const isInvalid = invalidProp ?? field.invalid;
     const isSuccess = successProp ?? field.success;
 
+    const resolvedIsPasswordField = isPasswordField || type === "password";
+
     const isControlled = value !== undefined;
     const [internalValue, setInternalValue] = useState(
       () => (defaultValue as string | undefined) ?? "",
@@ -124,7 +126,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     }, [isFirstRender]);
 
     useEffect(() => {
-      if (!isPasswordField || !lottieRef.current) return;
+      if (!resolvedIsPasswordField || !lottieRef.current) return;
       if (isFirstRender) {
         lottieRef.current.goToAndStop(0, true);
         return;
@@ -137,12 +139,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         lottieRef.current.setDirection(-1);
         lottieRef.current.play();
       }
-    }, [showPassword, isFirstRender, isPasswordField]);
+    }, [showPassword, isFirstRender, resolvedIsPasswordField]);
 
-    const showClear = hasValue && !isDisabled && !isPasswordField && showClearProp;
-    const inputType = isPasswordField ? (showPassword ? "text" : "password") : type;
+    const showClear = hasValue && !isDisabled && !resolvedIsPasswordField && showClearProp;
+    const inputType = resolvedIsPasswordField ? (showPassword ? "text" : "password") : type;
     const paddingClass = getInputPadding({
-      isPasswordField,
+      isPasswordField: resolvedIsPasswordField,
       hasIcon: Boolean(Icon),
       iconPosition,
       showClear,
@@ -191,7 +193,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               "pointer-events-none absolute z-20 flex items-center text-[var(--field-input-placeholder)]",
               iconPosition === "start" ? "inset-s-3" : "inset-e-3",
-              isPasswordField && "inset-s-3",
+              resolvedIsPasswordField && "inset-s-3",
             )}
           >
             <Icon className="size-5" aria-hidden />
@@ -216,7 +218,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           ) : null}
         </AnimatePresence>
 
-        {isPasswordField && !isDisabled ? (
+        {resolvedIsPasswordField && !isDisabled ? (
           <button
             type="button"
             tabIndex={-1}

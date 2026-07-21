@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlignLeft,
@@ -26,9 +27,11 @@ import {
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { BundlePreviewCard } from "./BundlePreviewCard";
 import { notify } from "@/shared/application/lib/toast";
+import { cn } from "@/shared/application/lib/cn";
 import { isValidAccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import type { AccessDurationDays } from "@/shared/domain/types/accessDuration.types";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -214,18 +217,24 @@ export function BundleFormPage({ bundleId }: BundleFormPageProps) {
   const handleCoverPick = async (file: File | null) => {
     if (!file) return;
     if (file.size > MAX_COVER_SIZE_BYTES) {
-      notify.error(t("validation.coverInvalid"));
+      notify.error(t("validation.coverTooLarge"));
       return;
     }
     setUploadingCover(true);
     const upload = await uploadAdminFile(file, BUNDLE_COVER_UPLOAD_FOLDER);
     setUploadingCover(false);
     if (!upload.ok) {
-      notify.error(upload.errorMessage ?? t("validation.coverInvalid"));
+      notify.error(upload.errorMessage || t("validation.coverInvalid"));
       return;
     }
     setCoverImageUrl(upload.filePath);
+    notify.success(upload.message ?? t("cover.uploadSuccess"));
   };
+
+  const resolvedCoverPreviewUrl = useMemo(
+    () => resolveFileUrl(coverImageUrl),
+    [coverImageUrl],
+  );
 
   const validateForm = (): boolean => {
     if (!name.trim()) {
@@ -373,17 +382,37 @@ export function BundleFormPage({ bundleId }: BundleFormPageProps) {
               </div>
               <button
                 type="button"
-                className="flex min-h-[12rem] w-full flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center transition-colors hover:border-[#C7AF6E]/50"
+                className={cn(
+                  "relative flex min-h-[12rem] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 px-6 py-8 text-center transition-colors hover:border-[#C7AF6E]/50",
+                  resolvedCoverPreviewUrl && "border-solid border-[#C7AF6E]/40",
+                )}
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingCover}
               >
-                <UploadCloud className="h-10 w-10 text-slate-300" aria-hidden />
-                <div className="space-y-1">
-                  <p className="font-semibold text-slate-700">{t("cover.dropTitle")}</p>
-                  <p className="text-sm text-slate-400">
-                    {uploadingCover ? t("cover.uploading") : t("cover.dropHint")}
-                  </p>
-                </div>
+                {resolvedCoverPreviewUrl ? (
+                  <>
+                    <Image
+                      src={resolvedCoverPreviewUrl}
+                      alt=""
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                    <div className="relative z-10 rounded-xl bg-black/45 px-4 py-2 text-sm font-semibold text-white backdrop-blur-[1px]">
+                      {uploadingCover ? t("cover.uploading") : t("cover.change")}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud className="h-10 w-10 text-slate-300" aria-hidden />
+                    <div className="space-y-1">
+                      <p className="font-semibold text-slate-700">{t("cover.dropTitle")}</p>
+                      <p className="text-sm text-slate-400">
+                        {uploadingCover ? t("cover.uploading") : t("cover.dropHint")}
+                      </p>
+                    </div>
+                  </>
+                )}
               </button>
               <input
                 ref={fileInputRef}
