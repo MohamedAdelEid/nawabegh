@@ -119,6 +119,12 @@ export function courseStatusIdToApi(status: "all" | CourseStatusId): number | un
   }
 }
 
+/** Query-string value for Course list APIs (PascalCase enum name). */
+export function courseStatusIdToApiQuery(status: "all" | CourseStatusId): string | undefined {
+  if (status === "all") return undefined;
+  return `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+}
+
 export function courseStatusIdToLearningPathStatus(status: "all" | CourseStatusId): number | undefined {
   if (status === "all") return undefined;
   switch (status) {

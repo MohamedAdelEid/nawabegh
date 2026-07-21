@@ -54,7 +54,7 @@ import {
 } from "@/shared/domain/enums/cms.enums";
 import {
   courseAccessTypeFromApi,
-  courseStatusIdToApi,
+  courseStatusIdToApiQuery,
 } from "@/shared/domain/enums/cms.mappers";
 import {DashboardDataTable,
   DashboardFilterSelect,
@@ -138,6 +138,9 @@ export function CourseManagementDashboard() {
     approved: 0,
     rejected: 0,
     archived: 0,
+    published: 0,
+    unpublished: 0,
+    total: 0,
   });
   const [coursePaging, setCoursePaging] = useState({
     currentPage: 1,
@@ -298,7 +301,7 @@ export function CourseManagementDashboard() {
 
   const loadCourses = useCallback(async () => {
     setLoadState("loading");
-    const statusParam = courseStatusIdToApi(filters.statusId);
+    const statusParam = courseStatusIdToApiQuery(filters.statusId);
     const subjectIdParam =
       filters.subjectId !== "all" ? Number(filters.subjectId) : undefined;
     const gradeIdParam = filters.stageId !== "all" ? Number(filters.stageId) : undefined;
@@ -306,9 +309,11 @@ export function CourseManagementDashboard() {
     const accessTypeParam = filters.accessType !== "all" ? Number(filters.accessType) : undefined;
     const isPublishedParam =
       filters.isPublished === "all" ? undefined : filters.isPublished === "true";
+    const needsClientSideFilter =
+      filters.statusId !== "all" || typeof isPublishedParam === "boolean";
 
-    const listResult = await getCoursesPage({
-      ...(typeof statusParam === "number" ? { status: statusParam } : {}),
+    const sharedParams = {
+      ...(statusParam ? { status: statusParam } : {}),
       ...(typeof subjectIdParam === "number" && !Number.isNaN(subjectIdParam)
         ? { subjectId: subjectIdParam }
         : {}),
@@ -322,6 +327,63 @@ export function CourseManagementDashboard() {
         : {}),
       ...(typeof isPublishedParam === "boolean" ? { isPublished: isPublishedParam } : {}),
       ...(debouncedKeyword ? { keyword: debouncedKeyword } : {}),
+    };
+
+    const applyLocalFilters = (rows: CourseListItemDto[]) => {
+      let next = rows;
+      if (filters.statusId !== "all") {
+        next = next.filter((row) => row.statusId === filters.statusId);
+      }
+      if (typeof isPublishedParam === "boolean") {
+        next = next.filter((row) => row.isPublished === isPublishedParam);
+      }
+      return next;
+    };
+
+    if (needsClientSideFilter) {
+      const collected: CourseListItemDto[] = [];
+      let pageNumber = 1;
+      let totalPages = 1;
+
+      do {
+        const pageResult = await getCoursesPage({
+          ...sharedParams,
+          pageNumber,
+          pageSize: 100,
+        });
+        if (!pageResult.data) {
+          if (pageNumber === 1) {
+            setLoadState("error");
+            notify.error(pageResult.errorMessage ?? t("courseManagement.table.loadError"));
+            return;
+          }
+          break;
+        }
+        collected.push(...pageResult.data.rows);
+        totalPages = Math.max(1, pageResult.data.totalPages);
+        pageNumber += 1;
+      } while (pageNumber <= totalPages && pageNumber <= 20);
+
+      const filtered = applyLocalFilters(collected);
+      const totalItems = filtered.length;
+      const totalPageCount = Math.max(1, Math.ceil(totalItems / pageSize) || 1);
+      const safePage = Math.min(currentPage, totalPageCount);
+      const start = (safePage - 1) * pageSize;
+      const pageRows = filtered.slice(start, start + pageSize);
+
+      setCourseRows(pageRows);
+      setCoursePaging({
+        currentPage: safePage,
+        totalPages: totalPageCount,
+        totalItems,
+        visibleItems: pageRows.length,
+      });
+      setLoadState("success");
+      return;
+    }
+
+    const listResult = await getCoursesPage({
+      ...sharedParams,
       pageNumber: currentPage,
       pageSize,
     });
@@ -334,10 +396,9 @@ export function CourseManagementDashboard() {
 
     const pageOut = listResult.data;
     setCourseRows(pageOut.rows);
-    const totalPages = Math.max(1, pageOut.totalPages);
     setCoursePaging({
       currentPage: pageOut.currentPage,
-      totalPages,
+      totalPages: Math.max(1, pageOut.totalPages),
       totalItems: pageOut.totalItems,
       visibleItems: pageOut.rows.length,
     });
@@ -385,11 +446,14 @@ export function CourseManagementDashboard() {
   );
 
   const statCards = useMemo<CourseManagementStat[]>(() => {
+    const totalValue =
+      statusCounts.total > 0 ? statusCounts.total : coursePaging.totalItems;
+
     return [
       {
         id: "learningPathsTotal",
         labelKey: "courseManagement.stats.learningPathsTotal.label",
-        value: formatAbbrevInt(coursePaging.totalItems),
+        value: formatAbbrevInt(totalValue),
         indicatorKey: "courseManagement.stats.learningPathsTotal.indicator",
         indicatorToneClassName: "text-emerald-500",
         icon: BookOpen,
@@ -407,7 +471,8 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsApproved",
         labelKey: "courseManagement.stats.learningPathsApproved.label",
-        value: formatAbbrevInt(statusCounts.approved),
+        // Card indicator is "Published" — count from backend `isPublished`.
+        value: formatAbbrevInt(statusCounts.published),
         indicatorKey: "courseManagement.stats.learningPathsApproved.indicator",
         indicatorToneClassName: "text-emerald-500",
         icon: CheckCircle2,
@@ -425,7 +490,8 @@ export function CourseManagementDashboard() {
       {
         id: "learningPathsDraft",
         labelKey: "courseManagement.stats.learningPathsDraft.label",
-        value: formatAbbrevInt(statusCounts.draft),
+        // Card indicator is "Unpublished" — count from backend `isPublished: false`.
+        value: formatAbbrevInt(statusCounts.unpublished),
         indicatorKey: "courseManagement.stats.learningPathsDraft.indicator",
         indicatorToneClassName: "text-slate-500",
         icon: FilePenLine,
