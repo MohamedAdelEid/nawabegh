@@ -12,15 +12,14 @@ type HelperResourceFiltersProps = {
   onChange: (value: HelperResourceMediaFilter) => void;
 };
 
-const FILTER_ICONS: Record<
-  "all" | "Pdf" | "Presentation" | "Word" | "Image",
-  string
-> = {
+const FILTER_ICONS: Record<HelperResourceMediaFilter, string> = {
   all: HELPER_RESOURCE_ASSETS.filterAll,
   Pdf: HELPER_RESOURCE_ASSETS.filterPdf,
   Presentation: HELPER_RESOURCE_ASSETS.filterPpt,
   Word: HELPER_RESOURCE_ASSETS.filterWord,
   Image: HELPER_RESOURCE_ASSETS.filterImage,
+  Video: HELPER_RESOURCE_ASSETS.filterAll,
+  Other: HELPER_RESOURCE_ASSETS.filterAll,
 };
 
 export function HelperResourceFilters({
