@@ -49,6 +49,8 @@ export type ExploreCourseDto = {
   subjectNameAr: string;
   subjectNameEn: string;
   gradeId: number;
+  gradeNameAr: string;
+  gradeNameEn: string;
   term: number;
   teacherFullName: string;
   teacherAvatarUrl: string;
@@ -78,7 +80,9 @@ export type ExploreCoursesPage = {
   currentPage: number;
   pageSize: number;
   totalCount?: number;
+  totalPages: number;
   hasMore: boolean;
+  hasPrevious: boolean;
 };
 
 /** UI-facing course card model with optional future fields. */

@@ -1,5 +1,6 @@
 import {
   SidebarBookIcon,
+  SidebarChatGroupIcon,
   SidebarFolderIcon,
   SidebarHomeIcon,
   SidebarMapIcon,
@@ -7,7 +8,7 @@ import {
 } from "@/shared/presentation/icons/sidebar";
 import type { SidebarItems } from "@/shared/domain/types/sidebar.types";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
-import { CalendarDays, CircleHelp, GraduationCap, Layers, ListTodo, LogOut, Newspaper, Settings, Swords } from "lucide-react";
+import { CalendarDays, CircleHelp, GraduationCap, Layers, ListTodo, LogOut, Newspaper, Settings, Swords, Trophy } from "lucide-react";
 
 export function buildStudentShellSidebar(dashboardBase: string, settingsHref: string): SidebarItems {
   return {
@@ -64,6 +65,13 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
         icon: Swords,
       },
       {
+        id: "challengeArena",
+        labelKey: "sidebar.nav.challengeArena",
+        href: ROUTES.USER.STUDENT.CHALLENGE_HUB,
+        activePathPrefixes: [ROUTES.USER.STUDENT.CHALLENGE_HUB],
+        icon: Trophy,
+      },
+      {
         id: "allCourses",
         labelKey: "sidebar.nav.allCourses",
         href: ROUTES.USER.STUDENT.COURSES,
@@ -81,6 +89,7 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
         labelKey: "sidebar.nav.helpFiles",
         href: `${dashboardBase}?tab=helpFiles`,
         icon: SidebarFolderIcon,
+        activePathPrefixes: ["/student/stations/helper-resource"],
       },
     ],
     secondary: [
@@ -106,7 +115,10 @@ export function buildStudentShellSidebar(dashboardBase: string, settingsHref: st
   };
 }
 
-const studentShellSidebar = buildStudentShellSidebar("/student/dashboard", "/student/settings");
+const studentShellSidebar = buildStudentShellSidebar(
+  "/student/dashboard",
+  ROUTES.USER.STUDENT.PROFILE,
+);
 
 /**
  * Student sidebar. Knowledge community is a student-only destination, so it is
@@ -117,6 +129,20 @@ export const studentSidebarItems: SidebarItems = {
   main: [
     ...studentShellSidebar.main,
     {
+      id: "chatGroups",
+      labelKey: "sidebar.nav.chatGroups",
+      href: ROUTES.USER.STUDENT.CHAT_GROUPS.LIST,
+      activePathPrefixes: [ROUTES.USER.STUDENT.CHAT_GROUPS.LIST],
+      icon: SidebarChatGroupIcon,
+    },
+    {
+      id: "schoolEvents",
+      labelKey: "sidebar.nav.schoolEvents",
+      href: ROUTES.USER.STUDENT.EVENTS,
+      activePathPrefixes: [ROUTES.USER.STUDENT.EVENTS],
+      icon: Trophy,
+    },
+    {
       id: "knowledgeCommunity",
       labelKey: "sidebar.nav.knowledgeCommunity",
       href: ROUTES.USER.STUDENT.KNOWLEDGE_COMMUNITY.LIST,
@@ -124,4 +150,17 @@ export const studentSidebarItems: SidebarItems = {
       icon: Newspaper,
     },
   ],
+  secondary: studentShellSidebar.secondary.map((item) =>
+    item.id === "settings"
+      ? {
+          ...item,
+          labelKey: "sidebar.nav.profile",
+          href: ROUTES.USER.STUDENT.PROFILE,
+          activePathPrefixes: [
+            ROUTES.USER.STUDENT.PROFILE,
+            ROUTES.USER.STUDENT.SETTINGS,
+          ],
+        }
+      : item,
+  ),
 };

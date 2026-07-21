@@ -1,0 +1,83 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { CornerUpLeft, MoreVertical } from "lucide-react";
+import type { StudentChatMessage } from "@/modules/student/domain/chat-groups/student-chat.types";
+import { CHAT_REACTION_EMOJIS } from "@/shared/domain/constants/chatReactionEmojis";
+import { cn } from "@/shared/application/lib/cn";
+import { Button } from "@/shared/presentation/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/presentation/components/ui/popover";
+
+type StudentChatMessageActionsProps = {
+  message: StudentChatMessage;
+  disabled?: boolean;
+  onReply: (message: StudentChatMessage) => void;
+  onReact: (message: StudentChatMessage, emoji: string) => void;
+};
+
+export function StudentChatMessageActions({
+  message,
+  disabled = false,
+  onReply,
+  onReact,
+}: StudentChatMessageActionsProps) {
+  const t = useTranslations("student.dashboard.chatGroups.conversation.actions");
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="flex items-center gap-0.5 rounded-full bg-white px-1 py-0.5 shadow-sm">
+        {CHAT_REACTION_EMOJIS.map((emoji) => {
+          const reaction = message.reactions?.find((item) => item.emoji === emoji);
+          return (
+            <button
+              key={emoji}
+              type="button"
+              disabled={disabled}
+              onClick={() => onReact(message, emoji)}
+              className={cn(
+                "rounded-full px-1.5 py-0.5 text-xs transition-colors hover:bg-slate-100",
+                reaction?.reactedByCurrentUser && "bg-sky-50 ring-1 ring-sky-200",
+              )}
+              aria-label={t("react", { emoji })}
+            >
+              {emoji}
+              {reaction && reaction.count > 0 ? (
+                <span className="ms-0.5 text-[10px] text-slate-500">{reaction.count}</span>
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 rounded-lg bg-white shadow-sm"
+            disabled={disabled}
+            aria-label={t("menu")}
+          >
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent align="end" className="w-40 space-y-1 p-2">
+          <button
+            type="button"
+            className="flex w-full items-center justify-end gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+            onClick={() => {
+              onReply(message);
+              setOpen(false);
+            }}
+          >
+            {t("reply")}
+            <CornerUpLeft className="h-4 w-4" />
+          </button>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}

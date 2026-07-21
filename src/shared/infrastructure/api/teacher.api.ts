@@ -1,7 +1,7 @@
-import type { Teacher, TeachersPage, TeachersQueryParams } from "@/shared/domain/types/teacher.types";
+import type { Teacher, TeachersPage, TeachersQueryParams, TeacherPublicProfile } from "@/shared/domain/types/teacher.types";
 import { paginatedParams } from "@/shared/domain/types/paginated-query.types";
-import { mapTeacherDto } from "@/shared/domain/utils/teacher.utils";
-import { resolveApiList } from "@/shared/infrastructure/api/apiResponse.utils";
+import { mapTeacherDto, mapTeacherPublicProfileDto } from "@/shared/domain/utils/teacher.utils";
+import { resolveApiData, resolveApiList } from "@/shared/infrastructure/api/apiResponse.utils";
 import { mapApiItems } from "@/shared/infrastructure/api/mapApiItems";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
@@ -44,4 +44,17 @@ export async function getTeachersPage(params: TeachersQueryParams): Promise<Teac
     hasPrevious: pagination?.hasPrevious ?? pageNumber > 1,
     hasNext: pagination?.hasNext ?? rows.length >= pageSize,
   };
+}
+
+export async function getTeacherPublicProfile(teacherId: string): Promise<TeacherPublicProfile> {
+  const response = await httpClient.get<unknown>({
+    url: `/api/v1/Teachers/${encodeURIComponent(teacherId)}`,
+  });
+
+  const profile = mapTeacherPublicProfileDto(resolveApiData(response));
+  if (!profile) {
+    throw new Error("Teacher not found");
+  }
+
+  return profile;
 }

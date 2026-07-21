@@ -1,18 +1,27 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
-import { StudentPathProgressStatus } from "@/modules/student/domain/progress/progress.enums";
+import {
+  StudentPathProgressStatus,
+  StudentStationProgressStatus,
+} from "@/modules/student/domain/progress/progress.enums";
+import { getStudentStationHref } from "@/modules/student/domain/progress/getStudentStationHref";
+import { buildProgressTimelineNodes } from "@/modules/student/domain/progress/progress.utils";
+import type {
+  MilestoneBoxDto,
+  PathStationProgressDto,
+} from "@/modules/student/domain/progress/progress.types";
 import { useProgressPath } from "@/modules/student/application/hooks/useProgressPath";
 import { ProgressPathBanner } from "./ProgressPathBanner";
 import { ProgressPathSkeleton } from "./ProgressPathSkeleton";
 import { ProgressPathTabs } from "./ProgressPathTabs";
 import { ProgressPathTimeline } from "./ProgressPathTimeline";
+import { JourneyAchievementModal } from "./JourneyAchievementModal";
 import { JOURNEY_ASSETS } from "./journey.assets";
-import type { PathStationProgressDto } from "@/modules/student/domain/progress/progress.types";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
@@ -25,6 +34,7 @@ export function ProgressPathDashboard() {
   const courseId = searchParams.get("courseId");
   const pathId = searchParams.get("pathId");
   const isDemo = searchParams.get("demo") === "1";
+  const celebrate = searchParams.get("celebrate");
 
   const withDemo = (params: URLSearchParams) => {
     if (isDemo) params.set("demo", "1");
@@ -49,9 +59,23 @@ export function ProgressPathDashboard() {
     activeCourse,
     activePathProgress,
     refreshAll,
-    selectCourse,
     isInitializing,
+    openMilestone,
+    isOpeningMilestone,
+    openingMilestoneOrder,
+    openMilestoneError,
+    completionNotice,
+    clearCompletionNotice,
+    showDemoCompletion,
   } = useProgressPath({ courseId, pathId });
+
+  useEffect(() => {
+    if (celebrate === "1" || celebrate === "station") {
+      showDemoCompletion("station");
+    } else if (celebrate === "path") {
+      showDemoCompletion("path");
+    }
+  }, [celebrate, showDemoCompletion]);
 
   const courseTabs = useMemo(
     () =>
@@ -85,15 +109,26 @@ export function ProgressPathDashboard() {
     return idx >= 0 ? idx + 1 : null;
   }, [activePathId, courseProgressQuery.data?.paths]);
 
+  const timelineNodes = useMemo(
+    () =>
+      buildProgressTimelineNodes(
+        pathStationsQuery.data?.stations ?? [],
+        pathStationsQuery.data?.milestoneBoxes ?? [],
+      ),
+    [pathStationsQuery.data?.stations, pathStationsQuery.data?.milestoneBoxes],
+  );
+
   const handleCourseChange = (nextCourseId: string) => {
     if (nextCourseId === activeCourseId) return;
-    selectCourse(nextCourseId);
-    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(new URLSearchParams()).toString()}`);
+    const params = new URLSearchParams();
+    params.set("courseId", nextCourseId);
+    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`);
   };
 
   const handlePathChange = (nextPathId: string) => {
     const params = new URLSearchParams();
     params.set("pathId", nextPathId);
+    if (activeCourseId) params.set("courseId", activeCourseId);
     router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`);
   };
 
@@ -106,7 +141,42 @@ export function ProgressPathDashboard() {
       return;
     }
     if (isPathLocked) return;
-    void station;
+    if (station.status === StudentStationProgressStatus.Locked) return;
+
+    const href = getStudentStationHref({
+      stationId: station.stationId,
+      stationType: station.stationType,
+      courseId: activeCourseId,
+      pathId: activePathId,
+    });
+    if (href) router.push(href);
+  };
+
+  const handleChestOpen = async (milestone: MilestoneBoxDto) => {
+    if (isDemo) {
+      requireAccount();
+      return;
+    }
+    if (!activePathId || isPathLocked) return;
+    try {
+      await openMilestone({
+        learningPathId: activePathId,
+        milestoneOrder: milestone.order,
+        pointsReward: milestone.pointsReward,
+      });
+    } catch {
+      // Error surfaced via openMilestoneError
+    }
+  };
+
+  const selectNextPath = () => {
+    clearCompletionNotice();
+    if (!activePathId || pathTabs.length === 0) return;
+    const idx = pathTabs.findIndex((tab) => tab.id === activePathId);
+    const next = pathTabs[idx + 1] ?? pathTabs[0];
+    if (next && next.id !== activePathId) {
+      handlePathChange(next.id);
+    }
   };
 
   const isLoading =
@@ -146,7 +216,21 @@ export function ProgressPathDashboard() {
   }
 
   return (
-    <div className="space-y-0 pb-10">
+    <div className="relative space-y-0 pb-10">
+      <div
+        className="pointer-events-none absolute inset-0 -z-0 bg-[#f6f8fb]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 -z-0 opacity-[0.05]"
+        style={{
+          backgroundImage: `url('${JOURNEY_ASSETS.background}')`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "640px auto",
+        }}
+        aria-hidden
+      />
+
       <PathHeader
         courseTitle={activeCourse?.title ?? t("page.title")}
         subtitle={t("page.subtitle")}
@@ -206,17 +290,42 @@ export function ProgressPathDashboard() {
         </div>
       ) : null}
 
+      {openMilestoneError ? (
+        <div className="relative z-10 px-4 pt-3 md:px-6">
+          <ApiFailureAlert
+            message={openMilestoneError}
+            fallbackMessage={t("errors.milestone")}
+          />
+        </div>
+      ) : null}
+
       <div className="relative z-10 mt-2">
         {pathStationsQuery.isLoading && !pathStationsQuery.data ? (
           <ProgressPathTimelineSkeleton />
         ) : (
           <ProgressPathTimeline
+            nodes={timelineNodes}
             stations={pathStationsQuery.data?.stations ?? []}
             onStationSelect={handleStationSelect}
+            onChestOpen={(m) => void handleChestOpen(m)}
+            openingMilestoneOrder={isOpeningMilestone ? openingMilestoneOrder : null}
             locked={isPathLocked}
           />
         )}
       </div>
+
+      <JourneyAchievementModal
+        open={Boolean(completionNotice)}
+        notice={completionNotice}
+        onOpenChange={(open) => {
+          if (!open) clearCompletionNotice();
+        }}
+        onPrimary={selectNextPath}
+        onSecondary={() => {
+          clearCompletionNotice();
+          router.push(ROUTES.USER.STUDENT.COURSES);
+        }}
+      />
     </div>
   );
 }
@@ -244,7 +353,7 @@ function PathHeader({
         <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-[rgba(44,66,96,0.1)] md:size-[60px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={JOURNEY_ASSETS.stations.iconPath}
+            src={JOURNEY_ASSETS.headerBook}
             alt=""
             className="size-5 object-contain md:size-6"
             aria-hidden

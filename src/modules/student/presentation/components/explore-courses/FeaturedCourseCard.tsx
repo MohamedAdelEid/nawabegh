@@ -13,10 +13,11 @@ import { getCourseCtaVariant } from "./getCourseCta";
 
 type FeaturedCourseCardProps = {
   course: CourseCardModel;
+  hideTeacher?: boolean;
   className?: string;
 };
 
-export function FeaturedCourseCard({ course, className }: FeaturedCourseCardProps) {
+export function FeaturedCourseCard({ course, hideTeacher = false, className }: FeaturedCourseCardProps) {
   const t = useTranslations("student.dashboard.exploreCourses");
   const locale = useLocale();
   const isArabic = locale.startsWith("ar");
@@ -71,16 +72,20 @@ export function FeaturedCourseCard({ course, className }: FeaturedCourseCardProp
             </h3>
 
             <div className="flex items-center justify-end gap-2">
-              <span className="text-[10px] font-medium text-[#dfdfdf]">
-                {course.teacherFullName}
-              </span>
-              <UserAvatarImageOrInitials
-                trackKey={`${course.id}-featured-teacher`}
-                name={course.teacherFullName}
-                imageUrl={course.teacherAvatarUrl}
-                size="sm"
-                circleClassName="!h-6 !w-6 !text-[10px] bg-white"
-              />
+              {hideTeacher ? null : (
+                <>
+                  <span className="text-[10px] font-medium text-[#dfdfdf]">
+                    {course.teacherFullName}
+                  </span>
+                  <UserAvatarImageOrInitials
+                    trackKey={`${course.id}-featured-teacher`}
+                    name={course.teacherFullName}
+                    imageUrl={course.teacherAvatarUrl}
+                    size="sm"
+                    circleClassName="!h-6 !w-6 !text-[10px] bg-white"
+                  />
+                </>
+              )}
             </div>
 
             {course.description ? (

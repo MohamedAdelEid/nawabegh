@@ -1,16 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Clock, Eye, Radio } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { enterChallengeQueue, joinLiveStation } from "@/modules/student/infrastructure/api/dailyTasks.api";
 import type {
   ChallengeStation,
   LiveSessionStation,
 } from "@/modules/student/domain/types/student-home.types";
 import { formatCompactCount } from "@/modules/student/domain/home/student-home.utils";
 import { cn } from "@/shared/application/lib/cn";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 type LiveSessionCardProps = {
   session: LiveSessionStation;
@@ -20,16 +21,13 @@ type LiveSessionCardProps = {
 export function LiveSessionCard({ session, className }: LiveSessionCardProps) {
   const t = useTranslations("student.dashboard.home.liveSessions");
   const locale = useLocale();
+  const router = useRouter();
   const [joining, setJoining] = useState(false);
 
-  const handleJoin = async () => {
+  const handleJoin = () => {
     if (!session.canJoin || joining) return;
     setJoining(true);
-    try {
-      await joinLiveStation(session.stationId);
-    } finally {
-      setJoining(false);
-    }
+    router.push(ROUTES.USER.STUDENT.LIVE_STATION(session.stationId));
   };
 
   const meta =
@@ -66,7 +64,7 @@ export function LiveSessionCard({ session, className }: LiveSessionCardProps) {
           </span>
           <button
             type="button"
-            onClick={() => void handleJoin()}
+            onClick={handleJoin}
             disabled={!session.canJoin || joining}
             className="rounded-lg bg-[#2b415e] px-4 py-2 text-sm font-bold text-white shadow-[0px_4px_0px_rgba(0,0,0,0.1)] transition-opacity disabled:opacity-50"
           >
@@ -103,16 +101,13 @@ type ChallengeCardProps = {
 
 export function ChallengeCard({ challenge, className }: ChallengeCardProps) {
   const t = useTranslations("student.dashboard.home.liveSessions");
+  const router = useRouter();
   const [entering, setEntering] = useState(false);
 
-  const handleEnter = async () => {
+  const handleEnter = () => {
     if (!challenge.canEnter || entering) return;
     setEntering(true);
-    try {
-      await enterChallengeQueue(challenge.challengeId);
-    } finally {
-      setEntering(false);
-    }
+    router.push(ROUTES.USER.STUDENT.CHALLENGE_STATION(challenge.stationId));
   };
 
   return (

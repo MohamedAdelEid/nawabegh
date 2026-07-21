@@ -29,9 +29,6 @@ export function WeeklyScheduleDashboard() {
     goToNextWeek,
     goToCurrentWeek,
     refresh,
-    handleJoinLive,
-    joiningStationId,
-    joinError,
     isLoading,
     errorMessage,
   } = useWeeklySchedule();
@@ -56,12 +53,15 @@ export function WeeklyScheduleDashboard() {
     }
 
     if (item.actionType === StudentScheduleActionType.EnterLive) {
-      try {
-        await handleJoinLive(item);
-        navigateToStation(item);
-      } catch {
-        /* surfaced via joinError */
-      }
+      const params = new URLSearchParams();
+      if (item.courseId) params.set("courseId", item.courseId);
+      if (item.learningPathId) params.set("pathId", item.learningPathId);
+      const query = params.toString();
+      router.push(
+        query
+          ? `${ROUTES.USER.STUDENT.LIVE_STATION(item.stationId)}?${query}`
+          : ROUTES.USER.STUDENT.LIVE_STATION(item.stationId),
+      );
       return;
     }
 
@@ -144,17 +144,13 @@ export function WeeklyScheduleDashboard() {
         </div>
       </div>
 
-      {joinError ? (
-        <ApiFailureAlert message={joinError} fallbackMessage={t("errors.joinLive")} />
-      ) : null}
-
       <div className="overflow-x-auto pb-2">
         <div className="grid min-w-[840px] grid-cols-5 gap-6">
           {data.days.map((day) => (
             <WeeklyScheduleDayColumn
               key={`${weekStart}-${day.date}`}
               day={day}
-              joiningStationId={joiningStationId}
+              joiningStationId={null}
               onItemAction={(item) => void handleItemAction(item)}
             />
           ))}

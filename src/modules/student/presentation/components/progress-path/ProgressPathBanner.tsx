@@ -40,7 +40,7 @@ export function ProgressPathBanner({
         <div className="flex size-14 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={JOURNEY_ASSETS.stations.iconPath}
+            src={JOURNEY_ASSETS.headerBook}
             alt=""
             className="size-7 object-contain"
             aria-hidden

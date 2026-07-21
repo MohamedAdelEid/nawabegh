@@ -1,0 +1,16 @@
+export const FLASHCARDS_STATION_ASSETS = {
+  ring: "/images/student/flashcards-station/ring.svg",
+  cards: "/images/student/flashcards-station/cards-icon.svg",
+  timer: "/images/student/flashcards-station/timer-icon.svg",
+  play: "/images/student/flashcards-station/play-icon.svg",
+  medal: "/images/student/flashcards-station/medal-icon.svg",
+  confetti: "/images/student/flashcards-station/confetti-icon.svg",
+  trophy: "/images/student/flashcards-station/trophy-stat.svg",
+  timerStat: "/images/student/flashcards-station/timer-stat.svg",
+  accuracy: "/images/student/flashcards-station/accuracy-stat.svg",
+  reviewErrors: "/images/student/flashcards-station/review-errors-icon.svg",
+  rocket: "/images/student/flashcards-station/rocket-icon.svg",
+  questionDoc: "/images/student/flashcards-station/question-doc-icon.svg",
+  info: "/images/student/flashcards-station/info-icon.svg",
+  close: "/images/student/flashcards-station/close-icon.svg",
+} as const;

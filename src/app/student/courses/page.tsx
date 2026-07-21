@@ -31,7 +31,9 @@ async function ExploreCoursesContent() {
     rows: [],
     currentPage: 1,
     pageSize: EXPLORE_COURSES_PAGE_SIZE,
+    totalPages: 1,
     hasMore: false,
+    hasPrevious: false,
   };
 
   try {
@@ -56,7 +58,9 @@ async function ExploreCoursesContent() {
       rows: [],
       currentPage: 1,
       pageSize: EXPLORE_COURSES_PAGE_SIZE,
+      totalPages: 1,
       hasMore: false,
+      hasPrevious: false,
     };
   }
 

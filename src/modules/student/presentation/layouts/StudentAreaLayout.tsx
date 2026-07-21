@@ -11,6 +11,7 @@ import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 const ONBOARDING_PREFIX = ROUTES.USER.STUDENT.ONBOARDING_QUIZ;
 const FRIEND_CHALLENGE_DUEL_PREFIX = `${ROUTES.USER.STUDENT.FRIEND_CHALLENGES.HUB}/sessions`;
+const LIVE_STATION_PREFIX = "/student/stations/";
 
 function normalizeRole(role?: string | null): string {
   return role?.trim().toLowerCase() ?? "student";
@@ -26,6 +27,7 @@ export function StudentAreaLayout({ children }: StudentAreaLayoutProps) {
   const { data: session, status } = useSession();
   const isOnboardingRoute = pathname.startsWith(ONBOARDING_PREFIX);
   const isFriendChallengeDuelRoute = pathname.startsWith(FRIEND_CHALLENGE_DUEL_PREFIX);
+  const isStationImmersiveRoute = pathname.startsWith(LIVE_STATION_PREFIX);
   const userId = session?.user?.id;
   const isStudent = normalizeRole(session?.user?.role) === "student";
 
@@ -54,7 +56,7 @@ export function StudentAreaLayout({ children }: StudentAreaLayoutProps) {
     status,
   ]);
 
-  if (isOnboardingRoute || isFriendChallengeDuelRoute) {
+  if (isOnboardingRoute || isFriendChallengeDuelRoute || isStationImmersiveRoute) {
     return <>{children}</>;
   }
 

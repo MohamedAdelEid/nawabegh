@@ -29,7 +29,9 @@ export async function getStudentDailyTasks(): Promise<StudentDailyTasksDto> {
 }
 
 export async function joinLiveStation(stationId: string): Promise<void> {
-  return callDailyTasksApi(async () => {
+  // Prefer navigating to LIVE_STATION route; this remains for legacy callers.
+  // Join credentials are obtained on the live station page via joinStudentLiveStation.
+  await callDailyTasksApi(async () => {
     await httpClient.post<unknown>({
       url: `live-stations/${encodeURIComponent(stationId)}/join`,
     });

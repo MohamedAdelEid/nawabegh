@@ -81,11 +81,55 @@ export type PathStationProgressDto = {
   liveSessionSchedule: LiveSessionScheduleDto | null;
 };
 
+export type MilestoneBoxDto = {
+  order: number;
+  pointsReward: number;
+  requiredCompletedStations: number;
+  afterStationOrder: number;
+  completedStations: number;
+  totalRequiredStations: number;
+  isEligible: boolean;
+  isOpened: boolean;
+};
+
 export type LearningPathStationsProgressDto = {
   learningPathId: string;
   learningPathTitle: string;
   stations: PathStationProgressDto[];
+  milestoneBoxes: MilestoneBoxDto[];
 };
+
+export type MilestoneOpenResultDto = {
+  milestoneOrder: number;
+  pointsAwarded: number;
+  totalPoints: number | null;
+  currentLevel: number | null;
+  pointsToNextLevel: number | null;
+};
+
+export type JourneyCompletionNotice = {
+  variant: "station" | "path";
+  pointsEarned: number;
+  currentLevel: number;
+  pointsToNextLevel: number;
+  levelProgress: number;
+};
+
+export type ProgressTimelineStationNode = {
+  kind: "station";
+  id: string;
+  station: PathStationProgressDto;
+};
+
+export type ProgressTimelineChestNode = {
+  kind: "chest";
+  id: string;
+  milestone: MilestoneBoxDto;
+};
+
+export type ProgressTimelineNode =
+  | ProgressTimelineStationNode
+  | ProgressTimelineChestNode;
 
 export type EnrolledCourseCardModel = EnrolledCourseCardDto;
 export type CourseProgressModel = CourseProgressDto;
