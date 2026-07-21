@@ -368,7 +368,7 @@ export function getLevelTitle(level: number, locale: "ar" | "en" = "ar"): string
   ];
   const titles = locale === "ar" ? titlesAr : titlesEn;
   const index = Math.min(titles.length - 1, Math.max(0, Math.floor((level - 1) / 5)));
-  return titles[index] ?? titles[0];
+  return titles[index] ?? titles[0] ?? "Junior Researcher";
 }
 
 export function getLevelProgressPercent(
