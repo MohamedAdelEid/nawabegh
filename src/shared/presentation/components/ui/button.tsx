@@ -45,7 +45,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const animation = "transition-all hover:translate-y-1 hover:shadow-none";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }), animation)}
+        className={cn(buttonVariants({ variant, size }), animation, className)}
         ref={ref}
         {...props}
       />

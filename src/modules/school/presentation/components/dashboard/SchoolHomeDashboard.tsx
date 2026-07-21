@@ -263,7 +263,7 @@ export function SchoolHomeDashboard() {
         totalCount={data.articlesTotalCount}
         action={
           <Button asChild variant="outline" className="rounded-xl">
-            <Link href={ROUTES.USER.SCHOOL.ARTICLES}>{t("articles.viewAll")}</Link>
+            <Link href={ROUTES.USER.SCHOOL.ARTICLES.LIST}>{t("articles.viewAll")}</Link>
           </Button>
         }
       />

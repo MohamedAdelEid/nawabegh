@@ -321,7 +321,15 @@ export const ROUTES = {
     SCHOOL: {
       HOME: "/school/dashboard",
       SETTINGS: "/school/settings",
-      ARTICLES: "/school/articles",
+      ARTICLES: {
+        LIST: "/school/articles",
+        CREATE: "/school/articles/create",
+        SETTINGS: "/school/articles/settings",
+        VIEW: (articleId: string) =>
+          `/school/articles/${encodeURIComponent(articleId)}`,
+        EDIT: (articleId: string) =>
+          `/school/articles/${encodeURIComponent(articleId)}/edit`,
+      },
       HONOR_BOARD: {
         LEADERBOARD: "/school/honor-board",
         HONORED_STUDENTS: "/school/honor-board/honored-students",
@@ -338,6 +346,16 @@ export const ROUTES = {
           `/school/announcements/${encodeURIComponent(announcementId)}/edit`,
         REPORT: (announcementId: string) =>
           `/school/announcements/${encodeURIComponent(announcementId)}/report`,
+      },
+      EVENTS: {
+        LIST: "/school/events",
+        CREATE: "/school/events/create",
+        VIEW: (eventId: string | number) =>
+          `/school/events/${encodeURIComponent(String(eventId))}`,
+        EDIT: (eventId: string | number) =>
+          `/school/events/${encodeURIComponent(String(eventId))}/edit`,
+        TEAMS_CREATE: "/school/events/teams/create",
+        RANKINGS: "/school/events/rankings",
       },
     },
   },

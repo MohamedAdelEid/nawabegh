@@ -145,6 +145,10 @@
             "label": "البريد الإلكتروني الرسمي",
             "placeholder": "info@school.edu.sa"
           },
+          "coordinatorName": {
+            "label": "اسم المنسق",
+            "placeholder": "مثال: أحمد محمد"
+          },
           "loginEmail": {
             "label": "البريد الإلكتروني لتسجيل الدخول",
             "placeholder": "admin@school.edu.sa"
@@ -245,6 +249,7 @@
         "title": "قائمة المدارس",
         "columns": {
           "school": "اسم المدرسة",
+          "coordinator": "المنسق",
           "students": "عدد الطلاب",
           "points": "إجمالي النقاط",
           "rank": "الترتيب",

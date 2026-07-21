@@ -145,6 +145,10 @@
             "label": "Official email",
             "placeholder": "info@school.edu.sa"
           },
+          "coordinatorName": {
+            "label": "Coordinator name",
+            "placeholder": "Example: Ahmed Mohammed"
+          },
           "loginEmail": {
             "label": "Login email",
             "placeholder": "admin@school.edu.sa"
@@ -245,6 +249,7 @@
         "title": "Schools list",
         "columns": {
           "school": "School name",
+          "coordinator": "Coordinator",
           "students": "Students",
           "points": "Total points",
           "rank": "Rank",

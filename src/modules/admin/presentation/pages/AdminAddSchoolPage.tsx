@@ -72,6 +72,7 @@ function buildCreateSchoolPayload(
   values: SchoolFormValues,
   logoUrl: string,
 ): CreateSchoolPayload {
+  const coordinatorName = normalizeTextInput(values.coordinatorName);
   return {
     name: normalizeTextInput(values.schoolName),
     logoUrl,
@@ -81,6 +82,7 @@ function buildCreateSchoolPayload(
     description: normalizeTextInput(values.schoolDescription),
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
+    ...(coordinatorName ? { coordinatorName } : {}),
     loginPassword: values.loginPassword,
     educationLevelIds: values.educationStageIds,
   };
@@ -102,6 +104,7 @@ function buildUpdateSchoolPayload(
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
+    coordinatorName: normalizeTextInput(values.coordinatorName),
     educationLevelIds: values.educationStageIds,
     ...(values.loginPassword ? { loginPassword: values.loginPassword } : {}),
     status: detail.statusCode,
@@ -452,19 +455,25 @@ export function AdminAddSchoolPage({ schoolId }: AdminAddSchoolPageProps = {}) {
           addressLabel={t("schoolManagement.addForm.fields.address.label")}
           phoneLabel={t("schoolManagement.addForm.fields.phoneNumber.label")}
           emailLabel={t("schoolManagement.addForm.fields.email.label")}
+          coordinatorNameLabel={t("schoolManagement.addForm.fields.coordinatorName.label")}
           cityPlaceholder={t("schoolManagement.addForm.fields.city.placeholder")}
           addressPlaceholder={t("schoolManagement.addForm.fields.address.placeholder")}
           phonePlaceholder={t("schoolManagement.addForm.fields.phoneNumber.placeholder")}
           emailPlaceholder={t("schoolManagement.addForm.fields.email.placeholder")}
+          coordinatorNamePlaceholder={t(
+            "schoolManagement.addForm.fields.coordinatorName.placeholder",
+          )}
           cityValue={values.city}
           addressValue={values.address}
           phoneValue={values.phoneNumber}
           emailValue={values.email}
+          coordinatorNameValue={values.coordinatorName}
           onCountryChange={handleCountryChange}
           onCityChange={(value) => setField("city", value)}
           onAddressChange={(value) => setField("address", value)}
           onPhoneChange={(value) => setField("phoneNumber", value)}
           onEmailChange={(value) => setField("email", value)}
+          onCoordinatorNameChange={(value) => setField("coordinatorName", value)}
         />
 
         <SchoolFormSectionCard

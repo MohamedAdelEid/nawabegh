@@ -161,6 +161,12 @@ export function SchoolManagementDashboard() {
         ),
       },
       {
+        id: "coordinator",
+        header: t("schoolManagement.table.columns.coordinator"),
+        cellClassName: "font-medium text-slate-600",
+        renderCell: (row) => row.coordinatorName || "—",
+      },
+      {
         id: "students",
         header: t("schoolManagement.table.columns.students"),
         cellClassName: "font-medium text-slate-600",

@@ -21,20 +21,26 @@ interface SchoolContactSectionProps {
   addressLabel: string;
   phoneLabel: string;
   emailLabel: string;
+  coordinatorNameLabel: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
   phonePlaceholder: string;
   emailPlaceholder: string;
+  coordinatorNamePlaceholder: string;
   cityValue: string;
   addressValue: string;
   phoneValue: string;
   emailValue: string;
+  coordinatorNameValue: string;
   onCountryChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onAddressChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
   onEmailChange: (value: string) => void;
+  onCoordinatorNameChange: (value: string) => void;
 }
+
+const COORDINATOR_NAME_MAX_LENGTH = 200;
 
 export function SchoolContactSection({
   icon,
@@ -47,19 +53,23 @@ export function SchoolContactSection({
   addressLabel,
   phoneLabel,
   emailLabel,
+  coordinatorNameLabel,
   cityPlaceholder,
   addressPlaceholder,
   phonePlaceholder,
   emailPlaceholder,
+  coordinatorNamePlaceholder,
   cityValue,
   addressValue,
   phoneValue,
   emailValue,
+  coordinatorNameValue,
   onCountryChange,
   onCityChange,
   onAddressChange,
   onPhoneChange,
   onEmailChange,
+  onCoordinatorNameChange,
 }: SchoolContactSectionProps) {
   const countrySelectOptions = [
     { value: "", label: countryPlaceholder },
@@ -99,6 +109,13 @@ export function SchoolContactSection({
           value={emailValue}
           placeholder={emailPlaceholder}
           onChange={onEmailChange}
+        />
+        <LabeledInput
+          label={coordinatorNameLabel}
+          value={coordinatorNameValue}
+          placeholder={coordinatorNamePlaceholder}
+          maxLength={COORDINATOR_NAME_MAX_LENGTH}
+          onChange={onCoordinatorNameChange}
         />
       </div>
     </SchoolFormSectionCard>

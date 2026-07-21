@@ -37,6 +37,8 @@
         "announcements": "Announcements & alerts",
         "honorBoard": "Honor board",
         "honoredStudents": "Honored students",
+        "articles": "Article editor",
+        "events": "School events",
         "settings": "Settings",
         "logout": "Log out"
       }
@@ -597,6 +599,452 @@
           "updated": "Honor updated",
           "uploadError": "Could not upload the image"
         }
+      }
+    },
+    "articleEditor": {
+      "page": {
+        "title": "Article editor",
+        "description": "Follow up and review platform articles from your school.",
+        "breadcrumbs": {
+          "home": "Home",
+          "current": "Article editor"
+        },
+        "addArticle": "Add article",
+        "settings": "Community settings"
+      },
+      "stats": {
+        "totalArticles": "Total articles",
+        "pendingReview": "Under review",
+        "publishedToday": "Published today",
+        "reports": "Reports"
+      },
+      "filters": {
+        "status": "Status",
+        "statusAll": "All",
+        "contentSource": "Source",
+        "contentSourceAll": "All articles",
+        "contentSourceSchool": "School posts",
+        "contentSourceStudents": "Student posts",
+        "search": "Quick search",
+        "searchPlaceholder": "Search article titles..."
+      },
+      "table": {
+        "title": "Articles",
+        "empty": "No matching articles.",
+        "loadError": "Could not load articles",
+        "summary": "Showing {from}-{to} of {total} articles",
+        "previous": "Previous",
+        "next": "Next",
+        "columns": {
+          "title": "Article title",
+          "author": "Author",
+          "interaction": "Engagement",
+          "date": "Publish date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "readTime": "{minutes} min read",
+        "schoolAuthored": "School",
+        "actions": {
+          "view": "View",
+          "edit": "Edit",
+          "hide": "Hide",
+          "unhide": "Restore",
+          "delete": "Delete",
+          "approve": "Approve",
+          "reject": "Reject"
+        }
+      },
+      "status": {
+        "Draft": "Draft",
+        "PendingReview": "Under review",
+        "NeedsEdits": "Needs edits",
+        "Published": "Published",
+        "Hidden": "Hidden",
+        "Removed": "Removed"
+      },
+      "messages": {
+        "approved": "Article approved",
+        "rejected": "Article rejected",
+        "hidden": "Article hidden",
+        "unhidden": "Article restored",
+        "deleted": "Article deleted",
+        "editsRequested": "Edit request sent",
+        "commentHidden": "Comment hidden",
+        "commentDeleted": "Comment deleted",
+        "draftSaved": "Draft saved",
+        "published": "Article published",
+        "updated": "Article updated",
+        "settingsSaved": "Settings updated",
+        "actionError": "Could not complete the action"
+      },
+      "modals": {
+        "delete": {
+          "title": "Delete article",
+          "description": "Are you sure you want to delete “{title}”? This cannot be undone.",
+          "confirm": "Yes, delete",
+          "cancel": "Cancel"
+        },
+        "reject": {
+          "title": "Reject article",
+          "info": "The article will return to draft so the author can revise it.",
+          "reasonsTitle": "Rejection reasons",
+          "notesLabel": "Additional notes",
+          "notesPlaceholder": "Add clarifying notes for the author...",
+          "confirm": "Reject article",
+          "cancel": "Cancel",
+          "close": "Close",
+          "reasons": {
+            "unclearTitle": "Unclear title",
+            "needsSources": "Needs sources",
+            "inappropriate": "Inappropriate content",
+            "offTopic": "Off topic",
+            "unspecified": "Unspecified"
+          }
+        },
+        "requestEdits": {
+          "title": "Request edits",
+          "notesLabel": "Notes for the author",
+          "notesPlaceholder": "Describe what should be changed...",
+          "hideFromFeed": "Hide from feed until edited",
+          "confirm": "Send request",
+          "cancel": "Cancel",
+          "notesRequired": "Notes are required"
+        },
+        "comment": {
+          "title": "Action on comment",
+          "description": "Are you sure you want to take this action? Deleting a comment cannot be undone.",
+          "delete": "Delete comment",
+          "hide": "Hide comment",
+          "cancel": "Cancel",
+          "submitting": "Please wait..."
+        }
+      },
+      "review": {
+        "breadcrumbs": {
+          "home": "Home",
+          "articles": "Article editor",
+          "current": "Article review"
+        },
+        "title": "Article review",
+        "description": "Review the article content, moderate comments, and take publication actions.",
+        "approve": "Approve publication",
+        "reject": "Reject article",
+        "requestEdits": "Request edits",
+        "share": "Publish article",
+        "hide": "Hide article",
+        "unhide": "Restore article",
+        "edit": "Edit article",
+        "delete": "Delete article",
+        "commentsTitle": "Comments ({count})",
+        "commentsEmpty": "No comments yet.",
+        "summaryTitle": "Review summary",
+        "tagsEmpty": "No tags",
+        "guidelinesTitle": "Review guidelines",
+        "guidelinesBody": "Ensure the content is accurate, respectful, and suitable for your school community before approving publication.",
+        "contactAuthor": "Contact author",
+        "loadError": "Could not load this article"
+      },
+      "create": {
+        "title": "Create new post",
+        "editTitle": "Edit article",
+        "subtitle": "Share ideas, ask a question, or publish knowledge with your school community.",
+        "titleLabel": "Post title",
+        "titlePlaceholder": "Enter an attractive title...",
+        "categoryLabel": "Specialization or category",
+        "categoryPlaceholder": "Choose category...",
+        "contentPlaceholder": "Write your idea in detail...",
+        "addImage": "Add photo",
+        "uploadFile": "Upload file",
+        "publish": "Publish now",
+        "saveDraft": "Save draft",
+        "rulesTitle": "Posting rules",
+        "rules": {
+          "one": "Use a clear and specific title.",
+          "two": "Choose the most relevant category.",
+          "three": "Avoid duplicate posts.",
+          "four": "Keep a respectful tone."
+        },
+        "rulesQuote": "A good contribution always starts with a precise question or a clear idea.",
+        "tipTitle": "Smart tip",
+        "tipBody": "Use headings and lists to make your post easier to read and more engaging.",
+        "validation": {
+          "title": "Title is required.",
+          "category": "Category is required.",
+          "content": "Content must be at least {min} characters."
+        }
+      },
+      "settings": {
+        "title": "Community settings",
+        "description": "Control privacy, moderation, and engagement options for your school community.",
+        "breadcrumbs": {
+          "home": "Home",
+          "articles": "Article editor",
+          "current": "Settings"
+        },
+        "inherited": "Using global defaults until you save school-specific settings.",
+        "controls": {
+          "title": "Community controls",
+          "publishing": "Enable publishing",
+          "publishingDescription": "Allow new articles to be published in the school community.",
+          "comments": "Enable comments",
+          "commentsDescription": "Allow members to comment on articles.",
+          "likes": "Enable likes",
+          "likesDescription": "Allow members to like articles.",
+          "ratings": "Enable ratings",
+          "ratingsDescription": "Allow members to rate articles.",
+          "following": "Enable following",
+          "followingDescription": "Allow members to follow authors.",
+          "on": "On",
+          "off": "Off"
+        },
+        "privacy": {
+          "title": "Privacy mode",
+          "publicTitle": "Public",
+          "publicDescription": "Community content may be visible more broadly.",
+          "schoolTitle": "School private",
+          "schoolDescription": "Limit community content to your school members."
+        },
+        "moderation": {
+          "title": "Moderation mode",
+          "preTitle": "Pre-moderation",
+          "preDescription": "Articles require approval before appearing in the feed.",
+          "postTitle": "Post-moderation",
+          "postDescription": "Articles publish immediately and can be moderated later."
+        },
+        "feedSort": {
+          "title": "Default feed sort",
+          "recent": "Recent",
+          "trending": "Trending"
+        }
+      }
+    },
+    "events": {
+      "common": {
+        "loading": "Loading...",
+        "loadError": "Could not load the data.",
+        "actionError": "Could not complete the action.",
+        "retry": "Retry",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "back": "Back"
+      },
+      "overview": {
+        "title": "School events overview",
+        "subtitle": "Manage school activities, sports days, and cultural competitions from one place.",
+        "tabs": {
+          "all": "All events",
+          "ongoing": "Running now",
+          "published": "Published",
+          "draft": "Draft",
+          "finished": "Ended"
+        },
+        "addCard": {
+          "title": "Add new event",
+          "description": "Create a sports day, competition, or cultural activity for your school."
+        },
+        "actions": {
+          "manage": "Manage event",
+          "editDraft": "Edit draft",
+          "viewReports": "View reports"
+        },
+        "status": {
+          "Draft": "Draft",
+          "Published": "Published",
+          "Ongoing": "Live",
+          "Finished": "Ended",
+          "Archived": "Archived"
+        },
+        "summary": "Showing {visible} of {total} events",
+        "loadMore": "Load more events",
+        "empty": "No events in this category yet.",
+        "participants": "+{count}"
+      },
+      "create": {
+        "title": "Event creator",
+        "subtitle": "Plan school events, sports days, and cultural competitions.",
+        "editTitle": "Edit event",
+        "kpis": {
+          "ongoing": "Ongoing events",
+          "total": "Total events"
+        },
+        "steps": {
+          "info": "Information",
+          "audience": "Audience",
+          "time": "Time"
+        },
+        "sections": {
+          "basic": "Basic information",
+          "audience": "Audience targeting",
+          "timeline": "Timeline"
+        },
+        "fields": {
+          "name": "Event name",
+          "namePlaceholder": "Example: Annual robotics contest",
+          "type": "Event type",
+          "typePlaceholder": "Choose event type",
+          "description": "Event description",
+          "descriptionPlaceholder": "Describe goals, activities, and expected outcomes...",
+          "rules": "Rules and conditions",
+          "rulesPlaceholder": "Participation rules and conditions...",
+          "cover": "Cover image",
+          "coverHint": "Click to upload cover image",
+          "coverLimit": "Max size: 5 MB (1920x1080)",
+          "wholeSchool": "Whole school",
+          "wholeSchoolHint": "Available to all students in the school",
+          "specificGrades": "Specific grades",
+          "specificGradesHint": "Limit participation to selected grades",
+          "addGrade": "Add grade",
+          "startsAt": "Event start",
+          "endsAt": "Event end",
+          "date": "Date",
+          "time": "Time",
+          "dateTimePlaceholder": "Select date and time",
+          "confirmDate": "Confirm"
+        },
+        "timelineNote": "Participation will close automatically at the selected end time.",
+        "actions": {
+          "publish": "Publish event now",
+          "saveDraft": "Save as draft"
+        },
+        "messages": {
+          "created": "Event created successfully",
+          "updated": "Event updated successfully",
+          "published": "Event published successfully",
+          "uploadError": "Could not upload the image",
+          "validation": "Please complete the required fields"
+        }
+      },
+      "live": {
+        "title": "Event view",
+        "subtitle": "Manage and track school events, sports, and cultural competitions.",
+        "tabs": {
+          "live": "Live broadcast",
+          "matches": "Match schedule",
+          "honor": "Hall of fame"
+        },
+        "score": {
+          "title": "Current score",
+          "round": "Round {current} of {total}"
+        },
+        "feed": {
+          "title": "Important updates",
+          "empty": "No updates yet.",
+          "placeholder": "Add an update now",
+          "send": "Send",
+          "icons": {
+            "lightning": "Highlight",
+            "pin": "Pin",
+            "trophy": "Trophy",
+            "update": "Update"
+          }
+        },
+        "poll": {
+          "title": "Live poll",
+          "votes": "Based on {count} audience votes."
+        },
+        "standings": {
+          "title": "General team ranking",
+          "viewAll": "View full ranking",
+          "empty": "No standings yet."
+        },
+        "nextMatch": {
+          "title": "Next match"
+        },
+        "matches": {
+          "empty": "No matches scheduled.",
+          "vs": "vs"
+        },
+        "honor": {
+          "empty": "No honor board entries yet.",
+          "points": "points"
+        },
+        "actions": {
+          "createTeam": "Create team",
+          "rankings": "Team rankings"
+        },
+        "messages": {
+          "posted": "Update posted",
+          "voted": "Vote submitted"
+        }
+      },
+      "teams": {
+        "title": "Create a new team",
+        "subtitle": "Set team identity, rules, and invite members.",
+        "steps": {
+          "identity": "Team identity",
+          "rules": "Team rules",
+          "invite": "Invite members"
+        },
+        "fields": {
+          "logo": "Upload logo",
+          "name": "Team name",
+          "namePlaceholder": "Example: Geniuses team",
+          "description": "Team description",
+          "descriptionPlaceholder": "Describe your goals and ambitions...",
+          "privacy": "Privacy",
+          "public": "Public team",
+          "publicHint": "Anyone can join without approval",
+          "school": "School team",
+          "schoolHint": "Only students from your school can join",
+          "private": "Private team",
+          "privateHint": "Members must request to join or be invited",
+          "requirements": "Joining requirements (optional)",
+          "minLevel": "Minimum level",
+          "minChallenges": "Minimum completed challenges",
+          "search": "Search by name or email",
+          "addMore": "Add more"
+        },
+        "summary": {
+          "title": "Team summary",
+          "completion": "Setup completion",
+          "privacy": "Privacy",
+          "members": "{count} members",
+          "create": "Create team",
+          "note": "You can edit team details after creation."
+        },
+        "info": {
+          "title": "Why join a team?",
+          "body": "Teams earn more points together and can join school tournaments and global challenges.",
+          "link": "Discover more"
+        },
+        "messages": {
+          "created": "Team created successfully",
+          "validation": "Please complete team name and privacy",
+          "uploadError": "Could not upload the logo"
+        }
+      },
+      "rankings": {
+        "title": "General team ranking",
+        "subtitle": "Best teams for this season",
+        "breadcrumbs": {
+          "home": "Home",
+          "events": "School events",
+          "current": "Team ranking"
+        },
+        "kpis": {
+          "totalTeams": "Total teams",
+          "activeChallenges": "Active challenges",
+          "seasonPoints": "Season points",
+          "globalRank": "Global rank"
+        },
+        "filters": {
+          "scope": "Filter by school",
+          "all": "All schools",
+          "own": "My school"
+        },
+        "table": {
+          "rank": "Rank",
+          "team": "Team",
+          "points": "Points",
+          "wins": "Winning challenges",
+          "members": "Members",
+          "empty": "No rankings available.",
+          "membersCount": "{count} members"
+        },
+        "previous": "Previous",
+        "next": "Next",
+        "createTeam": "Register your team now"
       }
     }
   }

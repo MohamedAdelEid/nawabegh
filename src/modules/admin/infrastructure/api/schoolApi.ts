@@ -38,6 +38,7 @@ export type CreateSchoolPayload = {
   address?: string;
   phoneNumber?: string;
   email: string;
+  coordinatorName?: string;
   loginPassword: string;
   educationLevelIds?: number[];
 };
@@ -49,6 +50,7 @@ export type CreatedSchool = {
   phoneNumber: string;
   address: string;
   email: string;
+  coordinatorName: string;
   description: string;
   city: string;
   country: string;
@@ -78,6 +80,7 @@ export type SchoolDetail = {
   address: string;
   description: string;
   email: string;
+  coordinatorName: string;
   city: string;
   country: string;
   countryId: number;
@@ -114,6 +117,7 @@ export type UpdateSchoolPayload = {
   address?: string;
   phoneNumber?: string;
   email: string;
+  coordinatorName?: string;
   loginPassword?: string;
   educationLevelIds?: number[];
   status?: SchoolStatus;
@@ -149,6 +153,7 @@ export interface SchoolTableRow {
   id: string;
   schoolName: string;
   logoUrl: string;
+  coordinatorName: string;
   city: string;
   address: string;
   country: string;
@@ -386,6 +391,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
   const address = readString(record, ["address"]) ?? "";
   const country = readString(record, ["country", "countryName"]) ?? "";
   const logoUrl = readString(record, ["logoUrl"]) ?? "";
+  const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const studentCount = formatNumber(
     readNumber(record, ["studentsCount", "studentCount", "totalStudents"]),
   );
@@ -413,6 +419,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
     id: idValue,
     schoolName,
     logoUrl,
+    coordinatorName,
     city,
     address,
     country,
@@ -479,6 +486,7 @@ function mapSchoolDetail(data: unknown): SchoolDetail | null {
     address: readString(record, ["address"]) ?? "",
     description: readString(record, ["description"]) ?? "",
     email: readString(record, ["email"]) ?? "",
+    coordinatorName: readString(record, ["coordinatorName"]) ?? "",
     city: readString(record, ["city", "cityName"]) ?? "",
     country: readString(record, ["country", "countryName"]) ?? "",
     countryId: readNumber(record, ["countryId"]) ?? 0,
@@ -512,6 +520,7 @@ function mapCreatedSchool(data: unknown): CreatedSchool | null {
     phoneNumber: readString(record, ["phoneNumber"]) ?? "",
     address: readString(record, ["address"]) ?? "",
     email: readString(record, ["email"]) ?? "",
+    coordinatorName: readString(record, ["coordinatorName"]) ?? "",
     description: readString(record, ["description"]) ?? "",
     city: readString(record, ["city"]) ?? "",
     country: readString(record, ["country"]) ?? "",

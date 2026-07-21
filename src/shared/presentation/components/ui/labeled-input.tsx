@@ -17,6 +17,7 @@ export interface LabeledInputProps {
   labelClassName?: string;
   disabled?: boolean;
   readOnly?: boolean;
+  maxLength?: number;
   type?: React.ComponentProps<typeof Input>["type"];
 }
 
@@ -31,6 +32,7 @@ export function LabeledInput({
   labelClassName,
   disabled,
   readOnly,
+  maxLength,
   type,
 }: LabeledInputProps) {
   const reactId = React.useId();
@@ -49,6 +51,7 @@ export function LabeledInput({
         placeholder={placeholder}
         disabled={disabled}
         readOnly={readOnly}
+        maxLength={maxLength}
         className={cn(
           "h-14 rounded-2xl border-slate-100 bg-slate-50 px-4 text-right placeholder:text-[#94A3B8] focus-visible:ring-[#C7AF6E]/40",
           (disabled || readOnly) && "cursor-not-allowed opacity-80",
