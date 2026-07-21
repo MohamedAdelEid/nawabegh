@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { challengeStationQueryKeys } from "@/modules/student/application/constants/challengeStationQueryKeys";
-import { progressQueryKeys } from "@/modules/student/application/constants/progressQueryKeys";
 import { ChallengeType } from "@/modules/student/domain/challenge-station/challenge-station.enums";
 import type { ChallengeStationPhase } from "@/modules/student/domain/challenge-station/challenge-station.enums";
 import type {
@@ -34,7 +33,6 @@ import {
 } from "@/modules/student/infrastructure/api/challengeStation.api";
 import { getLeaderboardWidget } from "@/modules/student/infrastructure/api/studentHomeApi";
 import { ChallengeHubClient } from "@/modules/student/infrastructure/realtime/challengeHub";
-import { getCourseProgress } from "@/modules/student/infrastructure/api/progress.api";
 
 type UseChallengeStationOptions = {
   stationId: string;
@@ -91,13 +89,6 @@ export function useChallengeStation({
     queryFn: () => getChallengeOverview(challengeId),
     enabled: Boolean(challengeId),
     staleTime: 30_000,
-  });
-
-  const courseProgressQuery = useQuery({
-    queryKey: progressQueryKeys.courseProgress(courseId ?? ""),
-    queryFn: () => getCourseProgress(courseId!),
-    enabled: Boolean(courseId),
-    staleTime: 60_000,
   });
 
   const pointsQuery = useQuery({
@@ -447,10 +438,7 @@ export function useChallengeStation({
     pointsQuery.data?.pointsToNextLevel ?? 0,
   );
 
-  const courseTitle =
-    courseProgressQuery.data?.courseTitle ||
-    introQuery.data?.courseTitle ||
-    null;
+  const courseTitle = introQuery.data?.courseTitle || null;
 
   return {
     phase,
