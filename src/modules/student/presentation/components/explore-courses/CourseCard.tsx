@@ -18,6 +18,7 @@ type CourseCardProps = {
   course: CourseCardModel;
   index?: number;
   layout?: CourseCardLayout;
+  hideTeacher?: boolean;
   className?: string;
 };
 
@@ -41,6 +42,7 @@ export function CourseCard({
   course,
   index = 0,
   layout = "grid",
+  hideTeacher = false,
   className,
 }: CourseCardProps) {
   const t = useTranslations("student.dashboard.exploreCourses");
@@ -134,18 +136,20 @@ export function CourseCard({
             </Link>
           </h3>
 
-          <div className={cn("flex items-center gap-2", isList ? "" : "mb-3")}>
-            <UserAvatarImageOrInitials
-              trackKey={`${course.id}-teacher`}
-              name={course.teacherFullName}
-              imageUrl={course.teacherAvatarUrl}
-              size="sm"
-              circleClassName="!h-6 !w-6 !text-[10px] bg-primary text-white"
-            />
-            <span className="truncate text-[10px] font-medium text-[#64748b]">
-              {course.teacherFullName}
-            </span>
-          </div>
+          {hideTeacher ? null : (
+            <div className={cn("flex items-center gap-2", isList ? "" : "mb-3")}>
+              <UserAvatarImageOrInitials
+                trackKey={`${course.id}-teacher`}
+                name={course.teacherFullName}
+                imageUrl={course.teacherAvatarUrl}
+                size="sm"
+                circleClassName="!h-6 !w-6 !text-[10px] bg-primary text-white"
+              />
+              <span className="truncate text-[10px] font-medium text-[#64748b]">
+                {course.teacherFullName}
+              </span>
+            </div>
+          )}
 
           {course.description ? (
             <p

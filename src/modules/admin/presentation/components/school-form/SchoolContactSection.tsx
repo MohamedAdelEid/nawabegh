@@ -20,24 +20,20 @@ interface SchoolContactSectionProps {
   cityLabel: string;
   addressLabel: string;
   phoneLabel: string;
-  emailLabel: string;
-  coordinatorNameLabel: string;
+  coordinatorLabel: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
   phonePlaceholder: string;
-  emailPlaceholder: string;
-  coordinatorNamePlaceholder: string;
+  coordinatorPlaceholder: string;
   cityValue: string;
   addressValue: string;
   phoneValue: string;
-  emailValue: string;
-  coordinatorNameValue: string;
+  coordinatorValue: string;
   onCountryChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onAddressChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
-  onEmailChange: (value: string) => void;
-  onCoordinatorNameChange: (value: string) => void;
+  onCoordinatorChange: (value: string) => void;
 }
 
 const COORDINATOR_NAME_MAX_LENGTH = 200;
@@ -52,24 +48,20 @@ export function SchoolContactSection({
   cityLabel,
   addressLabel,
   phoneLabel,
-  emailLabel,
-  coordinatorNameLabel,
+  coordinatorLabel,
   cityPlaceholder,
   addressPlaceholder,
   phonePlaceholder,
-  emailPlaceholder,
-  coordinatorNamePlaceholder,
+  coordinatorPlaceholder,
   cityValue,
   addressValue,
   phoneValue,
-  emailValue,
-  coordinatorNameValue,
+  coordinatorValue,
   onCountryChange,
   onCityChange,
   onAddressChange,
   onPhoneChange,
-  onEmailChange,
-  onCoordinatorNameChange,
+  onCoordinatorChange,
 }: SchoolContactSectionProps) {
   const countrySelectOptions = [
     { value: "", label: countryPlaceholder },
@@ -105,17 +97,11 @@ export function SchoolContactSection({
           onChange={onPhoneChange}
         />
         <LabeledInput
-          label={emailLabel}
-          value={emailValue}
-          placeholder={emailPlaceholder}
-          onChange={onEmailChange}
-        />
-        <LabeledInput
-          label={coordinatorNameLabel}
-          value={coordinatorNameValue}
-          placeholder={coordinatorNamePlaceholder}
+          label={coordinatorLabel}
+          value={coordinatorValue}
+          placeholder={coordinatorPlaceholder}
           maxLength={COORDINATOR_NAME_MAX_LENGTH}
-          onChange={onCoordinatorNameChange}
+          onChange={onCoordinatorChange}
         />
       </div>
     </SchoolFormSectionCard>

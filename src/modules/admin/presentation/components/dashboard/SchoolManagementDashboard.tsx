@@ -447,7 +447,7 @@ export function SchoolManagementDashboard() {
             title={t("schoolManagement.table.states.forbidden.title")}
             description={t("schoolManagement.table.states.forbidden.description")}
           />
-        ) : responseStatus === "NotFound" || (responseStatus === "Success" && (page?.rows.length ?? 0) === 0) ? (
+        ) : responseStatus === "NotFound" || (responseStatus === "Success" && (page?.rows.length ?? 0) === 0 && !schoolsTable.isFetching) ? (
           <TableState
             title={t("schoolManagement.table.states.empty.title")}
             description={t("schoolManagement.table.states.empty.description")}

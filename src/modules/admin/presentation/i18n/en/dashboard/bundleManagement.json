@@ -143,7 +143,9 @@
       "cover": {
         "dropTitle": "Choose an image or drag it here",
         "dropHint": "JPG, PNG (max 5MB)",
-        "uploading": "Uploading..."
+        "uploading": "Uploading...",
+        "change": "Change cover image",
+        "uploadSuccess": "Cover image uploaded successfully."
       },
       "fields": {
         "name": "Bundle name",
@@ -177,6 +179,7 @@
         "priceInvalid": "Bundle price must be greater than zero and less than the sum of course prices.",
         "coursesMin": "Select at least two courses.",
         "coverInvalid": "Failed to upload cover image.",
+        "coverTooLarge": "Cover image must be 5MB or smaller.",
         "accessDurationInvalid": "Access duration must be between 1 and 3650 days, or lifetime."
       },
       "messages": {

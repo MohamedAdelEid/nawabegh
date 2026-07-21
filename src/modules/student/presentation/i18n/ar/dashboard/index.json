@@ -37,9 +37,12 @@
         "subscriptions": "اشتراكاتي",
         "teachers": "المعلمون",
         "journey": "رحلة التفوق",
+        "chatGroups": "مجموعة المادة",
         "schedule": "الجدول",
         "dailyTasks": "مهام اليوم",
         "friendChallenges": "عندي صديق",
+        "challengeArena": "ساحة التحدي",
+        "schoolEvents": "فاعليات المدرسة",
         "studyMaterials": "المواد الدراسية",
         "allCourses": "دورات نوابغ المتاحة",
         "interactiveBook": "كتاب تفاعلي",
@@ -47,7 +50,8 @@
         "knowledgeCommunity": "مجتمع المعرفة",
         "helper": "مساعدة",
         "settings": "الإعدادات",
-        "logout": "تسجيل الخروج"
+        "logout": "تسجيل الخروج",
+        "profile": "الملف الشخصي"
       }
     },
     "tabs": {
@@ -77,6 +81,10 @@
       }
     },
     "helperResource": {
+      "page": {
+        "title": "الملفات المساعدة",
+        "description": "تجد هنا كافة الملفات المساعدة، الملخصات، ونماذج الاختبارات التي تدعم مسيرتك نحو التفوق والنجاح."
+      },
       "backToJourney": "العودة للرحلة",
       "noFiles": "لا توجد مصادر متاحة لهذه المحطة.",
       "fileSize": "الحجم",
@@ -87,14 +95,56 @@
       "lockedDescription": "هذا المورد متاح للمشتركين فقط. يرجى الاشتراك في المسار/الدورة للوصول إليه.",
       "completed": "مكتمل",
       "markCompleted": "تحديد كمكتمل",
+      "markingCompleted": "جاري التحديد...",
       "errorLoading": "فشل تحميل مصادر المساعدة.",
+      "errors": {
+        "retry": "إعادة المحاولة",
+        "action": "تعذر تنفيذ العملية"
+      },
+      "actions": {
+        "preview": "معاينة",
+        "download": "تحميل"
+      },
+      "contribute": {
+        "description": "هل تملك ملخصات مفيدة؟ ساهم في مساعدة زملائك",
+        "cta": "تواصل معنا للرفع",
+        "mailSubject": "رفع ملف مساعد"
+      },
       "filters": {
         "all": "الكل",
         "pdf": "PDF",
-        "presentation": "عرض تقديمي",
-        "word": "مستند Word",
+        "presentation": "PPT",
+        "word": "Word",
         "image": "صور",
         "video": "فيديوهات"
+      },
+      "viewer": {
+        "close": "إغلاق",
+        "fileSize": "حجم الملف: {size}",
+        "download": "تحميل",
+        "downloadFile": "تحميل الملف",
+        "downloadDocument": "تحميل المستند",
+        "downloadImage": "تحميل الصورة",
+        "fullscreen": "ملء الشاشة",
+        "exitFullscreen": "إنهاء ملء الشاشة",
+        "loading": "جاري التحميل...",
+        "loadError": "تعذر فتح الملف",
+        "startPresentation": "بدء العرض",
+        "breadcrumbHelper": "الملفات المساعدة",
+        "contentTab": "المحتوى",
+        "notesTab": "ملاحظات",
+        "notesPlaceholder": "اكتب ملاحظاتك هنا...",
+        "lastUpdated": "آخر تحديث: {relative}",
+        "print": "طباعة",
+        "share": "مشاركة",
+        "zoom": "التكبير",
+        "toc": "الفهرس والمحتويات",
+        "completionRate": "نسبة الإنجاز",
+        "document": "المستند",
+        "readingProgress": "تقدم القراءة",
+        "savedMeta": "تم الحفظ في 'ملفات المساعدة' · {relative}",
+        "imageMeta": "تم الرفع في {date} · {size}",
+        "info": "معلومات"
       }
     },
     "settingsPage": {
@@ -243,6 +293,115 @@
       "pagination": {
         "previous": "الصفحة السابقة",
         "next": "الصفحة التالية"
+      }
+    },
+    "teacherPublicProfile": {
+      "page": {
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbTeachers": "المعلمون",
+        "shareProfile": "مشاركة الملف",
+        "shareCopied": "تم نسخ رابط الملف",
+        "shareFailed": "تعذر مشاركة الملف"
+      },
+      "header": {
+        "badgeExpert": "معلم خبير",
+        "badgePioneer": "معلم رائد",
+        "statCourses": "الدورات التدريبية",
+        "statStudents": "طالب مشترك",
+        "statExperience": "سنوات الخبرة"
+      },
+      "about": {
+        "title": "نبذة عن المعلم",
+        "education": "التعليم الأكاديمي",
+        "achievements": "الإنجازات"
+      },
+      "skills": {
+        "title": "التخصصات والمهارات"
+      },
+      "courses": {
+        "title": "الدورات المتاحة",
+        "empty": "لا توجد دورات متاحة حالياً",
+        "gridView": "عرض شبكي",
+        "listView": "عرض قائمة"
+      },
+      "errors": {
+        "profile": "تعذر تحميل بروفايل المعلم",
+        "courses": "تعذر تحميل دورات المعلم",
+        "notFound": "المعلم غير موجود",
+        "retry": "إعادة المحاولة",
+        "backToTeachers": "العودة إلى المعلمين"
+      },
+      "pagination": {
+        "previous": "الصفحة السابقة",
+        "next": "الصفحة التالية"
+      }
+    },
+    "schoolEvents": {
+      "page": {
+        "title": "نظرة عامة على فعاليات المدرسة",
+        "description": "تابع الفعاليات المدرسية والأنشطة الرياضية والمسابقات الثقافية في مكان واحد.",
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbCurrent": "فاعليات المدرسة"
+      },
+      "filters": {
+        "all": "جميع الفعاليات",
+        "live": "جارية الآن",
+        "published": "منشورة",
+        "draft": "مسودة",
+        "ended": "منتهية"
+      },
+      "footer": {
+        "showing": "عرض {loaded} من أصل {total} فعالية",
+        "loadMore": "تحميل المزيد من الفعاليات"
+      },
+      "empty": "لا توجد فعاليات في هذا التصنيف حالياً",
+      "errors": {
+        "load": "تعذر تحميل فعاليات المدرسة",
+        "retry": "إعادة المحاولة"
+      }
+    },
+    "schoolEventLive": {
+      "page": {
+        "title": "عرض الفاعلية",
+        "description": "تابع البث المباشر والنتائج والتحديثات لفعالية مدرستك.",
+        "breadcrumbHome": "الرئيسية",
+        "breadcrumbEvents": "فاعليات المدرسة"
+      },
+      "tabs": {
+        "live": "البث المباشر",
+        "schedule": "جدول المواجهات",
+        "honorBoard": "لوحة الشرف"
+      },
+      "score": {
+        "title": "النتيجة الحالية",
+        "points": "النقاط: {points}"
+      },
+      "feed": {
+        "title": "أهم التحديثات",
+        "refresh": "تحديث"
+      },
+      "poll": {
+        "title": "استطلاع مباشر"
+      },
+      "standings": {
+        "title": "ترتيب الفرق العام",
+        "viewFull": "عرض الترتيب الكامل",
+        "points": "{points} نقطة"
+      },
+      "nextMatch": {
+        "title": "المباراة القادمة",
+        "vs": "ضد"
+      },
+      "schedule": {
+        "empty": "لا يوجد جدول مواجهات متاح حالياً"
+      },
+      "honorBoard": {
+        "empty": "لوحة الشرف ستظهر عند توفر النتائج"
+      },
+      "errors": {
+        "load": "تعذر تحميل عرض الفعالية",
+        "notFound": "الفعالية غير موجودة",
+        "backToEvents": "العودة إلى الفعاليات"
       }
     },
     "courseDetails": {
@@ -425,6 +584,63 @@
         "retry": "إعادة المحاولة"
       }
     },
+    "flashcardsStation": {
+      "page": {
+        "title": "محطة بطاقات الاستذكار"
+      },
+      "header": {
+        "close": "إغلاق",
+        "fallbackTitle": "بطاقات الاستذكار",
+        "journey": "رحلة التفوق",
+        "level": "LV {level}",
+        "levelShort": "Lvl {level}"
+      },
+      "intro": {
+        "title": "نشاط بطاقات الاستذكار: {name}",
+        "description": "راجع المفاهيم الأساسية من خلال هذه البطاقات التفاعلية.",
+        "swipeHint": "اسحب لليمين إذا كانت إجابتك صحيحة، أو لليسار إذا كانت خاطئة.",
+        "cardCount": "عدد البطاقات",
+        "estimatedTime": "الوقت المتوقع",
+        "minutes": "{count} دقائق",
+        "start": "ابدأ النشاط",
+        "starting": "جاري البدء..."
+      },
+      "play": {
+        "questionLabel": "السؤال",
+        "answerLabel": "الإجابة",
+        "answerIs": "الإجابة هي:",
+        "showAnswer": "إظهار الإجابة",
+        "correct": "صحيح",
+        "wrong": "خطأ",
+        "skip": "تخطي",
+        "tip": "نصيحة: اسحب البطاقة لليمين إذا كانت إجابتك صحيحة، أو لليسار إذا كانت خاطئة."
+      },
+      "results": {
+        "title": "إنجاز رائع! لقد تألقت اليوم",
+        "subtitle": "خطوة عملاقة أخرى نحو القمة. لقد أثبتّ جدارتك في هذه المحطة!",
+        "points": "النقاط المكتسبة",
+        "timeSpent": "الوقت المستغرق",
+        "accuracy": "الدقة المحققة",
+        "stageComplete": "اكتمال المرحلة",
+        "reviewMistakes": "مراجعة الأخطاء",
+        "backToJourney": "العودة لرحلة التفوق",
+        "stationsFooter": "تم إكمال {completed} من أصل {total} محطة في هذا المستوى"
+      },
+      "review": {
+        "progress": "تمت مراجعة {percent}%",
+        "cardOf": "البطاقة {current} من {total}",
+        "correctAnswer": "الإجابة الصحيحة:",
+        "xpNote": "أنت تتعلم من أخطائك! تم اكتساب {points} نقطة خبرة للمراجعة.",
+        "understood": "فهمتها!",
+        "needHelp": "ما زلت أحتاج مساعدة"
+      },
+      "errors": {
+        "load": "تعذر تحميل محطة بطاقات الاستذكار. حاول مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "action": "حدث خطأ. حاول مرة أخرى.",
+        "locked": "هذه المحطة مقفلة. أكمل المحطات السابقة أولاً."
+      }
+    },
     "progressPath": {
       "page": {
         "title": "رحلة التفوق",
@@ -443,13 +659,273 @@
       "locked": {
         "notice": "هذا المسار مقفل حالياً. يمكنك استعراض محطاته، لكن لا يمكنك الدخول إليها حتى يتم فتحه."
       },
+      "chest": {
+        "opened": "صندوق المكافأة مفتوح",
+        "claimable": "افتح صندوق المكافأة — {points} نقطة",
+        "locked": "صندوق مقفل — {points} نقطة",
+        "reward": "مكافأة {points} نقطة",
+        "claimed": "تم تحصيل {points} نقطة"
+      },
+      "achievement": {
+        "newLevel": "مستوى جديد",
+        "title": "تهانينا! لقد حققت إنجازاً جديداً",
+        "pathTitle": "تهانينا! لقد اكملت المسار بتفوق",
+        "subtitle": "لقد أثبتّ مهارة استثنائية في إتمام المهام المطلوبة",
+        "rewardLabel": "مكافأة الإنجاز",
+        "pointsEarned": "لقد ربحت {points} نقطة",
+        "level": "المستوى {level}",
+        "pointsToNext": "بقي {points} نقطة للمستوى القادم",
+        "primary": "المسار التالي",
+        "secondary": "استكشاف مواد أخرى",
+        "pathPrimary": "التوجه للاختبار النهائي",
+        "pathSecondary": "راجع التلخيص"
+      },
       "empty": {
         "noCourses": "لم تُسجَّل في أي دورة بعد.",
         "exploreCourses": "استكشف الدورات"
       },
       "errors": {
         "load": "تعذر تحميل رحلة التفوق. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "milestone": "تعذر فتح صندوق المكافأة. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "shortQuiz": {
+      "page": {
+        "title": "محطة الاختبار القصير",
+        "instructionsTitle": "تعليمات ما قبل الاختبار",
+        "attemptTitle": "أداء الاختبار",
+        "resultsTitle": "نتيجة الاختبار",
+        "reviewTitle": "مراجعة الإجابات"
+      },
+      "intro": {
+        "headerTitle": "تفاصيل الاختبار",
+        "headerSubtitle": "نظام إدارة التعلم الذكي",
+        "totalScore": "الدرجة الكلية",
+        "points": "نقطة",
+        "stats": {
+          "questions": "عدد الأسئلة",
+          "duration": "وقت الاختبار",
+          "durationValue": "{minutes} دقيقة",
+          "passScore": "درجة النجاح",
+          "attempts": "المحاولات"
+        },
+        "instructionsTitle": "تعليمات هامة قبل البدء",
+        "instructions": {
+          "internet": "يرجى التأكد من استقرار اتصال الإنترنت قبل بدء الاختبار لتجنب انقطاع الجلسة.",
+          "timer": "بمجرد الضغط على بدء الاختبار، سيبدأ العداد التنازلي للوقت ولن يتوقف.",
+          "review": "يمكنك مراجعة إجاباتك قبل تسليم الاختبار نهائياً، لكن لا يمكنك العودة بعد التسليم.",
+          "support": "في حال مواجهة أي مشكلة تقنية، يرجى التواصل مع الدعم الفني فوراً."
+        }
+      },
+      "instructions": {
+        "title": "تعليمات هامة قبل البدء",
+        "warning": "تنبيه: بمجرد الضغط على زر \"ابدأ الاختبار الآن\"، سيتم احتساب محاولة رسمية من محاولاتك المتاحة لهذا الاختبار.",
+        "rules": {
+          "internet": {
+            "title": "اتصال الإنترنت",
+            "description": "تأكد من استقرار اتصال الإنترنت لديك لتجنب الانقطاع."
+          },
+          "refresh": {
+            "title": "تحديث المتصفح",
+            "description": "لا تقم بتحديث الصفحة أو إغلاق المتصفح أثناء الاختبار."
+          },
+          "timer": {
+            "title": "الوقت المحدد",
+            "description": "بمجرد البدء، سيبدأ العداد الزمني ولن يتوقف لأي سبب."
+          },
+          "submit": {
+            "title": "تسليم الإجابات",
+            "description": "تأكد من حل كافة الأسئلة قبل الضغط على زر الإرسال النهائي."
+          }
+        }
+      },
+      "attempt": {
+        "headerTitle": "{title}",
+        "headerSubtitle": "محطة الاختبار القصير",
+        "questionLabel": "السؤال {label}",
+        "remaining": "الوقت المتبقي: {time}",
+        "trueFalseBadge": "سؤال صح أم خطأ",
+        "true": "صح",
+        "false": "خطأ",
+        "prev": "السابق",
+        "next": "التالي",
+        "finish": "إنهاء",
+        "map": {
+          "title": "خريطة الأسئلة",
+          "answered": "مجاب عليه",
+          "current": "السؤال الحالي",
+          "unanswered": "غير مجاب عليه"
+        }
+      },
+      "submit": {
+        "title": "تأكيد تسليم الاختبار",
+        "summary": "{answered}/{total} سؤالاً تم حله",
+        "warning": "لن تتمكن من تعديل إجاباتك بعد التسليم.",
+        "completion": "إتمام بنسبة {percent}%",
+        "confirm": "نعم، إرسال الآن",
+        "cancel": "لا، العودة للمراجعة"
+      },
+      "results": {
+        "passTitle": "مبروك! اجتزت الاختبار",
+        "passSubtitle": "أداء رائع — واصل رحلة التفوق.",
+        "failTitle": "للأسف، لم يتم اجتياز الاختبار",
+        "failSubtitle": "راجع أخطاءك وحاول مرة أخرى إن تبقّت محاولات.",
+        "finalScore": "النتيجة النهائية",
+        "correct": "الإجابات الصحيحة",
+        "timeSpent": "الوقت المستغرق",
+        "points": "النقاط المكتسبة",
+        "rank": "الترتيب",
+        "reviewAnswers": "مراجعة الإجابات",
+        "reviewMistakes": "مراجعة الأخطاء",
+        "retry": "إعادة المحاولة",
+        "share": "مشاركة النتيجة",
+        "shareText": "حصلت على {score}% في \"{title}\" على منصة نوابغ!"
+      },
+      "review": {
+        "title": "مراجعة الإجابات",
+        "questionNumber": "السؤال {number}",
+        "correctBadge": "إجابة صحيحة",
+        "wrongBadge": "إجابة خاطئة",
+        "explanation": "التوضيح",
+        "empty": "لا توجد أسئلة في هذا التصفية.",
+        "filters": {
+          "all": "الكل ({count})",
+          "correct": "صحيح ({count})",
+          "wrong": "خطأ ({count})"
+        }
+      },
+      "actions": {
+        "back": "رجوع",
+        "backToPath": "العودة للمسار",
+        "startNow": "ابدأ الاختبار الآن",
+        "close": "إغلاق"
+      },
+      "errors": {
+        "load": "تعذر تحميل محطة الاختبار. حاول مرة أخرى.",
+        "loadAttempt": "تعذر بدء أو استئناف محاولة الاختبار.",
+        "loadResult": "تعذر تحميل نتيجة الاختبار.",
+        "save": "تعذر حفظ الإجابة.",
         "retry": "إعادة المحاولة"
+      }
+    },
+    "liveStation": {
+      "page": {
+        "title": "محطة البث المباشر"
+      },
+      "stationLabel": "محطة البث المباشر",
+      "byTeacher": "بواسطة: {name}",
+      "badge": {
+        "liveNow": "بث مباشر الآن",
+        "live": "مباشر"
+      },
+      "stats": {
+        "remaining": "الوقت المتبقي",
+        "startsIn": "تبدأ خلال",
+        "attendance": "الحضور",
+        "minutes": "{count} دقيقة",
+        "students": "{count} طالب"
+      },
+      "features": {
+        "chat": "الدردشة التفاعلية مفعلة",
+        "board": "السبورة التفاعلية مع المعلم",
+        "recording": "سيكون التسجيل متاحاً بعد الجلسة"
+      },
+      "upcoming": {
+        "notice": "الجلسة لم تبدأ بعد. الوقت المتبقي تقريباً {minutes} دقيقة."
+      },
+      "header": {
+        "enrolledBadge": "طالب مشترك",
+        "teacher": "المعلم: {name}"
+      },
+      "tabs": {
+        "chat": "الدردشة المباشرة",
+        "participants": "المشاركون ({count})"
+      },
+      "chat": {
+        "empty": "لا توجد رسائل بعد. كن أول من يشارك!",
+        "placeholder": "اكتب رسالتك هنا...",
+        "send": "إرسال"
+      },
+      "participants": {
+        "title": "المشاركون",
+        "search": "البحث عن زميل...",
+        "teacherSection": "المعلم",
+        "studentsSection": "الطلاب",
+        "speaking": "يتحدث الآن...",
+        "handRaised": "رفع يده للمشاركة",
+        "studentRole": "طالب",
+        "empty": "لا يوجد مشاركون حالياً"
+      },
+      "controls": {
+        "participants": "المشاركون",
+        "chat": "الدردشة",
+        "info": "معلومات",
+        "more": "المزيد",
+        "share": "مشاركة الشاشة",
+        "hand": "رفع اليد",
+        "camera": "الكاميرا",
+        "mic": "الميكروفون"
+      },
+      "stage": {
+        "waiting": "بانتظار بث المعلم...",
+        "reconnecting": "جارٍ إعادة الاتصال..."
+      },
+      "footer": {
+        "sessionId": "الحصة رقم #{id} — منصة التعلم الذكي",
+        "connectionExcellent": "اتصال ممتاز",
+        "connectionPoor": "اتصال ضعيف",
+        "connectionUnknown": "جودة الاتصال",
+        "viewers": "{count} مشاهد"
+      },
+      "recorded": {
+        "subtitle": "استكمل رحلتك التعليمية الممتعة اليوم",
+        "noUrl": "التسجيل غير متاح حالياً",
+        "resumeFrom": "استئناف من {time}",
+        "partOne": "الجزء الأول",
+        "tag": "محاضرة مسجلة",
+        "goalTitle": "هدف الدرس الرئيسي",
+        "contextTitle": "سياق التعلم",
+        "watched": "تمت المشاهدة {current} من {total}",
+        "badgeHint": "أكمل هذا الدرس للحصول على شارة جديدة!",
+        "markComplete": "إكمال المحطة",
+        "completing": "جارٍ الإكمال...",
+        "completed": "تم إكمال المحطة بنجاح"
+      },
+      "locked": {
+        "title": "هذه المحطة مقفلة",
+        "description": "أكمل المحطات السابقة أولاً لتتمكن من دخول البث المباشر."
+      },
+      "ended": {
+        "title": "انتهت الجلسة",
+        "description": "التسجيل قيد التجهيز. يمكنك التحديث لاحقاً لمشاهدة المحاضرة المسجلة."
+      },
+      "attachments": {
+        "empty": "لا توجد ملحقات لهذه الجلسة"
+      },
+      "actions": {
+        "join": "دخول البث المباشر",
+        "joining": "جارٍ الدخول...",
+        "attachments": "عرض الملحقات (PDF)",
+        "close": "إغلاق",
+        "back": "العودة لرحلة التفوق",
+        "retry": "إعادة المحاولة",
+        "refresh": "تحديث الحالة",
+        "leave": "إنهاء",
+        "leaving": "جارٍ المغادرة...",
+        "raiseHand": "رفع اليد للمشاركة",
+        "lowerHand": "إنزال اليد",
+        "mute": "كتم الصوت",
+        "unmute": "فتح الميكروفون",
+        "openCamera": "فتح الكاميرا",
+        "closeCamera": "إغلاق الكاميرا"
+      },
+      "errors": {
+        "load": "تعذر تحميل محطة البث المباشر",
+        "join": "تعذر الدخول إلى البث المباشر",
+        "chat": "تعذر إرسال الرسالة",
+        "raiseHand": "تعذر تحديث حالة رفع اليد",
+        "media": "تعذر تحديث إعدادات الميكروفون أو الكاميرا"
       }
     },
     "subscriptions": {
@@ -780,6 +1256,321 @@
           "twitter": "تويتر / X",
           "linkedin": "لينكدإن"
         }
+      },
+      "challengeStation": {
+        "page": {
+          "title": "محطة التحدي",
+          "hubTitle": "ساحة التحدي"
+        },
+        "errors": {
+          "load": "تعذر تحميل محطة التحدي. حاول مرة أخرى."
+        },
+        "breadcrumb": {
+          "home": "الرئيسية",
+          "challenge": "التحدي"
+        },
+        "modes": {
+          "titleFallback": "تحدي الدورة",
+          "subtitle": "اختر نوع التحدي الذي يناسبك اليوم. هل أنت مستعد لاختبار ذكائك وسرعتك؟",
+          "backToJourney": "العودة لرحلة التفوق",
+          "duration": {
+            "oneMinute": "دقيقة واحدة",
+            "minutes": "{minutes} دقائق",
+            "unlimited": "غير محدود"
+          },
+          "quick": {
+            "difficulty": "سهل",
+            "title": "تحدي سريع",
+            "description": "سؤال واحد فقط، اختبر حدسك وتركيزك. مثالي للمراجعة السريعة.",
+            "cta": "العب الآن"
+          },
+          "ranked": {
+            "difficulty": "صعب جداً",
+            "title": "المباراة المصنفة",
+            "description": "تحدٍّ تنافسي ضد طلاب من مستواك. اكسب نقاطاً مضاعفة وارفع ترتيبك العالمي.",
+            "cta": "دخول الساحة"
+          },
+          "practice": {
+            "difficulty": "تجريبي",
+            "title": "تدريب",
+            "description": "طوّر مهاراتك بدون ضغط الوقت أو التقييم. اختر المواضيع التي تريد تقويتها.",
+            "cta": "ابدأ التدريب"
+          }
+        },
+        "matchmaking": {
+          "title": "جارٍ البحث عن منافس مناسب...",
+          "subtitle": "نحن نبحث في قاعدة بيانات الطلاب عن منافس من مستواك.",
+          "cancel": "إلغاء البحث والعودة للرئيسية",
+          "meta": {
+            "type": "نوع التحدي",
+            "level": "المستوى",
+            "wait": "وقت الانتظار",
+            "waitValue": "{seconds} ثانية",
+            "subject": "المادة",
+            "subjectFallback": "—"
+          },
+          "type": {
+            "quick": "سريع",
+            "ranked": "مصنف",
+            "practice": "تدريب"
+          },
+          "warmup": {
+            "bonus": "اكسب +50 نقطة إضافية أثناء الانتظار",
+            "active": "نشط الآن",
+            "question": "ما هو ناتج ضرب العدد 7 في 8؟"
+          }
+        },
+        "arena": {
+          "title": "ساحة التحدي",
+          "subtitle": "مواجهة مباشرة",
+          "close": "إغلاق",
+          "question": "السؤال {current}/{total}"
+        },
+        "lobby": {
+          "title": "تم العثور على منافس!",
+          "topTenHint": "الفائز يقترب من أفضل 10",
+          "opponent": "الخصم",
+          "you": "أنت",
+          "youFallback": "أنت",
+          "opponentFallback": "منافس",
+          "level": "المستوى {level}",
+          "points": "النقاط",
+          "rank": "الرتبة",
+          "ready": "استعد! ستبدأ المنافسة فور انتهاء العد التنازلي.",
+          "hint": "تلميح: السرعة في الإجابة تمنحك نقاطاً إضافية!",
+          "cta": "تحدي الآن"
+        },
+        "duel": {
+          "streakBonus": "بونص متتالي",
+          "speedBonus": "سرعة الإجابة",
+          "youShort": "أنت",
+          "opponentShort": "الخصم",
+          "opponentAnswering": "الخصم يجيب الآن...",
+          "streak": "STREAK",
+          "combo": "X{count} COMBO",
+          "ready": "جاهز",
+          "level": "مستوى {level}"
+        },
+        "results": {
+          "winTitle": "نصر مؤزر!",
+          "lossTitle": "حظ أوفر!",
+          "tieTitle": "تعادل!",
+          "winSubtitle": "أداء أكاديمي متميز في تحدي {subject}",
+          "lossSubtitle": "كل خسارة هي خطوة نحو المعرفة. لا تستسلم يا بطل!",
+          "subjectFallback": "العلوم",
+          "levelApproaching": "مستوى جديد يقترب",
+          "levelComplete": "اكتمال المستوى",
+          "progress": "التقدم",
+          "pointsToNext": "تحتاج إلى {points} نقطة إضافية للمستوى {level}",
+          "levelBadge": "مستوى {level}",
+          "rankBadge": "رتبة فضية",
+          "totalXp": "إجمالي نقاط الخبرة",
+          "topTenNudge": "اربح تحديًا آخر لدخول أفضل 10",
+          "xpLabel": "نقاط الخبرة",
+          "correctLabel": "الإجابات الصحيحة",
+          "closeToGoal": "لقد اقتربت من الهدف!",
+          "dailyMissions": "المهام اليومية",
+          "completed": "مكتمل!",
+          "inProgress": "قيد التقدم",
+          "newChallenge": "تحدي جديد",
+          "backDashboard": "العودة للوحة التحكم",
+          "retry": "إعادة التحدي",
+          "backHome": "العودة للرئيسية"
+        },
+        "hub": {
+          "badge": "تحدي الأسبوع",
+          "title": "هل أنت جاهز للمنافسة؟",
+          "subtitle": "واجه طلاباً من مختلف المستويات وأثبت مهاراتك الأكاديمية لتصدر لوحة الشرف.",
+          "start": "ابدأ التحدي",
+          "practice": "وضع التدريب",
+          "statsTitle": "إحصائياتك",
+          "points": "النقاط",
+          "rank": "الرتبة",
+          "level": "المستوى",
+          "toNext": "للمستوى التالي",
+          "missionsTitle": "المهام اليومية",
+          "rewardsTitle": "مكافآت التحدي",
+          "winReward": "+{points} نقطة عند الفوز",
+          "speedReward": "مضاعفة النقاط عند الإجابة السريعة",
+          "activityTitle": "النشاط الأخير",
+          "activityEmpty": "لا يوجد نشاط حديث بعد."
+        }
+      },
+      "chatGroups": {
+        "title": "مجموعات الدردشة",
+        "subtitle": "تواصل مع زملائك ومعلميك في مكان واحد",
+        "searchPlaceholder": "البحث عن مجموعة...",
+        "filters": {
+          "all": "الكل",
+          "active": "نشطة",
+          "unread": "غير مقروءة"
+        },
+        "studentsCount": "{count} طالب",
+        "empty": "لا توجد مجموعات دردشة حالياً",
+        "emptySearch": "لا توجد نتائج مطابقة للبحث",
+        "error": "تعذر تحميل مجموعات الدردشة",
+        "retry": "إعادة المحاولة",
+        "loading": "جاري التحميل...",
+        "conversation": {
+          "error": "فشل تحميل المحادثة",
+          "sendError": "فشل إرسال الرسالة",
+          "empty": "لا توجد رسائل بعد. كن أول من يبدأ النقاش.",
+          "locked": "الدردشة مقفلة حالياً",
+          "teachersOnly": "يمكن للمعلمين فقط الكتابة في هذه المجموعة",
+          "inputPlaceholder": "اكتب رسالتك...",
+          "members": "الأعضاء",
+          "mute": "كتم الصوت",
+          "unmute": "إلغاء كتم الصوت",
+          "muteError": "فشل تحديث كتم التنبيهات",
+          "more": "المزيد",
+          "attachments": {
+            "image": "إرفاق صورة",
+            "file": "إرفاق ملف",
+            "voice": "تسجيل رسالة صوتية",
+            "recording": "جاري التسجيل...",
+            "recordCancel": "إلغاء التسجيل",
+            "recordSend": "إرسال الرسالة الصوتية",
+            "recordPermissionError": "يلزم السماح بالوصول إلى الميكروفون لتسجيل الرسائل الصوتية",
+            "recordUnsupported": "تسجيل الصوت غير مدعوم في هذا المتصفح"
+          },
+          "actions": {
+            "menu": "إجراءات الرسالة",
+            "reply": "رد",
+            "replyingTo": "الرد على {name}",
+            "pinnedLabel": "مثبتة",
+            "react": "تفاعل {emoji}",
+            "reactionError": "فشل تحديث التفاعل"
+          }
+        },
+        "members": {
+          "error": "فشل تحميل معلومات المجموعة",
+          "settingsError": "فشل تحديث إعدادات المجموعة",
+          "headerTitle": "معلومات المجموعة",
+          "share": "مشاركة",
+          "shareCopied": "تم نسخ رابط المجموعة",
+          "noDescription": "لا يوجد وصف للمجموعة",
+          "createdAt": "تم الإنشاء في {date}",
+          "participantsTitle": "المشاركون ({count})",
+          "viewAll": "عرض الكل",
+          "teacherBadge": "المعلم",
+          "emptyParticipants": "لا يوجد مشاركون بعد",
+          "settings": {
+            "title": "الإعدادات",
+            "mute": "كتم التنبيهات",
+            "pin": "تثبيت المجموعة"
+          },
+          "media": {
+            "title": "الوسائط",
+            "files": "الملفات",
+            "viewAll": "عرض الكل",
+            "empty": "لا توجد وسائط مشتركة بعد",
+            "recentDocs": "المستندات الأخيرة"
+          },
+          "files": {
+            "empty": "لا توجد ملفات مشتركة بعد"
+          }
+        }
+      }
+    },
+    "profile": {
+      "page": {
+        "title": "الملف الشخصي",
+        "description": "عرض بياناتك وتقدمك وتفضيلاتك."
+      },
+      "fallbackName": "طالب",
+      "prefsSectionTitle": "البيانات والتفضيلات الشخصية",
+      "hero": {
+        "totalPoints": "إجمالي النقاط",
+        "earnedBadges": "الشارات المحققة",
+        "platinum": "اشتراك بلاتيني",
+        "memberSince": "عضو منذ: {date}",
+        "activeNow": "نشط الآن"
+      },
+      "share": {
+        "action": "مشاركة",
+        "copied": "تم نسخ رابط الملف الشخصي",
+        "failed": "تعذر مشاركة الملف الشخصي"
+      },
+      "kpis": {
+        "completedStations": "محطة مكتملة",
+        "progressRate": "نسبة الإنجاز",
+        "liveSessions": "حصص مباشرة",
+        "completedQuizzes": "اختبارات مكتملة",
+        "excellent": "ممتاز",
+        "good": "جيد",
+        "keepGoing": "واصل"
+      },
+      "ranking": {
+        "title": "الترتيب والمنافسة",
+        "school": "داخل المدرسة",
+        "schoolFallback": "مدرستك",
+        "platform": "على مستوى المنصة",
+        "platformSubtitle": "الجمهورية"
+      },
+      "badges": {
+        "title": "الأوسمة والإنجازات",
+        "viewAll": "عرض الكل",
+        "new": "NEW",
+        "empty": "لا توجد أوسمة بعد. أكمل المهام لفتح أول وسام."
+      },
+      "courses": {
+        "title": "الكورسات ورحلة التعلم",
+        "viewAll": "عرض الكل",
+        "progressLabel": "إنجاز",
+        "continue": "متابعة التعلم",
+        "continuing": "جاري التحميل...",
+        "empty": "لم تُسجَّل في أي دورة بعد.",
+        "explore": "استكشف الدورات"
+      },
+      "info": {
+        "title": "المعلومات الأساسية",
+        "email": "البريد الإلكتروني",
+        "studentCode": "كود الطالب",
+        "phone": "رقم الهاتف",
+        "school": "المدرسة",
+        "joinedAt": "تاريخ الانضمام",
+        "edit": "تعديل البيانات الشخصية"
+      },
+      "prefs": {
+        "title": "تفضيلات الإشعارات",
+        "on": "مفعّل",
+        "off": "متوقف",
+        "localOnly": "تُحفظ هذه التفضيلات محلياً حتى يتوفر واجهة برمجة للتفضيلات.",
+        "live": {
+          "title": "تنبيهات الحصص المباشرة",
+          "description": "إشعار عند بدء الحصص المباشرة"
+        },
+        "quiz": {
+          "title": "نتائج الاختبارات",
+          "description": "إشعار عند صدور نتائج الاختبارات"
+        },
+        "achievements": {
+          "title": "رسائل الإنجازات والأوسمة",
+          "description": "إشعار عند الحصول على وسام جديد"
+        }
+      },
+      "edit": {
+        "title": "تعديل البيانات الشخصية",
+        "description": "حدّث بياناتك الظاهرة في الملف الشخصي.",
+        "fullName": "الاسم الكامل",
+        "emailReadonly": "البريد الإلكتروني (للقراءة فقط)",
+        "usernameReadonly": "كود الطالب (للقراءة فقط)",
+        "phone": "رقم الهاتف",
+        "countryCode": "رمز الدولة",
+        "address": "العنوان",
+        "cancel": "إلغاء",
+        "save": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "errors": {
+          "fullNameRequired": "الاسم الكامل مطلوب.",
+          "invalidCountryCode": "رمز الدولة غير صالح.",
+          "save": "تعذر حفظ البيانات. حاول مرة أخرى."
+        }
+      },
+      "errors": {
+        "load": "تعذر تحميل الملف الشخصي. يرجى المحاولة مرة أخرى.",
+        "retry": "إعادة المحاولة",
+        "continue": "تعذر بدء متابعة التعلم. يرجى المحاولة مرة أخرى."
       }
     }
   }

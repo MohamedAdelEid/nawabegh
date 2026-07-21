@@ -25,11 +25,6 @@ export function DailyTasksDashboard() {
     isLoading,
     errorMessage,
     refreshAll,
-    handleJoinLive,
-    handleEnterChallenge,
-    joiningStationId,
-    enteringChallengeId,
-    joinError,
     challengeError,
   } = useDailyTasks();
 
@@ -69,9 +64,6 @@ export function DailyTasksDashboard() {
         peerPercentile={peerPercentile}
       />
 
-      {joinError ? (
-        <ApiFailureAlert message={joinError} fallbackMessage={t("errors.joinLive")} />
-      ) : null}
       {challengeError ? (
         <ApiFailureAlert message={challengeError} fallbackMessage={t("errors.enterChallenge")} />
       ) : null}
@@ -94,17 +86,14 @@ export function DailyTasksDashboard() {
           {featuredLiveSession ? (
             <DailyTasksLiveCard
               session={featuredLiveSession}
-              isJoining={joiningStationId === featuredLiveSession.stationId}
-              onJoin={async () => {
-                try {
-                  await handleJoinLive(featuredLiveSession.stationId);
-                  navigateToJourney({
-                    courseId: featuredLiveSession.courseId,
-                    stationId: featuredLiveSession.stationId,
-                  });
-                } catch {
-                  /* surfaced via joinError */
-                }
+              isJoining={false}
+              onJoin={() => {
+                const params = new URLSearchParams({
+                  courseId: featuredLiveSession.courseId,
+                });
+                router.push(
+                  `${ROUTES.USER.STUDENT.LIVE_STATION(featuredLiveSession.stationId)}?${params.toString()}`,
+                );
               }}
             />
           ) : (
@@ -114,18 +103,19 @@ export function DailyTasksDashboard() {
           {featuredChallenge ? (
             <DailyTasksChallengeCard
               challenge={featuredChallenge}
-              isEntering={enteringChallengeId === featuredChallenge.challengeId}
+              isEntering={false}
               onEnter={async () => {
                 if (!featuredChallenge.canEnter) return;
-                try {
-                  await handleEnterChallenge(featuredChallenge.challengeId);
-                  navigateToJourney({
-                    courseId: featuredChallenge.courseId,
-                    stationId: featuredChallenge.stationId,
-                  });
-                } catch {
-                  /* surfaced via challengeError */
+                const params = new URLSearchParams();
+                if (featuredChallenge.courseId) {
+                  params.set("courseId", featuredChallenge.courseId);
                 }
+                const qs = params.toString();
+                router.push(
+                  qs
+                    ? `${ROUTES.USER.STUDENT.CHALLENGE_STATION(featuredChallenge.stationId)}?${qs}`
+                    : ROUTES.USER.STUDENT.CHALLENGE_STATION(featuredChallenge.stationId),
+                );
               }}
             />
           ) : (

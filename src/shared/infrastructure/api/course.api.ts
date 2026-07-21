@@ -47,7 +47,9 @@ export async function getExploreCoursesPage(
     currentPage: pagination?.currentPage ?? pageNumber,
     pageSize: pagination?.pageSize ?? pageSize,
     totalCount: pagination?.totalCount,
+    totalPages: pagination?.totalPages ?? 1,
     hasMore: pagination ? pagination.hasNext : rows.length >= pageSize,
+    hasPrevious: pagination?.hasPrevious ?? pageNumber > 1,
   };
 }
 

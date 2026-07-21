@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Award,
@@ -11,7 +12,7 @@ import {
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { CourseDetailsModel } from "@/shared/domain/types/course.types";
-import { cn } from "@/shared/application/lib/cn";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user/UserAvatarImageOrInitials";
 import { useCourseEnrollment } from "@/modules/student/application/hooks/useCourseEnrollment";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
@@ -210,18 +211,22 @@ function SidebarEnrolled({ course }: { course: CourseDetailsModel }) {
           </div>
         ) : null}
 
-        <button
-          type="button"
-          disabled={!course.chat.canEnterChat}
-          className={cn(
-            "w-full rounded-xl py-3 text-sm font-bold transition-colors",
-            course.chat.canEnterChat
-              ? "bg-[#c7af6d] text-white hover:bg-[#b9a264]"
-              : "bg-white/10 text-white/50",
-          )}
-        >
-          {t("sidebar.enterChat")}
-        </button>
+        {course.chat.canEnterChat ? (
+          <Link
+            href={ROUTES.USER.STUDENT.CHAT_GROUPS.VIEW(course.id)}
+            className="block w-full rounded-xl bg-[#c7af6d] py-3 text-center text-sm font-bold text-white transition-colors hover:bg-[#b9a264]"
+          >
+            {t("sidebar.enterChat")}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="w-full rounded-xl bg-white/10 py-3 text-sm font-bold text-white/50"
+          >
+            {t("sidebar.enterChat")}
+          </button>
+        )}
       </div>
 
       <CourseBenefitsList />

@@ -39,3 +39,38 @@ export type TeachersPage = {
   hasPrevious: boolean;
   hasNext: boolean;
 };
+
+export type TeacherCertificate = {
+  title: string;
+  description: string;
+  year: number | null;
+};
+
+export type TeacherPublishedCourseSummary = {
+  courseId: string;
+  title: string;
+  coverImageUrl: string | null;
+  subjectNameAr: string;
+  gradeId: number;
+  gradeNameAr: string;
+  gradeNameEn: string;
+  discountedPrice: number;
+  originalPrice: number;
+};
+
+export type TeacherPublicProfile = {
+  teacherId: string;
+  fullName: string;
+  profileImageUrl: string | null;
+  jobTitle: string;
+  rating: number;
+  yearsOfExperience: number;
+  studentCount: number;
+  location: string;
+  isExpert: boolean;
+  expertBadgeLabel: string;
+  about: string;
+  certificates: TeacherCertificate[];
+  subjectsTaught: string[];
+  publishedCourses: TeacherPublishedCourseSummary[];
+};

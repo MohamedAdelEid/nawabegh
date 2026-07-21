@@ -3,12 +3,14 @@ import {
   mapCourseProgressDto,
   mapLearningPathDropdownItem,
   mapLearningPathStationsProgressDto,
+  mapMilestoneOpenResult,
   mapSubscriptionsDashboardDto,
 } from "@/modules/student/domain/progress/progress.utils";
 import type {
   CourseProgressDto,
   LearningPathDropdownItemDto,
   LearningPathStationsProgressDto,
+  MilestoneOpenResultDto,
   SubscriptionsDashboardDto,
 } from "@/modules/student/domain/progress/progress.types";
 import {
@@ -87,4 +89,29 @@ export async function getLearningPathStationsProgress(
     if (!dto) throw new Error("Failed to load path stations");
     return dto;
   }, "Failed to load path stations");
+}
+
+export async function openLearningPathMilestone(
+  learningPathId: string,
+  milestoneOrder: number,
+): Promise<MilestoneOpenResultDto> {
+  try {
+    const response = await httpClient.post<unknown>({
+      url: `progress/learning-paths/${learningPathId}/milestones/${milestoneOrder}/open`,
+    });
+    const dto = mapMilestoneOpenResult(resolveApiData(response));
+    if (!dto) throw new Error("Failed to open milestone");
+    return dto;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 409) {
+      return {
+        milestoneOrder,
+        pointsAwarded: 0,
+        totalPoints: null,
+        currentLevel: null,
+        pointsToNextLevel: null,
+      };
+    }
+    throw new Error(extractApiErrorMessage(error, "Failed to open milestone"));
+  }
 }

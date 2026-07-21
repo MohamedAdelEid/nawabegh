@@ -47,6 +47,8 @@ export function mapExploreCourseDto(item: unknown): ExploreCourseDto | null {
     subjectNameAr: row.subjectNameAr ?? "",
     subjectNameEn: row.subjectNameEn ?? "",
     gradeId: Number(row.gradeId ?? 0),
+    gradeNameAr: row.gradeNameAr ?? "",
+    gradeNameEn: row.gradeNameEn ?? "",
     term: Number(row.term ?? 0),
     teacherFullName: row.teacherFullName ?? "",
     teacherAvatarUrl: row.teacherAvatarUrl ?? "",
@@ -71,6 +73,9 @@ export function mapExploreCourseToCard(
   locale: string,
 ): CourseCardModel {
   const isArabic = locale.startsWith("ar");
+  const gradeName = isArabic
+    ? dto.gradeNameAr
+    : dto.gradeNameEn || dto.gradeNameAr;
 
   return {
     id: dto.id,
@@ -88,5 +93,6 @@ export function mapExploreCourseToCard(
     progressPercentage: dto.progressPercentage,
     isBestSeller: dto.isBestSeller,
     courseFilesCount: dto.courseFilesCount,
+    levelLabel: gradeName || undefined,
   };
 }

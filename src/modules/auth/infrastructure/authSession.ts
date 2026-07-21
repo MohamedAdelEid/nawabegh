@@ -233,5 +233,5 @@ export function getSettingsPathForRole(role?: string | null) {
   if (r === "School") return ROUTES.USER.SCHOOL.SETTINGS;
   if (r === "Teacher") return ROUTES.USER.TEACHER.SETTINGS;
   if (r === "Parent") return ROUTES.USER.PARENT.SETTINGS;
-  return ROUTES.USER.STUDENT.SETTINGS;
+  return ROUTES.USER.STUDENT.PROFILE;
 }

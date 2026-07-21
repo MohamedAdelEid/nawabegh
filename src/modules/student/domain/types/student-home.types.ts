@@ -9,12 +9,25 @@ export type StudentMyProfile = {
   userId: string;
   fullName: string;
   profileImageUrl: string | null;
+  email: string;
+  username: string;
+  phoneNumber: string;
+  phoneCountryCode: number | null;
+  whatsAppNumber: string;
+  whatsAppCountryCode: number | null;
+  address: string;
+  educationLevelId: string;
+  educationLevelName: string;
+  gradeId: string;
+  gradeName: string;
+  schoolId: string;
+  schoolName: string;
+  academicTerm: number | null;
   points: number;
   maxPointsEverReached: number;
   achievementBadgeCount: number;
   earnedAchievementBadges: StudentAchievementBadge[];
-  gradeName: string;
-  schoolName: string;
+  createdAt: string | null;
 };
 
 export type LiveSessionStation = {

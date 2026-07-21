@@ -7,8 +7,7 @@ import { StationType } from "@/shared/domain/enums/learning-path.enums";
 import { JOURNEY_ASSETS } from "./journey.assets";
 
 export type ProgressPathNodeVariant =
-  | "completedGreen"
-  | "completedBlue"
+  | "completed"
   | "active"
   | "locked"
   | "live"
@@ -20,19 +19,37 @@ export type ProgressPathNodeVisual = {
   isInteractive: boolean;
   showLivePulse: boolean;
   countdownSeconds: number | null;
-  shadowSrc: string;
-  maskSrc: string;
-  iconSrc: string;
+  stoneSrc: string;
+  desaturated: boolean;
 };
 
+/** Desktop zigzag layout inspired by Figma 1698:3045 + mobile stone sizes. */
 export const TIMELINE_LAYOUT = {
-  viewWidth: 400,
-  nodeSlotHeight: 200,
-  nodeWidth: 135,
-  nodeHeight: 155,
-  rightX: 268,
-  leftX: 132,
+  viewWidth: 420,
+  nodeSlotHeight: 210,
+  stoneWidth: 135,
+  stoneHeight: 155,
+  chestWidth: 152,
+  chestHeight: 171,
+  rightX: 280,
+  leftX: 140,
 } as const;
+
+export function resolveStationStoneSrc(type: StationType): string {
+  switch (type) {
+    case StationType.LiveStream:
+      return JOURNEY_ASSETS.stones.live;
+    case StationType.Flashcards:
+      return JOURNEY_ASSETS.stones.flashcards;
+    case StationType.ShortQuiz:
+      return JOURNEY_ASSETS.stones.quiz;
+    case StationType.Challenge:
+      return JOURNEY_ASSETS.stones.challenge;
+    case StationType.HelperResource:
+    default:
+      return JOURNEY_ASSETS.stones.book;
+  }
+}
 
 export function resolveProgressPathNodeVisual(
   station: PathStationProgressDto,
@@ -41,19 +58,16 @@ export function resolveProgressPathNodeVisual(
   const isLive = station.stationType === StationType.LiveStream;
   const liveMode = station.liveSessionSchedule?.runtimeMode;
   const countdown = station.liveSessionSchedule?.countdownSeconds ?? null;
-  const iconSrc = resolveStationIcon(station.stationType);
+  const stoneSrc = resolveStationStoneSrc(station.stationType);
 
-  // When the whole learning path is locked, every station is visible but
-  // non-joinable regardless of its individual status.
   if (pathLocked) {
     return {
       variant: "locked",
       isInteractive: false,
       showLivePulse: false,
       countdownSeconds: null,
-      shadowSrc: JOURNEY_ASSETS.stations.shadowGray,
-      maskSrc: JOURNEY_ASSETS.stations.maskGray,
-      iconSrc,
+      stoneSrc,
+      desaturated: true,
     };
   }
 
@@ -63,9 +77,8 @@ export function resolveProgressPathNodeVisual(
       isInteractive: station.status !== StudentStationProgressStatus.Locked,
       showLivePulse: true,
       countdownSeconds: countdown,
-      shadowSrc: JOURNEY_ASSETS.stations.shadowRed,
-      maskSrc: JOURNEY_ASSETS.stations.maskRed,
-      iconSrc: JOURNEY_ASSETS.stations.iconLive,
+      stoneSrc: JOURNEY_ASSETS.stones.live,
+      desaturated: false,
     };
   }
 
@@ -73,11 +86,10 @@ export function resolveProgressPathNodeVisual(
     return {
       variant: "liveUpcoming",
       isInteractive: station.status !== StudentStationProgressStatus.Locked,
-      showLivePulse: false,
+      showLivePulse: true,
       countdownSeconds: countdown,
-      shadowSrc: JOURNEY_ASSETS.stations.shadowRed,
-      maskSrc: JOURNEY_ASSETS.stations.maskRed,
-      iconSrc: JOURNEY_ASSETS.stations.iconLive,
+      stoneSrc: JOURNEY_ASSETS.stones.live,
+      desaturated: false,
     };
   }
 
@@ -90,22 +102,19 @@ export function resolveProgressPathNodeVisual(
       isInteractive: true,
       showLivePulse: false,
       countdownSeconds: null,
-      shadowSrc: JOURNEY_ASSETS.stations.shadowGray,
-      maskSrc: JOURNEY_ASSETS.stations.maskGray,
-      iconSrc,
+      stoneSrc,
+      desaturated: true,
     };
   }
 
   if (station.status === StudentStationProgressStatus.Completed) {
-    const isQuiz = station.stationType === StationType.ShortQuiz;
     return {
-      variant: isQuiz ? "completedBlue" : "completedGreen",
+      variant: "completed",
       isInteractive: true,
       showLivePulse: false,
       countdownSeconds: null,
-      shadowSrc: isQuiz ? JOURNEY_ASSETS.stations.shadowBlue : JOURNEY_ASSETS.stations.shadow,
-      maskSrc: isQuiz ? JOURNEY_ASSETS.stations.maskBlue : JOURNEY_ASSETS.stations.maskGreen,
-      iconSrc,
+      stoneSrc,
+      desaturated: false,
     };
   }
 
@@ -118,9 +127,8 @@ export function resolveProgressPathNodeVisual(
       isInteractive: true,
       showLivePulse: false,
       countdownSeconds: null,
-      shadowSrc: JOURNEY_ASSETS.stations.shadowGold,
-      maskSrc: JOURNEY_ASSETS.stations.maskGold,
-      iconSrc,
+      stoneSrc,
+      desaturated: false,
     };
   }
 
@@ -129,24 +137,9 @@ export function resolveProgressPathNodeVisual(
     isInteractive: false,
     showLivePulse: false,
     countdownSeconds: null,
-    shadowSrc: JOURNEY_ASSETS.stations.shadowGray,
-    maskSrc: JOURNEY_ASSETS.stations.maskGray,
-    iconSrc,
+    stoneSrc,
+    desaturated: true,
   };
-}
-
-function resolveStationIcon(type: StationType): string {
-  switch (type) {
-    case StationType.LiveStream:
-      return JOURNEY_ASSETS.stations.iconLive;
-    case StationType.Challenge:
-      return JOURNEY_ASSETS.stations.iconChallenge;
-    case StationType.ShortQuiz:
-    case StationType.Flashcards:
-      return "";
-    default:
-      return JOURNEY_ASSETS.stations.iconBook;
-  }
 }
 
 export function getNodeX(index: number): number {
@@ -154,7 +147,7 @@ export function getNodeX(index: number): number {
 }
 
 export function getNodeY(index: number): number {
-  return 90 + index * TIMELINE_LAYOUT.nodeSlotHeight;
+  return 100 + index * TIMELINE_LAYOUT.nodeSlotHeight;
 }
 
 export function buildConnectorPath(x1: number, y1: number, x2: number, y2: number): string {

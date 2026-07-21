@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { SchoolManagementFilterState } from "@/modules/admin/domain/types/schoolManagementFilters.types";
 import { getCountriesDropdown } from "@/modules/admin/infrastructure/api/userManagementApi";
+import { findOmanCountry } from "@/shared/domain/utils/country.utils";
 import {
   DashboardFilterSelect,
   DashboardFiltersPanel,
@@ -25,6 +26,7 @@ export function SchoolManagementFilterBar({
 }: SchoolManagementFilterBarProps) {
   const t = useTranslations("admin.dashboard");
   const [countryOptions, setCountryOptions] = useState<DashboardFilterOption<string>[]>([]);
+  const defaultCountryAppliedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,25 +34,30 @@ export function SchoolManagementFilterBar({
       const result = await getCountriesDropdown();
       if (cancelled) return;
       if (result.data?.length) {
-        setCountryOptions(
-          result.data.map((row) => ({
-            id: row.name,
-            label: row.name,
-          })),
-        );
+        const options = result.data.map((row) => ({
+          id: row.name,
+          label: row.name,
+        }));
+        setCountryOptions(options);
+
+        const oman = findOmanCountry(result.data);
+        if (oman && !defaultCountryAppliedRef.current && !value.country) {
+          defaultCountryAppliedRef.current = true;
+          onChange({ ...value, country: oman.name });
+        }
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [onChange, value]);
 
   const performanceOptions = useMemo(
     () => [
       { id: "all", label: t("schoolManagement.filters.performanceLevel.all") },
-      { id: "Excellent", label: t("schoolManagement.filters.performanceLevel.excellent") },
-      { id: "VeryGood", label: t("schoolManagement.filters.performanceLevel.veryGood") },
-      { id: "Good", label: t("schoolManagement.filters.performanceLevel.good") },
+      { id: "ممتاز", label: t("schoolManagement.filters.performanceLevel.excellent") },
+      { id: "جيد جداً", label: t("schoolManagement.filters.performanceLevel.veryGood") },
+      { id: "جيد", label: t("schoolManagement.filters.performanceLevel.good") },
     ],
     [t],
   );

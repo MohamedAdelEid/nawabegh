@@ -11,7 +11,7 @@ function readString(record: UnknownRecord | null, keys: string[], fallback = "")
   if (!record) return fallback;
   for (const key of keys) {
     const value = record[key];
-    if (typeof value === "string") return value;
+    if (typeof value === "string" && value.trim()) return value.trim();
   }
   return fallback;
 }
@@ -25,17 +25,74 @@ function readBoolean(record: UnknownRecord | null, keys: string[], fallback: boo
   return fallback;
 }
 
+function readUploadSuccess(record: UnknownRecord | null): boolean {
+  return readBoolean(record, ["success"], false) || readBoolean(record, ["isSuccess"], false);
+}
+
+function extractRelativeUploadPath(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return trimmed.replace(/^\/+/, "");
+  }
+
+  try {
+    const pathname = new URL(trimmed).pathname.replace(/^\/+/, "");
+    if (pathname.startsWith("uploads/")) return pathname;
+  } catch {
+    // Fall back to the original value below.
+  }
+
+  return trimmed;
+}
+
+function normalizeUploadFilePath(record: UnknownRecord): string {
+  const filePath = extractRelativeUploadPath(readString(record, ["filePath"]));
+  if (filePath) return filePath;
+
+  const fileUrl = readString(record, ["fileUrl", "url", "path"]);
+  return extractRelativeUploadPath(fileUrl);
+}
+
 function hasUploadPath(record: UnknownRecord | null): boolean {
   return Boolean(readString(record, ["filePath", "fileUrl", "url", "path"], "").trim());
 }
 
+function uploadRecordFromString(value: string): UnknownRecord | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    try {
+      return unwrapUploadRecord(JSON.parse(trimmed));
+    } catch {
+      // Treat the raw string as a stored path below.
+    }
+  }
+
+  return {
+    success: true,
+    filePath: extractRelativeUploadPath(trimmed),
+  };
+}
+
 /** Backend may return the payload at the root, under `data`, or nested further. */
 export function unwrapUploadRecord(data: unknown): UnknownRecord | null {
+  if (typeof data === "string") {
+    return uploadRecordFromString(data);
+  }
+
   const root = asRecord(data);
   if (!root) return null;
   if (hasUploadPath(root)) return root;
 
-  const level1 = asRecord(root.data);
+  const level1Value = root.data;
+  if (typeof level1Value === "string") {
+    return uploadRecordFromString(level1Value);
+  }
+
+  const level1 = asRecord(level1Value);
   if (level1 && hasUploadPath(level1)) return level1;
 
   const level2 = level1 ? asRecord(level1.data) : null;
@@ -87,20 +144,20 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       return { ok: false, errorMessage: "Invalid upload response" };
     }
 
-    const filePath = readString(record, ["filePath", "fileUrl", "url", "path"]);
+    const filePath = normalizeUploadFilePath(record);
     const message = readString(record, ["message"]);
-    const explicitSuccess = readBoolean(record, ["success"], false);
-    const hasPath = Boolean(filePath.trim());
+    const explicitSuccess = readUploadSuccess(record);
+    const hasPath = Boolean(filePath);
 
     // Some responses omit `success` but still return `filePath`.
     if (!hasPath && !explicitSuccess) {
-      return { ok: false, errorMessage: message.trim() || "Upload failed" };
+      return { ok: false, errorMessage: message || "Upload failed" };
     }
     if (!hasPath) {
-      return { ok: false, errorMessage: message.trim() || "Upload failed: missing file path" };
+      return { ok: false, errorMessage: message || "Upload failed: missing file path" };
     }
 
-    return { ok: true, filePath: filePath.trim(), message: message.trim() || undefined };
+    return { ok: true, filePath, message: message || undefined };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Upload failed";
     return { ok: false, errorMessage: msg };

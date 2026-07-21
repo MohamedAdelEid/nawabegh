@@ -1,0 +1,16 @@
+export const CHALLENGE_STATION_ASSETS = {
+  heroSword: "/images/student/challenge-station/hub-2.png",
+  heroPattern: "/images/student/challenge-station/hub-3.png",
+  chart: "/images/student/challenge-station/hub-8.svg",
+  clock: "/images/student/challenge-station/hub-9.svg",
+  star: "/images/student/challenge-station/hub-10.svg",
+  bolt: "/images/student/challenge-station/hub-11.svg",
+  trophy: "/images/student/challenge-station/hub-14.svg",
+  activity: "/images/student/challenge-station/hub-15.svg",
+  searchPerson: "/images/student/challenge-station/mm-2.png",
+  searchRing: "/images/student/challenge-station/mm-3.png",
+  quickIcon: "/images/student/challenge-station/modes-3.png",
+  rankedIcon: "/images/student/challenge-station/modes-5.png",
+  practiceIcon: "/images/student/challenge-station/modes-7.png",
+  close: "/images/student/flashcards-station/close-icon.svg",
+} as const;

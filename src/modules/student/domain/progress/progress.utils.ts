@@ -7,10 +7,14 @@ import type {
   CoursePathProgressDto,
   CourseProgressDto,
   EnrolledCourseCardDto,
+  JourneyCompletionNotice,
   LearningPathDropdownItemDto,
   LearningPathStationsProgressDto,
   LiveSessionScheduleDto,
+  MilestoneBoxDto,
+  MilestoneOpenResultDto,
   PathStationProgressDto,
+  ProgressTimelineNode,
   SubscriptionsDashboardDto,
 } from "@/modules/student/domain/progress/progress.types";
 import { StationType } from "@/shared/domain/enums/learning-path.enums";
@@ -194,6 +198,24 @@ export function mapLearningPathDropdownItem(row: unknown): LearningPathDropdownI
   return { id, name: toOptionalString(record.name) };
 }
 
+function mapMilestoneBox(row: unknown): MilestoneBoxDto | null {
+  const record = asRecord(row);
+  if (!record) return null;
+  const order = toNumber(record.order);
+  if (order < 1) return null;
+
+  return {
+    order,
+    pointsReward: toNumber(record.pointsReward),
+    requiredCompletedStations: toNumber(record.requiredCompletedStations),
+    afterStationOrder: toNumber(record.afterStationOrder),
+    completedStations: toNumber(record.completedStations),
+    totalRequiredStations: toNumber(record.totalRequiredStations),
+    isEligible: Boolean(record.isEligible),
+    isOpened: Boolean(record.isOpened),
+  };
+}
+
 export function mapLearningPathStationsProgressDto(
   item: unknown,
 ): LearningPathStationsProgressDto | null {
@@ -203,6 +225,7 @@ export function mapLearningPathStationsProgressDto(
   if (!learningPathId) return null;
 
   const stationsRaw = Array.isArray(row.stations) ? row.stations : [];
+  const milestonesRaw = Array.isArray(row.milestoneBoxes) ? row.milestoneBoxes : [];
 
   return {
     learningPathId,
@@ -211,6 +234,103 @@ export function mapLearningPathStationsProgressDto(
       .map(mapPathStationProgress)
       .filter((station): station is PathStationProgressDto => station != null)
       .sort((a, b) => a.order - b.order),
+    milestoneBoxes: milestonesRaw
+      .map(mapMilestoneBox)
+      .filter((box): box is MilestoneBoxDto => box != null)
+      .sort((a, b) => a.order - b.order),
+  };
+}
+
+export function mapMilestoneOpenResult(item: unknown): MilestoneOpenResultDto | null {
+  const row = asRecord(item);
+  if (!row) return null;
+
+  return {
+    milestoneOrder: toNumber(row.milestoneOrder),
+    pointsAwarded: toNumber(row.pointsAwarded),
+    totalPoints: row.totalPoints != null ? toNumber(row.totalPoints) : null,
+    currentLevel: row.currentLevel != null ? toNumber(row.currentLevel) : null,
+    pointsToNextLevel:
+      row.pointsToNextLevel != null ? toNumber(row.pointsToNextLevel) : null,
+  };
+}
+
+export function isMilestoneClaimable(
+  milestone: MilestoneBoxDto,
+  stations: PathStationProgressDto[],
+): boolean {
+  if (milestone.isOpened) return false;
+  if (milestone.isEligible) return true;
+
+  const completedBeforeMilestone = stations.filter(
+    (station) =>
+      station.order <= milestone.afterStationOrder &&
+      station.status === StudentStationProgressStatus.Completed,
+  ).length;
+
+  return completedBeforeMilestone >= milestone.requiredCompletedStations;
+}
+
+/** Insert milestone chests after `afterStationOrder` (mobile `journey_ui_mapper`). */
+export function buildProgressTimelineNodes(
+  stations: PathStationProgressDto[],
+  milestoneBoxes: MilestoneBoxDto[],
+): ProgressTimelineNode[] {
+  const sortedStations = [...stations].sort((a, b) => a.order - b.order);
+  const boxes = [...milestoneBoxes].sort((a, b) => a.order - b.order);
+  const placed = new Set<number>();
+  const nodes: ProgressTimelineNode[] = [];
+
+  for (const station of sortedStations) {
+    nodes.push({
+      kind: "station",
+      id: `station-${station.stationId}`,
+      station,
+    });
+
+    for (const box of boxes) {
+      if (placed.has(box.order)) continue;
+      if (station.order === box.afterStationOrder) {
+        nodes.push({ kind: "chest", id: `chest-${box.order}`, milestone: box });
+        placed.add(box.order);
+      }
+    }
+  }
+
+  for (const box of boxes) {
+    if (placed.has(box.order)) continue;
+    nodes.push({ kind: "chest", id: `chest-${box.order}`, milestone: box });
+  }
+
+  return nodes;
+}
+
+export function journeyCompletionLevelProgress(
+  pointsEarned: number,
+  pointsToNextLevel: number,
+): number {
+  if (pointsEarned <= 0 && pointsToNextLevel <= 0) return 0.75;
+  const span = pointsEarned + pointsToNextLevel;
+  if (span <= 0) return 0;
+  return Math.min(1, Math.max(0, pointsEarned / span));
+}
+
+export function buildJourneyCompletionNotice(input: {
+  variant?: "station" | "path";
+  pointsEarned: number;
+  currentLevel?: number | null;
+  pointsToNextLevel?: number | null;
+}): JourneyCompletionNotice {
+  const pointsEarned = Math.max(0, input.pointsEarned);
+  const currentLevel = input.currentLevel ?? 1;
+  const pointsToNextLevel = input.pointsToNextLevel ?? 0;
+
+  return {
+    variant: input.variant ?? "station",
+    pointsEarned,
+    currentLevel,
+    pointsToNextLevel,
+    levelProgress: journeyCompletionLevelProgress(pointsEarned, pointsToNextLevel),
   };
 }
 
@@ -222,12 +342,15 @@ export function hasActiveLiveStation(stations: PathStationProgressDto[]): boolea
   );
 }
 
+/** Figma live chip: `{days} أيام | {hh} ساعات | {mm} دقيقة | {ss} ثانية` */
 export function formatCountdown(seconds: number): string {
   const safe = Math.max(0, Math.floor(seconds));
-  const hours = Math.floor(safe / 3600);
+  const days = Math.floor(safe / 86_400);
+  const hours = Math.floor((safe % 86_400) / 3600);
   const minutes = Math.floor((safe % 3600) / 60);
   const secs = safe % 60;
-  return [hours, minutes, secs].map((part) => String(part).padStart(2, "0")).join(":");
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${days} أيام | ${pad(hours)} ساعات | ${pad(minutes)} دقيقة | ${pad(secs)} ثانية`;
 }
 
 export function resolveActivePathId(

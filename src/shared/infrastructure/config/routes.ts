@@ -199,9 +199,35 @@ export const ROUTES = {
       COURSE_CHECKOUT: (courseId: string) => `/student/courses/${courseId}/checkout`,
       CHECKOUT_RESULT: "/student/checkout/result",
       JOURNEY: "/student/journey",
+      CHALLENGE_HUB: "/student/challenge",
+      CHALLENGE_STATION: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/challenge`,
+      LIVE_STATION: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/live`,
+      STATION_FLASHCARDS: (stationId: string) =>
+        `/student/stations/flashcards/${encodeURIComponent(stationId)}`,
+      HELPER_RESOURCE: (stationId: string) =>
+        `/student/stations/helper-resource/${encodeURIComponent(stationId)}`,
+      HELPER_RESOURCE_FILE: (stationId: string, fileId: string) =>
+        `/student/stations/helper-resource/${encodeURIComponent(stationId)}/${encodeURIComponent(fileId)}`,
+      SHORT_QUIZ: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz`,
+      SHORT_QUIZ_INSTRUCTIONS: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz/instructions`,
+      SHORT_QUIZ_ATTEMPT: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz/attempt`,
+      SHORT_QUIZ_RESULTS: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz/results`,
+      SHORT_QUIZ_REVIEW: (stationId: string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz/review`,
+      SHORT_QUIZ_REVIEW_DETAIL: (stationId: string, questionIndex: number | string) =>
+        `/student/stations/${encodeURIComponent(stationId)}/quiz/review/${encodeURIComponent(String(questionIndex))}`,
       SUBSCRIPTIONS: "/student/subscriptions",
       DAILY_TASKS: "/student/daily-tasks",
       SCHEDULE: "/student/schedule",
+      EVENTS: "/student/events",
+      EVENT_LIVE: (eventId: string) =>
+        `/student/events/${encodeURIComponent(eventId)}/live`,
       ONBOARDING_QUIZ: "/student/onboarding-quiz",
       FRIEND_CHALLENGES: {
         HUB: "/student/friend-challenges",
@@ -219,6 +245,14 @@ export const ROUTES = {
           `/student/friend-challenges/sessions/${encodeURIComponent(sessionId)}/result`,
       },
       SETTINGS: "/student/settings",
+      PROFILE: "/student/profile",
+      CHAT_GROUPS: {
+        LIST: "/student/chat-groups",
+        VIEW: (courseId: string) =>
+          `/student/chat-groups/${encodeURIComponent(courseId)}`,
+        MEMBERS: (courseId: string) =>
+          `/student/chat-groups/${encodeURIComponent(courseId)}/members`,
+      },
       KNOWLEDGE_COMMUNITY: {
         LIST: "/student/knowledge-community",
         CREATE: "/student/knowledge-community/create",

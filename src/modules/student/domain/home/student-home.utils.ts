@@ -112,10 +112,40 @@ export function mapStudentMyProfile(raw: unknown): StudentMyProfile | null {
   const badgesRaw = Array.isArray(record.earnedAchievementBadges)
     ? record.earnedAchievementBadges
     : [];
+  const phoneCountryRaw = record.phoneCountryCode;
+  const whatsAppCountryRaw = record.whatsAppCountryCode;
+  const academicTermRaw = record.academicTerm;
   return {
     userId,
     fullName: readString(record, ["fullName"]),
     profileImageUrl: readString(record, ["profileImageUrl"]) || null,
+    email: readString(record, ["email"]),
+    username: readString(record, ["username"]),
+    phoneNumber: readString(record, ["phoneNumber"]),
+    phoneCountryCode:
+      typeof phoneCountryRaw === "number" && Number.isFinite(phoneCountryRaw)
+        ? phoneCountryRaw
+        : phoneCountryRaw != null && String(phoneCountryRaw).trim() !== ""
+          ? Number(phoneCountryRaw)
+          : null,
+    whatsAppNumber: readString(record, ["whatsAppNumber"]),
+    whatsAppCountryCode:
+      typeof whatsAppCountryRaw === "number" && Number.isFinite(whatsAppCountryRaw)
+        ? whatsAppCountryRaw
+        : whatsAppCountryRaw != null && String(whatsAppCountryRaw).trim() !== ""
+          ? Number(whatsAppCountryRaw)
+          : null,
+    address: readString(record, ["address"]),
+    educationLevelId: readString(record, ["educationLevelId"]),
+    educationLevelName: readString(record, ["educationLevelName"]),
+    gradeId: readString(record, ["gradeId"]),
+    gradeName: readString(record, ["gradeName"]),
+    schoolId: readString(record, ["schoolId"]),
+    schoolName: readString(record, ["schoolName"]),
+    academicTerm:
+      typeof academicTermRaw === "number" && Number.isFinite(academicTermRaw)
+        ? academicTermRaw
+        : null,
     points: readNumber(record, ["points"]),
     maxPointsEverReached: readNumber(record, ["maxPointsEverReached"]),
     achievementBadgeCount: readNumber(record, ["achievementBadgeCount"]),
@@ -133,8 +163,7 @@ export function mapStudentMyProfile(raw: unknown): StudentMyProfile | null {
         };
       })
       .filter((badge): badge is NonNullable<typeof badge> => badge != null),
-    gradeName: readString(record, ["gradeName"]),
-    schoolName: readString(record, ["schoolName"]),
+    createdAt: readString(record, ["createdAt", "createdAtUtc"]) || null,
   };
 }
 

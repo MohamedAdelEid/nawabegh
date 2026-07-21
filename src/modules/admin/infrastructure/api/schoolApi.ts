@@ -152,6 +152,7 @@ export interface GetSchoolsParams {
 export interface SchoolTableRow {
   id: string;
   schoolName: string;
+  coordinatorName: string;
   logoUrl: string;
   coordinatorName: string;
   city: string;
@@ -390,6 +391,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
     readString(record, ["cityName", "cityNameAr", "city", "address", "regionName"]) ?? "—";
   const address = readString(record, ["address"]) ?? "";
   const country = readString(record, ["country", "countryName"]) ?? "";
+  const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const logoUrl = readString(record, ["logoUrl"]) ?? "";
   const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const studentCount = formatNumber(
@@ -418,6 +420,7 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
   return {
     id: idValue,
     schoolName,
+    coordinatorName,
     logoUrl,
     coordinatorName,
     city,
