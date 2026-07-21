@@ -15,6 +15,7 @@ export interface SchoolFormValues {
   address: string;
   phoneNumber: string;
   email: string;
+  coordinatorName: string;
   loginPassword: string;
   subscriptionPlanId: SchoolSubscriptionPlanId;
   educationStageIds: SchoolEducationStageId[];

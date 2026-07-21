@@ -567,10 +567,10 @@ export async function createResourceFile(
       };
     }
 
-    if (files.length > 20) {
+    if (files.length > 50) {
       return {
         status: "BadRequest",
-        errorMessage: "Maximum 20 files per create request",
+        errorMessage: "Maximum 50 files per create request",
         data: null,
       };
     }

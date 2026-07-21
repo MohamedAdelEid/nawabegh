@@ -20,20 +20,20 @@ interface SchoolContactSectionProps {
   cityLabel: string;
   addressLabel: string;
   phoneLabel: string;
-  emailLabel: string;
+  coordinatorLabel: string;
   cityPlaceholder: string;
   addressPlaceholder: string;
   phonePlaceholder: string;
-  emailPlaceholder: string;
+  coordinatorPlaceholder: string;
   cityValue: string;
   addressValue: string;
   phoneValue: string;
-  emailValue: string;
+  coordinatorValue: string;
   onCountryChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onAddressChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
-  onEmailChange: (value: string) => void;
+  onCoordinatorChange: (value: string) => void;
 }
 
 export function SchoolContactSection({
@@ -46,20 +46,20 @@ export function SchoolContactSection({
   cityLabel,
   addressLabel,
   phoneLabel,
-  emailLabel,
+  coordinatorLabel,
   cityPlaceholder,
   addressPlaceholder,
   phonePlaceholder,
-  emailPlaceholder,
+  coordinatorPlaceholder,
   cityValue,
   addressValue,
   phoneValue,
-  emailValue,
+  coordinatorValue,
   onCountryChange,
   onCityChange,
   onAddressChange,
   onPhoneChange,
-  onEmailChange,
+  onCoordinatorChange,
 }: SchoolContactSectionProps) {
   const countrySelectOptions = [
     { value: "", label: countryPlaceholder },
@@ -95,10 +95,10 @@ export function SchoolContactSection({
           onChange={onPhoneChange}
         />
         <LabeledInput
-          label={emailLabel}
-          value={emailValue}
-          placeholder={emailPlaceholder}
-          onChange={onEmailChange}
+          label={coordinatorLabel}
+          value={coordinatorValue}
+          placeholder={coordinatorPlaceholder}
+          onChange={onCoordinatorChange}
         />
       </div>
     </SchoolFormSectionCard>

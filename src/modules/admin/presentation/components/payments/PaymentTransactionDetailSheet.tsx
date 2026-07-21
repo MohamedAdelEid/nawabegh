@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { AdminPaymentTransactionDetail } from "@/modules/admin/domain/types/payments.types";
 import { getPaymentTransactionById } from "@/modules/admin/infrastructure/api/paymentsApi";
@@ -293,28 +293,16 @@ export function SecretInput({
   placeholder?: string;
   hint?: string | null;
 }) {
-  const [visible, setVisible] = useState(false);
-
   return (
     <div className="space-y-1 text-right">
       <Label className="text-[#64748B]">{label}</Label>
-      <div className="relative">
-        <Input
-          type={visible ? "text" : "password"}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={placeholder ?? ""}
-          className="h-14 rounded-2xl border-slate-100 bg-slate-50 px-4 text-right pe-12 placeholder:text-[#94A3B8] focus-visible:ring-[#C7AF6E]/40"
-        />
-        <button
-          type="button"
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-          onClick={() => setVisible((prev) => !prev)}
-          aria-label={visible ? "Hide" : "Show"}
-        >
-          {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
-      </div>
+      <Input
+        type="password"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder ?? ""}
+        className="h-14 rounded-2xl border-slate-100 bg-slate-50 px-4 text-right placeholder:text-[#94A3B8] focus-visible:ring-[#C7AF6E]/40"
+      />
       {hint ? <p className="text-xs text-slate-400">{hint}</p> : null}
     </div>
   );

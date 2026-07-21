@@ -143,8 +143,18 @@ function readString(record: UnknownRecord | null, keys: string[], fallback = "")
   for (const key of keys) {
     const value = record[key];
     if (typeof value === "string") return value;
+    if (typeof value === "number" && Number.isFinite(value)) return String(value);
   }
   return fallback;
+}
+
+function readArray(record: UnknownRecord | null, keys: string[]): unknown[] | null {
+  if (!record) return null;
+  for (const key of keys) {
+    const value = record[key];
+    if (Array.isArray(value)) return value;
+  }
+  return null;
 }
 
 function readNumber(record: UnknownRecord | null, keys: string[]): number | null {
@@ -261,11 +271,13 @@ function extractListRows(data: unknown): unknown[] {
   if (Array.isArray(unwrapped)) return unwrapped;
   const record = asRecord(unwrapped);
   if (!record) return [];
-  for (const key of ["items", "results", "records", "list", "rows"]) {
-    const value = record[key];
-    if (Array.isArray(value)) return value;
-  }
-  return [];
+
+  const nestedRecord = asRecord(record.data);
+  return (
+    readArray(record, ["items", "results", "records", "list", "rows", "data", "courses"]) ??
+    readArray(nestedRecord, ["items", "results", "records", "list", "rows", "data", "courses"]) ??
+    []
+  );
 }
 
 function extractPageMeta(
@@ -299,7 +311,7 @@ function formatCurrency(value: number): string {
 function mapCourseListItem(item: unknown): CourseListItemDto | null {
   const record = asRecord(item);
   if (!record) return null;
-  const id = readString(record, ["id", "courseId"], "").trim();
+  const id = readString(record, ["id", "courseId", "Id", "CourseId"], "").trim();
   if (!id) return null;
 
   const statusId = courseStatusFromApi(readRecordValue(record, "status"));
@@ -433,6 +445,38 @@ function mapCourseEditData(data: unknown): CourseEditData | null {
     discountedPrice: readNumber(record, ["discountedPrice"]) ?? 0,
     accessDurationDays: readNullableNumber(record, ["accessDurationDays"]),
   };
+}
+
+export type CourseStatusCounts = Record<
+  "draft" | "pending" | "approved" | "rejected" | "archived",
+  number
+>;
+
+export async function getCourseStatusCounts(): Promise<CourseApiResult<CourseStatusCounts>> {
+  try {
+    const statuses = ["draft", "pending", "approved", "rejected", "archived"] as const;
+    const entries = await Promise.all(
+      statuses.map(async (statusId) => {
+        const status = courseStatusIdToApi(statusId);
+        if (status === undefined) return [statusId, 0] as const;
+
+        const result = await getCoursesPage({
+          status,
+          pageNumber: 1,
+          pageSize: 1,
+        });
+
+        return [statusId, result.data?.totalItems ?? 0] as const;
+      }),
+    );
+
+    return {
+      status: "Success",
+      data: Object.fromEntries(entries) as CourseStatusCounts,
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to load course status counts");
+  }
 }
 
 export async function getCoursesPage(

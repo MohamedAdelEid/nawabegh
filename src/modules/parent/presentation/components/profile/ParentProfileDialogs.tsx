@@ -12,6 +12,8 @@ import { extractApiErrorMessage } from "@/shared/infrastructure/api/apiResponse.
 import { getCountriesDropdown } from "@/shared/infrastructure/api/country.api";
 import { notify } from "@/shared/application/lib/toast";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { Input } from "@/shared/presentation/components/ui/input";
+import { Label } from "@/shared/presentation/components/ui/label";
 import {
   ModalClose,
   ModalDescription,
@@ -35,15 +37,19 @@ type FieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
 };
 
-function Field({ label, ...props }: FieldProps) {
+function Field({ label, type, className, ...props }: FieldProps) {
+  const id = props.id ?? props.name;
+
   return (
-    <label className="space-y-2 text-sm font-semibold text-slate-700">
-      <span>{label}</span>
-      <input
+    <div className="space-y-2 text-sm font-semibold text-slate-700">
+      <Label htmlFor={id}>{label}</Label>
+      <Input
         {...props}
-        className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 font-normal outline-none transition focus:border-[#C7AF6E] focus:ring-2 focus:ring-[#C7AF6E]/15"
+        id={id}
+        type={type}
+        className={`h-12 rounded-xl border border-slate-200 bg-slate-50 px-4 font-normal focus-visible:ring-[#C7AF6E]/15 ${className ?? ""}`}
       />
-    </label>
+    </div>
   );
 }
 

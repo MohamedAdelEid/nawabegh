@@ -38,6 +38,7 @@ export function mapSchoolDetailToFormValues(
     address: detail.address,
     phoneNumber: detail.phoneNumber,
     email: detail.email,
+    coordinatorName: detail.coordinatorName,
     loginPassword: "",
     subscriptionPlanId: resolveSubscriptionPlanId(detail.subscriptionPlanId),
     educationStageIds: detail.educationLevelIds,

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { CircleAlert, Loader2, Trash2, UploadCloud } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CircleAlert, FileIcon, Loader2, Trash2, UploadCloud } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import {
@@ -76,6 +76,7 @@ export function AdminHelperFileManagementAddPage({
   const [stationName, setStationName] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFileEntry[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const [courseOptions, setCourseOptions] = useState<Array<{ value: string; label: string }>>([]);
 
@@ -156,8 +157,8 @@ export function AdminHelperFileManagementAddPage({
     return courseSelectOptions.filter((option) => option.label.toLowerCase().includes(query));
   }, [courseSearchQuery, courseSelectOptions]);
 
-  const handleFilePick = async (files: FileList | null) => {
-    if (!files?.length) return;
+  const handleFilePick = async (files: FileList | File[] | null) => {
+    if (!files || (files instanceof FileList && files.length === 0) || (Array.isArray(files) && files.length === 0)) return;
     setUploadProgress(0);
     setUploading(true);
     const progressTimer = window.setInterval(() => {
@@ -249,6 +250,32 @@ export function AdminHelperFileManagementAddPage({
     notify.success(t("form.upload.deleteSuccess"));
   };
 
+  const handleDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsDragOver(false);
+      if (uploading) return;
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      if (droppedFiles.length > 0) {
+        void handleFilePick(droppedFiles);
+      }
+    },
+    [uploading],
+  );
+
   const submit = async () => {
     if (submitting) return;
     if (!stationContext && !courseId.trim()) {
@@ -298,11 +325,11 @@ export function AdminHelperFileManagementAddPage({
               },
             ];
 
-      if (filesToCreate.length > 20) {
+      if (filesToCreate.length > 50) {
         notify.error(
           locale.startsWith("ar")
-            ? "الحد الأقصى 20 ملفًا في الطلب الواحد."
-            : "Maximum 20 files per create request.",
+            ? "الحد الأقصى 50 ملفًا في الطلب الواحد."
+            : "Maximum 50 files per create request.",
         );
         return;
       }
@@ -405,31 +432,47 @@ export function AdminHelperFileManagementAddPage({
               <input
                 ref={fileInputRef}
                 type="file"
+                multiple
                 className="hidden"
-                onChange={(event) => void handleFilePick(event.target.files)}
+                onChange={(event) => {
+                  void handleFilePick(event.target.files);
+                  event.target.value = "";
+                }}
               />
               <button
                 type="button"
-                className="w-full rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-8 text-center transition-colors hover:border-[#243B5A]/30"
+                className={[
+                  "w-full rounded-2xl border-2 border-dashed p-8 text-center transition-colors",
+                  isDragOver
+                    ? "border-[#243B5A] bg-[#EEF4FD]"
+                    : "border-slate-200 bg-slate-50 hover:border-[#243B5A]/30",
+                ].join(" ")}
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
+                onDragOver={handleDragOver}
+                onDragEnter={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
-                <UploadCloud className="mx-auto h-9 w-9 text-slate-400" />
+                <UploadCloud className={[
+                  "mx-auto h-9 w-9 transition-colors",
+                  isDragOver ? "text-[#243B5A]" : "text-slate-400",
+                ].join(" ")} />
                 <p className="mt-2 font-semibold text-slate-700">
                   {uploading ? t("form.upload.uploading") : t("form.upload.title")}
                 </p>
                 <p className="text-sm text-slate-400">{t("form.upload.subtitle")}</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {locale.startsWith("ar")
+                    ? "حد أقصى 50 ملفًا في المرة الواحدة"
+                    : "Up to 50 files at once"}
+                </p>
                 {uploadedFiles.length > 0 ? (
                   <p className="mt-3 text-xs text-emerald-700">
                     {t("form.upload.uploadedCount", { count: uploadedFiles.length })}
                   </p>
                 ) : null}
               </button>
-              <p className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 text-right text-xs leading-5 text-amber-800">
-                {locale.startsWith("ar")
-                  ? "نصيحة: ارفع الملفات ملفًا بملف لتجنب تجاوز الحد الأقصى لحجم الرفع."
-                  : "Tip: Upload one file at a time to avoid upload size limits."}
-              </p>
               {uploading ? (
                 <div className="rounded-xl border border-[#D6E3F5] bg-[#F4F8FF] p-3">
                   <div className="mb-2 flex items-center justify-between text-xs text-[#1E3A66]">
@@ -450,37 +493,45 @@ export function AdminHelperFileManagementAddPage({
               {uploadedFiles.length > 0 ? (
                 <div className="space-y-2 rounded-xl border border-slate-100 bg-slate-50 p-3">
                   <p className="text-xs font-semibold text-slate-700">
-                    {t("form.upload.listTitle")}
+                    {t("form.upload.listTitle")} ({uploadedFiles.length})
                   </p>
-                  {uploadedFiles.map((file) => (
-                    <div
-                      key={file.fileUrl}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white p-2"
-                    >
-                      <div className="min-w-0 text-right">
-                        <p className="truncate text-xs font-semibold text-slate-700">
-                          {file.fileName}
-                        </p>
-                        <p className="truncate text-[11px] text-slate-400">{file.fileType}</p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className="h-8 px-2 text-red-600 hover:bg-red-50 hover:text-red-700"
-                        onClick={() => void handleDeleteUploadedFile(file.fileUrl)}
-                        disabled={Boolean(file.isDeleting) || uploading || submitting}
+                  <div className="max-h-[24rem] space-y-2 overflow-y-auto">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.fileUrl}
+                        className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-2.5"
                       >
-                        {file.isDeleting ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Trash2 className="h-4 w-4" />
-                            <span className="text-xs">{t("form.upload.delete")}</span>
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  ))}
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                          <FileIcon className="h-4 w-4" />
+                        </div>
+                        <div className="min-w-0 flex-1 text-right">
+                          <p className="truncate text-sm font-semibold text-slate-700" title={file.originalFileName}>
+                            {file.originalFileName || file.fileName}
+                          </p>
+                          <p className="truncate text-[11px] text-slate-400">
+                            {file.fileType}
+                            {file.fileSizeBytes ? ` · ${(file.fileSizeBytes / 1024).toFixed(0)} KB` : ""}
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="h-8 shrink-0 px-2 text-red-600 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => void handleDeleteUploadedFile(file.fileUrl)}
+                          disabled={Boolean(file.isDeleting) || uploading || submitting}
+                        >
+                          {file.isDeleting ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4" />
+                              <span className="text-xs">{t("form.upload.delete")}</span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ) : null}
             </CardContent>
@@ -489,18 +540,53 @@ export function AdminHelperFileManagementAddPage({
           <Card className="rounded-2xl border-white/80 bg-white shadow-[0px_8px_0px_0px_#0000000D]">
             <CardContent className="space-y-4 p-6 text-right">
               <h3 className="font-bold text-[#1E3A66]">{t("form.sections.identity")}</h3>
-              <LabeledInput
-                label={t("form.fields.fileName")}
-                value={fileName}
-                placeholder={t("form.fields.fileNamePlaceholder")}
-                onChange={setFileName}
-              />
-              <LabeledInput
-                label={t("form.fields.fileType")}
-                value={fileType}
-                placeholder={t("form.fields.fileTypePlaceholder")}
-                onChange={setFileType}
-              />
+              {uploadedFiles.length <= 1 ? (
+                <>
+                  <LabeledInput
+                    label={t("form.fields.fileName")}
+                    value={fileName}
+                    placeholder={t("form.fields.fileNamePlaceholder")}
+                    onChange={setFileName}
+                  />
+                  <LabeledInput
+                    label={t("form.fields.fileType")}
+                    value={fileType}
+                    placeholder={t("form.fields.fileTypePlaceholder")}
+                    onChange={setFileType}
+                  />
+                </>
+              ) : (
+                <div className="max-h-[28rem] space-y-3 overflow-y-auto">
+                  {uploadedFiles.map((file, index) => (
+                    <div key={file.fileUrl} className="rounded-xl border border-slate-100 bg-slate-50 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-slate-500">
+                        {locale.startsWith("ar") ? `ملف ${index + 1}` : `File ${index + 1}`}
+                      </p>
+                      <LabeledInput
+                        label={t("form.fields.fileName")}
+                        value={file.originalFileName || file.fileName}
+                        placeholder={t("form.fields.fileNamePlaceholder")}
+                        onChange={(value) => {
+                          setUploadedFiles((prev) =>
+                            prev.map((f) =>
+                              f.fileUrl === file.fileUrl
+                                ? { ...f, originalFileName: value, fileName: value }
+                                : f,
+                            ),
+                          );
+                        }}
+                      />
+                      <LabeledInput
+                        label={t("form.fields.fileType")}
+                        value={file.fileType}
+                        placeholder={t("form.fields.fileTypePlaceholder")}
+                        onChange={() => undefined}
+                        readOnly
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
