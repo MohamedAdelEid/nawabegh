@@ -14,7 +14,7 @@ const CHANGE_PASSWORD_URL = `${PROFILE_URL}/change-password`;
 
 export async function fetchParentProfile(): Promise<ParentProfile> {
   const response = await httpClient.get<ParentProfile>({ url: PROFILE_URL });
-  return resolveApiData(response);
+  return resolveApiData<ParentProfile>(response);
 }
 
 export async function updateParentProfile(

@@ -442,7 +442,7 @@ export function useChallengeStation({
 
   return {
     phase,
-    busy,
+    busy, 
     actionError,
     intro: introQuery.data,
     overview: overviewQuery.data,

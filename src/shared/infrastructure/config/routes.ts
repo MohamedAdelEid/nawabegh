@@ -350,7 +350,57 @@ export const ROUTES = {
     },
     PARENT: {
       HOME: "/parent/dashboard",
+      CHILDREN_STATS: "/parent/children-stats",
+      CHILDREN: "/parent/children",
+      CHILDREN_ADD: "/parent/children/add",
+      CHILD_DETAILS: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}`,
+      CHILD_REPORT: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/report`,
+      CHILD_SCHEDULE: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/schedule`,
+      CHILD_SETTINGS: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/settings`,
+      /** Child learning overview — subjects grid */
+      CHILD_LEARNING: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/learning`,
+      CHILD_COURSES: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/courses`,
+      CHILD_COURSE_JOURNEY: (studentUserId: string, courseId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/courses/${encodeURIComponent(courseId)}/journey`,
+      CHILD_COURSE_RESULTS: (studentUserId: string, courseId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/courses/${encodeURIComponent(courseId)}/results`,
+      CHILD_QUIZ_REVIEW: (studentUserId: string, stationId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/stations/${encodeURIComponent(stationId)}/quiz-review`,
+      CHILD_FLASHCARDS: (studentUserId: string, stationId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/stations/${encodeURIComponent(stationId)}/flashcards`,
+      CHILD_RESOURCES: (studentUserId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/resources`,
+      CHILD_RESOURCE_VIEW: (
+        studentUserId: string,
+        resourceId: string,
+        kind?: string,
+      ) => {
+        const base = `/parent/children/${encodeURIComponent(studentUserId)}/resources/${encodeURIComponent(resourceId)}`;
+        return kind ? `${base}?kind=${encodeURIComponent(kind)}` : base;
+      },
+      CHILD_STATION: (studentUserId: string, stationId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/stations/${encodeURIComponent(stationId)}`,
+      CHILD_COURSE_CHAT: (studentUserId: string, courseId: string) =>
+        `/parent/children/${encodeURIComponent(studentUserId)}/courses/${encodeURIComponent(courseId)}/chat`,
+      COURSES_CATALOG: "/parent/courses",
+      COURSE_DETAIL: (courseId: string) =>
+        `/parent/courses/${encodeURIComponent(courseId)}`,
+      COURSE_CHECKOUT: (courseId: string) =>
+        `/parent/courses/${encodeURIComponent(courseId)}/checkout`,
+      CHECKOUT_RESULT: "/parent/checkout/result",
+      PAYMENTS: "/parent/payments",
+      PAYMENTS_TRANSACTIONS: "/parent/payments/transactions",
+      CONVERSATIONS: "/parent/conversations",
+      HELP: "/parent/help",
       SETTINGS: "/parent/settings",
+      /** Profile screen — served at settings in current IA. */
+      PROFILE: "/parent/settings",
     },
     SCHOOL: {
       HOME: "/school/dashboard",
