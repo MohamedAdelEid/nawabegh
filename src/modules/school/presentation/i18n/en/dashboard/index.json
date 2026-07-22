@@ -768,6 +768,7 @@
         "rulesQuote": "A good contribution always starts with a precise question or a clear idea.",
         "tipTitle": "Smart tip",
         "tipBody": "Use headings and lists to make your post easier to read and more engaging.",
+        "loadCategoriesError": "Failed to load categories.",
         "validation": {
           "title": "Title is required.",
           "category": "Category is required.",
@@ -925,23 +926,40 @@
         },
         "score": {
           "title": "Current score",
-          "round": "Round {current} of {total}"
+          "round": "Round {current} of {total}",
+          "empty": "No live match score yet.",
+          "emptyHint": "Create a match, then mark it live from the match schedule tab.",
+          "manage": "Update live score",
+          "homeScore": "Home score",
+          "awayScore": "Away score",
+          "setsHome": "Sets won (home)",
+          "setsAway": "Sets won (away)",
+          "remainingSeconds": "Remaining seconds",
+          "updateLive": "Update score",
+          "complete": "Mark completed",
+          "invalid": "Enter valid scores."
         },
         "feed": {
           "title": "Important updates",
           "empty": "No updates yet.",
           "placeholder": "Add an update now",
           "send": "Send",
+          "teamOptional": "Team (optional)",
           "icons": {
-            "lightning": "Highlight",
-            "pin": "Pin",
-            "trophy": "Trophy",
-            "update": "Update"
+            "success": "Success",
+            "round": "Round",
+            "trophy": "Trophy"
           }
         },
         "poll": {
           "title": "Live poll",
-          "votes": "Based on {count} audience votes."
+          "votes": "Based on {count} audience votes.",
+          "createTitle": "Create live poll",
+          "createHint": "Creating a new poll closes any previous active poll.",
+          "questionPlaceholder": "Who do you think will win?",
+          "optionPlaceholder": "Option {index}",
+          "create": "Create poll",
+          "invalid": "Add a question and at least two options."
         },
         "standings": {
           "title": "General team ranking",
@@ -953,11 +971,26 @@
         },
         "matches": {
           "empty": "No matches scheduled.",
-          "vs": "vs"
+          "vs": "vs",
+          "createTitle": "Create match",
+          "createHint": "Matches are created manually — there is no auto bracket.",
+          "needTeams": "Create at least two teams linked to this event first.",
+          "round": "Round",
+          "roundLabel": "Round {round}",
+          "scheduledAt": "Scheduled at",
+          "time": "Time",
+          "confirmDate": "Confirm",
+          "homeTeam": "Home team",
+          "awayTeam": "Away team",
+          "selectTeam": "Select team",
+          "create": "Create match",
+          "goLive": "Go live",
+          "invalid": "Choose two different teams, a round, and a schedule time."
         },
         "honor": {
           "empty": "No honor board entries yet.",
-          "points": "points"
+          "points": "points",
+          "captain": "Team captain"
         },
         "actions": {
           "createTeam": "Create team",
@@ -965,7 +998,11 @@
         },
         "messages": {
           "posted": "Update posted",
-          "voted": "Vote submitted"
+          "voted": "Vote submitted",
+          "scoreUpdated": "Score updated",
+          "matchLive": "Match is now live",
+          "matchCreated": "Match created",
+          "pollCreated": "Poll created"
         }
       },
       "teams": {

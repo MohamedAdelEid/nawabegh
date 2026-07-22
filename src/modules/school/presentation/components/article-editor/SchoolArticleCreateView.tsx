@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { useSchoolCommunityArticleEditor } from "@/modules/school/application/hooks/useSchoolCommunityArticleEditor";
-import { getKnowledgeCommunityCategoriesDropdown } from "@/modules/teacher/infrastructure/api/knowledgeCommunityCategoriesApi";
+import { getSchoolCommunityCategoriesDropdown } from "@/modules/school/infrastructure/api/schoolCommunityApi";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
@@ -58,24 +58,24 @@ export function SchoolArticleCreateView({ articleId }: { articleId?: string }) {
     let cancelled = false;
     setCategoriesLoading(true);
 
-    void getKnowledgeCommunityCategoriesDropdown({ pageNumber: 1, pageSize: 200 }).then(
-      (result) => {
+    void getSchoolCommunityCategoriesDropdown({ pageNumber: 1, pageSize: 200 })
+      .then((rows) => {
         if (cancelled) return;
-        const rows = result.data ?? [];
         setCategories(rows.map((item) => ({ id: item.id, label: item.name })));
-
-        if (result.errorMessage && rows.length === 0) {
-          notify.error(result.errorMessage);
-        }
-
-        setCategoriesLoading(false);
-      },
-    );
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setCategories([]);
+        notify.error(err instanceof Error ? err.message : t("create.loadCategoriesError"));
+      })
+      .finally(() => {
+        if (!cancelled) setCategoriesLoading(false);
+      });
 
     return () => {
       cancelled = true;
     };
-  }, [locale]);
+  }, [locale, t]);
 
   useEffect(() => {
     if (!articleId || !editor.detail || hydratedRef.current) return;

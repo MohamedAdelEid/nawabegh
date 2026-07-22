@@ -393,7 +393,6 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
   const country = readString(record, ["country", "countryName"]) ?? "";
   const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const logoUrl = readString(record, ["logoUrl"]) ?? "";
-  const coordinatorName = readString(record, ["coordinatorName"]) ?? "";
   const studentCount = formatNumber(
     readNumber(record, ["studentsCount", "studentCount", "totalStudents"]),
   );
@@ -422,7 +421,6 @@ function mapSchoolRow(item: unknown, index: number, pageNumber: number, pageSize
     schoolName,
     coordinatorName,
     logoUrl,
-    coordinatorName,
     city,
     address,
     country,

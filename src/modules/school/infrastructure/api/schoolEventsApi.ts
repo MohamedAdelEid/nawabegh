@@ -1,5 +1,9 @@
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import type {
+  CreateSchoolEventMatchPayload,
+  CreateSchoolEventPollPayload,
+  PatchSchoolEventMatchScorePayload,
+  PostSchoolEventActivityPayload,
   SchoolEventCard,
   SchoolEventDetail,
   SchoolEventFeedItem,
@@ -9,6 +13,7 @@ import type {
   SchoolEventLiveHero,
   SchoolEventLiveScore,
   SchoolEventMatch,
+  SchoolEventMatchStatus,
   SchoolEventMeta,
   SchoolEventMetaOption,
   SchoolEventNextMatch,
@@ -245,6 +250,7 @@ function mapFeedItem(value: unknown): SchoolEventFeedItem | null {
     createdAt: readNullableString(record, ["createdAt", "timestamp"]),
     relativeTimeLabel: readString(record, ["relativeTimeLabel", "timeAgo", "relativeTime"]),
     icon: readNullableString(record, ["icon", "iconType", "type"]),
+    teamId: readNullableNumber(record, ["teamId"]),
   };
 }
 
@@ -313,6 +319,7 @@ function mapScore(value: unknown): SchoolEventLiveScore | null {
   const homePoints = readNumber(record, ["homePoints", "teamAPoints", "homeScore", "leftPoints"]);
   const awayPoints = readNumber(record, ["awayPoints", "teamBPoints", "awayScore", "rightPoints"]);
   return {
+    matchId: readNullableNumber(record, ["matchId", "id", "currentMatchId"]),
     homeTeamId: readTeamId(
       record,
       ["homeTeamId", "teamAId"],
@@ -337,6 +344,8 @@ function mapScore(value: unknown): SchoolEventLiveScore | null {
       ["awayTeam", "teamB", "rightTeam"],
     ),
     awayPoints,
+    setsWonHome: readNumber(record, ["setsWonHome", "homeSets"]),
+    setsWonAway: readNumber(record, ["setsWonAway", "awaySets"]),
     scoreLabel:
       readString(record, ["scoreLabel"]) ||
       `${homePoints} : ${awayPoints}`,
@@ -403,8 +412,11 @@ function mapNextMatch(value: unknown): SchoolEventNextMatch | null {
   );
   if (!homeTeamName && !awayTeamName) return null;
   return {
-    startsAt: readNullableString(record, ["startsAt", "startAt"]),
+    matchId: readNullableNumber(record, ["matchId", "id"]),
+    startsAt: readNullableString(record, ["startsAt", "startAt", "scheduledAt"]),
     timeLabel: readString(record, ["timeLabel", "label"]),
+    homeTeamId: readTeamId(record, ["homeTeamId", "teamAId"], ["homeTeam", "teamA"]),
+    awayTeamId: readTeamId(record, ["awayTeamId", "teamBId"], ["awayTeam", "teamB"]),
     homeTeamName: homeTeamName || "—",
     awayTeamName: awayTeamName || "—",
   };
@@ -416,8 +428,8 @@ function mapHero(value: unknown, fallbackTitle = ""): SchoolEventLiveHero {
     title: readString(record, ["title", "name", "eventTitle"], fallbackTitle),
     description: readString(record, ["description", "subtitle", "summary"]),
     seriesLabel: readNullableString(record, ["seriesLabel", "series", "championshipLabel"]),
-    statusLabel: readString(record, ["statusLabel", "liveLabel"], "Live"),
-    isLive: readBoolean(record, ["isLive", "live"], true),
+    statusLabel: readString(record, ["liveStatusLabel", "statusLabel", "liveLabel"], "Live"),
+    isLive: readBoolean(record, ["isLive", "live"], false),
     bannerImageUrl: readNullableString(record, ["bannerImageUrl", "coverImageUrl", "imageUrl"]),
   };
 }
@@ -425,23 +437,30 @@ function mapHero(value: unknown, fallbackTitle = ""): SchoolEventLiveHero {
 function mapLiveDashboard(value: unknown): SchoolEventLiveDashboard {
   const record = asRecord(value);
   const scoreSource =
+    asRecord(record?.currentMatch) ??
     asRecord(record?.score) ??
     asRecord(record?.currentScore) ??
     asRecord(record?.matchScore) ??
     null;
-  const pollSource = asRecord(record?.poll) ?? asRecord(record?.activePoll) ?? null;
+  const pollSource = asRecord(record?.activePoll) ?? asRecord(record?.poll) ?? null;
   const nextMatchSource =
     asRecord(record?.nextMatch) ?? asRecord(record?.upcomingMatch) ?? null;
   const heroSource = asRecord(record?.hero) ?? asRecord(record?.event) ?? record;
 
   return {
     hero: mapHero(heroSource, readString(record, ["title", "name"])),
-    score: mapScore(scoreSource ?? record),
-    feed: readArray(record, ["feed", "activity", "updates", "recentUpdates"])
+    score: mapScore(scoreSource),
+    feed: readArray(record, [
+      "activityFeed",
+      "feed",
+      "activity",
+      "updates",
+      "recentUpdates",
+    ])
       .map(mapFeedItem)
       .filter((item): item is SchoolEventFeedItem => item !== null),
     poll: mapPoll(pollSource),
-    standings: readArray(record, ["standings", "teamStandings", "rankings"])
+    standings: readArray(record, ["teamStandings", "standings", "rankings"])
       .map(mapStanding)
       .filter((item): item is SchoolEventStandingEntry => item !== null)
       .slice(0, 5),
@@ -464,15 +483,22 @@ function mapMatch(value: unknown): SchoolEventMatch | null {
     ["awayTeam", "teamB"],
   );
   if (!id || (!homeTeamName && !awayTeamName)) return null;
+  const statusRaw = readString(record, ["status"], "scheduled");
+  const status = statusRaw.toLowerCase() as SchoolEventMatchStatus;
+  const round = readNumber(record, ["round"]);
   return {
     id,
+    round,
+    homeTeamId: readTeamId(record, ["homeTeamId", "teamAId"], ["homeTeam", "teamA"]),
+    awayTeamId: readTeamId(record, ["awayTeamId", "teamBId"], ["awayTeam", "teamB"]),
     homeTeamName: homeTeamName || "—",
     awayTeamName: awayTeamName || "—",
     homeScore: readNullableNumber(record, ["homeScore", "teamAScore"]),
     awayScore: readNullableNumber(record, ["awayScore", "teamBScore"]),
-    startsAt: readNullableString(record, ["startsAt", "startAt"]),
-    statusLabel: readString(record, ["statusLabel", "status"]),
-    roundLabel: readString(record, ["roundLabel", "round"]),
+    startsAt: readNullableString(record, ["startsAt", "startAt", "scheduledAt"]),
+    status,
+    statusLabel: readString(record, ["statusLabel"], statusRaw),
+    roundLabel: readString(record, ["roundLabel"]) || (round ? String(round) : ""),
   };
 }
 
@@ -482,6 +508,8 @@ function mapHonorEntry(value: unknown): SchoolEventHonorEntry | null {
   const fullName = readString(record, ["fullName", "name", "studentName"]);
   const rank = readNumber(record, ["rank", "position"]);
   if (!fullName || !rank) return null;
+  const isCaptain = readBoolean(record, ["isCaptain", "captain"], true);
+  const roleLabel = readString(record, ["roleLabel", "role", "title"]);
   return {
     rank,
     fullName,
@@ -489,6 +517,9 @@ function mapHonorEntry(value: unknown): SchoolEventHonorEntry | null {
     points: readNumber(record, ["points", "score"]),
     pointsLabel: readString(record, ["pointsLabel", "scoreLabel"]),
     gradeLabel: readString(record, ["gradeLabel", "grade", "className"]),
+    teamName: readString(record, ["teamName", "team"]),
+    isCaptain,
+    roleLabel,
   };
 }
 
@@ -605,25 +636,28 @@ export async function getSchoolEventActivity(
 
 export async function postSchoolEventActivity(
   id: number | string,
-  message: string,
-  iconType: string = "Update",
+  payload: PostSchoolEventActivityPayload,
 ): Promise<SchoolEventFeedItem> {
+  const body: Record<string, unknown> = {
+    message: payload.message,
+    iconType: payload.iconType,
+  };
+  if (payload.teamId != null) body.teamId = payload.teamId;
+
   const response = await httpClient.post<unknown>({
     url: `${BASE}/${id}/activity`,
-    data: {
-      message,
-      iconType,
-    },
+    data: body,
   });
   assertSuccess(response, "Failed to post activity");
   const mapped = mapFeedItem(unwrap(response.data));
   if (!mapped) {
     return {
       id: Date.now(),
-      message,
+      message: payload.message,
       createdAt: new Date().toISOString(),
       relativeTimeLabel: "",
-      icon: iconType,
+      icon: payload.iconType,
+      teamId: payload.teamId ?? null,
     };
   }
   return mapped;
@@ -642,6 +676,50 @@ export async function getSchoolEventMatches(
   return rows
     .map(mapMatch)
     .filter((item): item is SchoolEventMatch => item !== null);
+}
+
+export async function createSchoolEventMatch(
+  eventId: number | string,
+  payload: CreateSchoolEventMatchPayload,
+): Promise<SchoolEventMatch> {
+  const response = await httpClient.post<unknown>({
+    url: `${BASE}/${eventId}/matches`,
+    data: payload,
+  });
+  assertSuccess(response, "Failed to create match");
+  const mapped = mapMatch(unwrap(response.data));
+  if (!mapped) {
+    throw new Error("Failed to create match");
+  }
+  return mapped;
+}
+
+export async function patchSchoolEventMatchScore(
+  eventId: number | string,
+  matchId: number | string,
+  payload: PatchSchoolEventMatchScorePayload,
+): Promise<SchoolEventMatch | null> {
+  const response = await httpClient.patch<unknown>({
+    url: `${BASE}/${eventId}/matches/${matchId}/score`,
+    data: payload,
+  });
+  assertSuccess(response, "Failed to update match score");
+  return mapMatch(unwrap(response.data));
+}
+
+export async function createSchoolEventPoll(
+  eventId: number | string,
+  payload: CreateSchoolEventPollPayload,
+): Promise<SchoolEventPoll | null> {
+  const response = await httpClient.post<unknown>({
+    url: `${BASE}/${eventId}/polls`,
+    data: {
+      question: payload.question,
+      options: payload.options.filter((option) => option.trim().length > 0),
+    },
+  });
+  assertSuccess(response, "Failed to create poll");
+  return mapPoll(unwrap(response.data));
 }
 
 export async function getSchoolEventStandings(

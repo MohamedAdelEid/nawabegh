@@ -387,8 +387,23 @@ export async function getSchoolCommunityMeta(): Promise<UnknownRecord> {
   return asRecord(response.data) ?? {};
 }
 
-export async function getSchoolCommunityCategoriesDropdown(): Promise<SchoolCommunityDropdownOption[]> {
-  const response = await httpClient.get<unknown>({ url: `${BASE}/categories/dropdown` });
+export type SchoolCommunityCategoriesDropdownParams = {
+  keyword?: string;
+  pageNumber?: number;
+  pageSize?: number;
+};
+
+export async function getSchoolCommunityCategoriesDropdown(
+  params: SchoolCommunityCategoriesDropdownParams = {},
+): Promise<SchoolCommunityDropdownOption[]> {
+  const response = await httpClient.get<unknown>({
+    url: `${BASE}/categories/dropdown`,
+    params: {
+      keyword: params.keyword?.trim() || undefined,
+      pageNumber: params.pageNumber ?? 1,
+      pageSize: params.pageSize ?? 200,
+    },
+  });
   if (isFailure(response)) {
     throw new Error(failMessage(response, "Failed to load categories"));
   }

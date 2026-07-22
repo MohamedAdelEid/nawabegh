@@ -1,19 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowDown,
   ArrowUp,
   CalendarDays,
+  CheckCircle2,
+  CircleDot,
   Flame,
   Heart,
-  MapPin,
   Medal,
   Send,
   Trophy,
-  Zap,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import {
@@ -21,29 +21,41 @@ import {
   useSchoolEventLive,
   useSchoolEventMatches,
   useSchoolEventMutations,
+  useSchoolEventStandings,
 } from "@/modules/school/application/hooks/useSchoolEvents";
+import type {
+  SchoolEventActivityIconType,
+  SchoolEventMatchStatus,
+} from "@/modules/school/domain/types/schoolEvents.types";
 import { cn } from "@/shared/application/lib/cn";
 import { formatDate, formatNumber } from "@/shared/application/lib/format";
 import { notify } from "@/shared/application/lib/toast";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { DateTimePicker } from "@/shared/presentation/components/ui/date-time-picker";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user/UserAvatarImageOrInitials";
 import { SchoolEventLiveSkeleton } from "./SchoolEventsSkeletons";
 import { SchoolTeamAvatar } from "./SchoolTeamAvatar";
 
 type LiveTab = "live" | "matches" | "honor";
-type ActivityIconType = "Lightning" | "Pin" | "Trophy" | "Update";
 
 const ACTIVITY_ICON_OPTIONS: Array<{
-  value: ActivityIconType;
-  icon: typeof Zap;
+  value: SchoolEventActivityIconType;
+  icon: typeof CheckCircle2;
+  tone: string;
 }> = [
-  { value: "Lightning", icon: Zap },
-  { value: "Pin", icon: MapPin },
-  { value: "Trophy", icon: Trophy },
-  { value: "Update", icon: Send },
+  { value: "success", icon: CheckCircle2, tone: "text-emerald-600" },
+  { value: "round", icon: CircleDot, tone: "text-sky-600" },
+  { value: "trophy", icon: Trophy, tone: "text-amber-600" },
 ];
+
+function localDateTimeToIso(value: string) {
+  if (!value) return "";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "";
+  return parsed.toISOString();
+}
 
 function formatTimer(seconds: number, fallback: string) {
   if (fallback) return fallback;
@@ -55,16 +67,16 @@ function formatTimer(seconds: number, fallback: string) {
 
 function FeedIcon({ type }: { type: string | null }) {
   const normalized = (type ?? "").toLowerCase();
-  if (normalized.includes("trophy") || normalized.includes("medal")) {
-    return <Trophy className="size-4" />;
+  if (normalized.includes("trophy")) {
+    return <Trophy className="size-4 text-amber-600" />;
   }
-  if (normalized.includes("pin") || normalized.includes("map")) {
-    return <MapPin className="size-4" />;
+  if (normalized.includes("round")) {
+    return <CircleDot className="size-4 text-sky-600" />;
   }
-  if (normalized.includes("update") || normalized.includes("send")) {
-    return <Send className="size-4" />;
+  if (normalized.includes("success") || normalized.includes("check")) {
+    return <CheckCircle2 className="size-4 text-emerald-600" />;
   }
-  return <Zap className="size-4" />;
+  return <Send className="size-4 text-sky-600" />;
 }
 
 export function SchoolEventLiveView({ eventId }: { eventId: string }) {
@@ -73,14 +85,41 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
   const locale = useLocale();
   const [tab, setTab] = useState<LiveTab>("live");
   const [message, setMessage] = useState("");
-  const [iconType, setIconType] = useState<ActivityIconType>("Lightning");
+  const [iconType, setIconType] = useState<SchoolEventActivityIconType>("success");
+  const [activityTeamId, setActivityTeamId] = useState("");
+  const [homeScoreDraft, setHomeScoreDraft] = useState("");
+  const [awayScoreDraft, setAwayScoreDraft] = useState("");
+  const [setsHomeDraft, setSetsHomeDraft] = useState("");
+  const [setsAwayDraft, setSetsAwayDraft] = useState("");
+  const [timerDraft, setTimerDraft] = useState("");
+  const [matchRound, setMatchRound] = useState("1");
+  const [matchHomeTeamId, setMatchHomeTeamId] = useState("");
+  const [matchAwayTeamId, setMatchAwayTeamId] = useState("");
+  const [matchScheduledAt, setMatchScheduledAt] = useState("");
+  const [pollQuestion, setPollQuestion] = useState("");
+  const [pollOptionA, setPollOptionA] = useState("");
+  const [pollOptionB, setPollOptionB] = useState("");
+  const [scoreSeededFor, setScoreSeededFor] = useState<string | null>(null);
+
   const liveQuery = useSchoolEventLive(eventId);
   const matchesQuery = useSchoolEventMatches(eventId);
+  const standingsQuery = useSchoolEventStandings(eventId);
   const honorQuery = useSchoolEventHonorBoard(eventId);
   const mutations = useSchoolEventMutations();
 
   const data = liveQuery.data;
   const createTeamHref = `${ROUTES.USER.SCHOOL.EVENTS.TEAMS_CREATE}?eventId=${encodeURIComponent(eventId)}`;
+
+  const teams = useMemo(() => {
+    const map = new Map<number, { teamId: number; teamName: string }>();
+    for (const entry of data?.standings ?? []) {
+      map.set(entry.teamId, { teamId: entry.teamId, teamName: entry.teamName });
+    }
+    for (const entry of standingsQuery.data ?? []) {
+      map.set(entry.teamId, { teamId: entry.teamId, teamName: entry.teamName });
+    }
+    return Array.from(map.values());
+  }, [data?.standings, standingsQuery.data]);
 
   const tabs = useMemo(
     () =>
@@ -95,13 +134,26 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
   const iconLabels = useMemo(
     () =>
       ({
-        Lightning: t("feed.icons.lightning"),
-        Pin: t("feed.icons.pin"),
-        Trophy: t("feed.icons.trophy"),
-        Update: t("feed.icons.update"),
-      }) satisfies Record<ActivityIconType, string>,
+        success: t("feed.icons.success"),
+        round: t("feed.icons.round"),
+        trophy: t("feed.icons.trophy"),
+      }) satisfies Record<SchoolEventActivityIconType, string>,
     [t],
   );
+
+  const score = data?.score ?? null;
+
+  useEffect(() => {
+    if (!score) return;
+    const scoreKey = `${score.matchId ?? "none"}-${score.homePoints}-${score.awayPoints}`;
+    if (scoreSeededFor === scoreKey) return;
+    setScoreSeededFor(scoreKey);
+    setHomeScoreDraft(String(score.homePoints));
+    setAwayScoreDraft(String(score.awayPoints));
+    setSetsHomeDraft(String(score.setsWonHome));
+    setSetsAwayDraft(String(score.setsWonAway));
+    setTimerDraft(score.timerSeconds > 0 ? String(score.timerSeconds) : "");
+  }, [score, scoreSeededFor]);
 
   const postUpdate = async () => {
     const trimmed = message.trim();
@@ -109,8 +161,11 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
     try {
       await mutations.postActivity.mutateAsync({
         id: eventId,
-        message: trimmed,
-        iconType,
+        payload: {
+          message: trimmed,
+          iconType,
+          teamId: activityTeamId ? Number(activityTeamId) : null,
+        },
       });
       setMessage("");
       notify.success(t("messages.posted"));
@@ -123,6 +178,105 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
     try {
       await mutations.votePoll.mutateAsync({ eventId, pollId, optionId });
       notify.success(t("messages.voted"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : common("actionError"));
+    }
+  };
+
+  const patchScore = async (
+    matchId: number | string,
+    status?: SchoolEventMatchStatus,
+  ) => {
+    const homeScore = Number(homeScoreDraft);
+    const awayScore = Number(awayScoreDraft);
+    if (!Number.isFinite(homeScore) || !Number.isFinite(awayScore)) {
+      notify.error(t("score.invalid"));
+      return;
+    }
+    try {
+      await mutations.patchMatchScore.mutateAsync({
+        eventId,
+        matchId,
+        payload: {
+          homeScore,
+          awayScore,
+          setsWonHome: setsHomeDraft ? Number(setsHomeDraft) : undefined,
+          setsWonAway: setsAwayDraft ? Number(setsAwayDraft) : undefined,
+          remainingSeconds: timerDraft ? Number(timerDraft) : undefined,
+          status,
+        },
+      });
+      notify.success(t("messages.scoreUpdated"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : common("actionError"));
+    }
+  };
+
+  const startMatchLive = async (matchId: number) => {
+    try {
+      await mutations.patchMatchScore.mutateAsync({
+        eventId,
+        matchId,
+        payload: {
+          homeScore: 0,
+          awayScore: 0,
+          status: "live",
+        },
+      });
+      setTab("live");
+      notify.success(t("messages.matchLive"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : common("actionError"));
+    }
+  };
+
+  const createMatch = async () => {
+    const round = Number(matchRound);
+    const homeTeamId = Number(matchHomeTeamId);
+    const awayTeamId = Number(matchAwayTeamId);
+    const scheduledAt = localDateTimeToIso(matchScheduledAt);
+    if (
+      !Number.isFinite(round) ||
+      round < 1 ||
+      !homeTeamId ||
+      !awayTeamId ||
+      homeTeamId === awayTeamId ||
+      !scheduledAt
+    ) {
+      notify.error(t("matches.invalid"));
+      return;
+    }
+    try {
+      await mutations.createMatch.mutateAsync({
+        eventId,
+        payload: { round, homeTeamId, awayTeamId, scheduledAt },
+      });
+      setMatchRound(String(round + 1));
+      setMatchHomeTeamId("");
+      setMatchAwayTeamId("");
+      setMatchScheduledAt("");
+      notify.success(t("messages.matchCreated"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : common("actionError"));
+    }
+  };
+
+  const createPoll = async () => {
+    const question = pollQuestion.trim();
+    const options = [pollOptionA.trim(), pollOptionB.trim()].filter(Boolean);
+    if (!question || options.length < 2) {
+      notify.error(t("poll.invalid"));
+      return;
+    }
+    try {
+      await mutations.createPoll.mutateAsync({
+        eventId,
+        payload: { question, options },
+      });
+      setPollQuestion("");
+      setPollOptionA("");
+      setPollOptionB("");
+      notify.success(t("messages.pollCreated"));
     } catch (error) {
       notify.error(error instanceof Error ? error.message : common("actionError"));
     }
@@ -141,8 +295,8 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
     );
   }
 
-  const score = data.score;
   const poll = data.poll;
+  const activeMatchId = score?.matchId;
 
   return (
     <div className="space-y-6">
@@ -280,8 +434,84 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
                     </span>
                   </div>
                 ) : null}
+
+                {activeMatchId != null ? (
+                  <div className="mt-5 space-y-3 border-t border-slate-100 pt-4">
+                    <p className="text-sm font-semibold text-[#1e3a5f]">{t("score.manage")}</p>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <label className="space-y-1 text-xs text-slate-500">
+                        {t("score.homeScore")}
+                        <input
+                          type="number"
+                          value={homeScoreDraft}
+                          onChange={(event) => setHomeScoreDraft(event.target.value)}
+                          className="min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-slate-500">
+                        {t("score.awayScore")}
+                        <input
+                          type="number"
+                          value={awayScoreDraft}
+                          onChange={(event) => setAwayScoreDraft(event.target.value)}
+                          className="min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-slate-500">
+                        {t("score.setsHome")}
+                        <input
+                          type="number"
+                          value={setsHomeDraft}
+                          onChange={(event) => setSetsHomeDraft(event.target.value)}
+                          className="min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-slate-500">
+                        {t("score.setsAway")}
+                        <input
+                          type="number"
+                          value={setsAwayDraft}
+                          onChange={(event) => setSetsAwayDraft(event.target.value)}
+                          className="min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                        />
+                      </label>
+                      <label className="space-y-1 text-xs text-slate-500 sm:col-span-2">
+                        {t("score.remainingSeconds")}
+                        <input
+                          type="number"
+                          value={timerDraft}
+                          onChange={(event) => setTimerDraft(event.target.value)}
+                          className="min-h-10 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                        />
+                      </label>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        className="rounded-xl bg-[#1e3a5f] text-white hover:translate-y-0 hover:bg-[#163049]"
+                        disabled={mutations.patchMatchScore.isPending}
+                        onClick={() => void patchScore(activeMatchId, "live")}
+                      >
+                        {t("score.updateLive")}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-xl"
+                        disabled={mutations.patchMatchScore.isPending}
+                        onClick={() => void patchScore(activeMatchId, "completed")}
+                      >
+                        {t("score.complete")}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
               </motion.section>
-            ) : null}
+            ) : (
+              <section className="rounded-[1.5rem] border border-dashed border-slate-200 bg-white p-5">
+                <h3 className="font-bold text-[#1e3a5f]">{t("score.title")}</h3>
+                <p className="mt-2 text-sm text-slate-500">{t("score.empty")}</p>
+                <p className="mt-1 text-xs text-slate-400">{t("score.emptyHint")}</p>
+              </section>
+            )}
 
             <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
               <h3 className="mb-4 font-bold text-[#1e3a5f]">{t("feed.title")}</h3>
@@ -291,7 +521,7 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
                 ) : (
                   data.feed.map((item) => (
                     <div key={String(item.id)} className="flex gap-3">
-                      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-50 text-sky-600">
+                      <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-50">
                         <FeedIcon type={item.icon} />
                       </div>
                       <div className="min-w-0 flex-1 rounded-2xl bg-slate-50 px-4 py-3">
@@ -323,12 +553,26 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
                         )}
                         aria-label={iconLabels[option.value]}
                       >
-                        <Icon className="size-3.5" />
+                        <Icon className={cn("size-3.5", selected ? "text-white" : option.tone)} />
                         {iconLabels[option.value]}
                       </button>
                     );
                   })}
                 </div>
+                {teams.length > 0 ? (
+                  <select
+                    value={activityTeamId}
+                    onChange={(event) => setActivityTeamId(event.target.value)}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  >
+                    <option value="">{t("feed.teamOptional")}</option>
+                    {teams.map((team) => (
+                      <option key={team.teamId} value={team.teamId}>
+                        {team.teamName}
+                      </option>
+                    ))}
+                  </select>
+                ) : null}
                 <div className="flex gap-2">
                   <input
                     value={message}
@@ -382,7 +626,39 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
                   {t("poll.votes", { count: formatNumber(poll.totalVotes, locale) })}
                 </p>
               </section>
-            ) : null}
+            ) : (
+              <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+                <h3 className="font-bold text-[#1e3a5f]">{t("poll.createTitle")}</h3>
+                <p className="mt-1 text-sm text-slate-500">{t("poll.createHint")}</p>
+                <div className="mt-4 space-y-3">
+                  <input
+                    value={pollQuestion}
+                    onChange={(event) => setPollQuestion(event.target.value)}
+                    placeholder={t("poll.questionPlaceholder")}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 px-4 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  />
+                  <input
+                    value={pollOptionA}
+                    onChange={(event) => setPollOptionA(event.target.value)}
+                    placeholder={t("poll.optionPlaceholder", { index: 1 })}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 px-4 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  />
+                  <input
+                    value={pollOptionB}
+                    onChange={(event) => setPollOptionB(event.target.value)}
+                    placeholder={t("poll.optionPlaceholder", { index: 2 })}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 px-4 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  />
+                  <Button
+                    className="rounded-xl bg-[#1e3a5f] text-white hover:translate-y-0 hover:bg-[#163049]"
+                    disabled={mutations.createPoll.isPending}
+                    onClick={() => void createPoll()}
+                  >
+                    {t("poll.create")}
+                  </Button>
+                </div>
+              </section>
+            )}
 
             <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
               <h3 className="mb-4 font-bold text-[#1e3a5f]">{t("standings.title")}</h3>
@@ -460,39 +736,131 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
       ) : null}
 
       {tab === "matches" ? (
-        <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
-          {matchesQuery.isLoading ? (
-            <p className="text-sm text-slate-500">{common("loading")}</p>
-          ) : (matchesQuery.data?.length ?? 0) === 0 ? (
-            <p className="text-sm text-slate-500">{t("matches.empty")}</p>
-          ) : (
-            <div className="space-y-3">
-              {matchesQuery.data?.map((match) => (
-                <div
-                  key={match.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"
-                >
-                  <div>
-                    <p className="text-xs text-slate-500">
-                      {[match.roundLabel, match.statusLabel].filter(Boolean).join(" • ")}
-                    </p>
-                    <p className="mt-1 font-semibold text-slate-800">
-                      {match.homeTeamName} {t("matches.vs")} {match.awayTeamName}
-                    </p>
-                    {match.startsAt ? (
-                      <p className="mt-1 text-xs text-slate-500">
-                        {formatDate(match.startsAt, locale)}
-                      </p>
-                    ) : null}
-                  </div>
-                  <p className="text-xl font-bold text-[#1e3a5f]">
-                    {match.homeScore ?? "-"} : {match.awayScore ?? "-"}
-                  </p>
+        <div className="space-y-5">
+          <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+            <h3 className="font-bold text-[#1e3a5f]">{t("matches.createTitle")}</h3>
+            <p className="mt-1 text-sm text-slate-500">{t("matches.createHint")}</p>
+            {teams.length < 2 ? (
+              <p className="mt-4 text-sm text-amber-700">{t("matches.needTeams")}</p>
+            ) : (
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <label className="space-y-1 text-xs text-slate-500">
+                  {t("matches.round")}
+                  <input
+                    type="number"
+                    min={1}
+                    value={matchRound}
+                    onChange={(event) => setMatchRound(event.target.value)}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  />
+                </label>
+                <div className="space-y-1 text-xs text-slate-500">
+                  {t("matches.scheduledAt")}
+                  <DateTimePicker
+                    value={matchScheduledAt}
+                    onChange={setMatchScheduledAt}
+                    locale={locale}
+                    ariaLabel={t("matches.scheduledAt")}
+                    placeholder={t("matches.scheduledAt")}
+                    timeLabel={t("matches.time")}
+                    confirmLabel={t("matches.confirmDate")}
+                  />
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
+                <label className="space-y-1 text-xs text-slate-500">
+                  {t("matches.homeTeam")}
+                  <select
+                    value={matchHomeTeamId}
+                    onChange={(event) => setMatchHomeTeamId(event.target.value)}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  >
+                    <option value="">{t("matches.selectTeam")}</option>
+                    {teams.map((team) => (
+                      <option key={team.teamId} value={team.teamId}>
+                        {team.teamName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="space-y-1 text-xs text-slate-500">
+                  {t("matches.awayTeam")}
+                  <select
+                    value={matchAwayTeamId}
+                    onChange={(event) => setMatchAwayTeamId(event.target.value)}
+                    className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none ring-[#1e3a5f]/20 focus:ring-2"
+                  >
+                    <option value="">{t("matches.selectTeam")}</option>
+                    {teams.map((team) => (
+                      <option key={team.teamId} value={team.teamId}>
+                        {team.teamName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <div className="md:col-span-2">
+                  <Button
+                    className="rounded-xl bg-[#1e3a5f] text-white hover:translate-y-0 hover:bg-[#163049]"
+                    disabled={mutations.createMatch.isPending}
+                    onClick={() => void createMatch()}
+                  >
+                    {t("matches.create")}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+            {matchesQuery.isLoading ? (
+              <p className="text-sm text-slate-500">{common("loading")}</p>
+            ) : (matchesQuery.data?.length ?? 0) === 0 ? (
+              <p className="text-sm text-slate-500">{t("matches.empty")}</p>
+            ) : (
+              <div className="space-y-3">
+                {matchesQuery.data?.map((match) => (
+                  <div
+                    key={match.id}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"
+                  >
+                    <div>
+                      <p className="text-xs text-slate-500">
+                        {[
+                          match.roundLabel ||
+                            (match.round ? t("matches.roundLabel", { round: match.round }) : ""),
+                          match.statusLabel || match.status,
+                        ]
+                          .filter(Boolean)
+                          .join(" • ")}
+                      </p>
+                      <p className="mt-1 font-semibold text-slate-800">
+                        {match.homeTeamName} {t("matches.vs")} {match.awayTeamName}
+                      </p>
+                      {match.startsAt ? (
+                        <p className="mt-1 text-xs text-slate-500">
+                          {formatDate(match.startsAt, locale)}
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <p className="text-xl font-bold text-[#1e3a5f]">
+                        {match.homeScore ?? "-"} : {match.awayScore ?? "-"}
+                      </p>
+                      {match.status !== "live" && match.status !== "completed" ? (
+                        <Button
+                          size="sm"
+                          className="rounded-xl bg-emerald-600 text-white hover:translate-y-0 hover:bg-emerald-700"
+                          disabled={mutations.patchMatchScore.isPending}
+                          onClick={() => void startMatchLive(match.id)}
+                        >
+                          {t("matches.goLive")}
+                        </Button>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       ) : null}
 
       {tab === "honor" ? (
@@ -519,7 +887,16 @@ export function SchoolEventLiveView({ eventId }: { eventId: string }) {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold text-slate-800">{entry.fullName}</p>
-                    <p className="text-xs text-slate-500">{entry.gradeLabel}</p>
+                    <p className="text-xs text-slate-500">
+                      {[
+                        entry.roleLabel ||
+                          (entry.isCaptain ? t("honor.captain") : ""),
+                        entry.teamName,
+                        entry.gradeLabel,
+                      ]
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </p>
                   </div>
                   <p className="font-bold text-[#1e3a5f]">
                     {entry.pointsLabel ||

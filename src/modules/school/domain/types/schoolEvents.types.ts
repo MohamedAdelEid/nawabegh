@@ -16,8 +16,17 @@ export type SchoolEventType =
   | "sports"
   | "cultural"
   | "academic"
-  | "behavioral"
   | "scientific"
+  | "other"
+  | string;
+
+export type SchoolEventActivityIconType = "success" | "round" | "trophy";
+
+export type SchoolEventMatchStatus =
+  | "scheduled"
+  | "live"
+  | "completed"
+  | "cancelled"
   | string;
 
 export interface SchoolEventKpis {
@@ -110,6 +119,7 @@ export interface UpsertSchoolEventPayload {
 }
 
 export interface SchoolEventLiveScore {
+  matchId: number | null;
   homeTeamId: number | null;
   homeTeamName: string;
   homeTeamLogoUrl: string | null;
@@ -118,6 +128,8 @@ export interface SchoolEventLiveScore {
   awayTeamName: string;
   awayTeamLogoUrl: string | null;
   awayPoints: number;
+  setsWonHome: number;
+  setsWonAway: number;
   scoreLabel: string;
   roundLabel: string;
   timerSeconds: number;
@@ -133,6 +145,7 @@ export interface SchoolEventFeedItem {
   createdAt: string | null;
   relativeTimeLabel: string;
   icon: string | null;
+  teamId: number | null;
 }
 
 export interface SchoolEventPollOption {
@@ -160,8 +173,11 @@ export interface SchoolEventStandingEntry {
 }
 
 export interface SchoolEventNextMatch {
+  matchId: number | null;
   startsAt: string | null;
   timeLabel: string;
+  homeTeamId: number | null;
+  awayTeamId: number | null;
   homeTeamName: string;
   awayTeamName: string;
 }
@@ -186,13 +202,44 @@ export interface SchoolEventLiveDashboard {
 
 export interface SchoolEventMatch {
   id: number;
+  round: number;
+  homeTeamId: number | null;
+  awayTeamId: number | null;
   homeTeamName: string;
   awayTeamName: string;
   homeScore: number | null;
   awayScore: number | null;
   startsAt: string | null;
+  status: SchoolEventMatchStatus;
   statusLabel: string;
   roundLabel: string;
+}
+
+export interface CreateSchoolEventMatchPayload {
+  round: number;
+  homeTeamId: number;
+  awayTeamId: number;
+  scheduledAt: string;
+}
+
+export interface PatchSchoolEventMatchScorePayload {
+  homeScore: number;
+  awayScore: number;
+  setsWonHome?: number;
+  setsWonAway?: number;
+  remainingSeconds?: number;
+  status?: SchoolEventMatchStatus;
+}
+
+export interface CreateSchoolEventPollPayload {
+  question: string;
+  options: string[];
+}
+
+export interface PostSchoolEventActivityPayload {
+  message: string;
+  iconType: SchoolEventActivityIconType;
+  teamId?: number | null;
 }
 
 export interface SchoolEventHonorEntry {
@@ -202,6 +249,9 @@ export interface SchoolEventHonorEntry {
   points: number;
   pointsLabel: string;
   gradeLabel: string;
+  teamName: string;
+  isCaptain: boolean;
+  roleLabel: string;
 }
 
 export type SchoolTeamPrivacy = "public" | "school" | "private";

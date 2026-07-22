@@ -139,8 +139,8 @@ export function SchoolEventCreateView({ eventId }: { eventId?: string }) {
       { value: "sports", label: locale.startsWith("ar") ? "رياضي" : "Sports" },
       { value: "cultural", label: locale.startsWith("ar") ? "ثقافي" : "Cultural" },
       { value: "academic", label: locale.startsWith("ar") ? "أكاديمي" : "Academic" },
-      { value: "behavioral", label: locale.startsWith("ar") ? "سلوكي" : "Behavioral" },
       { value: "scientific", label: locale.startsWith("ar") ? "علمي" : "Scientific" },
+      { value: "other", label: locale.startsWith("ar") ? "أخرى" : "Other" },
     ];
   }, [locale, metaQuery.data?.types]);
 

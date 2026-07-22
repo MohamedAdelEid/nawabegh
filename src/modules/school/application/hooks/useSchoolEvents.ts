@@ -8,6 +8,10 @@ import {
   schoolTeamsQueryKeys,
 } from "@/modules/school/application/constants/schoolEventsQueryKeys";
 import type {
+  CreateSchoolEventMatchPayload,
+  CreateSchoolEventPollPayload,
+  PatchSchoolEventMatchScorePayload,
+  PostSchoolEventActivityPayload,
   SchoolEventLiveDashboard,
   SchoolEventsListParams,
   SchoolTeamRankingsParams,
@@ -17,6 +21,8 @@ import type {
 import {
   archiveSchoolEvent,
   createSchoolEvent,
+  createSchoolEventMatch,
+  createSchoolEventPoll,
   getSchoolEventActivePoll,
   getSchoolEventActivity,
   getSchoolEventDetail,
@@ -27,6 +33,7 @@ import {
   getSchoolEventMeta,
   getSchoolEventStandings,
   getSchoolEventsList,
+  patchSchoolEventMatchScore,
   postSchoolEventActivity,
   publishSchoolEvent,
   updateSchoolEvent,
@@ -268,19 +275,73 @@ export function useSchoolEventMutations() {
     postActivity: useMutation({
       mutationFn: ({
         id,
-        message,
-        iconType,
+        payload,
       }: {
         id: number | string;
-        message: string;
-        iconType?: string;
-      }) => postSchoolEventActivity(id, message, iconType ?? "Update"),
+        payload: PostSchoolEventActivityPayload;
+      }) => postSchoolEventActivity(id, payload),
       onSuccess: (_data, variables) => {
         void queryClient.invalidateQueries({
           queryKey: schoolEventsQueryKeys.live(variables.id),
         });
         void queryClient.invalidateQueries({
           queryKey: [...schoolEventsQueryKeys.all, "activity", String(variables.id)],
+        });
+      },
+    }),
+    createMatch: useMutation({
+      mutationFn: ({
+        eventId,
+        payload,
+      }: {
+        eventId: number | string;
+        payload: CreateSchoolEventMatchPayload;
+      }) => createSchoolEventMatch(eventId, payload),
+      onSuccess: (_data, variables) => {
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.matches(variables.eventId),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.live(variables.eventId),
+        });
+      },
+    }),
+    patchMatchScore: useMutation({
+      mutationFn: ({
+        eventId,
+        matchId,
+        payload,
+      }: {
+        eventId: number | string;
+        matchId: number | string;
+        payload: PatchSchoolEventMatchScorePayload;
+      }) => patchSchoolEventMatchScore(eventId, matchId, payload),
+      onSuccess: (_data, variables) => {
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.matches(variables.eventId),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.live(variables.eventId),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.standings(variables.eventId),
+        });
+      },
+    }),
+    createPoll: useMutation({
+      mutationFn: ({
+        eventId,
+        payload,
+      }: {
+        eventId: number | string;
+        payload: CreateSchoolEventPollPayload;
+      }) => createSchoolEventPoll(eventId, payload),
+      onSuccess: (_data, variables) => {
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.live(variables.eventId),
+        });
+        void queryClient.invalidateQueries({
+          queryKey: schoolEventsQueryKeys.poll(variables.eventId),
         });
       },
     }),
@@ -340,6 +401,7 @@ export function useSchoolTeamMutations() {
   const queryClient = useQueryClient();
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: schoolTeamsQueryKeys.all });
+    void queryClient.invalidateQueries({ queryKey: schoolEventsQueryKeys.all });
   };
 
   return {
