@@ -154,7 +154,6 @@ export interface SchoolTableRow {
   schoolName: string;
   coordinatorName: string;
   logoUrl: string;
-  coordinatorName: string;
   city: string;
   address: string;
   country: string;
