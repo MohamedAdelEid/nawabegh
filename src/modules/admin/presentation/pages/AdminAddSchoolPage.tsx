@@ -80,7 +80,6 @@ function buildCreateSchoolPayload(
     phoneNumber: normalizeDigitsToLatin(normalizeTextInput(values.phoneNumber)),
     address: normalizeTextInput(values.address),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
-    coordinatorName: normalizeTextInput(values.coordinatorName) || undefined,
     description: normalizeTextInput(values.schoolDescription),
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
@@ -96,6 +95,7 @@ function buildUpdateSchoolPayload(
   detail: SchoolDetail,
   logoUrl: string,
 ): UpdateSchoolPayload {
+  const coordinatorName = normalizeTextInput(values.coordinatorName);
   return {
     id: schoolId,
     name: normalizeTextInput(values.schoolName),
@@ -104,10 +104,9 @@ function buildUpdateSchoolPayload(
     address: normalizeTextInput(values.address),
     description: normalizeTextInput(values.schoolDescription),
     email: normalizeDigitsToLatin(normalizeTextInput(values.email)).toLowerCase(),
-    coordinatorName: normalizeTextInput(values.coordinatorName) || undefined,
     city: normalizeTextInput(values.city),
     countryId: Number(values.countryId),
-    coordinatorName: normalizeTextInput(values.coordinatorName),
+    ...(coordinatorName ? { coordinatorName } : {}),
     educationLevelIds: values.educationStageIds,
     ...(values.loginPassword ? { loginPassword: values.loginPassword } : {}),
     status: detail.statusCode,
