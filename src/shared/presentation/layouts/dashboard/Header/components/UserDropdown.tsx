@@ -1,13 +1,16 @@
 "use client";
 
 import type React from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useSchoolHome } from "@/modules/school/application/hooks/useSchoolHome";
+import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { cn } from "@/shared/application/lib/cn";
 import { useAuth } from "@/shared/application/hooks/useAuth";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { useDropdown } from "../hooks";
-import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSession";
 
 function getInitials(name: string): string {
   return name
@@ -35,11 +38,28 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({
 }) => {
   const router = useRouter();
   const { user } = useAuth();
+  const schoolHome = useSchoolHome();
   const t = useTranslations(translationNamespace);
   const { dropdownRef } = useDropdown();
-  const displayName = user?.name || t("header.user.guestName");
+  const [avatarBroken, setAvatarBroken] = useState(false);
+
+  const schoolName = schoolHome.data?.schoolName?.trim() || "";
+  const displayName =
+    (user?.role === "School" && schoolName ? schoolName : null) ||
+    user?.name ||
+    t("header.user.guestName");
   const displayRole = roleLabel(user?.role, t);
   const settingsHref = getSettingsPathForRole(user?.role);
+
+  const avatarUrl = resolveFileUrl(
+    (user?.role === "School" ? schoolHome.data?.schoolLogoUrl : null) ||
+      user?.avatar ||
+      null,
+  );
+
+  useEffect(() => {
+    setAvatarBroken(false);
+  }, [avatarUrl]);
 
   const handleNavigateToAccount = () => {
     if (settingsHref) {
@@ -60,14 +80,15 @@ export const UserDropdown: React.FC<UserDropdownProps> = ({
         aria-label={t("header.user.menuLabel")}
       >
         <div className="relative h-11 w-11 shrink-0">
-          {user?.avatar ? (
+          {avatarUrl && !avatarBroken ? (
             <Image
-              src={user.avatar}
+              src={avatarUrl}
               alt={displayName}
               width={44}
               height={44}
               unoptimized
               className="h-full w-full rounded-full object-cover"
+              onError={() => setAvatarBroken(true)}
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center rounded-full bg-[#2C4260]">

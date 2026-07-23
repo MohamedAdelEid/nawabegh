@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { schoolAccountQueryKeys } from "@/modules/school/application/constants/schoolAccountQueryKeys";
+import { schoolHomeQueryKeys } from "@/modules/school/application/constants/schoolHomeQueryKeys";
 import type {
   SchoolAccountFormValues,
   SchoolAccountNotifications,
@@ -38,6 +39,7 @@ export function useSchoolAccountSettings() {
     mutationFn: updateSchoolAccountSettings,
     onSuccess: (data) => {
       queryClient.setQueryData(settingsKey, data);
+      void queryClient.invalidateQueries({ queryKey: schoolHomeQueryKeys.all });
     },
   });
 

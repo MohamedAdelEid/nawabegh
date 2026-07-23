@@ -1,5 +1,6 @@
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import type {
   SchoolCompetitionCenter,
   SchoolHomeAnnouncement,
@@ -156,7 +157,7 @@ export async function getSchoolHome(): Promise<SchoolHomeData> {
   return {
     schoolId: readString(record, "schoolId"),
     schoolName: readString(record, "schoolName"),
-    schoolLogoUrl: readNullableString(record, "schoolLogoUrl"),
+    schoolLogoUrl: resolveFileUrl(readNullableString(record, "schoolLogoUrl")),
     hasUnreadNotifications: readBoolean(record, "hasUnreadNotifications"),
     kpis: mapKpis(record.kpis),
     competitionCenter: mapCompetition(record.competitionCenter),
