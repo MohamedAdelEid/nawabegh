@@ -4,6 +4,8 @@ export { JourneyEditorPageSkeleton } from "./JourneyEditorPageSkeleton";
 export { JourneyEditorStationPageSkeleton } from "./JourneyEditorStationPageSkeleton";
 export { AddLearningPathModal } from "./AddLearningPathModal";
 export type { AddLearningPathDraft } from "./AddLearningPathModal";
+export { EditLearningPathModal } from "./EditLearningPathModal";
+export type { EditLearningPathDraft } from "./EditLearningPathModal";
 export { AddStationModal } from "./AddStationModal";
 export { JourneyPathCard } from "./JourneyPathCard";
 export { JourneyStationCard } from "./JourneyStationCard";

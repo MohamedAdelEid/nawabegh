@@ -2824,7 +2824,8 @@
           "stationsCount": "{count} stations added",
           "minutes": "min",
           "addStation": "Add new station to this section",
-          "deletePath": "Delete learning path"
+          "deletePath": "Delete learning path",
+          "editPath": "Edit learning path name"
         },
         "station": {
           "dragHandleAria": "Drag to reorder stations",
@@ -2856,6 +2857,8 @@
         "stationCreateError": "Failed to create station.",
         "stationDeleteError": "Failed to delete station.",
         "pathDeleteError": "Failed to delete learning path.",
+        "pathUpdateError": "Failed to update learning path.",
+        "pathUpdated": "Learning path updated successfully.",
         "loadFailed": "Failed to load journey editor.",
         "stationAdded": "Station created successfully.",
         "stationReorderError": "Failed to reorder stations."
@@ -2884,6 +2887,15 @@
         "orderPlaceholder": "e.g. 2",
         "create": "Create Path",
         "creating": "Creating...",
+        "cancel": "Cancel"
+      },
+      "editLearningPathModal": {
+        "title": "Edit Learning Path Name",
+        "description": "Update the display name of this learning path.",
+        "pathTitle": "Path Title",
+        "pathTitlePlaceholder": "e.g. Introduction to Physics",
+        "save": "Save",
+        "saving": "Saving...",
         "cancel": "Cancel"
       },
       "flashcardGroup": {

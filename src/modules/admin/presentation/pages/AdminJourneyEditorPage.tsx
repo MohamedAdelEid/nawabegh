@@ -42,6 +42,7 @@ import {
   createLearningPath,
   deleteLearningPath,
   getCourseLearningPathsForEditor,
+  updateLearningPath,
   type CourseLearningPath,
 } from "@/modules/admin/infrastructure/api/learningPathsApi";
 import {
@@ -51,11 +52,13 @@ import {
 } from "@/modules/admin/infrastructure/api/stationsApi";
 import {
   AddLearningPathModal,
+  EditLearningPathModal,
   AddStationModal,
   JourneyEditorAnimatedSection,
   JourneyEditorPageSkeleton,
   JourneyPathCard,
   type AddLearningPathDraft,
+  type EditLearningPathDraft,
 } from "@/modules/admin/presentation/components/journey-editor";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
@@ -259,10 +262,13 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
 
   const [draft, setDraft] = useState<AddStationDraft>(defaultAddStationDraft);
   const [addingPath, setAddingPath] = useState(false);
+  const [updatingPath, setUpdatingPath] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalPathId, setModalPathId] = useState<string | undefined>(undefined);
   const [addPathModalOpen, setAddPathModalOpen] = useState(false);
+  const [editPathModalOpen, setEditPathModalOpen] = useState(false);
+  const [editingPathId, setEditingPathId] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -427,6 +433,43 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
     );
   };
 
+  const openEditPathModal = (pathId: string) => {
+    setEditingPathId(pathId);
+    setEditPathModalOpen(true);
+  };
+
+  const handleUpdatePath = async (pathDraft: EditLearningPathDraft) => {
+    if (!editingPathId) return false;
+    const currentPath = data?.paths.find((path) => path.id === editingPathId);
+    if (!currentPath) return false;
+
+    setUpdatingPath(true);
+    const result = await updateLearningPath({
+      id: editingPathId,
+      title: pathDraft.title,
+      order: currentPath.order,
+    });
+    setUpdatingPath(false);
+
+    if (result.errorMessage || !result.data) {
+      notify.error(result.errorMessage ?? t("messages.pathUpdateError"));
+      return false;
+    }
+
+    const nextTitle = result.data.title || pathDraft.title;
+    setData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        paths: prev.paths.map((path) =>
+          path.id === editingPathId ? { ...path, title: nextTitle } : path,
+        ),
+      };
+    });
+    notify.success(t("messages.pathUpdated"));
+    return true;
+  };
+
   const handleCreatePath = async (pathDraft: AddLearningPathDraft) => {
     setAddingPath(true);
     const result = await createLearningPath({
@@ -526,6 +569,7 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
                 path={path}
                 onAddStation={openAddStationModal}
                 onDeleteStation={(stationId) => void handleDeleteStation(stationId)}
+                onEditPath={openEditPathModal}
                 onDeletePath={(pathId) => void handleDeletePath(pathId)}
               />
             ))
@@ -789,6 +833,18 @@ export function AdminJourneyEditorPage({ journeyId }: Props) {
         defaultOrder={Math.max(0, ...data.paths.map((path) => path.order)) + 1}
         onAdd={handleCreatePath}
         loading={addingPath}
+      />
+      <EditLearningPathModal
+        open={editPathModalOpen}
+        onOpenChange={(open) => {
+          setEditPathModalOpen(open);
+          if (!open) setEditingPathId(null);
+        }}
+        initialTitle={
+          data.paths.find((path) => path.id === editingPathId)?.title ?? ""
+        }
+        onSave={handleUpdatePath}
+        loading={updatingPath}
       />
     </div>
   );

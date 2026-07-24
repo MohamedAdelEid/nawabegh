@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Clock, GraduationCap, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Clock, GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -16,6 +16,7 @@ interface Props {
   path: JourneyPath;
   onAddStation: (pathId: string) => void;
   onDeleteStation: (stationId: string) => void;
+  onEditPath?: (pathId: string) => void;
   onDeletePath?: (pathId: string) => void;
 }
 
@@ -24,6 +25,7 @@ export function JourneyPathCard({
   path,
   onAddStation,
   onDeleteStation,
+  onEditPath,
   onDeletePath,
 }: Props) {
   const t = useTranslations("admin.dashboard.journeyEditor.editor");
@@ -69,6 +71,18 @@ export function JourneyPathCard({
             title={t("path.deletePath")}
           >
             <Trash2 className="h-5 w-5" />
+          </button>
+        ) : null}
+
+        {onEditPath ? (
+          <button
+            type="button"
+            onClick={() => onEditPath(path.id)}
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-amber-50 hover:text-[#C8AC59] transition-colors"
+            aria-label={t("path.editPath")}
+            title={t("path.editPath")}
+          >
+            <Pencil className="h-5 w-5" />
           </button>
         ) : null}
       </div>

@@ -47,6 +47,12 @@ export type CreateLearningPathPayload = {
   order: number;
 };
 
+export type UpdateLearningPathPayload = {
+  id: string;
+  title: string;
+  order: number;
+};
+
 export type CreatedLearningPath = {
   id: string;
   courseId: string;
@@ -321,6 +327,37 @@ export async function createLearningPath(
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to create learning path");
+  }
+}
+
+export async function updateLearningPath(
+  payload: UpdateLearningPathPayload,
+): Promise<LearningPathApiResult<CreatedLearningPath>> {
+  try {
+    const response = await httpClient.put<unknown>({
+      url: `/api/v1/learning-paths/${encodeURIComponent(payload.id)}`,
+      data: payload,
+    });
+    const mapped = mapCreatedLearningPath(response.data);
+    return {
+      status: response.status,
+      message: response.message,
+      errorMessage: response.error?.message,
+      data:
+        mapped ??
+        (response.error?.message
+          ? null
+          : {
+              id: payload.id,
+              courseId: "",
+              title: payload.title,
+              order: payload.order,
+              status: 0,
+              createdAt: "",
+            }),
+    };
+  } catch (error) {
+    return buildErrorResult(error, "Failed to update learning path");
   }
 }
 

@@ -2827,7 +2827,8 @@
           "stationsCount": "تمت إضافة {count} محطات",
           "minutes": "دقيقة",
           "addStation": "إضافة محطة جديدة لهذا القسم",
-          "deletePath": "حذف المسار التعليمي"
+          "deletePath": "حذف المسار التعليمي",
+          "editPath": "تعديل اسم المسار التعليمي"
         },
         "station": {
           "dragHandleAria": "سحب لإعادة ترتيب المحطات",
@@ -2859,6 +2860,8 @@
         "stationCreateError": "تعذر إنشاء المحطة.",
         "stationDeleteError": "تعذر حذف المحطة.",
         "pathDeleteError": "تعذر حذف المسار التعليمي.",
+        "pathUpdateError": "تعذر تحديث المسار التعليمي.",
+        "pathUpdated": "تم تحديث المسار التعليمي بنجاح.",
         "loadFailed": "تعذّر تحميل محرر الرحلة.",
         "stationAdded": "تم إنشاء المحطة بنجاح.",
         "stationReorderError": "تعذر إعادة ترتيب المحطات."
@@ -2887,6 +2890,15 @@
         "orderPlaceholder": "مثال: 2",
         "create": "إنشاء المسار",
         "creating": "جار الإنشاء...",
+        "cancel": "إلغاء"
+      },
+      "editLearningPathModal": {
+        "title": "تعديل اسم المسار التعليمي",
+        "description": "قم بتحديث الاسم المعروض لهذا المسار التعليمي.",
+        "pathTitle": "عنوان المسار",
+        "pathTitlePlaceholder": "مثال: مقدمة في الفيزياء",
+        "save": "حفظ",
+        "saving": "جار الحفظ...",
         "cancel": "إلغاء"
       },
       "flashcardGroup": {
