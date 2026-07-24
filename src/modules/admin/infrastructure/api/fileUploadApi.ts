@@ -1,4 +1,4 @@
-import { FILE_UPLOAD_URL } from "@/shared/infrastructure/files/fileUrl";
+import { extractUploadFilePath, FILE_UPLOAD_URL } from "@/shared/infrastructure/files/fileUrl";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -30,21 +30,7 @@ function readUploadSuccess(record: UnknownRecord | null): boolean {
 }
 
 function extractRelativeUploadPath(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return "";
-
-  if (!/^https?:\/\//i.test(trimmed)) {
-    return trimmed.replace(/^\/+/, "");
-  }
-
-  try {
-    const pathname = new URL(trimmed).pathname.replace(/^\/+/, "");
-    if (pathname.startsWith("uploads/")) return pathname;
-  } catch {
-    // Fall back to the original value below.
-  }
-
-  return trimmed;
+  return extractUploadFilePath(value) ?? "";
 }
 
 function normalizeUploadFilePath(record: UnknownRecord): string {

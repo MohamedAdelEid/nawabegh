@@ -9,7 +9,8 @@ import {
 } from "@/modules/admin/infrastructure/api/hotspotsApi";
 import { cn } from "@/shared/application/lib/cn";
 import type { HotspotPlacement } from "@/modules/admin/presentation/components/interactive-books/interactiveBookPdfViewer.types";
-import { fetchFileAsArrayBuffer } from "@/shared/infrastructure/files/fetchFileForViewer";
+import { notify } from "@/shared/application/lib/toast";
+import { fetchFileForViewer } from "@/shared/infrastructure/files/fetchFileForViewer";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -160,6 +161,7 @@ export function InteractiveBookPdfViewer({
 }: InteractiveBookPdfViewerProps) {
   const t = useScopedInteractiveBooksTranslations("managePage.viewer");
   const [loadError, setLoadError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [isResolving, setIsResolving] = useState(false);
   const [documentFile, setDocumentFile] = useState<string | ArrayBuffer | null>(null);
   const [reactPdf, setReactPdf] = useState<ReactPdfComponents | null>(null);
@@ -197,6 +199,7 @@ export function InteractiveBookPdfViewer({
 
     const load = async () => {
       setLoadError(false);
+      setNotFound(false);
       setDocumentFile(null);
 
       if (localFileUrl?.startsWith("blob:")) {
@@ -212,16 +215,22 @@ export function InteractiveBookPdfViewer({
       }
 
       setIsResolving(true);
-      const buffer = await fetchFileAsArrayBuffer(path);
+      const result = await fetchFileForViewer(path);
       if (!alive) return;
       setIsResolving(false);
 
-      if (!buffer) {
+      if (!result.ok) {
         setLoadError(true);
+        setNotFound(result.reason === "not_found");
+        notify.error(
+          result.reason === "not_found"
+            ? t("fileNotFound")
+            : t("loadError"),
+        );
         return;
       }
 
-      const blob = new Blob([buffer], { type: "application/pdf" });
+      const blob = new Blob([result.data], { type: "application/pdf" });
       objectUrl = URL.createObjectURL(blob);
       setDocumentFile(objectUrl);
     };
@@ -306,7 +315,9 @@ export function InteractiveBookPdfViewer({
           {renderDocumentSkeleton()}
         </div>
       ) : loadError || !documentFile ? (
-        <p className="py-16 text-center text-sm text-red-600">{t("loadError")}</p>
+        <p className="py-16 text-center text-sm text-red-600">
+          {notFound ? t("fileNotFound") : t("loadError")}
+        </p>
       ) : (
         <Document
           file={documentFile}

@@ -13,6 +13,7 @@ import {
   hideSchoolCommunityComment,
   rejectSchoolCommunityArticle,
   requestSchoolCommunityArticleEdits,
+  submitSchoolCommunityArticle,
   unhideSchoolCommunityArticle,
 } from "@/modules/school/infrastructure/api/schoolCommunityApi";
 import type {
@@ -48,6 +49,11 @@ export function useSchoolCommunityArticle(articleId: string) {
 
   const approve = useMutation({
     mutationFn: () => approveSchoolCommunityArticle(articleId),
+    onSuccess: invalidate,
+  });
+
+  const submit = useMutation({
+    mutationFn: () => submitSchoolCommunityArticle(articleId),
     onSuccess: invalidate,
   });
 
@@ -99,6 +105,7 @@ export function useSchoolCommunityArticle(articleId: string) {
       await Promise.all([detailQuery.refetch(), commentsQuery.refetch()]);
     },
     approve,
+    submit,
     reject,
     requestEdits,
     hide,

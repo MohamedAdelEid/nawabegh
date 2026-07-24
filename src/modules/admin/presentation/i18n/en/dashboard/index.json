@@ -1634,6 +1634,7 @@
           "noPdf": "Upload a PDF file to preview the book.",
           "loading": "Loading PDF…",
           "loadError": "Could not load the PDF file.",
+          "fileNotFound": "File not found, please try to re-submit files again.",
           "placementHint": "Click on the page to place an interaction point.",
           "saveBookFirst": "Save the interactive book before adding hotspots.",
           "chapterTitle": "Chapter three: Chemical bonds",
@@ -4104,6 +4105,7 @@
           "title": "File preview",
           "loading": "Loading file preview...",
           "loadError": "Could not load this file for preview.",
+          "fileNotFound": "File not found, please try to re-submit files again.",
           "unsupported": "In-browser preview is not available for this file type.",
           "legacyDocUnsupported": "Legacy Word files (.doc) cannot be previewed in the browser. Please upload .docx or PDF instead.",
           "legacyPptUnsupported": "Legacy PowerPoint files (.ppt) cannot be previewed in the browser. Please upload .pptx or PDF instead."

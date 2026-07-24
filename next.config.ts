@@ -10,6 +10,7 @@ function buildFileRemotePatterns(): NonNullable<NextConfig["images"]>["remotePat
     process.env.NEXT_PUBLIC_FILE_PUBLIC_BASE_URL,
     process.env.NEXT_PUBLIC_API_URL,
     "https://api.nwabigh.com",
+    "https://nawabegh-uploads.s3.eu-north-1.amazonaws.com",
   ].filter((value): value is string => Boolean(value?.trim()));
 
   const patterns = bases
@@ -26,6 +27,13 @@ function buildFileRemotePatterns(): NonNullable<NextConfig["images"]>["remotePat
       }
     })
     .filter((pattern): pattern is NonNullable<typeof pattern> => pattern !== null);
+
+  // Allow regional S3 hostnames used by upload responses (e.g. bucket.s3.eu-north-1.amazonaws.com).
+  patterns.push({
+    protocol: "https",
+    hostname: "**.amazonaws.com",
+    pathname: "/**",
+  });
 
   const seen = new Set<string>();
   return patterns.filter((pattern) => {

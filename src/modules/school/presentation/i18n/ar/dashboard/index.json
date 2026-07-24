@@ -652,7 +652,9 @@
           "unhide": "إظهار",
           "delete": "حذف",
           "approve": "اعتماد",
-          "reject": "رفض"
+          "reject": "رفض",
+          "requestEdits": "طلب تعديلات",
+          "submit": "إرسال للمراجعة"
         }
       },
       "status": {
@@ -670,6 +672,7 @@
         "unhidden": "تم إظهار المقال",
         "deleted": "تم حذف المقال",
         "editsRequested": "تم إرسال طلب التعديل",
+        "submitted": "تم إرسال المقال للمراجعة",
         "commentHidden": "تم إخفاء التعليق",
         "commentDeleted": "تم حذف التعليق",
         "draftSaved": "تم حفظ المسودة",
@@ -731,11 +734,16 @@
         "approve": "اعتماد النشر",
         "reject": "رفض المقال",
         "requestEdits": "طلب تعديلات",
+        "submit": "إرسال للمراجعة",
         "share": "نشر المقال",
         "hide": "إخفاء المقال",
         "unhide": "إظهار المقال",
         "edit": "تعديل المقال",
         "delete": "حذف المقال",
+        "likesCount": "{count} إعجاب",
+        "commentsCount": "{count} تعليق",
+        "viewsCount": "{count} مشاهدة",
+        "historyTitle": "سجل المراجعة",
         "commentsTitle": "التعليقات ({count})",
         "commentsEmpty": "لا توجد تعليقات بعد.",
         "summaryTitle": "ملخص المراجعة",

@@ -652,7 +652,9 @@
           "unhide": "Restore",
           "delete": "Delete",
           "approve": "Approve",
-          "reject": "Reject"
+          "reject": "Reject",
+          "requestEdits": "Request edits",
+          "submit": "Submit for review"
         }
       },
       "status": {
@@ -670,6 +672,7 @@
         "unhidden": "Article restored",
         "deleted": "Article deleted",
         "editsRequested": "Edit request sent",
+        "submitted": "Article submitted for review",
         "commentHidden": "Comment hidden",
         "commentDeleted": "Comment deleted",
         "draftSaved": "Draft saved",
@@ -731,11 +734,16 @@
         "approve": "Approve publication",
         "reject": "Reject article",
         "requestEdits": "Request edits",
+        "submit": "Submit for review",
         "share": "Publish article",
         "hide": "Hide article",
         "unhide": "Restore article",
         "edit": "Edit article",
         "delete": "Delete article",
+        "likesCount": "{count} likes",
+        "commentsCount": "{count} comments",
+        "viewsCount": "{count} views",
+        "historyTitle": "Moderation history",
         "commentsTitle": "Comments ({count})",
         "commentsEmpty": "No comments yet.",
         "summaryTitle": "Review summary",

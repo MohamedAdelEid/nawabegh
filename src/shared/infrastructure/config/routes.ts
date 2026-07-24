@@ -131,6 +131,7 @@ export const ROUTES = {
       ADD: "/admin/question-bank/add",
       PREVIEW: "/admin/question-bank/preview",
       PREVIEW_All: "/admin/question-bank/preview-all",
+      ONBOARDING_QUIZ: "/admin/question-bank/onboarding-quiz",
     },
     ARTICLE_EDITOR: {
       LIST: "/admin/article-editor",

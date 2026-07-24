@@ -187,16 +187,26 @@ export function AdminQuestionBankPage() {
       description={t("questionBank.description")}
       breadcrumbs={[{ label: t("tabs.home.title"), href: ROUTES.ADMIN.HOME }, { label: t("questionBank.title") }]}
       action={
-        <Button
-          type="button"
-          className="dashboard-raised-button h-14 rounded-2xl bg-[#243B5A] px-6 text-base font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
-          style={{
-            boxShadow: "0px 4px 0px 0px #1E2E42",
-          }}
-          onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.PREVIEW_All)}
-        >
-          {t("questionBank.actions.openManage")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-14 rounded-2xl border-slate-200 bg-white px-5 text-base font-semibold text-[#243B5A] hover:bg-slate-50 cursor-pointer"
+            onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.ONBOARDING_QUIZ)}
+          >
+            {t("questionBankOnboardingQuiz.actions.openPreview")}
+          </Button>
+          <Button
+            type="button"
+            className="dashboard-raised-button h-14 rounded-2xl bg-[#243B5A] px-6 text-base font-semibold text-white hover:bg-[#1D314B] cursor-pointer"
+            style={{
+              boxShadow: "0px 4px 0px 0px #1E2E42",
+            }}
+            onClick={() => router.push(ROUTES.ADMIN.QUESTION_BANK.PREVIEW_All)}
+          >
+            {t("questionBank.actions.openManage")}
+          </Button>
+        </div>
       }
     />
   );

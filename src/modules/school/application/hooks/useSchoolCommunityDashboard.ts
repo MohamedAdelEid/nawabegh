@@ -5,15 +5,21 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { useAuth } from "@/shared/application/hooks/useAuth";
 import { schoolCommunityQueryKeys } from "@/modules/school/application/constants/schoolCommunityQueryKeys";
 import {
+  approveSchoolCommunityArticle,
   deleteSchoolCommunityArticle,
   getSchoolCommunityArticles,
   getSchoolCommunityDashboard,
   hideSchoolCommunityArticle,
+  rejectSchoolCommunityArticle,
+  requestSchoolCommunityArticleEdits,
+  submitSchoolCommunityArticle,
   unhideSchoolCommunityArticle,
 } from "@/modules/school/infrastructure/api/schoolCommunityApi";
 import type {
   SchoolArticleStatusFilter,
   SchoolCommunityContentSource,
+  SchoolCommunityRejectPayload,
+  SchoolCommunityRequestEditsPayload,
 } from "@/modules/school/domain/types/schoolCommunity.types";
 
 const PAGE_SIZE = 10;
@@ -90,6 +96,38 @@ export function useSchoolCommunityDashboard() {
     onSuccess: invalidate,
   });
 
+  const approve = useMutation({
+    mutationFn: approveSchoolCommunityArticle,
+    onSuccess: invalidate,
+  });
+
+  const reject = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: SchoolCommunityRejectPayload;
+    }) => rejectSchoolCommunityArticle(id, payload),
+    onSuccess: invalidate,
+  });
+
+  const requestEdits = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: SchoolCommunityRequestEditsPayload;
+    }) => requestSchoolCommunityArticleEdits(id, payload),
+    onSuccess: invalidate,
+  });
+
+  const submit = useMutation({
+    mutationFn: submitSchoolCommunityArticle,
+    onSuccess: invalidate,
+  });
+
   const totalPages = query.data?.pagination.totalPages ?? 1;
   useEffect(() => {
     if (query.data && pageNumber > totalPages) setPageNumber(totalPages);
@@ -113,6 +151,10 @@ export function useSchoolCommunityDashboard() {
     hide,
     unhide,
     remove,
+    approve,
+    reject,
+    requestEdits,
+    submit,
     invalidate,
   };
 }

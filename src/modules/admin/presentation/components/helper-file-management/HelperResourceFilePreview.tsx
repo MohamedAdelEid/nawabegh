@@ -10,7 +10,8 @@ import {
   mimeTypeForPreviewKind,
   type ResourcePreviewKind,
 } from "@/modules/admin/presentation/components/helper-file-management/detectResourcePreviewKind";
-import { fetchFileAsArrayBuffer } from "@/shared/infrastructure/files/fetchFileForViewer";
+import { notify } from "@/shared/application/lib/toast";
+import { fetchFileForViewer } from "@/shared/infrastructure/files/fetchFileForViewer";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -52,6 +53,7 @@ export function HelperResourceFilePreview({
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const [reactPdf, setReactPdf] = useState<ReactPdfComponents | null>(null);
   const [pdfPages, setPdfPages] = useState(0);
 
@@ -77,6 +79,7 @@ export function HelperResourceFilePreview({
     const load = async () => {
       setLoading(true);
       setLoadError(false);
+      setNotFound(false);
       setFileBuffer(null);
       setBlobUrl(null);
       setPdfPages(0);
@@ -90,15 +93,20 @@ export function HelperResourceFilePreview({
         return;
       }
 
-      const buffer = await fetchFileAsArrayBuffer(fileUrl);
+      const result = await fetchFileForViewer(fileUrl);
       if (!alive) return;
 
-      if (!buffer || buffer.byteLength === 0) {
+      if (!result.ok) {
         setLoadError(true);
+        setNotFound(result.reason === "not_found");
         setLoading(false);
+        notify.error(
+          result.reason === "not_found" ? t("fileNotFound") : t("loadError"),
+        );
         return;
       }
 
+      const buffer = result.data;
       setFileBuffer(buffer);
 
       if (previewKind !== "docx" && previewKind !== "pptx") {
@@ -157,7 +165,9 @@ export function HelperResourceFilePreview({
   if (loadError || !fileBuffer) {
     return (
       <PreviewShell title={t("title")}>
-        <p className="py-12 text-center text-sm text-red-600">{t("loadError")}</p>
+        <p className="py-12 text-center text-sm text-red-600">
+          {notFound ? t("fileNotFound") : t("loadError")}
+        </p>
       </PreviewShell>
     );
   }

@@ -3,17 +3,21 @@
 import { useMemo, useState } from "react";
 import {
   AlertCircle,
+  Check,
   CheckCircle2,
   ClipboardList,
   Eye,
   EyeOff,
+  FilePenLine,
   FileText,
   Heart,
   MessageSquare,
   Pencil,
   Plus,
+  Send,
   Settings2,
   Trash2,
+  X,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -26,6 +30,8 @@ import type {
   SchoolCommunityContentSource,
 } from "@/modules/school/domain/types/schoolCommunity.types";
 import { SchoolArticleEditorDashboardSkeleton } from "@/modules/school/presentation/components/article-editor/SchoolArticleEditorDashboardSkeleton";
+import { SchoolArticleRejectModal } from "@/modules/school/presentation/components/article-editor/SchoolArticleRejectModal";
+import { SchoolArticleRequestEditsModal } from "@/modules/school/presentation/components/article-editor/SchoolArticleRequestEditsModal";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import {
@@ -78,6 +84,9 @@ export function SchoolArticleEditorDashboard() {
   const router = useRouter();
   const dashboard = useSchoolCommunityDashboard();
   const [deleteTarget, setDeleteTarget] = useState<SchoolCommunityArticleListItem | null>(null);
+  const [rejectTarget, setRejectTarget] = useState<SchoolCommunityArticleListItem | null>(null);
+  const [requestEditsTarget, setRequestEditsTarget] =
+    useState<SchoolCommunityArticleListItem | null>(null);
 
   const stats = dashboard.data?.stats;
   const articles = dashboard.data?.articles ?? [];
@@ -90,7 +99,11 @@ export function SchoolArticleEditorDashboard() {
   const pendingId =
     (dashboard.hide.isPending ? dashboard.hide.variables : null) ??
     (dashboard.unhide.isPending ? dashboard.unhide.variables : null) ??
-    (dashboard.remove.isPending ? dashboard.remove.variables : null);
+    (dashboard.remove.isPending ? dashboard.remove.variables : null) ??
+    (dashboard.approve.isPending ? dashboard.approve.variables : null) ??
+    (dashboard.submit.isPending ? dashboard.submit.variables : null) ??
+    (dashboard.reject.isPending ? dashboard.reject.variables?.id : null) ??
+    (dashboard.requestEdits.isPending ? dashboard.requestEdits.variables?.id : null);
 
   const formatDate = (iso: string | null) => {
     if (!iso) return "—";
@@ -108,6 +121,58 @@ export function SchoolArticleEditorDashboard() {
         await dashboard.unhide.mutateAsync(item.article.articleId);
         notify.success(t("messages.unhidden"));
       }
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("messages.actionError"));
+    }
+  };
+
+  const handleApprove = async (item: SchoolCommunityArticleListItem) => {
+    try {
+      await dashboard.approve.mutateAsync(item.article.articleId);
+      notify.success(t("messages.approved"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("messages.actionError"));
+    }
+  };
+
+  const handleSubmit = async (item: SchoolCommunityArticleListItem) => {
+    try {
+      await dashboard.submit.mutateAsync(item.article.articleId);
+      notify.success(t("messages.submitted"));
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("messages.actionError"));
+    }
+  };
+
+  const handleReject = async (payload: { reasons: string[]; notes: string }) => {
+    if (!rejectTarget) return;
+    try {
+      await dashboard.reject.mutateAsync({
+        id: rejectTarget.article.articleId,
+        payload: {
+          reasons:
+            payload.reasons.length > 0
+              ? payload.reasons
+              : [t("modals.reject.reasons.unspecified")],
+          additionalNotes: payload.notes,
+        },
+      });
+      notify.success(t("messages.rejected"));
+      setRejectTarget(null);
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("messages.actionError"));
+    }
+  };
+
+  const handleRequestEdits = async (payload: { notes: string; hideFromFeed: boolean }) => {
+    if (!requestEditsTarget) return;
+    try {
+      await dashboard.requestEdits.mutateAsync({
+        id: requestEditsTarget.article.articleId,
+        payload,
+      });
+      notify.success(t("messages.editsRequested"));
+      setRequestEditsTarget(null);
     } catch (error) {
       notify.error(error instanceof Error ? error.message : t("messages.actionError"));
     }
@@ -205,7 +270,7 @@ export function SchoolArticleEditorDashboard() {
         renderCell: (row) => {
           const busy = pendingId === row.article.articleId;
           return (
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <Button
                 type="button"
                 variant="ghost"
@@ -218,6 +283,58 @@ export function SchoolArticleEditorDashboard() {
               >
                 <Eye className="h-4 w-4" />
               </Button>
+              {row.actions.canApprove ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-emerald-600"
+                  disabled={busy}
+                  aria-label={t("table.actions.approve")}
+                  onClick={() => void handleApprove(row)}
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+              ) : null}
+              {row.actions.canReject ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-rose-500"
+                  disabled={busy}
+                  aria-label={t("table.actions.reject")}
+                  onClick={() => setRejectTarget(row)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              ) : null}
+              {row.actions.canRequestEdits ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-amber-600"
+                  disabled={busy}
+                  aria-label={t("table.actions.requestEdits")}
+                  onClick={() => setRequestEditsTarget(row)}
+                >
+                  <FilePenLine className="h-4 w-4" />
+                </Button>
+              ) : null}
+              {row.actions.canSubmit ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 text-sky-600"
+                  disabled={busy}
+                  aria-label={t("table.actions.submit")}
+                  onClick={() => void handleSubmit(row)}
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              ) : null}
               {row.actions.canEdit ? (
                 <Button
                   type="button"
@@ -269,6 +386,7 @@ export function SchoolArticleEditorDashboard() {
         },
       },
     ],
+    // Handlers close over latest dashboard mutations; refresh columns when pending row changes.
     [formatter, pendingId, router, t],
   );
 
@@ -478,6 +596,38 @@ export function SchoolArticleEditorDashboard() {
           </Button>
         </div>
       </ModalShell>
+
+      <SchoolArticleRejectModal
+        open={Boolean(rejectTarget)}
+        onOpenChange={(open) => !open && setRejectTarget(null)}
+        title={t("modals.reject.title")}
+        infoBannerText={t("modals.reject.info")}
+        reasonsTitle={t("modals.reject.reasonsTitle")}
+        notesLabel={t("modals.reject.notesLabel")}
+        notesPlaceholder={t("modals.reject.notesPlaceholder")}
+        confirmLabel={t("modals.reject.confirm")}
+        cancelLabel={t("modals.reject.cancel")}
+        reasonOptions={[
+          { id: "unclearTitle", label: t("modals.reject.reasons.unclearTitle") },
+          { id: "needsSources", label: t("modals.reject.reasons.needsSources") },
+          { id: "inappropriate", label: t("modals.reject.reasons.inappropriate") },
+          { id: "offTopic", label: t("modals.reject.reasons.offTopic") },
+        ]}
+        onConfirm={handleReject}
+      />
+
+      <SchoolArticleRequestEditsModal
+        open={Boolean(requestEditsTarget)}
+        onOpenChange={(open) => !open && setRequestEditsTarget(null)}
+        title={t("modals.requestEdits.title")}
+        notesLabel={t("modals.requestEdits.notesLabel")}
+        notesPlaceholder={t("modals.requestEdits.notesPlaceholder")}
+        notesRequired={t("modals.requestEdits.notesRequired")}
+        hideFromFeedLabel={t("modals.requestEdits.hideFromFeed")}
+        confirmLabel={t("modals.requestEdits.confirm")}
+        cancelLabel={t("modals.requestEdits.cancel")}
+        onConfirm={handleRequestEdits}
+      />
     </div>
   );
 }

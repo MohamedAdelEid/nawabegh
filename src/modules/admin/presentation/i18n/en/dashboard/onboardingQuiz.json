@@ -1,0 +1,69 @@
+{
+  "questionBankOnboardingQuiz": {
+    "title": "Preview placement test questions",
+    "description": "Preview placement test questions and edit any question easily.",
+    "breadcrumbs": {
+      "home": "Home",
+      "questionBank": "Question bank",
+      "current": "Preview placement test questions"
+    },
+    "actions": {
+      "openPreview": "Go to placement test questions preview",
+      "saveChanges": "Save changes",
+      "back": "Back",
+      "edit": "Edit",
+      "cancel": "Cancel"
+    },
+    "filters": {
+      "educationLevel": {
+        "label": "Education level",
+        "placeholder": "Select level"
+      },
+      "grade": {
+        "label": "Grade",
+        "placeholder": "Select grade"
+      },
+      "term": {
+        "label": "Term",
+        "term1": "Term 1",
+        "term2": "Term 2"
+      }
+    },
+    "types": {
+      "multipleChoice": "Multiple choice",
+      "trueOrFalse": "True / False"
+    },
+    "correctAnswer": "Correct answer",
+    "emptyScope": "Select education level, grade, and term to preview placement test questions.",
+    "empty": "No placement test questions found for this scope.",
+    "loadError": "Could not load placement test questions. Please try again.",
+    "saveSuccess": "Placement test changes saved successfully.",
+    "saveError": "Could not save changes. Please try again.",
+    "saveDisabledHint": "There are no changes to save.",
+    "editModal": {
+      "title": "Edit question",
+      "subtitle": "Edit current question data - ID# {id}",
+      "subtitleNoId": "Edit current question data",
+      "questionText": "Question text",
+      "questionType": "Question type",
+      "points": "Points",
+      "options": "Answer options",
+      "selectCorrect": "Select the correct answer",
+      "optionPlaceholder": "Option text {index}",
+      "addOption": "Add option",
+      "removeOption": "Remove option",
+      "trueOption": "True",
+      "falseOption": "False",
+      "apply": "Save changes",
+      "cancel": "Cancel",
+      "validation": {
+        "textRequired": "Question text is required.",
+        "optionsRequired": "All answer options must be filled.",
+        "correctRequired": "Exactly one correct answer is required.",
+        "mcqOptionCount": "Multiple choice questions require 2 to 4 options.",
+        "tfOptionCount": "True/False questions require exactly 2 options.",
+        "pointsInvalid": "Points must be greater than zero."
+      }
+    }
+  }
+}

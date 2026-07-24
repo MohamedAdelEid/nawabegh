@@ -5,14 +5,16 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  Heart,
   Lightbulb,
   MessageSquare,
   Pencil,
+  Send,
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { useSchoolCommunityArticle } from "@/modules/school/application/hooks/useSchoolCommunityArticle";
 import type { SchoolCommunityComment } from "@/modules/school/domain/types/schoolCommunity.types";
@@ -39,10 +41,11 @@ import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user
 function formatCommentTime(
   formatter: ReturnType<typeof useFormatter>,
   iso: string,
+  now: Date,
 ) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return formatter.relativeTime(date);
+  return formatter.relativeTime(date, now);
 }
 
 function initials(name: string) {
@@ -91,6 +94,7 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
   const t = useTranslations("school.dashboard.articleEditor");
   const common = useTranslations("school.dashboard.common");
   const formatter = useFormatter();
+  const now = useNow();
   const router = useRouter();
   const article = useSchoolCommunityArticle(articleId);
 
@@ -111,7 +115,7 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
         id: commentTarget.commentId,
         authorName: commentTarget.author.fullName,
         authorInitials: initials(commentTarget.author.fullName),
-        createdAtLabel: formatCommentTime(formatter, commentTarget.createdAt),
+        createdAtLabel: formatCommentTime(formatter, commentTarget.createdAt, now),
         message: commentTarget.content,
       }
     : null;
@@ -121,6 +125,15 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
       await article.approve.mutateAsync();
       notify.success(t("messages.approved"));
       router.push(ROUTES.USER.SCHOOL.ARTICLES.LIST);
+    } catch (error) {
+      notify.error(error instanceof Error ? error.message : t("messages.actionError"));
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      await article.submit.mutateAsync();
+      notify.success(t("messages.submitted"));
     } catch (error) {
       notify.error(error instanceof Error ? error.message : t("messages.actionError"));
     }
@@ -341,6 +354,47 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
                 <p className="leading-8 text-slate-700">{core.excerpt}</p>
               ) : null}
 
+              <div className="flex flex-wrap items-center justify-end gap-4 border-t border-slate-100 pt-4 text-sm text-slate-500">
+                <span className="inline-flex items-center gap-1.5">
+                  <Heart className="h-4 w-4" />
+                  {t("review.likesCount", { count: core.likesCount })}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <MessageSquare className="h-4 w-4" />
+                  {t("review.commentsCount", { count: core.commentsCount })}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Eye className="h-4 w-4" />
+                  {t("review.viewsCount", { count: core.viewsCount })}
+                </span>
+              </div>
+
+              {core.moderationHistory.length > 0 ? (
+                <div className="space-y-3 border-t border-slate-100 pt-6">
+                  <h3 className="text-lg font-bold text-[#2C4260]">
+                    {t("review.historyTitle")}
+                  </h3>
+                  <div className="space-y-2">
+                    {core.moderationHistory.map((entry, index) => (
+                      <div
+                        key={`${entry.action}-${entry.createdAt}-${index}`}
+                        className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-right"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="font-semibold text-slate-700">{entry.action}</p>
+                          <p className="text-xs text-slate-400">
+                            {formatCommentTime(formatter, entry.createdAt, now)}
+                          </p>
+                        </div>
+                        {entry.reason ? (
+                          <p className="mt-1 text-sm text-slate-600">{entry.reason}</p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               <div className="space-y-4 border-t border-slate-100 pt-6">
                 <h3 className="text-lg font-bold text-[#2C4260]">
                   {t("review.commentsTitle", { count: visibleComments.length })}
@@ -372,7 +426,7 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
                             </div>
                           </div>
                           <p className="shrink-0 text-xs text-slate-400">
-                            {formatCommentTime(formatter, comment.createdAt)}
+                            {formatCommentTime(formatter, comment.createdAt, now)}
                           </p>
                         </div>
                         {actions?.canHideComment || actions?.canDeleteComment ? (
@@ -425,6 +479,18 @@ export function SchoolArticleReviewView({ articleId }: { articleId: string }) {
             >
               <CheckCircle2 className="h-4 w-4" />
               {t("review.share")}
+            </Button>
+          ) : null}
+
+          {actions?.canSubmit ? (
+            <Button
+              type="button"
+              className="h-12 w-full rounded-xl bg-sky-600 text-white hover:bg-sky-700"
+              disabled={article.submit.isPending}
+              onClick={() => void handleSubmit()}
+            >
+              <Send className="h-4 w-4" />
+              {t("review.submit")}
             </Button>
           ) : null}
 

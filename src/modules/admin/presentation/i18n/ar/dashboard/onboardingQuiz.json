@@ -1,0 +1,69 @@
+{
+  "questionBankOnboardingQuiz": {
+    "title": "معاينة أسئلة اختبار التهيئة",
+    "description": "معاينة أسئلة اختبار التهيئة وإمكانية التعديل على أي سؤال بسهولة",
+    "breadcrumbs": {
+      "home": "الرئيسية",
+      "questionBank": "بنك الأسئلة",
+      "current": "معاينة أسئلة اختبار التهيئة"
+    },
+    "actions": {
+      "openPreview": "الذهاب لمعاينة اسئلة الاختبار التهيئة",
+      "saveChanges": "حفظ التعديلات",
+      "back": "رجوع",
+      "edit": "تعديل",
+      "cancel": "إلغاء"
+    },
+    "filters": {
+      "educationLevel": {
+        "label": "المرحلة التعليمية",
+        "placeholder": "اختر المرحلة"
+      },
+      "grade": {
+        "label": "الصف",
+        "placeholder": "اختر الصف"
+      },
+      "term": {
+        "label": "الفصل الدراسي",
+        "term1": "الفصل الأول",
+        "term2": "الفصل الثاني"
+      }
+    },
+    "types": {
+      "multipleChoice": "اختيار من متعدد",
+      "trueOrFalse": "صح / خطأ"
+    },
+    "correctAnswer": "الإجابة الصحيحة",
+    "emptyScope": "اختر المرحلة والصف والفصل الدراسي لعرض أسئلة اختبار التهيئة.",
+    "empty": "لا توجد أسئلة لاختبار التهيئة ضمن هذا النطاق.",
+    "loadError": "تعذر تحميل أسئلة اختبار التهيئة. حاول مرة أخرى.",
+    "saveSuccess": "تم حفظ تعديلات اختبار التهيئة بنجاح.",
+    "saveError": "تعذر حفظ التعديلات. حاول مرة أخرى.",
+    "saveDisabledHint": "لا توجد تعديلات للحفظ.",
+    "editModal": {
+      "title": "تعديل السؤال",
+      "subtitle": "تعديل بيانات السؤال الحالي - معرف# {id}",
+      "subtitleNoId": "تعديل بيانات السؤال الحالي",
+      "questionText": "نص السؤال",
+      "questionType": "نوع السؤال",
+      "points": "النقاط",
+      "options": "خيارات الإجابة",
+      "selectCorrect": "حدد الإجابة الصحيحة",
+      "optionPlaceholder": "نص الخيار {index}",
+      "addOption": "إضافة خيار",
+      "removeOption": "حذف الخيار",
+      "trueOption": "صح",
+      "falseOption": "خطأ",
+      "apply": "حفظ التعديلات",
+      "cancel": "إلغاء",
+      "validation": {
+        "textRequired": "نص السؤال مطلوب.",
+        "optionsRequired": "يجب تعبئة جميع خيارات الإجابة.",
+        "correctRequired": "يجب تحديد إجابة صحيحة واحدة.",
+        "mcqOptionCount": "أسئلة الاختيار من متعدد تتطلب من خيارين إلى أربعة خيارات.",
+        "tfOptionCount": "أسئلة صح/خطأ تتطلب خيارين بالضبط.",
+        "pointsInvalid": "النقاط يجب أن تكون أكبر من صفر."
+      }
+    }
+  }
+}

@@ -11,6 +11,7 @@ import arPaymentManagement from "./presentation/i18n/ar/dashboard/paymentManagem
 import arSupportTickets from "./presentation/i18n/ar/dashboard/supportTickets.json";
 import arResultsAnalytics from "./presentation/i18n/ar/dashboard/resultsAnalytics.json";
 import arFriendChallenges from "./presentation/i18n/ar/dashboard/friendChallenges.json";
+import arOnboardingQuiz from "./presentation/i18n/ar/dashboard/onboardingQuiz.json";
 import arHomeNav from "./presentation/i18n/ar/dashboard/homeNav.json";
 import arHome from "./presentation/i18n/ar/dashboard/home.json";
 import arNotImplemented from "./presentation/i18n/ar/dashboard/notImplemented.json";
@@ -24,6 +25,7 @@ import enPaymentManagement from "./presentation/i18n/en/dashboard/paymentManagem
 import enSupportTickets from "./presentation/i18n/en/dashboard/supportTickets.json";
 import enResultsAnalytics from "./presentation/i18n/en/dashboard/resultsAnalytics.json";
 import enFriendChallenges from "./presentation/i18n/en/dashboard/friendChallenges.json";
+import enOnboardingQuiz from "./presentation/i18n/en/dashboard/onboardingQuiz.json";
 import enHomeNav from "./presentation/i18n/en/dashboard/homeNav.json";
 import enHome from "./presentation/i18n/en/dashboard/home.json";
 import enNotImplemented from "./presentation/i18n/en/dashboard/notImplemented.json";
@@ -59,6 +61,10 @@ function dashboardForLocale(locale: AppLocale) {
     locale === "ar"
       ? arFriendChallenges.friendChallenges
       : enFriendChallenges.friendChallenges;
+  const questionBankOnboardingQuiz =
+    locale === "ar"
+      ? arOnboardingQuiz.questionBankOnboardingQuiz
+      : enOnboardingQuiz.questionBankOnboardingQuiz;
   return {
     ...base,
     home,
@@ -73,6 +79,7 @@ function dashboardForLocale(locale: AppLocale) {
     supportTickets,
     resultsAnalytics,
     friendChallenges,
+    questionBankOnboardingQuiz,
   };
 }
 

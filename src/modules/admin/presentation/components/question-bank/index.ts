@@ -11,3 +11,7 @@ export type { QuestionBankDifficultyDistribution } from "./QuestionBankDifficult
 export { QuestionBankQuestionPreviewCard } from "./QuestionBankQuestionPreviewCard";
 export { QuestionBankQuestionPreviewCardSkeleton } from "./QuestionBankQuestionPreviewCardSkeleton";
 export { QuestionBankPreviewPeopleCard } from "./QuestionBankPreviewPeopleCard";
+export { OnboardingQuizQuestionCard } from "./OnboardingQuizQuestionCard";
+export { OnboardingQuizQuestionCardSkeleton } from "./OnboardingQuizQuestionCardSkeleton";
+export { OnboardingQuizPreviewPageSkeleton } from "./OnboardingQuizPreviewPageSkeleton";
+export { OnboardingQuizEditQuestionModal } from "./OnboardingQuizEditQuestionModal";
