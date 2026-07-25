@@ -59,9 +59,11 @@ export type ParentCreateChildResult = {
   requiresEmailOtp?: boolean;
 };
 
-export type ParentLinkChildRequest = {
-  studentUserId: string;
-};
+export type ParentLinkChildRequest =
+  | { studentUserId: string }
+  | { usernameOrLinkCode: string }
+  | { linkCode: string }
+  | { username: string };
 
 export type ParentChildSubjectProgress = {
   subjectId?: string | null;

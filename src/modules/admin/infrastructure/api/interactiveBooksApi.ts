@@ -4,6 +4,10 @@ import type {
   InteractiveBookStatusId,
   InteractiveBookTableRow,
 } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
+import {
+  extractApiErrorMessage,
+  getErrorHttpStatus,
+} from "@/shared/infrastructure/api/apiResponse.utils";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
 
@@ -126,20 +130,16 @@ function readSummary(record: UnknownRecord | null, keys: string[]): InteractiveB
 }
 
 function buildErrorResult<T>(error: unknown, fallbackMessage: string): InteractiveBooksApiResult<T> {
-  const axiosError = asRecord(error);
-  const response = asRecord(axiosError?.response);
-  const responseData = asRecord(response?.data);
-  const dataEnvelope = responseData as BackendApiResponse<unknown> | null;
+  const statusCode = getErrorHttpStatus(error);
+  const errorMessage = extractApiErrorMessage(error, fallbackMessage);
 
-  const detailMessage =
-    readString(responseData, ["detail", "title"], "") ||
-    dataEnvelope?.error?.message ||
-    (typeof axiosError?.message === "string" ? axiosError.message : fallbackMessage);
+  let status: BackendStatus | string = "Error";
+  if (statusCode === 403) status = "Forbidden";
+  else if (statusCode === 404) status = "NotFound";
 
   return {
-    status: (typeof dataEnvelope?.status === "string" ? dataEnvelope.status : undefined) ?? "Error",
-    message: typeof dataEnvelope?.message === "string" ? dataEnvelope.message : undefined,
-    errorMessage: detailMessage,
+    status,
+    errorMessage,
     data: null,
   };
 }

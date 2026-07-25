@@ -25,6 +25,35 @@ function toOptionalString(value: unknown): string {
   return String(value).trim();
 }
 
+function parseNamedEnum(
+  value: unknown,
+  nameMap: Record<string, number>,
+  fallback: number,
+): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const raw = value.trim();
+    if (!raw) return fallback;
+    if (!Number.isNaN(Number(raw))) return Number(raw);
+    const mapped = nameMap[raw.toLowerCase().replace(/[\s_-]+/g, "")];
+    if (mapped != null) return mapped;
+  }
+  return fallback;
+}
+
+const ATTEMPT_STATUS_NAMES: Record<string, number> = {
+  draft: StudentQuizAttemptStatus.Draft,
+  submitted: StudentQuizAttemptStatus.Submitted,
+  timedout: StudentQuizAttemptStatus.TimedOut,
+};
+
+const QUESTION_TYPE_NAMES: Record<string, number> = {
+  multiplechoice: QuizQuestionType.MultipleChoice,
+  mcq: QuizQuestionType.MultipleChoice,
+  trueorfalse: QuizQuestionType.TrueOrFalse,
+  truefalse: QuizQuestionType.TrueOrFalse,
+};
+
 function toNullableString(value: unknown): string | null {
   const text = toOptionalString(value);
   return text || null;
@@ -63,7 +92,11 @@ function mapQuestion(row: unknown): ShortQuizQuestionDto | null {
     .filter((option): option is ShortQuizOptionDto => option != null)
     .sort((a, b) => a.order - b.order);
 
-  const typeValue = toNumber(record.type, QuizQuestionType.MultipleChoice);
+  const typeValue = parseNamedEnum(
+    record.type,
+    QUESTION_TYPE_NAMES,
+    QuizQuestionType.MultipleChoice,
+  );
 
   return {
     id,
@@ -138,11 +171,22 @@ function mapAttemptPayload(row: unknown): ShortQuizAttemptDto | null {
     passScore: toNumber(record.passScore, 60),
     maxAttempts: toNumber(record.maxAttempts, 1),
     durationMinutes: toNumber(record.durationMinutes, 30),
-    status: toNumber(record.status, StudentQuizAttemptStatus.Draft) as StudentQuizAttemptStatus,
+    status: parseNamedEnum(
+      record.status,
+      ATTEMPT_STATUS_NAMES,
+      StudentQuizAttemptStatus.Draft,
+    ) as StudentQuizAttemptStatus,
     attemptNumber: toNumber(record.attemptNumber, 1),
     startedAt: toNullableString(record.startedAt),
     deadlineAt: toNullableString(record.deadlineAt),
+    submittedAt: toNullableString(
+      record.submittedAt ?? record.completedAt ?? record.finishedAt,
+    ),
     remainingSeconds: Math.max(0, toNumber(record.remainingSeconds)),
+    timeSpentSeconds:
+      record.timeSpentSeconds != null || record.elapsedSeconds != null
+        ? Math.max(0, toNumber(record.timeSpentSeconds ?? record.elapsedSeconds))
+        : null,
     totalQuestions: toNumber(record.totalQuestions, questions.length),
     answeredQuestionsCount: toNumber(
       record.answeredQuestionsCount,
@@ -201,18 +245,97 @@ export function mapShortQuizAttempt(row: unknown): ShortQuizAttemptDto | null {
 }
 
 export function formatRemainingTime(totalSeconds: number): string {
-  const safe = Math.max(0, Math.floor(totalSeconds));
-  const minutes = Math.floor(safe / 60);
-  const seconds = safe % 60;
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  return formatDurationClock(totalSeconds);
 }
 
-export function formatElapsedTime(startedAt: string | null, endedAt = new Date()): string {
+/** Formats seconds as `MM:SS` or `H:MM:SS` when an hour or more. */
+export function formatDurationClock(totalSeconds: number): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(safe / 3600);
+  const minutes = Math.floor((safe % 3600) / 60);
+  const seconds = safe % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  if (hours > 0) return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  return `${pad(minutes)}:${pad(seconds)}`;
+}
+
+/** Resolves how long the student actually spent on the attempt (not wall-clock since start). */
+export function resolveAttemptElapsedSeconds(attempt: ShortQuizAttemptDto): number {
+  const maxSeconds = Math.max(0, Math.floor(attempt.durationMinutes * 60));
+
+  if (attempt.timeSpentSeconds != null && attempt.timeSpentSeconds >= 0) {
+    return maxSeconds > 0
+      ? Math.min(attempt.timeSpentSeconds, maxSeconds)
+      : attempt.timeSpentSeconds;
+  }
+
+  const endIso = attempt.submittedAt;
+  if (attempt.startedAt && endIso) {
+    const start = new Date(attempt.startedAt).getTime();
+    const end = new Date(endIso).getTime();
+    if (Number.isFinite(start) && Number.isFinite(end) && end >= start) {
+      const elapsed = Math.floor((end - start) / 1000);
+      return maxSeconds > 0 ? Math.min(elapsed, maxSeconds) : elapsed;
+    }
+  }
+
+  if (isAttemptFinalized(attempt) && maxSeconds > 0) {
+    return Math.max(0, Math.min(maxSeconds, maxSeconds - attempt.remainingSeconds));
+  }
+
+  if (attempt.startedAt && maxSeconds > 0) {
+    const start = new Date(attempt.startedAt).getTime();
+    if (Number.isFinite(start)) {
+      const elapsed = Math.max(0, Math.floor((Date.now() - start) / 1000));
+      return Math.min(elapsed, maxSeconds);
+    }
+  }
+
+  return 0;
+}
+
+export function formatElapsedTime(
+  startedAt: string | null,
+  endedAt = new Date(),
+  maxSeconds?: number,
+): string {
   if (!startedAt) return "00:00";
   const start = new Date(startedAt).getTime();
   if (!Number.isFinite(start)) return "00:00";
-  const elapsedSeconds = Math.max(0, Math.floor((endedAt.getTime() - start) / 1000));
-  return formatRemainingTime(elapsedSeconds);
+  let elapsedSeconds = Math.max(0, Math.floor((endedAt.getTime() - start) / 1000));
+  if (maxSeconds != null && maxSeconds > 0) {
+    elapsedSeconds = Math.min(elapsedSeconds, maxSeconds);
+  }
+  return formatDurationClock(elapsedSeconds);
+}
+
+export function formatAttemptDuration(attempt: ShortQuizAttemptDto): string {
+  return formatDurationClock(resolveAttemptElapsedSeconds(attempt));
+}
+
+/** Best-effort remaining time when the API omits or zeroes `remainingSeconds`. */
+export function resolveAttemptRemainingSeconds(attempt: ShortQuizAttemptDto): number {
+  if (attempt.remainingSeconds > 0) return attempt.remainingSeconds;
+
+  if (attempt.deadlineAt) {
+    const deadline = new Date(attempt.deadlineAt).getTime();
+    if (Number.isFinite(deadline)) {
+      return Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+    }
+  }
+
+  const maxSeconds = Math.max(0, Math.floor(attempt.durationMinutes * 60));
+  if (maxSeconds <= 0) return 0;
+
+  if (attempt.startedAt) {
+    const start = new Date(attempt.startedAt).getTime();
+    if (Number.isFinite(start)) {
+      const elapsed = Math.max(0, Math.floor((Date.now() - start) / 1000));
+      return Math.max(0, maxSeconds - elapsed);
+    }
+  }
+
+  return maxSeconds;
 }
 
 export function getArabicQuestionLabel(order: number): string {

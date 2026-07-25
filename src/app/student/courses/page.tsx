@@ -29,6 +29,8 @@ async function ExploreCoursesContent() {
   let teachers: Awaited<ReturnType<typeof getTeachers>> = [];
   let coursesPage: Awaited<ReturnType<typeof getExploreCoursesPage>> = {
     rows: [],
+    gradeFilters: [],
+    totalCoursesCount: 0,
     currentPage: 1,
     pageSize: EXPLORE_COURSES_PAGE_SIZE,
     totalPages: 1,
@@ -56,6 +58,8 @@ async function ExploreCoursesContent() {
   } catch {
     coursesPage = {
       rows: [],
+      gradeFilters: [],
+      totalCoursesCount: 0,
       currentPage: 1,
       pageSize: EXPLORE_COURSES_PAGE_SIZE,
       totalPages: 1,

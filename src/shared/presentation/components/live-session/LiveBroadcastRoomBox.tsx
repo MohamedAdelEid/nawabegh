@@ -11,6 +11,7 @@ import {
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
 import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
+import { parseScheduleDateMs } from "@/shared/domain/utils/scheduleTime";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { LiveKitHostRoom } from "@/shared/presentation/components/live-session/LiveKitHostRoom";
@@ -33,8 +34,8 @@ export interface LiveBroadcastRoomBoxProps {
 type Countdown = { hours: number; minutes: number; seconds: number };
 
 function computeCountdown(scheduledAt: string): Countdown {
-  const target = new Date(scheduledAt).getTime();
-  const diffMs = Number.isNaN(target) ? 0 : Math.max(0, target - Date.now());
+  const target = parseScheduleDateMs(scheduledAt);
+  const diffMs = target == null ? 0 : Math.max(0, target - Date.now());
   const totalSeconds = Math.floor(diffMs / 1000);
 
   return {

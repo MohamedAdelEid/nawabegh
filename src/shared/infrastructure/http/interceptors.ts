@@ -1,5 +1,8 @@
 import type { AxiosInstance } from "axios";
-import { getApiErrorMessage } from "@/shared/infrastructure/api/apiResponse.utils";
+import {
+  ApiRequestError,
+  getApiErrorMessage,
+} from "@/shared/infrastructure/api/apiResponse.utils";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 
 export function applyRequestInterceptor(
@@ -24,12 +27,15 @@ export function applyResponseInterceptor(
   client.interceptors.response.use(
     (res) => res,
     (error) => {
-      if (error.response?.status === 401) onUnauthorized();
+      const status = error.response?.status as number | undefined;
+      if (status === 401) onUnauthorized();
 
       const body = error.response?.data;
       if (body && typeof body === "object") {
         const apiMessage = getApiErrorMessage(body as BackendApiResponse<unknown>, "");
-        if (apiMessage) return Promise.reject(new Error(apiMessage));
+        if (apiMessage) {
+          return Promise.reject(new ApiRequestError(apiMessage, undefined, status));
+        }
       }
 
       return Promise.reject(error);

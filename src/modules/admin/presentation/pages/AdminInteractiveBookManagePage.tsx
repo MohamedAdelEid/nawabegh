@@ -69,7 +69,7 @@ import { Label } from "@/shared/presentation/components/ui/label";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 
 const INTERACTIVE_BOOK_PDF_UPLOAD_FOLDER = "interactive-books";
-const MAX_PDF_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_PDF_SIZE_BYTES = 100 * 1024 * 1024;
 const PDF_SCALE_MIN = 0.5;
 const PDF_SCALE_MAX = 2;
 const PDF_SCALE_STEP = 0.25;

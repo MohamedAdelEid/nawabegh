@@ -8,8 +8,8 @@ import {
   getCurrentStations,
   getLeaderboardWidget,
   getStudentMyProfile,
-  getUnreadInAppNotifications,
 } from "@/modules/student/infrastructure/api/studentHomeApi";
+import { useUnreadInAppNotifications } from "@/shared/application/hooks/useInAppNotifications";
 import { getStudentCommunityFeed } from "@/modules/student/infrastructure/api/studentKnowledgeCommunityApi";
 import { mapExploreCourseToCard } from "@/shared/domain/utils/course.utils";
 import { getExploreCoursesPage } from "@/shared/infrastructure/api/course.api";
@@ -26,11 +26,7 @@ export function useStudentHomeProfile() {
 }
 
 export function useStudentHomeNotifications() {
-  return useQuery({
-    queryKey: studentHomeQueryKeys.notifications(),
-    queryFn: getUnreadInAppNotifications,
-    staleTime: 30_000,
-  });
+  return useUnreadInAppNotifications();
 }
 
 export function useStudentHomeDashboard() {

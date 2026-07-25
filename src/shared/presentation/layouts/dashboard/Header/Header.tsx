@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { motion } from "framer-motion";
-import { Bell, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/shared/application/hooks/useAuth";
@@ -10,6 +10,7 @@ import { getSettingsPathForRole } from "@/modules/auth/infrastructure/authSessio
 import {
   HeaderActionButton,
   MobileMenuButton,
+  NotificationsBell,
   UserDropdown,
 } from "./components";
 import { headerVariants } from "./constants/animations";
@@ -46,8 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
         />
         <div className="ms-auto flex items-center gap-2 sm:gap-3">
           <UserDropdown translationNamespace={translationNamespace} />
-          <HeaderActionButton
-            icon={Bell}
+          <NotificationsBell
             label={t("header.actions.notifications")}
             className="hidden sm:inline-flex"
           />

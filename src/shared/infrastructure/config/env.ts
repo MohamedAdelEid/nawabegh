@@ -16,6 +16,8 @@ const schema = z.object({
     .url()
     .default("https://api.nwabigh.com"),
   NEXT_PUBLIC_API_TIMEOUT: z.string().default("15000"),
+  /** Dedicated timeout for FileUpload endpoints (upload / upload-multiple). Default: 10 minutes. */
+  NEXT_PUBLIC_FILE_UPLOAD_TIMEOUT: z.string().default("600000"),
 });
 
 export const env = schema.parse(process.env);

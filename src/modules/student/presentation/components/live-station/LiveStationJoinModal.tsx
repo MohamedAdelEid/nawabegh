@@ -8,11 +8,13 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LiveSessionRuntimeMode } from "@/modules/student/domain/progress/progress.enums";
 import type { LiveStationInfoDto } from "@/modules/student/domain/live-station/live-station.types";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { cn } from "@/shared/application/lib/cn";
+import { minutesUntilSchedule } from "@/shared/domain/utils/scheduleTime";
 
 type LiveStationJoinModalProps = {
   info: LiveStationInfoDto;
@@ -22,6 +24,16 @@ type LiveStationJoinModalProps = {
   onClose: () => void;
   onViewAttachments: () => void;
 };
+
+function resolveScheduleMinutes(info: LiveStationInfoDto): number {
+  if (info.runtimeMode === LiveSessionRuntimeMode.Upcoming) {
+    return minutesUntilSchedule(info.scheduledAt);
+  }
+  if (info.runtimeMode === LiveSessionRuntimeMode.Live) {
+    return minutesUntilSchedule(info.scheduledEndAt);
+  }
+  return 0;
+}
 
 export function LiveStationJoinModal({
   info,
@@ -37,6 +49,23 @@ export function LiveStationJoinModal({
   const teacherName = info.responsibleTeacher?.fullName ?? "";
   const teacherImage = info.responsibleTeacher?.profileImageUrl;
   const features = info.features;
+  const [scheduleMinutes, setScheduleMinutes] = useState(() =>
+    resolveScheduleMinutes(info),
+  );
+
+  useEffect(() => {
+    const tick = () => setScheduleMinutes(resolveScheduleMinutes(info));
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, [info]);
+
+  const displayMinutes =
+    scheduleMinutes > 0
+      ? scheduleMinutes
+      : info.durationMinutes > 0
+        ? info.durationMinutes
+        : 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#2c4260]/60 p-4 backdrop-blur-[2px]">
@@ -76,7 +105,7 @@ export function LiveStationJoinModal({
         </div>
 
         <div className="flex flex-col gap-6 px-8 pb-8 pt-14">
-          <div className="space-y-1 text-end">
+          <div className="space-y-1">
             <p className="text-sm font-bold text-[#c7af6d]">{t("stationLabel")}</p>
             <h2 className="text-2xl font-bold leading-tight text-[#2c4260]">
               {info.title}
@@ -88,21 +117,21 @@ export function LiveStationJoinModal({
             ) : null}
           </div>
 
-          {(isLive || info.studentHasAttended) && (
+          {(isLive || isUpcoming || info.studentHasAttended) && (
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-end gap-3 rounded-lg border border-[#2c4260]/10 bg-[#2c4260]/5 px-3 py-3">
-                <div className="text-end">
+              <div className="flex items-center gap-3 rounded-lg border border-[#2c4260]/10 bg-[#2c4260]/5 px-3 py-3">
+                <div>
                   <p className="text-[10px] uppercase tracking-wide text-slate-500">
                     {isUpcoming ? t("stats.startsIn") : t("stats.remaining")}
                   </p>
                   <p className="text-sm font-bold text-[#2c4260]">
-                    {t("stats.minutes", { count: info.remainingMinutes || info.durationMinutes })}
+                    {t("stats.minutes", { count: displayMinutes })}
                   </p>
                 </div>
                 <Clock3 className="size-5 text-[#2c4260]" />
               </div>
-              <div className="flex items-center justify-end gap-3 rounded-lg border border-[#c7af6d]/20 bg-[#c7af6d]/5 px-3 py-3">
-                <div className="text-end">
+              <div className="flex items-center gap-3 rounded-lg border border-[#c7af6d]/20 bg-[#c7af6d]/5 px-3 py-3">
+                <div>
                   <p className="text-[10px] uppercase tracking-wide text-slate-500">
                     {t("stats.attendance")}
                   </p>
@@ -118,7 +147,7 @@ export function LiveStationJoinModal({
           {isUpcoming ? (
             <div className="rounded-xl border border-[#2c4260]/10 bg-slate-50 px-4 py-3 text-end text-sm text-slate-600">
               {t("upcoming.notice", {
-                minutes: info.remainingMinutes || info.durationMinutes,
+                minutes: scheduleMinutes > 0 ? scheduleMinutes : displayMinutes,
               })}
             </div>
           ) : null}

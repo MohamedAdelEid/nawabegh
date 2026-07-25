@@ -1,40 +1,63 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
-import {
-  StudentPathProgressStatus,
-  StudentStationProgressStatus,
-} from "@/modules/student/domain/progress/progress.enums";
-import { getStudentStationHref } from "@/modules/student/domain/progress/getStudentStationHref";
-import { buildProgressTimelineNodes } from "@/modules/student/domain/progress/progress.utils";
+import { Compass } from "lucide-react";
 import type {
   MilestoneBoxDto,
   PathStationProgressDto,
 } from "@/modules/student/domain/progress/progress.types";
+import { getStudentStationHref } from "@/modules/student/domain/progress/getStudentStationHref";
 import { useProgressPath } from "@/modules/student/application/hooks/useProgressPath";
-import { ProgressPathBanner } from "./ProgressPathBanner";
+import { StudentChatConversationView } from "@/modules/student/presentation/components/chat-groups/StudentChatConversationView";
 import { ProgressPathSkeleton } from "./ProgressPathSkeleton";
 import { ProgressPathTabs } from "./ProgressPathTabs";
-import { ProgressPathTimeline } from "./ProgressPathTimeline";
 import { JourneyAchievementModal } from "./JourneyAchievementModal";
+import {
+  JourneySurfaceTabs,
+  type JourneySurfaceId,
+} from "./JourneySurfaceTabs";
+import { JourneyInteractiveBookPanel } from "./JourneyInteractiveBookPanel";
+import { JourneyHelperFilesPanel } from "./JourneyHelperFilesPanel";
+import {
+  JourneyPathsStack,
+  scrollToJourneyPath,
+} from "./JourneyPathsStack";
 import { JOURNEY_ASSETS } from "./journey.assets";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 
+const SURFACE_IDS: JourneySurfaceId[] = [
+  "journey",
+  "interactiveBook",
+  "helpFiles",
+  "chat",
+];
+
+function parseSurface(value: string | null): JourneySurfaceId {
+  if (value && (SURFACE_IDS as string[]).includes(value)) {
+    return value as JourneySurfaceId;
+  }
+  return "journey";
+}
+
 export function ProgressPathDashboard() {
   const t = useTranslations("student.dashboard.progressPath");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const scrollingToPathRef = useRef(false);
+  /** Skip the pathId effect scroll when a tab click already scrolled. */
+  const skipPathIdScrollEffectRef = useRef(false);
+  const pathScrollGenerationRef = useRef(0);
 
   const courseId = searchParams.get("courseId");
   const pathId = searchParams.get("pathId");
   const isDemo = searchParams.get("demo") === "1";
   const celebrate = searchParams.get("celebrate");
+  const activeSurface = parseSurface(searchParams.get("tab"));
 
   const withDemo = (params: URLSearchParams) => {
     if (isDemo) params.set("demo", "1");
@@ -53,16 +76,15 @@ export function ProgressPathDashboard() {
     dashboardQuery,
     courseProgressQuery,
     pathDropdownQuery,
-    pathStationsQuery,
     activeCourseId,
     activePathId,
     activeCourse,
-    activePathProgress,
     refreshAll,
     isInitializing,
     openMilestone,
     isOpeningMilestone,
     openingMilestoneOrder,
+    openingPathId,
     openMilestoneError,
     completionNotice,
     clearCompletionNotice,
@@ -97,70 +119,131 @@ export function ProgressPathDashboard() {
     }));
   }, [pathDropdownQuery.data, courseProgressQuery.data?.paths]);
 
-  const pathTitle =
-    pathStationsQuery.data?.learningPathTitle ||
-    activePathProgress?.pathName ||
-    t("banner.defaultPath");
+  const pushJourneyParams = useCallback(
+    (
+      next: {
+        courseId?: string | null;
+        pathId?: string | null;
+        tab?: JourneySurfaceId;
+      },
+      mode: "push" | "replace" = "push",
+    ) => {
+      const params = new URLSearchParams();
+      const nextCourseId =
+        next.courseId !== undefined ? next.courseId : activeCourseId;
+      const nextPathId = next.pathId !== undefined ? next.pathId : activePathId;
+      const nextTab = next.tab ?? activeSurface;
 
-  const pathIndex = useMemo(() => {
-    if (!activePathId) return null;
-    const allPaths = courseProgressQuery.data?.paths ?? [];
-    const idx = allPaths.findIndex((p) => p.pathId === activePathId);
-    return idx >= 0 ? idx + 1 : null;
-  }, [activePathId, courseProgressQuery.data?.paths]);
+      if (nextCourseId) params.set("courseId", nextCourseId);
+      if (nextPathId) params.set("pathId", nextPathId);
+      if (nextTab && nextTab !== "journey") params.set("tab", nextTab);
 
-  const timelineNodes = useMemo(
-    () =>
-      buildProgressTimelineNodes(
-        pathStationsQuery.data?.stations ?? [],
-        pathStationsQuery.data?.milestoneBoxes ?? [],
-      ),
-    [pathStationsQuery.data?.stations, pathStationsQuery.data?.milestoneBoxes],
+      const href = `${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`;
+      if (mode === "replace") router.replace(href);
+      else router.push(href);
+    },
+    [activeCourseId, activePathId, activeSurface, isDemo, router],
   );
+
+  const handleSurfaceChange = (nextSurface: JourneySurfaceId) => {
+    pushJourneyParams({ tab: nextSurface });
+  };
 
   const handleCourseChange = (nextCourseId: string) => {
     if (nextCourseId === activeCourseId) return;
-    const params = new URLSearchParams();
-    params.set("courseId", nextCourseId);
-    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`);
+    pushJourneyParams({
+      courseId: nextCourseId,
+      pathId: null,
+      tab: activeSurface,
+    });
   };
 
   const handlePathChange = (nextPathId: string) => {
-    const params = new URLSearchParams();
-    params.set("pathId", nextPathId);
-    if (activeCourseId) params.set("courseId", activeCourseId);
-    router.push(`${ROUTES.USER.STUDENT.JOURNEY}?${withDemo(params).toString()}`);
+    const generation = ++pathScrollGenerationRef.current;
+    scrollingToPathRef.current = true;
+    skipPathIdScrollEffectRef.current = true;
+
+    if (nextPathId !== activePathId) {
+      // replace avoids a full navigation churn mid-scroll
+      pushJourneyParams({ pathId: nextPathId, tab: "journey" }, "replace");
+    }
+
+    requestAnimationFrame(() => {
+      scrollToJourneyPath(nextPathId, {
+        onDone: () => {
+          if (pathScrollGenerationRef.current === generation) {
+            scrollingToPathRef.current = false;
+          }
+        },
+      });
+    });
   };
 
-  const isPathLocked =
-    activePathProgress?.pathProgressStatus === StudentPathProgressStatus.Locked;
+  const handleActivePathFromScroll = useCallback(
+    (nextPathId: string) => {
+      if (scrollingToPathRef.current) return;
+      if (!nextPathId || nextPathId === activePathId) return;
+      pushJourneyParams({ pathId: nextPathId, tab: "journey" }, "replace");
+    },
+    [activePathId, pushJourneyParams],
+  );
 
-  const handleStationSelect = (station: PathStationProgressDto) => {
+  useEffect(() => {
+    if (activeSurface !== "journey" || !pathId) return;
+    if (skipPathIdScrollEffectRef.current) {
+      skipPathIdScrollEffectRef.current = false;
+      return;
+    }
+
+    const generation = ++pathScrollGenerationRef.current;
+    scrollingToPathRef.current = true;
+    const timer = window.setTimeout(() => {
+      scrollToJourneyPath(pathId, {
+        onDone: () => {
+          if (pathScrollGenerationRef.current === generation) {
+            scrollingToPathRef.current = false;
+          }
+        },
+      });
+    }, 80);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (pathScrollGenerationRef.current === generation) {
+        scrollingToPathRef.current = false;
+      }
+    };
+  }, [activeSurface, pathId, activeCourseId]);
+
+  const handleStationSelect = (
+    station: PathStationProgressDto,
+    stationPathId: string,
+  ) => {
     if (isDemo) {
       requireAccount();
       return;
     }
-    if (isPathLocked) return;
-    if (station.status === StudentStationProgressStatus.Locked) return;
 
     const href = getStudentStationHref({
       stationId: station.stationId,
       stationType: station.stationType,
       courseId: activeCourseId,
-      pathId: activePathId,
+      pathId: stationPathId,
     });
     if (href) router.push(href);
   };
 
-  const handleChestOpen = async (milestone: MilestoneBoxDto) => {
+  const handleChestOpen = async (
+    milestone: MilestoneBoxDto,
+    stationPathId: string,
+  ) => {
     if (isDemo) {
       requireAccount();
       return;
     }
-    if (!activePathId || isPathLocked) return;
     try {
       await openMilestone({
-        learningPathId: activePathId,
+        learningPathId: stationPathId,
         milestoneOrder: milestone.order,
         pointsReward: milestone.pointsReward,
       });
@@ -181,13 +264,15 @@ export function ProgressPathDashboard() {
 
   const isLoading =
     dashboardQuery.isLoading ||
-    (Boolean(activeCourseId) && courseProgressQuery.isLoading) ||
-    (Boolean(activePathId) && pathStationsQuery.isLoading && !pathStationsQuery.data);
+    (Boolean(activeCourseId) &&
+      activeSurface === "journey" &&
+      courseProgressQuery.isLoading);
 
   const errorMessage =
     (dashboardQuery.error instanceof Error ? dashboardQuery.error.message : null) ||
-    (courseProgressQuery.error instanceof Error ? courseProgressQuery.error.message : null) ||
-    (pathStationsQuery.error instanceof Error ? pathStationsQuery.error.message : null);
+    (courseProgressQuery.error instanceof Error
+      ? courseProgressQuery.error.message
+      : null);
 
   if (isLoading && !dashboardQuery.data) {
     return <ProgressPathSkeleton />;
@@ -215,6 +300,13 @@ export function ProgressPathDashboard() {
     );
   }
 
+  const surfaceLabels: Record<JourneySurfaceId, string> = {
+    journey: t("surfaces.journey"),
+    interactiveBook: t("surfaces.interactiveBook.label"),
+    helpFiles: t("surfaces.helpFiles.label"),
+    chat: t("surfaces.chat"),
+  };
+
   return (
     <div className="relative space-y-0 pb-10">
       <div
@@ -239,6 +331,13 @@ export function ProgressPathDashboard() {
       />
 
       <div className="relative z-10 space-y-3 px-0 pt-4">
+        <JourneySurfaceTabs
+          activeId={activeSurface}
+          onChange={handleSurfaceChange}
+          labels={surfaceLabels}
+          ariaLabel={t("surfaces.aria")}
+        />
+
         <ProgressPathTabs
           items={courseTabs}
           activeId={activeCourseId}
@@ -246,73 +345,74 @@ export function ProgressPathDashboard() {
           variant="course"
           ariaLabel={t("tabs.courses")}
           isLoading={isInitializing}
+          trailingAction={
+            <Link
+              href={ROUTES.USER.STUDENT.COURSES}
+              className="inline-flex h-14 shrink-0 items-center gap-2 rounded-xl border border-dashed border-[#c7af6d] bg-[#fffbeb] px-4 text-sm font-semibold text-[#92400e] transition-colors hover:bg-[#fef3c7]"
+            >
+              <Compass className="size-4 shrink-0" aria-hidden />
+              <span className="whitespace-nowrap">{t("tabs.exploreMore")}</span>
+            </Link>
+          }
         />
 
-        {pathTabs.length > 0 ? (
-          <ProgressPathTabs
-            items={pathTabs}
-            activeId={activePathId}
-            onChange={handlePathChange}
-            variant="path"
-            ariaLabel={t("tabs.paths")}
-            isLoading={courseProgressQuery.isLoading || pathDropdownQuery.isLoading}
-          />
-        ) : courseProgressQuery.isLoading ? (
-          <div className="mx-4 h-14 animate-pulse rounded-xl bg-[#e2e8f0] md:mx-6" />
+        {activeSurface === "journey" ? (
+          pathTabs.length > 0 ? (
+            <ProgressPathTabs
+              items={pathTabs}
+              activeId={activePathId}
+              onChange={handlePathChange}
+              variant="path"
+              ariaLabel={t("tabs.paths")}
+              isLoading={courseProgressQuery.isLoading || pathDropdownQuery.isLoading}
+            />
+          ) : courseProgressQuery.isLoading ? (
+            <div className="mx-4 h-14 animate-pulse rounded-xl bg-[#e2e8f0] md:mx-6" />
+          ) : null
         ) : null}
       </div>
 
-      <div className="relative z-10 px-0 pt-4">
-        {activePathId || activeCourse ? (
-          <ProgressPathBanner
-            pathTitle={pathTitle}
-            pathIndex={pathIndex}
-            progress={
-              activePathProgress?.stationProgressPercent ??
-              activeCourse?.progressPercentage ??
-              0
-            }
-            subjectLabel={activeCourse?.subjectNameAr || activeCourse?.subjectNameEn}
-          />
-        ) : (
-          <div className="mx-4 h-36 animate-pulse rounded-[25px] bg-[#e2e8f0] md:mx-6" />
-        )}
-      </div>
+      {activeSurface === "journey" ? (
+        <JourneyPathsStack
+          paths={courseProgressQuery.data?.paths ?? []}
+          pathLabels={pathTabs}
+          activePathId={activePathId}
+          onActivePathChange={handleActivePathFromScroll}
+          onStationSelect={handleStationSelect}
+          onChestOpen={(milestone, stationPathId) => {
+            void handleChestOpen(milestone, stationPathId);
+          }}
+          openingMilestoneOrder={isOpeningMilestone ? openingMilestoneOrder : null}
+          openingPathId={isOpeningMilestone ? openingPathId : null}
+          openMilestoneError={openMilestoneError}
+        />
+      ) : null}
 
-      {isPathLocked ? (
-        <div className="relative z-10 px-4 pt-3 md:px-6">
-          <div className="flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] px-4 py-3 text-sm font-medium text-[#64748b]">
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-white shadow-sm">
-              <Lock className="size-3.5 text-[#64748b]" aria-hidden />
-            </span>
-            <span>{t("locked.notice")}</span>
+      {activeSurface === "interactiveBook" && activeCourseId ? (
+        <div className="relative z-10">
+          <JourneyInteractiveBookPanel
+            courseId={activeCourseId}
+            courseTitle={activeCourse?.title}
+          />
+        </div>
+      ) : null}
+
+      {activeSurface === "helpFiles" && activeCourseId ? (
+        <div className="relative z-10">
+          <JourneyHelperFilesPanel
+            courseId={activeCourseId}
+            paths={courseProgressQuery.data?.paths ?? []}
+          />
+        </div>
+      ) : null}
+
+      {activeSurface === "chat" && activeCourseId ? (
+        <div className="relative z-10 px-2 py-4 md:px-4">
+          <div className="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-sm">
+            <StudentChatConversationView courseId={activeCourseId} embedded />
           </div>
         </div>
       ) : null}
-
-      {openMilestoneError ? (
-        <div className="relative z-10 px-4 pt-3 md:px-6">
-          <ApiFailureAlert
-            message={openMilestoneError}
-            fallbackMessage={t("errors.milestone")}
-          />
-        </div>
-      ) : null}
-
-      <div className="relative z-10 mt-2">
-        {pathStationsQuery.isLoading && !pathStationsQuery.data ? (
-          <ProgressPathTimelineSkeleton />
-        ) : (
-          <ProgressPathTimeline
-            nodes={timelineNodes}
-            stations={pathStationsQuery.data?.stations ?? []}
-            onStationSelect={handleStationSelect}
-            onChestOpen={(m) => void handleChestOpen(m)}
-            openingMilestoneOrder={isOpeningMilestone ? openingMilestoneOrder : null}
-            locked={isPathLocked}
-          />
-        )}
-      </div>
 
       <JourneyAchievementModal
         open={Boolean(completionNotice)}
@@ -344,12 +444,6 @@ function PathHeader({
   return (
     <header className="relative z-10 flex flex-col gap-4 border-b border-[rgba(44,66,96,0.1)] bg-white px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <div className="flex items-center gap-4">
-        <div className="text-start">
-          <h1 className="text-xl font-bold text-[#0f172a] md:text-[30px] md:leading-[36px]">
-            {courseTitle}
-          </h1>
-          <p className="text-sm text-[#64748b] md:text-base">{subtitle}</p>
-        </div>
         <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-[rgba(44,66,96,0.1)] md:size-[60px]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -359,36 +453,25 @@ function PathHeader({
             aria-hidden
           />
         </div>
+        <div className="text-start">
+          <h1 className="text-xl font-bold text-[#0f172a] md:text-[30px] md:leading-[36px]">
+            {courseTitle}
+          </h1>
+          <p className="text-sm text-[#64748b] md:text-base">{subtitle}</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(199,175,109,0.3)] bg-[#e2e8f0] shadow-sm">
+          <span className="text-base">👤</span>
+        </div>
         <div className="text-start">
           <p className="text-sm font-bold text-[#1e293b]">{studentName}</p>
           <p className="text-[10px] font-bold uppercase tracking-[0.5px] text-[#c7af6d]">
             {enrolledBadge}
           </p>
         </div>
-        <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-[rgba(199,175,109,0.3)] bg-[#e2e8f0] shadow-sm">
-          <span className="text-base">👤</span>
-        </div>
       </div>
     </header>
-  );
-}
-
-function ProgressPathTimelineSkeleton() {
-  return (
-    <div className="relative mx-auto flex max-w-xl flex-col items-center gap-10 py-12">
-      {Array.from({ length: 3 }).map((_, index) => (
-        <motion.div
-          key={index}
-          className="size-[135px] rounded-full bg-[#e2e8f0]/80"
-          style={{ alignSelf: index % 2 === 0 ? "flex-start" : "flex-end", marginInline: "18%" }}
-          initial={{ opacity: 0.3 }}
-          animate={{ opacity: [0.3, 0.7, 0.3] }}
-          transition={{ duration: 1.4, repeat: Infinity, delay: index * 0.2 }}
-        />
-      ))}
-    </div>
   );
 }

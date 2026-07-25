@@ -4,6 +4,14 @@
       "placeholder": "Select an option",
       "searchPlaceholder": "Search options...",
       "empty": "No matching options"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "empty": "No notifications yet.",
+      "error": "Could not load notifications.",
+      "retry": "Retry",
+      "openAction": "Open",
+      "unreadBadge": "{count} unread"
     }
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/shared/application/lib/cn";
@@ -17,6 +17,7 @@ type ProgressPathTabsProps = {
   variant?: "course" | "path";
   ariaLabel: string;
   isLoading?: boolean;
+  trailingAction?: ReactNode;
 };
 
 export function ProgressPathTabs({
@@ -26,6 +27,7 @@ export function ProgressPathTabs({
   variant = "course",
   ariaLabel,
   isLoading = false,
+  trailingAction,
 }: ProgressPathTabsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -86,13 +88,21 @@ export function ProgressPathTabs({
                   layoutId={`progress-tab-bg-${variant}`}
                   className="absolute inset-0 rounded-xl"
                   style={{ backgroundColor: activeColor }}
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: isPath ? 260 : 380,
+                    damping: isPath ? 34 : 32,
+                    mass: isPath ? 0.85 : 1,
+                  }}
                 />
               ) : null}
               <span className="relative z-10 whitespace-nowrap">{item.label}</span>
             </button>
           );
         })}
+        {trailingAction ? (
+          <div className="shrink-0 ps-1">{trailingAction}</div>
+        ) : null}
       </div>
 
       <button

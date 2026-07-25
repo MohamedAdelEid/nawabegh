@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import type { Subject } from "@/shared/domain/types/subject.types";
 import type { Teacher } from "@/shared/domain/types/teacher.types";
 import { cn } from "@/shared/application/lib/cn";
+import type { ExploreGradeFilterOption } from "@/shared/domain/types/course.types";
+import { ExploreGradeFilterChips } from "./ExploreGradeFilterChips";
 import { SubjectFilterSelect } from "./SubjectFilterSelect";
 import { TeacherFilterSelect } from "./TeacherFilterSelect";
 
@@ -16,6 +18,10 @@ type ExploreCoursesFiltersProps = {
   onSubjectChange: (value: number | null) => void;
   teacherId: string | null;
   onTeacherChange: (value: string | null) => void;
+  gradeId: number | null;
+  onGradeChange: (value: number | null) => void;
+  gradeFilters: ExploreGradeFilterOption[];
+  totalCoursesCount: number;
   teacherSearch: string;
   onTeacherSearchChange: (value: string) => void;
   subjects: Subject[];
@@ -34,6 +40,10 @@ export function ExploreCoursesFilters({
   onSubjectChange,
   teacherId,
   onTeacherChange,
+  gradeId,
+  onGradeChange,
+  gradeFilters,
+  totalCoursesCount,
   teacherSearch,
   onTeacherSearchChange,
   subjects,
@@ -70,6 +80,14 @@ export function ExploreCoursesFilters({
           aria-hidden
         />
       </div>
+
+      <ExploreGradeFilterChips
+        grades={gradeFilters}
+        selectedGradeId={gradeId}
+        onChange={onGradeChange}
+        totalCoursesCount={totalCoursesCount}
+        className="mb-6"
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">

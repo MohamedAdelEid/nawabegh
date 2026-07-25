@@ -4,10 +4,9 @@ import type React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bell, CalendarDays, Mail } from "lucide-react";
+import { CalendarDays, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import {
-  useStudentHomeNotifications,
   useStudentHomeProfile,
 } from "@/modules/student/application/hooks/useStudentHomeDashboard";
 import {
@@ -21,6 +20,7 @@ import { useAuth } from "@/shared/application/hooks/useAuth";
 import {
   HeaderActionButton,
   MobileMenuButton,
+  NotificationsBell,
 } from "./components";
 import { headerVariants } from "./constants/animations";
 
@@ -49,7 +49,6 @@ export const StudentDashboardHeader: React.FC<StudentDashboardHeaderProps> = ({
   const tHome = useTranslations("student.dashboard.home.header");
   const { user } = useAuth();
   const profileQuery = useStudentHomeProfile();
-  const notificationsQuery = useStudentHomeNotifications();
   const settingsHref = getSettingsPathForRole(user?.role);
 
   const profile = profileQuery.data;
@@ -57,8 +56,6 @@ export const StudentDashboardHeader: React.FC<StudentDashboardHeaderProps> = ({
   const avatarUrl = profile?.profileImageUrl || user?.avatar || null;
   const level = profile ? deriveStudentLevel(profile.points) : null;
   const badgeName = profile ? deriveStudentLevelSubtitle(profile) : "";
-  const unreadCount =
-    notificationsQuery.data?.filter((item) => !item.isRead).length ?? 0;
 
   const subtitle =
     level != null
@@ -126,12 +123,7 @@ export const StudentDashboardHeader: React.FC<StudentDashboardHeaderProps> = ({
             onClick={() => router.push(ROUTES.USER.STUDENT.SCHEDULE)}
           />
           <HeaderActionButton icon={Mail} label={tHome("messages")} className="hidden md:inline-flex" />
-          <div className="relative">
-            <HeaderActionButton icon={Bell} label={t("header.actions.notifications")} />
-            {unreadCount > 0 ? (
-              <span className="absolute end-2 top-2 size-2 rounded-full bg-[#ff4b4b]" aria-hidden />
-            ) : null}
-          </div>
+          <NotificationsBell label={t("header.actions.notifications")} />
         </div>
       </div>
     </motion.header>

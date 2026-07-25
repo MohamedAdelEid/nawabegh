@@ -50,6 +50,7 @@ import type {
   ParentChildListItem,
   ParentChildSearchItem,
   ParentCreateChildRequest,
+  ParentLinkChildRequest,
 } from "@/modules/parent/domain/types/parentChildren.types";
 import { notify } from "@/shared/application/lib/toast";
 import { cn } from "@/shared/application/lib/cn";
@@ -599,6 +600,30 @@ function resolveOptionLabel(
   return (nameAr?.trim() || nameEn?.trim() || "").trim();
 }
 
+function buildLinkChildPayload(
+  student: ParentChildSearchItem,
+  verifiedKeyword: string,
+): ParentLinkChildRequest {
+  const keyword = verifiedKeyword.trim();
+  const username = student.username?.trim() ?? "";
+
+  // Exact username / link-code verify → POST with usernameOrLinkCode (API §3).
+  if (
+    keyword &&
+    username &&
+    username.toLocaleLowerCase() === keyword.toLocaleLowerCase()
+  ) {
+    return { usernameOrLinkCode: keyword };
+  }
+
+  const studentUserId = student.studentUserId?.trim();
+  if (studentUserId) return { studentUserId };
+  if (keyword) return { usernameOrLinkCode: keyword };
+  if (username) return { usernameOrLinkCode: username };
+
+  throw new Error("Missing student identifier for link");
+}
+
 function LinkChildSection() {
   const t = useTranslations("parent.dashboard.childrenManagement");
   const tCommon = useTranslations("parent.dashboard.common");
@@ -620,10 +645,29 @@ function LinkChildSection() {
     setSearchKeyword(searchInput.trim());
   };
 
+  // Verify UX: single match by link code / student id → open confirm card.
+  useEffect(() => {
+    if (!searchKeyword.trim() || selected || searchQuery.isLoading || searchQuery.isError) {
+      return;
+    }
+    const items = searchQuery.data?.items ?? [];
+    const linkable = items.filter((item) => !item.alreadyLinked);
+    if (items.length === 1 && linkable.length === 1) {
+      setSelected(linkable[0]);
+    }
+  }, [
+    searchKeyword,
+    searchQuery.data?.items,
+    searchQuery.isError,
+    searchQuery.isLoading,
+    selected,
+  ]);
+
   const handleConfirmLink = async () => {
     if (!selected) return;
     try {
-      await linkMutation.mutateAsync({ studentUserId: selected.studentUserId });
+      const payload = buildLinkChildPayload(selected, searchKeyword || searchInput);
+      await linkMutation.mutateAsync(payload);
       notify.success(t("add.linkSuccess"));
       router.push(ROUTES.USER.PARENT.CHILD_DETAILS(selected.studentUserId));
     } catch (error) {
@@ -658,7 +702,7 @@ function LinkChildSection() {
           className="h-12 shrink-0 rounded-xl bg-[#2b415e] px-6 text-sm font-bold text-white hover:bg-[#24384f]"
         >
           <Search className="size-4" />
-          {t("add.searchButton")}
+          {t("add.verify")}
         </Button>
       </form>
 
@@ -769,7 +813,8 @@ function SearchResultRow({
         <div className="min-w-0">
           <p className="truncate font-bold text-[#2b415e]">{item.fullName}</p>
           <p className="truncate text-xs text-[#64748b]">
-            {[gradeLabel, item.schoolName].filter(Boolean).join(" · ") || "—"}
+            {[item.username, gradeLabel, item.schoolName].filter(Boolean).join(" · ") ||
+              "—"}
           </p>
         </div>
       </div>
@@ -828,7 +873,9 @@ function ConfirmLinkCard({
         <div className="min-w-0 flex-1">
           <p className="truncate font-bold text-[#2b415e]">{student.fullName}</p>
           <p className="truncate text-sm text-[#64748b]">
-            {[gradeLabel, student.schoolName].filter(Boolean).join(" · ") || "—"}
+            {[student.username, gradeLabel, student.schoolName]
+              .filter(Boolean)
+              .join(" · ") || "—"}
           </p>
         </div>
         <span className="shrink-0 rounded-full bg-[rgba(43,65,94,0.08)] px-3 py-1 text-xs font-bold text-[#2b415e]">

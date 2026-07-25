@@ -12,6 +12,8 @@ import { cn } from "@/shared/application/lib/cn";
 type TeacherChatMessageActionsProps = {
   message: TeacherChatMessage;
   disabled?: boolean;
+  /** Place hover actions on the physical left (own messages) or right (others). */
+  side?: "left" | "right";
   onReply: (message: TeacherChatMessage) => void;
   onPin: (message: TeacherChatMessage) => void;
   onDelete: (message: TeacherChatMessage) => void;
@@ -21,6 +23,7 @@ type TeacherChatMessageActionsProps = {
 export function TeacherChatMessageActions({
   message,
   disabled = false,
+  side = "right",
   onReply,
   onPin,
   onDelete,
@@ -30,7 +33,15 @@ export function TeacherChatMessageActions({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+    <div
+      className={cn(
+        "absolute top-1/2 z-10 flex -translate-y-1/2 items-center gap-1",
+        "pointer-events-none opacity-0 transition-opacity",
+        "group-hover:pointer-events-auto group-hover:opacity-100",
+        open && "pointer-events-auto opacity-100",
+        side === "left" ? "right-full mr-2" : "left-full ml-2",
+      )}
+    >
       <div className="flex items-center gap-0.5 rounded-full bg-white px-1 py-0.5 shadow-sm">
         {CHAT_REACTION_EMOJIS.map((emoji) => {
           const reaction = message.reactions?.find((item) => item.emoji === emoji);
@@ -68,7 +79,7 @@ export function TeacherChatMessageActions({
             <MoreVertical className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="w-44 space-y-1 p-2">
+        <PopoverContent align={side === "left" ? "start" : "end"} className="w-44 space-y-1 p-2">
           <button
             type="button"
             className="flex w-full items-center justify-end gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"

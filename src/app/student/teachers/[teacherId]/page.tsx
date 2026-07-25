@@ -35,6 +35,8 @@ async function TeacherProfileContent({ teacherId }: { teacherId: string }) {
   let profile: Awaited<ReturnType<typeof getTeacherPublicProfile>> | null = null;
   let coursesPage: Awaited<ReturnType<typeof getExploreCoursesPage>> = {
     rows: [],
+    gradeFilters: [],
+    totalCoursesCount: 0,
     currentPage: 1,
     pageSize: TEACHER_PUBLIC_PROFILE_COURSES_PAGE_SIZE,
     totalPages: 1,
@@ -57,6 +59,8 @@ async function TeacherProfileContent({ teacherId }: { teacherId: string }) {
   } catch {
     coursesPage = {
       rows: [],
+      gradeFilters: [],
+      totalCoursesCount: 0,
       currentPage: 1,
       pageSize: TEACHER_PUBLIC_PROFILE_COURSES_PAGE_SIZE,
       totalPages: 1,

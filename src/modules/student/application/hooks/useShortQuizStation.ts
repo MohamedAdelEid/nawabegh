@@ -7,6 +7,7 @@ import { progressQueryKeys } from "@/modules/student/application/constants/progr
 import {
   canRetryAttempt,
   isAttemptFinalized,
+  resolveAttemptRemainingSeconds,
   resolveInitialQuestionIndex,
 } from "@/modules/student/domain/short-quiz/short-quiz.utils";
 import type {
@@ -72,6 +73,7 @@ export function useShortQuizAttemptSession({
   const queryClient = useQueryClient();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [timerReady, setTimerReady] = useState(false);
   const [submitOpen, setSubmitOpen] = useState(false);
   const [result, setResult] = useState<ShortQuizStationResultDto | null>(() =>
     readStoredResult(stationId),
@@ -90,10 +92,15 @@ export function useShortQuizAttemptSession({
   const applyAttempt = useCallback(
     (attempt: ShortQuizAttemptDto) => {
       queryClient.setQueryData(shortQuizQueryKeys.attempt(stationId), attempt);
-      setRemainingSeconds(attempt.remainingSeconds);
+      if (!isAttemptFinalized(attempt)) {
+        setRemainingSeconds(resolveAttemptRemainingSeconds(attempt));
+      }
       if (isAttemptFinalized(attempt)) {
         const stored: ShortQuizStationResultDto = {
-          attempt,
+          attempt: {
+            ...attempt,
+            submittedAt: attempt.submittedAt ?? new Date().toISOString(),
+          },
           pointsReward: 0,
           stationRank: null,
           stationRankTotal: null,
@@ -109,13 +116,17 @@ export function useShortQuizAttemptSession({
     if (!attemptQuery.data || initializedRef.current) return;
     initializedRef.current = true;
     setCurrentIndex(resolveInitialQuestionIndex(attemptQuery.data));
-    setRemainingSeconds(attemptQuery.data.remainingSeconds);
+
     if (isAttemptFinalized(attemptQuery.data)) {
+      setTimerReady(false);
       const stored = readStoredResult(stationId);
       if (stored) setResult(stored);
       else {
         setResult({
-          attempt: attemptQuery.data,
+          attempt: {
+            ...attemptQuery.data,
+            submittedAt: attemptQuery.data.submittedAt ?? new Date().toISOString(),
+          },
           pointsReward: 0,
           stationRank: null,
           stationRankTotal: null,
@@ -124,11 +135,17 @@ export function useShortQuizAttemptSession({
       }
       return;
     }
+
     // Active draft — ignore any stale finalized result from a previous attempt.
     setResult(null);
     if (typeof window !== "undefined") {
       sessionStorage.removeItem(RESULT_STORAGE_KEY(stationId));
     }
+
+    const remaining = resolveAttemptRemainingSeconds(attemptQuery.data);
+    setRemainingSeconds(remaining);
+    // Arm auto-submit only after remaining is applied on the next render.
+    setTimerReady(true);
   }, [attemptQuery.data, stationId]);
 
   const saveMutation = useMutation({
@@ -142,10 +159,18 @@ export function useShortQuizAttemptSession({
   const submitMutation = useMutation({
     mutationFn: () => submitShortQuizAttempt(stationId),
     onSuccess: (payload) => {
-      writeStoredResult(stationId, payload);
-      setResult(payload);
-      applyAttempt(payload.attempt);
+      const stamped: ShortQuizStationResultDto = {
+        ...payload,
+        attempt: {
+          ...payload.attempt,
+          submittedAt: payload.attempt.submittedAt ?? new Date().toISOString(),
+        },
+      };
+      writeStoredResult(stationId, stamped);
+      setResult(stamped);
+      applyAttempt(stamped.attempt);
       setSubmitOpen(false);
+      setTimerReady(false);
       void queryClient.invalidateQueries({ queryKey: progressQueryKeys.dashboard() });
       void queryClient.invalidateQueries({ queryKey: ["student-path-stations"] });
       void queryClient.invalidateQueries({ queryKey: ["student-course-progress"] });
@@ -181,6 +206,7 @@ export function useShortQuizAttemptSession({
   const submit = useCallback(async () => {
     if (submittingRef.current || submitMutation.isPending) return;
     submittingRef.current = true;
+    setTimerReady(false);
     try {
       await submitMutation.mutateAsync();
     } finally {
@@ -191,6 +217,7 @@ export function useShortQuizAttemptSession({
   useEffect(() => {
     if (!enabled || !attemptQuery.data) return;
     if (isAttemptFinalized(attemptQuery.data)) return;
+    if (!timerReady) return;
 
     const timer = window.setInterval(() => {
       setRemainingSeconds((prev) => {
@@ -202,15 +229,15 @@ export function useShortQuizAttemptSession({
       });
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [attemptQuery.data, enabled]);
+  }, [attemptQuery.data, enabled, timerReady]);
 
   useEffect(() => {
     if (!enabled || !attemptQuery.data) return;
     if (isAttemptFinalized(attemptQuery.data)) return;
-    if (remainingSeconds === 0 && attemptQuery.data.remainingSeconds > 0) {
-      void submit();
-    }
-  }, [attemptQuery.data, enabled, remainingSeconds, submit]);
+    if (!timerReady) return;
+    if (remainingSeconds > 0) return;
+    void submit();
+  }, [attemptQuery.data, enabled, remainingSeconds, submit, timerReady]);
 
   const attempt = attemptQuery.data ?? null;
   const questions = attempt?.questions ?? [];
@@ -235,7 +262,9 @@ export function useShortQuizAttemptSession({
 
   const retry = async () => {
     initializedRef.current = false;
+    setTimerReady(false);
     setResult(null);
+    setRemainingSeconds(0);
     if (typeof window !== "undefined") {
       sessionStorage.removeItem(RESULT_STORAGE_KEY(stationId));
     }

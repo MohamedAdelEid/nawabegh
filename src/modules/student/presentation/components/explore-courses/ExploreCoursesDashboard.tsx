@@ -45,12 +45,16 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
     setSubjectId,
     teacherId,
     setTeacherId,
+    gradeId,
+    setGradeId,
     teacherSearch,
     setTeacherSearch,
     subjectsQuery,
     teachersQuery,
     coursesQuery,
     courses,
+    gradeFilters,
+    totalCoursesCount,
   } = useExploreCourses({ initial });
 
   const subjects = subjectsQuery.data ?? [];
@@ -69,7 +73,7 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
         />
         <DashboardPageHeader
           title={t("page.title")}
-          description={t("page.description")}
+          description={t("page.subtitleCount", { count: totalCoursesCount })}
         />
       </div>
 
@@ -80,6 +84,10 @@ export function ExploreCoursesDashboard({ initial }: ExploreCoursesDashboardProp
         onSubjectChange={setSubjectId}
         teacherId={teacherId}
         onTeacherChange={setTeacherId}
+        gradeId={gradeId}
+        onGradeChange={setGradeId}
+        gradeFilters={gradeFilters}
+        totalCoursesCount={totalCoursesCount}
         teacherSearch={teacherSearch}
         onTeacherSearchChange={setTeacherSearch}
         subjects={subjects}

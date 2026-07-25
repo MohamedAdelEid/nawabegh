@@ -78,7 +78,7 @@ export function ParentChatMessageBubble({ message }: { message: ParentChatMessag
   );
 
   return (
-    <div className={cn("flex w-full", isMine ? "justify-end" : "justify-start")}>
+    <div className={cn("flex w-full", isMine ? "justify-end" : "justify-start")} dir="ltr">
       <div
         className={cn(
           "flex max-w-[min(100%,28rem)] flex-col gap-1 px-3 py-2.5 shadow-sm",

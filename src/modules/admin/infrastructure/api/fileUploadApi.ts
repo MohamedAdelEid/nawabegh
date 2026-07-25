@@ -1,5 +1,11 @@
+import { env } from "@/shared/infrastructure/config/env";
 import { FILE_UPLOAD_URL } from "@/shared/infrastructure/files/fileUrl";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+
+/** Dedicated client timeout for `/api/FileUpload/upload` and `/api/FileUpload/upload-multiple` (default 10 min). */
+export const FILE_UPLOAD_TIMEOUT_MS = Number(
+  env.NEXT_PUBLIC_FILE_UPLOAD_TIMEOUT ?? 600_000,
+);
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -137,6 +143,7 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       url: FILE_UPLOAD_URL,
       data: formData,
       isFormData: true,
+      timeout: FILE_UPLOAD_TIMEOUT_MS,
     });
 
     const record = unwrapUploadRecord(response);
@@ -242,7 +249,7 @@ async function uploadAdminFilesBatch(
     url: "/api/FileUpload/upload-multiple",
     data: formData,
     isFormData: true,
-    timeout: 0,
+    timeout: FILE_UPLOAD_TIMEOUT_MS,
   });
 
   const envelope = unwrapUploadMultipleEnvelope(response);

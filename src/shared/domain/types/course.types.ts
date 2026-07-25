@@ -73,10 +73,25 @@ export type ExploreCoursesQueryParams = PaginatedQueryParams & {
   subjectId?: number;
   teacherId?: string;
   accessType?: CourseAccessType;
+  gradeId?: number;
+  term?: number;
+};
+
+export type ExploreGradeFilterOption = {
+  id: number;
+  nameAr: string;
+  nameEn: string;
+  educationLevelId: number;
+  educationLevelNameAr: string;
+  educationLevelNameEn: string;
+  order: number;
+  coursesCount: number;
 };
 
 export type ExploreCoursesPage = {
   rows: ExploreCourseDto[];
+  gradeFilters: ExploreGradeFilterOption[];
+  totalCoursesCount: number;
   currentPage: number;
   pageSize: number;
   totalCount?: number;

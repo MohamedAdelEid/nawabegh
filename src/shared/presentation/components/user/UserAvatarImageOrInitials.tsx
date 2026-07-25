@@ -52,7 +52,7 @@ export function UserAvatarImageOrInitials({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-center overflow-hidden font-bold",
+        "flex shrink-0 items-center justify-center overflow-hidden font-bold bg-gray-200",
         sizeStyles[size],
         circleClassName,
         shape === "square" ? "rounded-md" : "rounded-full",
@@ -69,6 +69,6 @@ export function UserAvatarImageOrInitials({
       ) : (
         initials
       )}
-    </div>
+    </div>  
   );
 }

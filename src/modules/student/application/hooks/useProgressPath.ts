@@ -9,6 +9,10 @@ import {
   resolveActiveCourseId,
   resolveActivePathId,
 } from "@/modules/student/domain/progress/progress.utils";
+import {
+  readLastJourneyCourseId,
+  writeLastJourneyCourseId,
+} from "@/modules/student/domain/progress/journeyLastCourse";
 import type { JourneyCompletionNotice } from "@/modules/student/domain/progress/progress.types";
 import {
   getCourseProgress,
@@ -57,6 +61,11 @@ export function useProgressPath({ courseId: preferredCourseId, pathId: preferred
   const [completionNotice, setCompletionNotice] = useState<JourneyCompletionNotice | null>(
     null,
   );
+  const [lastOpenedCourseId, setLastOpenedCourseId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLastOpenedCourseId(readLastJourneyCourseId());
+  }, []);
 
   const markCourseInitialized = useCallback((courseId: string) => {
     setInitializedCourses((prev) => {
@@ -75,9 +84,19 @@ export function useProgressPath({ courseId: preferredCourseId, pathId: preferred
 
   const activeCourseId = useMemo(
     () =>
-      resolveActiveCourseId(dashboardQuery.data?.courses ?? [], preferredCourseId ?? null),
-    [dashboardQuery.data?.courses, preferredCourseId],
+      resolveActiveCourseId(
+        dashboardQuery.data?.courses ?? [],
+        preferredCourseId ?? null,
+        lastOpenedCourseId,
+      ),
+    [dashboardQuery.data?.courses, preferredCourseId, lastOpenedCourseId],
   );
+
+  useEffect(() => {
+    if (!activeCourseId) return;
+    writeLastJourneyCourseId(activeCourseId);
+    setLastOpenedCourseId(activeCourseId);
+  }, [activeCourseId]);
 
   const initializeMutation = useMutation({
     mutationFn: initializeCourseProgress,
@@ -231,6 +250,7 @@ export function useProgressPath({ courseId: preferredCourseId, pathId: preferred
     openMilestone: openMilestoneMutation.mutateAsync,
     isOpeningMilestone: openMilestoneMutation.isPending,
     openingMilestoneOrder: openMilestoneMutation.variables?.milestoneOrder ?? null,
+    openingPathId: openMilestoneMutation.variables?.learningPathId ?? null,
     openMilestoneError:
       openMilestoneMutation.error instanceof Error
         ? openMilestoneMutation.error.message

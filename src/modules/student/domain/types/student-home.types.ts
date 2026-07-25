@@ -81,10 +81,4 @@ export type LeaderboardWidgetDto = {
   currentUser: LeaderboardEntry | null;
 };
 
-export type InAppNotification = {
-  id: string;
-  title: string;
-  body: string;
-  isRead: boolean;
-  createdAtUtc: string;
-};
+export type { InAppNotification } from "@/shared/domain/types/notification.types";

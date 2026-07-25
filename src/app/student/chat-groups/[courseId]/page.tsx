@@ -1,11 +1,5 @@
-import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { StudentChatConversationPage } from "@/modules/student/presentation/pages/StudentChatConversationPage";
-
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("student.dashboard.chatGroups");
-  return { title: t("title") };
-}
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/shared/infrastructure/config/routes";
 
 export default async function StudentChatConversationRoute({
   params,
@@ -13,5 +7,7 @@ export default async function StudentChatConversationRoute({
   params: Promise<{ courseId: string }>;
 }) {
   const { courseId } = await params;
-  return <StudentChatConversationPage courseId={courseId} />;
+  redirect(
+    `${ROUTES.USER.STUDENT.JOURNEY}?courseId=${encodeURIComponent(courseId)}&tab=chat`,
+  );
 }

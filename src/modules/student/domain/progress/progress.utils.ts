@@ -36,12 +36,67 @@ function toOptionalString(value: unknown): string {
   return String(value).trim();
 }
 
+function parseNamedEnum(
+  value: unknown,
+  nameMap: Record<string, number>,
+  fallback: number,
+): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const raw = value.trim();
+    if (!raw) return fallback;
+    if (!Number.isNaN(Number(raw))) return Number(raw);
+    const mapped = nameMap[raw.toLowerCase().replace(/[\s_-]+/g, "")];
+    if (mapped != null) return mapped;
+  }
+  return fallback;
+}
+
+const STATION_STATUS_NAMES: Record<string, number> = {
+  locked: StudentStationProgressStatus.Locked,
+  available: StudentStationProgressStatus.Available,
+  inprogress: StudentStationProgressStatus.InProgress,
+  completed: StudentStationProgressStatus.Completed,
+  missed: StudentStationProgressStatus.Missed,
+  incomplete: StudentStationProgressStatus.Incomplete,
+};
+
+const PATH_STATUS_NAMES: Record<string, number> = {
+  locked: StudentPathProgressStatus.Locked,
+  available: StudentPathProgressStatus.Available,
+  inprogress: StudentPathProgressStatus.InProgress,
+  completed: StudentPathProgressStatus.Completed,
+};
+
+const LIVE_RUNTIME_MODE_NAMES: Record<string, number> = {
+  upcoming: LiveSessionRuntimeMode.Upcoming,
+  live: LiveSessionRuntimeMode.Live,
+  recorded: LiveSessionRuntimeMode.Recorded,
+  endedwithoutrecording: LiveSessionRuntimeMode.EndedWithoutRecording,
+};
+
+const STATION_TYPE_NAMES: Record<string, number> = {
+  livestream: StationType.LiveStream,
+  live: StationType.LiveStream,
+  flashcards: StationType.Flashcards,
+  shortquiz: StationType.ShortQuiz,
+  quiz: StationType.ShortQuiz,
+  challenge: StationType.Challenge,
+  helperresource: StationType.HelperResource,
+  helper: StationType.HelperResource,
+  recordedlecture: StationType.RecordedLecture,
+};
+
 function mapLiveSessionSchedule(row: unknown): LiveSessionScheduleDto | null {
   const record = asRecord(row);
   if (!record) return null;
   return {
     scheduledAt: toOptionalString(record.scheduledAt),
-    runtimeMode: toNumber(record.runtimeMode, LiveSessionRuntimeMode.Upcoming) as LiveSessionRuntimeMode,
+    runtimeMode: parseNamedEnum(
+      record.runtimeMode,
+      LIVE_RUNTIME_MODE_NAMES,
+      LiveSessionRuntimeMode.Upcoming,
+    ) as LiveSessionRuntimeMode,
     countdownSeconds:
       record.countdownSeconds != null ? toNumber(record.countdownSeconds) : null,
   };
@@ -58,8 +113,16 @@ function mapPathStationProgress(row: unknown): PathStationProgressDto | null {
     stationId,
     stationName: toOptionalString(record.stationName),
     order: toNumber(record.order),
-    stationType: toNumber(record.stationType, StationType.HelperResource) as StationType,
-    status: toNumber(record.status, StudentStationProgressStatus.Locked) as StudentStationProgressStatus,
+    stationType: parseNamedEnum(
+      record.stationType,
+      STATION_TYPE_NAMES,
+      StationType.HelperResource,
+    ) as StationType,
+    status: parseNamedEnum(
+      record.status,
+      STATION_STATUS_NAMES,
+      StudentStationProgressStatus.Locked,
+    ) as StudentStationProgressStatus,
     liveSessionSchedule: liveRaw != null ? mapLiveSessionSchedule(liveRaw) : null,
   };
 }
@@ -157,8 +220,9 @@ function mapCoursePathProgress(row: unknown): CoursePathProgressDto | null {
   return {
     pathId,
     pathName: toOptionalString(record.pathName),
-    pathProgressStatus: toNumber(
+    pathProgressStatus: parseNamedEnum(
       record.pathProgressStatus,
+      PATH_STATUS_NAMES,
       StudentPathProgressStatus.Locked,
     ) as StudentPathProgressStatus,
     totalStations: toNumber(record.totalStations),
@@ -374,9 +438,16 @@ export function resolveActivePathId(
 export function resolveActiveCourseId(
   courses: EnrolledCourseCardDto[],
   preferredCourseId?: string | null,
+  lastOpenedCourseId?: string | null,
 ): string | null {
   if (preferredCourseId && courses.some((course) => course.courseId === preferredCourseId)) {
     return preferredCourseId;
+  }
+  if (
+    lastOpenedCourseId &&
+    courses.some((course) => course.courseId === lastOpenedCourseId)
+  ) {
+    return lastOpenedCourseId;
   }
   return courses[0]?.courseId ?? null;
 }
