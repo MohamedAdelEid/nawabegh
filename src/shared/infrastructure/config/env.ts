@@ -16,6 +16,12 @@ const schema = z.object({
     .url()
     .default("https://api.nwabigh.com"),
   NEXT_PUBLIC_API_TIMEOUT: z.string().default("15000"),
+  NEXT_PUBLIC_GOOGLE_CLIENT_ID: z
+    .string()
+    .min(1)
+    .default(
+      "1089222314346-a8mc4fs5u0urid9tbvb3gqekkojk4unj.apps.googleusercontent.com",
+    ),
 });
 
 export const env = schema.parse(process.env);

@@ -5,6 +5,14 @@ export type LoginCredentials = {
   password: string;
 };
 
+/** Roles allowed for Google sign-in (`POST /api/v1/Auth/google`). */
+export type GoogleAuthRole = "Student" | "Parent";
+
+export type GoogleLoginCredentials = {
+  idToken: string;
+  role: GoogleAuthRole;
+};
+
 /** User object returned inside `data` from `POST /api/v1/Auth/login`. */
 export type LoginApiUser = {
   id: string;
@@ -13,6 +21,8 @@ export type LoginApiUser = {
   photo?: string | null;
   phoneNumber?: string | null;
   roles?: string[];
+  requiresProfileCompletion?: boolean;
+  countryId?: number | null;
 };
 
 /**

@@ -22,11 +22,24 @@
         "countryName": "Saudi Arabia",
         "countryCode": "+966"
       },
+      "google": {
+        "roleTitle": "Continue with Google",
+        "roleDescription": "Choose whether you are signing in as a student or a parent. Teachers and schools must use email registration.",
+        "student": "Student",
+        "parent": "Parent",
+        "selectRoleHint": "Select a role to continue",
+        "submitting": "Signing in with Google...",
+        "close": "Close",
+        "roleRequired": "Please select Student or Parent before continuing.",
+        "noToken": "Google did not return an ID token. Please try again.",
+        "cancelled": "Google sign-in was cancelled or failed. Please try again."
+      },
       "validation": {
         "emailRequired": "Please enter your email address.",
         "emailInvalid": "Please enter a valid email address.",
         "passwordRequired": "Please enter your password.",
-        "genericError": "Unable to sign in right now. Please try again."
+        "genericError": "Unable to sign in right now. Please try again.",
+        "googleError": "Unable to sign in with Google. Please try again."
       },
       "actions": {
         "backHome": "Back to home",

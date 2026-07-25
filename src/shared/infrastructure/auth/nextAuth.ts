@@ -10,7 +10,12 @@ import {
   mapLoginResponseToSession,
   mapRefreshResponseToTokens,
 } from "@/modules/auth/infrastructure/authSession";
-import { loginWithCredentials, refreshAuthToken } from "@/modules/auth/infrastructure/loginApi";
+import {
+  loginWithCredentials,
+  loginWithGoogle,
+  refreshAuthToken,
+} from "@/modules/auth/infrastructure/loginApi";
+import type { GoogleAuthRole } from "@/modules/auth/domain/types/login.types";
 import {
   buildTeacherMockAuthorizeUser,
   isTeacherMockAccessToken,
@@ -155,6 +160,42 @@ export const authOptions: NextAuthOptions = {
 
         if (!sessionPayload) {
           throw new Error("Unable to establish session after verification.");
+        }
+
+        return {
+          id: sessionPayload.user.id,
+          name: sessionPayload.user.name,
+          email: sessionPayload.user.email,
+          image: sessionPayload.user.avatar ?? undefined,
+          role: sessionPayload.user.role,
+          domainUid: sessionPayload.user.domainUid,
+          accessToken: sessionPayload.accessToken,
+          refreshToken: sessionPayload.refreshToken,
+          accessTokenExpiresAt: sessionPayload.accessTokenExpiresAt,
+        };
+      },
+    }),
+    CredentialsProvider({
+      id: "google",
+      name: "Google",
+      credentials: {
+        idToken: { type: "text" },
+        role: { type: "text" },
+        locale: { type: "text" },
+      },
+      async authorize(credentials) {
+        const idToken = credentials?.idToken?.trim();
+        const role = credentials?.role?.trim() as GoogleAuthRole | undefined;
+        const locale = credentials?.locale === "en" ? "en" : "ar";
+
+        if (!idToken || (role !== "Student" && role !== "Parent")) {
+          throw new Error("Missing Google credentials or role.");
+        }
+
+        const response = await loginWithGoogle({ idToken, role }, locale);
+        const sessionPayload = mapLoginResponseToSession(response);
+        if (sessionPayload == null) {
+          throw new Error(getAuthErrorMessage(response));
         }
 
         return {

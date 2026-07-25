@@ -1,5 +1,6 @@
 import { env } from "@/shared/infrastructure/config/env";
 import type {
+  GoogleLoginCredentials,
   LoginApiResponse,
   LoginCredentials,
   RefreshTokenApiResponse,
@@ -8,6 +9,7 @@ import { buildLoginPayload } from "./authSession";
 
 /** Must match backend route (same version prefix as other clients, e.g. `userManagementApi`). */
 const AUTH_LOGIN_PATH = "/api/v1/Auth/login";
+const AUTH_GOOGLE_PATH = "/api/v1/Auth/google";
 const AUTH_REFRESH_PATH = "/api/v1/Auth/refresh-token";
 const AUTH_LOGOUT_PATH = "/api/v1/Auth/logout";
 
@@ -24,6 +26,29 @@ export async function loginWithCredentials(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(buildLoginPayload(credentials)),
+    cache: "no-store",
+  });
+
+  return response.json() as Promise<LoginApiResponse>;
+}
+
+export async function loginWithGoogle(
+  credentials: GoogleLoginCredentials,
+  locale: "ar" | "en" = "ar",
+): Promise<LoginApiResponse> {
+  const baseUrl = env.NEXT_PUBLIC_API_URL.replace(/\/+$/, "");
+  const response = await fetch(`${baseUrl}${AUTH_GOOGLE_PATH}`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Accept-Language": locale,
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      idToken: credentials.idToken,
+      role: credentials.role,
+    }),
     cache: "no-store",
   });
 

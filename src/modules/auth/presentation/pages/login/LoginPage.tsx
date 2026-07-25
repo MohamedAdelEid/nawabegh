@@ -23,7 +23,8 @@ import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { cn } from "@/shared/application/lib/cn";
 import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
 import { resolveStudentPostAuthPath } from "@/modules/student/application/lib/resolveStudentPostAuthPath";
-import { LoginInput } from "../../components";
+import type { GoogleAuthRole } from "@/modules/auth/domain/types/login.types";
+import { GoogleIcon, GoogleLoginRoleModal, LoginInput } from "../../components";
 
 type LoginFormState = {
   email: string;
@@ -31,29 +32,6 @@ type LoginFormState = {
 };
 
 type LoginFormErrors = Partial<Record<keyof LoginFormState | "root", string>>;
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden className="h-5 w-5">
-      <path
-        fill="#EA4335"
-        d="M12 10.2v3.9h5.4c-.2 1.3-1.6 3.8-5.4 3.8-3.2 0-5.9-2.7-5.9-6s2.7-6 5.9-6c1.8 0 3 .8 3.7 1.4l2.5-2.4C16.7 3.4 14.6 2.5 12 2.5 6.8 2.5 2.5 6.8 2.5 12s4.3 9.5 9.5 9.5c5.5 0 9.1-3.9 9.1-9.4 0-.6-.1-1.1-.1-1.9H12Z"
-      />
-      <path
-        fill="#34A853"
-        d="M3.6 7.6 6.8 10c.9-2.6 3.2-4.3 5.2-4.3 1.8 0 3 .8 3.7 1.4l2.5-2.4C16.7 3.4 14.6 2.5 12 2.5 8.3 2.5 5.1 4.6 3.6 7.6Z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M12 21.5c2.5 0 4.6-.8 6.1-2.2l-2.8-2.3c-.8.6-1.9 1.1-3.3 1.1-3.7 0-5.1-2.5-5.4-3.7l-3.1 2.4c1.5 3.1 4.7 4.7 8.5 4.7Z"
-      />
-      <path
-        fill="#4285F4"
-        d="M21.1 12.1c0-.6-.1-1.1-.2-1.6H12v3.9h5.4c-.3 1.1-.9 1.9-1.7 2.5l2.8 2.3c1.6-1.5 2.6-3.8 2.6-7.1Z"
-      />
-    </svg>
-  );
-}
 
 export function LoginPage() {
   const t = useTranslations("auth.login");
@@ -63,6 +41,9 @@ export function LoginPage() {
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+  const [googleModalOpen, setGoogleModalOpen] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const [values, setValues] = useState<LoginFormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<LoginFormErrors>({});
 
@@ -95,6 +76,22 @@ export function LoginPage() {
     return Object.keys(nextErrors).length === 0;
   }
 
+  async function redirectAfterAuth() {
+    const session = await getSession();
+    let targetPath = callbackUrl ?? getRedirectPathForRole(session?.user?.role);
+
+    if (
+      !callbackUrl &&
+      session?.user?.role?.trim().toLowerCase() === "student" &&
+      session.user.id
+    ) {
+      targetPath = await resolveStudentPostAuthPath(session.user.id);
+    }
+
+    router.replace(targetPath);
+    router.refresh();
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!validateForm()) return;
@@ -114,19 +111,29 @@ export function LoginPage() {
       return;
     }
 
-    const session = await getSession();
-    let targetPath = callbackUrl ?? getRedirectPathForRole(session?.user?.role);
+    await redirectAfterAuth();
+  }
 
-    if (
-      !callbackUrl &&
-      session?.user?.role?.trim().toLowerCase() === "student" &&
-      session.user.id
-    ) {
-      targetPath = await resolveStudentPostAuthPath(session.user.id);
+  async function handleGoogleCredential(idToken: string, role: GoogleAuthRole) {
+    setIsGoogleSubmitting(true);
+    setGoogleError(null);
+
+    const result = await signIn("google", {
+      redirect: false,
+      idToken,
+      role,
+      locale,
+    });
+
+    if (result?.error) {
+      setGoogleError(t("validation.googleError"));
+      setIsGoogleSubmitting(false);
+      return;
     }
 
-    router.replace(targetPath);
-    router.refresh();
+    setGoogleModalOpen(false);
+    setGoogleError(null);
+    await redirectAfterAuth();
   }
 
   return (
@@ -225,7 +232,7 @@ export function LoginPage() {
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isGoogleSubmitting}
                   className="dashboard-raised-button mt-3 h-12 w-full rounded-2xl bg-[var(--dashboard-primary)] text-base font-semibold text-white shadow-[var(--dashboard-shadow-button)] hover:bg-[var(--dashboard-primary)]"
                 >
                   {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
@@ -252,6 +259,11 @@ export function LoginPage() {
                 <Button
                   type="button"
                   variant="outline"
+                  disabled={isSubmitting || isGoogleSubmitting}
+                  onClick={() => {
+                    setGoogleError(null);
+                    setGoogleModalOpen(true);
+                  }}
                   className={cn(
                     "h-11 w-full rounded-2xl border-[#e8edf3] bg-white text-sm font-semibold text-slate-700",
                     "hover:bg-slate-50",
@@ -265,6 +277,21 @@ export function LoginPage() {
           </motion.section>
         </div>
       </div>
+
+      <GoogleLoginRoleModal
+        open={googleModalOpen}
+        onOpenChange={(open) => {
+          setGoogleModalOpen(open);
+          if (!open) setGoogleError(null);
+        }}
+        isSubmitting={isGoogleSubmitting}
+        errorMessage={googleError}
+        onCredential={handleGoogleCredential}
+        onError={(message) => {
+          setGoogleError(message);
+          setIsGoogleSubmitting(false);
+        }}
+      />
     </main>
   );
 }
