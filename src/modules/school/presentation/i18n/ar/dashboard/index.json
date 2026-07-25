@@ -131,7 +131,7 @@
         "sessionRemoveError": "تعذّرت إزالة الجهاز",
         "sessionsRevoked": "تم تسجيل الخروج من الأجهزة الأخرى",
         "sessionsRevokeError": "تعذّر تسجيل الخروج من الأجهزة",
-        "invalidImage": "يرجى اختيار صورة بصيغة PNG أو JPG أو WEBP وبحجم أقل من 5 ميجابايت"
+        "invalidImage": "يرجى اختيار صورة بصيغة PNG أو JPG أو WEBP وبحجم لا يتجاوز 20 ميجابايت"
       }
     },
     "homePage": {
@@ -898,7 +898,7 @@
           "rulesPlaceholder": "قواعد وشروط المشاركة...",
           "cover": "صورة الغلاف",
           "coverHint": "اضغط لرفع صورة الغلاف",
-          "coverLimit": "الحد الأقصى: 5 ميجابايت (1920x1080)",
+          "coverLimit": "الحد الأقصى: 20 ميجابايت (1920x1080)",
           "wholeSchool": "كامل المدرسة",
           "wholeSchoolHint": "متاحة لجميع طلاب المدرسة",
           "specificGrades": "صفوف محددة",

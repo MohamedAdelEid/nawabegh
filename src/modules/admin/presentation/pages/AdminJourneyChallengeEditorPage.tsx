@@ -52,6 +52,7 @@ import { DashboardPageHeader } from "@/shared/presentation/components/dashboard"
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 interface Props {
   journeyId: string;
@@ -67,7 +68,7 @@ type PendingSourceFile = LiveBroadcastAttachment & {
 const QUESTIONS_COUNT_OPTIONS = [5, 10, 15, 20] as const;
 const DURATION_OPTIONS = [5, 8, 10, 15, 20] as const;
 const DIFFICULTY_OPTIONS: FlashcardDifficultyId[] = ["easy", "medium", "hard"];
-const MAX_SOURCE_FILE_BYTES = 100 * 1024 * 1024;
+const MAX_SOURCE_FILE_BYTES = UPLOAD_LIMITS.documentBytes;
 const CHALLENGE_SOURCE_UPLOAD_FOLDER = "challenges/sources";
 const ACCEPTED_SOURCE_EXTENSIONS = new Set(["pdf", "pptx", "mp4"]);
 

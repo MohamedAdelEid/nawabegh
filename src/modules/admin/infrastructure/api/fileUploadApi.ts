@@ -1,5 +1,13 @@
 import { extractUploadFilePath, FILE_UPLOAD_URL } from "@/shared/infrastructure/files/fileUrl";
+import {
+  getUploadTooLargeMessage,
+  isFileWithinUploadLimit,
+  UPLOAD_LIMITS,
+} from "@/shared/infrastructure/files/uploadLimits";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
+
+/** Large PDFs / documents can exceed the default 15s axios timeout. */
+const UPLOAD_REQUEST_TIMEOUT_MS = 0;
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -112,8 +120,13 @@ export type DeleteAdminUploadedFileResult =
 
 /**
  * Uploads a file via the shared FileUpload endpoint (same contract as user image upload).
+ * Enforces client size limits that match backend `UploadFileRules` before posting.
  */
 export async function uploadAdminFile(file: File, folder: string): Promise<UploadAdminFileResult> {
+  if (!isFileWithinUploadLimit(file)) {
+    return { ok: false, errorMessage: getUploadTooLargeMessage(file) };
+  }
+
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -123,6 +136,7 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       url: FILE_UPLOAD_URL,
       data: formData,
       isFormData: true,
+      timeout: UPLOAD_REQUEST_TIMEOUT_MS,
     });
 
     const record = unwrapUploadRecord(response);
@@ -145,6 +159,12 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
 
     return { ok: true, filePath, message: message || undefined };
   } catch (error) {
+    if (isRequestEntityTooLargeError(error)) {
+      return {
+        ok: false,
+        errorMessage: getUploadTooLargeMessage(file),
+      };
+    }
     const msg = error instanceof Error ? error.message : "Upload failed";
     return { ok: false, errorMessage: msg };
   }
@@ -211,7 +231,9 @@ function isRequestEntityTooLargeError(error: unknown): boolean {
   if (status === 413) return true;
 
   const message = error instanceof Error ? error.message : String(error ?? "");
-  return /413|request entity too large|payload too large/i.test(message);
+  return /413|request entity too large|payload too large|too large|حجم الملف أكبر|يتجاوز.*ميجا/i.test(
+    message,
+  );
 }
 
 async function uploadAdminFilesBatch(
@@ -228,7 +250,7 @@ async function uploadAdminFilesBatch(
     url: "/api/FileUpload/upload-multiple",
     data: formData,
     isFormData: true,
-    timeout: 0,
+    timeout: UPLOAD_REQUEST_TIMEOUT_MS,
   });
 
   const envelope = unwrapUploadMultipleEnvelope(response);
@@ -257,6 +279,12 @@ export async function uploadAdminFiles(files: File[], folder: string): Promise<U
     return { ok: false, errorMessage: "No files selected" };
   }
 
+  for (const file of files) {
+    if (!isFileWithinUploadLimit(file) || file.size > UPLOAD_LIMITS.requestBodyBytes) {
+      return { ok: false, errorMessage: getUploadTooLargeMessage(file) };
+    }
+  }
+
   const uploaded: UploadAdminMultiFileItem[] = [];
 
   for (const file of files) {
@@ -273,10 +301,7 @@ export async function uploadAdminFiles(files: File[], folder: string): Promise<U
       if (isRequestEntityTooLargeError(error)) {
         return {
           ok: false,
-          errorMessage:
-            uploaded.length > 0
-              ? `${uploaded.length} file(s) uploaded, then failed: "${file.name}" is too large for the server limit.`
-              : `File "${file.name}" is too large for the server upload limit (413).`,
+          errorMessage: getUploadTooLargeMessage(file),
         };
       }
       const msg = error instanceof Error ? error.message : "Upload failed";

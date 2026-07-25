@@ -17,6 +17,10 @@ import { DashboardFilterSelect } from "@/shared/presentation/components/dashboar
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ModalShell, ModalTitle } from "@/shared/presentation/components/ui/modal-shell";
 import { cn } from "@/shared/application/lib/cn";
+import {
+  getMaxBytesForUpload,
+  getUploadTooLargeMessage,
+} from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_FILE_TYPES = [
   "image/png",
@@ -25,7 +29,6 @@ const ACCEPTED_FILE_TYPES = [
   "image/webp",
   "application/pdf",
 ];
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 const MAX_ATTACHMENTS = 5;
 
 type FormValues = {
@@ -78,8 +81,8 @@ export function SupportTicketCreateModal({
         setUploadError(t("attachments.invalidType"));
         continue;
       }
-      if (file.size > MAX_FILE_SIZE_BYTES) {
-        setUploadError(t("attachments.maxSize"));
+      if (file.size > getMaxBytesForUpload(file)) {
+        setUploadError(getUploadTooLargeMessage(file));
         continue;
       }
       nextFiles.push(file);

@@ -345,19 +345,56 @@
       },
       "filters": {
         "all": "All events",
-        "live": "Live now",
-        "published": "Published",
-        "draft": "Draft",
-        "ended": "Ended"
+        "ongoing": "Running now",
+        "published": "Upcoming",
+        "finished": "Ended"
       },
+      "status": {
+        "Ongoing": "Live",
+        "Published": "Upcoming",
+        "Finished": "Ended"
+      },
+      "kpis": {
+        "ongoing": "Ongoing events",
+        "published": "Upcoming events",
+        "finished": "Ended events",
+        "total": "Total events"
+      },
+      "participants": "+{count}",
       "footer": {
         "showing": "Showing {loaded} of {total} events",
-        "loadMore": "Load more events"
+        "loadMore": "Load more events",
+        "loading": "Loading..."
       },
       "empty": "No events in this category right now",
       "errors": {
         "load": "Could not load school events",
         "retry": "Retry"
+      },
+      "linkSchool": {
+        "title": "Link your school",
+        "description": "Choose your country and school to view school events.",
+        "submit": "Save and continue",
+        "saving": "Saving...",
+        "country": {
+          "label": "Country",
+          "placeholder": "Select country",
+          "searchPlaceholder": "Search country",
+          "empty": "No countries found",
+          "loadError": "Could not load countries"
+        },
+        "school": {
+          "label": "School",
+          "placeholder": "Select school",
+          "selectCountryFirst": "Select a country first",
+          "searchPlaceholder": "Search school",
+          "empty": "No schools found",
+          "loadError": "Could not load schools"
+        },
+        "errors": {
+          "schoolRequired": "Please select a school",
+          "save": "Could not link your school"
+        }
       }
     },
     "schoolEventLive": {
@@ -369,23 +406,28 @@
       },
       "tabs": {
         "live": "Live stream",
-        "schedule": "Match schedule",
+        "matches": "Match schedule",
         "honorBoard": "Honor board"
       },
       "score": {
         "title": "Current score",
-        "points": "Points: {points}"
+        "points": "Points",
+        "empty": "No live match score yet."
       },
       "feed": {
         "title": "Top updates",
-        "refresh": "Refresh"
+        "refresh": "Refresh",
+        "empty": "No updates yet"
       },
       "poll": {
-        "title": "Live poll"
+        "title": "Live poll",
+        "votes": "Based on {count} audience votes"
       },
       "standings": {
         "title": "Overall team standings",
         "viewFull": "View full standings",
+        "loading": "Loading standings...",
+        "empty": "Standings will appear when teams are ranked",
         "points": "{points} pts"
       },
       "nextMatch": {
@@ -393,10 +435,12 @@
         "vs": "vs"
       },
       "schedule": {
-        "empty": "No match schedule is available yet"
+        "empty": "No match schedule is available yet",
+        "loading": "Loading match schedule..."
       },
       "honorBoard": {
-        "empty": "The honor board will appear when results are ready"
+        "empty": "The honor board will appear when results are ready",
+        "loading": "Loading honor board..."
       },
       "errors": {
         "load": "Could not load the event view",

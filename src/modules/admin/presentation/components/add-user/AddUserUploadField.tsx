@@ -4,10 +4,11 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera, Pencil } from "lucide-react";
 import { Button } from "@/shared/presentation/components/ui/button";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 import AddPhoto from "../../assets/icons/AddPhoto";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 export function AddUserUploadField({
   title,

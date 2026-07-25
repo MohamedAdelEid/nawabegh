@@ -142,7 +142,7 @@
         "media": {
           "label": "Upload image / video",
           "hint": "Drag files here or click to upload",
-          "formats": "Supports JPG, PNG, MP4 (max 50 MB)"
+          "formats": "Supports JPG, PNG, MP4 (max 100 MB)"
         },
         "cta": { "label": "CTA button text", "placeholder": "e.g. Register now, discover more..." },
         "ctaUrl": { "label": "Destination URL", "placeholder": "https://" }
@@ -337,7 +337,7 @@
       },
       "cover": {
         "hint": "Click to change image",
-        "formats": "PNG, JPG — max 5 MB"
+        "formats": "PNG, JPG — max 20 MB"
       },
       "sections": { "targeting": "Targeting settings" },
       "actions": { "cancel": "Cancel", "save": "Save changes" },

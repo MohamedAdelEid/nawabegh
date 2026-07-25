@@ -15,9 +15,10 @@ import { ModalShell, ModalTitle } from "@/shared/presentation/components/ui/moda
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { cn } from "@/shared/application/lib/cn";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 export type BadgeFormValues = {
   name: string;

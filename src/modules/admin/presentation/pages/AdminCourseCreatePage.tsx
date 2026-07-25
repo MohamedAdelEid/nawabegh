@@ -34,9 +34,10 @@ import { ModalDescription, ModalShell, ModalTitle } from "@/shared/presentation/
 import { cn } from "@/shared/application/lib/cn";
 import { MoneyIcon } from "../assets/icons/Money";
 import { GiftIcon } from "../assets/icons/Gift";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 const COURSE_COVER_UPLOAD_FOLDER = "courses";
 
 const pricingOptions: CoursePricingType[] = [

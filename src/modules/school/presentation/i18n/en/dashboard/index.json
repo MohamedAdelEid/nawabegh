@@ -131,7 +131,7 @@
         "sessionRemoveError": "Could not remove the device",
         "sessionsRevoked": "Logged out from other devices",
         "sessionsRevokeError": "Could not log out from other devices",
-        "invalidImage": "Please choose a PNG, JPG, or WEBP image smaller than 5MB"
+        "invalidImage": "Please choose a PNG, JPG, or WEBP image up to 20 MB"
       }
     },
     "homePage": {
@@ -898,7 +898,7 @@
           "rulesPlaceholder": "Participation rules and conditions...",
           "cover": "Cover image",
           "coverHint": "Click to upload cover image",
-          "coverLimit": "Max size: 5 MB (1920x1080)",
+          "coverLimit": "Max size: 20 MB (1920x1080)",
           "wholeSchool": "Whole school",
           "wholeSchoolHint": "Available to all students in the school",
           "specificGrades": "Specific grades",

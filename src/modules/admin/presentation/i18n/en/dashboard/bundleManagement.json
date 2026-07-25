@@ -142,7 +142,7 @@
       },
       "cover": {
         "dropTitle": "Choose an image or drag it here",
-        "dropHint": "JPG, PNG (max 5MB)",
+        "dropHint": "JPG, PNG (max 20MB)",
         "uploading": "Uploading...",
         "change": "Change cover image",
         "uploadSuccess": "Cover image uploaded successfully."
@@ -179,7 +179,7 @@
         "priceInvalid": "Bundle price must be greater than zero and less than the sum of course prices.",
         "coursesMin": "Select at least two courses.",
         "coverInvalid": "Failed to upload cover image.",
-        "coverTooLarge": "Cover image must be 5MB or smaller.",
+        "coverTooLarge": "Cover image must not exceed 20 MB.",
         "accessDurationInvalid": "Access duration must be between 1 and 3650 days, or lifetime."
       },
       "messages": {

@@ -494,7 +494,7 @@
           "pdf": {
             "label": "رفع ملف PDF",
             "hint": "اضغط لرفع الملف أو اسحب وأفلت",
-            "subhint": "الحد الأقصى لحجم الملف 50 ميجابايت (PDF فقط)"
+            "subhint": "الحد الأقصى لحجم الملف 100 ميجابايت (PDF فقط)"
           },
           "subject": {
             "label": "اختيار المادة",
@@ -638,7 +638,7 @@
           "subjectsLoadError": "تعذر تحميل المواد",
           "pdfUploading": "جاري رفع ملف PDF…",
           "pdfInvalidType": "يرجى اختيار ملف PDF فقط.",
-          "pdfTooLarge": "يجب ألا يتجاوز حجم ملف PDF 50 ميجابايت.",
+          "pdfTooLarge": "يجب ألا يتجاوز حجم ملف PDF 100 ميجابايت.",
           "coursePlaceholder": "اختر الدورة",
           "courseSearchPlaceholder": "ابحث عن دورة…",
           "coursesEmpty": "لا توجد دورات مطابقة للبحث",
@@ -1333,7 +1333,7 @@
           "coverHint": "اسحب الصورة هنا أو تصفح الملفات",
           "coverUploading": "جاري رفع الغلاف...",
           "coverUploaded": "تم رفع الغلاف",
-          "coverRequirements": "JPG, PNG — نسبة 16:9 — الحد الأقصى 5 ميجابايت",
+          "coverRequirements": "JPG, PNG — نسبة 16:9 — الحد الأقصى 20 ميجابايت",
           "basePrice": "السعر الأصلي (ر.ع.)",
           "offerPrice": "السعر بعد الخصم (ر.ع.)"
         },

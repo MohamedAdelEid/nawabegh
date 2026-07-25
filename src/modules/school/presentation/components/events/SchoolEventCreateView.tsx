@@ -34,6 +34,7 @@ import { DateTimePicker } from "@/shared/presentation/components/ui/date-time-pi
 import { LabeledInput } from "@/shared/presentation/components/ui/labeled-input";
 import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { SchoolEventFormSkeleton } from "./SchoolEventsSkeletons";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 type GradeOption = { id: number; label: string };
 
@@ -169,7 +170,7 @@ export function SchoolEventCreateView({ eventId }: { eventId?: string }) {
 
   const handleUpload = async (file: File | undefined) => {
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > UPLOAD_LIMITS.imageBytes) {
       notify.error(t("messages.uploadError"));
       return;
     }

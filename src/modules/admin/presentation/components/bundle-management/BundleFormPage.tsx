@@ -42,9 +42,10 @@ import {
   type SearchableSelectOption,
 } from "@/shared/presentation/components/ui/searchable-select";
 import { DashboardFilterSelect } from "@/shared/presentation/components/dashboard";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const BUNDLE_COVER_UPLOAD_FOLDER = "bundles/covers";
-const MAX_COVER_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_COVER_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 type SelectedCourse = {
   id: string;

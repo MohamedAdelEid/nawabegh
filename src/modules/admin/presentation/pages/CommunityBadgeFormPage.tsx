@@ -43,9 +43,10 @@ import {
   uploadAdminFile,
 } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml"];
-const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 type CommunityBadgeFormPageProps = {
   mode: "create" | "edit";
