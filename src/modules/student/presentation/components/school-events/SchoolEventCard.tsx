@@ -1,120 +1,133 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { CalendarDays } from "lucide-react";
+import { useLocale } from "next-intl";
 import { cn } from "@/shared/application/lib/cn";
-import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user/UserAvatarImageOrInitials";
+import { formatDate, formatNumber } from "@/shared/application/lib/format";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { Button } from "@/shared/presentation/components/ui/button";
+import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user/UserAvatarImageOrInitials";
 import type { SchoolEventCard as SchoolEventCardModel } from "@/modules/student/domain/types/schoolEvent.types";
 
 type SchoolEventCardProps = {
   event: SchoolEventCardModel;
+  statusLabel: string;
+  participantsLabel: (count: string) => string;
 };
 
-const statusBadgeClass: Record<SchoolEventCardModel["status"], string> = {
-  Live: "bg-[#58cc02] text-white",
-  Published: "bg-[#2b415e] text-white",
-  Draft: "bg-[#dee2e6] text-[#0f172a]",
-  Ended: "bg-[#94a3b8] text-white",
-};
-
-function eventHref(event: SchoolEventCardModel): string | null {
-  if (event.actionType === "ComingSoon") return null;
-  return ROUTES.USER.STUDENT.EVENT_LIVE(event.id);
+function statusTone(status: SchoolEventCardModel["status"]) {
+  if (status === "Ongoing") return "bg-emerald-500 text-white";
+  if (status === "Published") return "bg-sky-600 text-white";
+  return "bg-slate-500 text-white";
 }
 
-export function SchoolEventCard({ event }: SchoolEventCardProps) {
-  const href = eventHref(event);
-  const isPrimaryAction =
-    event.actionType === "ViewLive" || event.actionType === "ViewEvent";
-  const isEnded = event.status === "Ended";
+export function SchoolEventCard({
+  event,
+  statusLabel,
+  participantsLabel,
+}: SchoolEventCardProps) {
+  const locale = useLocale();
+  const cover = resolveFileUrl(event.coverImageUrl);
+  const dateText =
+    event.dateLabel ||
+    [event.startsAt, event.endsAt]
+      .filter(Boolean)
+      .map((value) => formatDate(value as string, locale))
+      .join(" - ");
 
-  const actionClass = cn(
-    "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-bold transition-all",
-    isPrimaryAction
-      ? "bg-[#c7af6d] text-white shadow-[0px_4px_0px_#a38f5a] hover:translate-y-0.5 hover:shadow-none"
-      : "border-2 border-[#e2e8f0] bg-[#f8fafc] text-[#2b415e] hover:bg-white",
-    !href && "cursor-not-allowed opacity-60",
-  );
+  const href = ROUTES.USER.STUDENT.EVENT_LIVE(String(event.id));
+  const isRegister = event.actionType === "Register";
+  const primaryClass = isRegister
+    ? "bg-[#c4a574] text-white hover:bg-[#b39463]"
+    : event.status === "Finished"
+      ? "bg-slate-100 text-slate-700 hover:bg-slate-200"
+      : "bg-[#c4a574] text-white hover:bg-[#b39463]";
 
   return (
-    <article
-      className={cn(
-        "flex h-full flex-col overflow-hidden rounded-[20px] bg-white shadow-[0px_8px_0px_0px_rgba(0,0,0,0.05)]",
-        isEnded && "opacity-80",
-      )}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-[1.5rem] border border-slate-200 bg-white shadow-sm"
     >
-      <div className="relative h-48 w-full overflow-hidden bg-[#e2e8f0]">
-        {event.coverImageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={event.coverImageUrl}
-            alt=""
-            className="size-full object-cover"
+      <div className="relative aspect-[16/9] overflow-hidden rounded-t-[1.5rem] bg-slate-100">
+        {cover ? (
+          <Image
+            src={cover}
+            alt={event.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 33vw"
+            unoptimized
           />
-        ) : null}
-
+        ) : (
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-200 to-slate-100">
+            <CalendarDays className="size-10 text-slate-400" />
+          </div>
+        )}
         <span
           className={cn(
-            "absolute start-4 top-4 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide",
-            statusBadgeClass[event.status],
+            "absolute end-3 top-3 rounded-full px-3 py-1 text-xs font-semibold",
+            statusTone(event.status),
           )}
         >
-          {event.statusLabel}
+          {statusLabel}
         </span>
-
-        <span className="absolute bottom-4 end-4 rounded-lg bg-black/50 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-[6px]">
-          {event.categoryLabel}
-        </span>
+        {event.typeLabel ? (
+          <span className="absolute bottom-3 start-3 rounded-lg bg-slate-900/80 px-3 py-1 text-xs font-medium text-white">
+            {event.typeLabel}
+          </span>
+        ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col justify-between gap-4 p-6">
-        <div className="space-y-3 text-start">
-          <h3 className="text-xl font-bold leading-7 text-[#0f172a]">{event.title}</h3>
-          <div className="flex items-center gap-2 text-sm text-[#64748b]">
-            <CalendarDays className="size-3.5 shrink-0" aria-hidden />
-            <span>{event.dateRangeLabel}</span>
-          </div>
+      <div className="space-y-4 p-5">
+        <div className="space-y-2">
+          <h3 className="line-clamp-2 text-lg font-bold text-[#1e3a5f]">
+            {event.title}
+          </h3>
+          {dateText ? (
+            <p className="flex items-center gap-2 text-sm text-slate-500">
+              <CalendarDays className="size-4 shrink-0" />
+              <span>{dateText}</span>
+            </p>
+          ) : null}
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t-2 border-[#e2e8f0] pt-[18px]">
-          {href ? (
-            <Link href={href} className={actionClass}>
-              {event.actionLabel}
-            </Link>
-          ) : (
-            <span className={actionClass}>{event.actionLabel}</span>
-          )}
-
-          <div className="flex items-center">
-            {event.participantPreview.length === 0 ? (
-              <span className="inline-flex size-8 items-center justify-center rounded-full border-2 border-white bg-[#dee2e6] text-[10px] font-bold text-[#0f172a]">
-                —
-              </span>
-            ) : (
-              event.participantPreview.slice(0, 2).map((participant, index) => (
-                <div
-                  key={`${event.id}-p-${index}`}
-                  className={index > 0 ? "-ms-2" : undefined}
-                >
-                  <UserAvatarImageOrInitials
-                    trackKey={`${event.id}-p-${index}`}
-                    imageUrl={participant.profileImageUrl}
-                    name={participant.fullName ?? "?"}
-                    size="sm"
-                    circleClassName="!h-8 !w-8 border-2 border-white text-[10px]"
-                  />
-                </div>
-              ))
+        <div className="flex items-center justify-between gap-3">
+          <Button
+            asChild
+            className={cn(
+              "min-h-11 rounded-xl px-4 hover:translate-y-0",
+              primaryClass,
             )}
+          >
+            <Link href={href}>{event.actionLabel}</Link>
+          </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2 space-x-reverse">
+              {event.participantPreview.slice(0, 3).map((participant) => (
+                <UserAvatarImageOrInitials
+                  key={participant.id}
+                  trackKey={participant.id}
+                  name={participant.fullName}
+                  imageUrl={resolveFileUrl(participant.avatarUrl)}
+                  size="sm"
+                  circleClassName="ring-2 ring-white"
+                />
+              ))}
+            </div>
             {event.participantCount > 0 ? (
-              <span className="-ms-2 inline-flex size-8 items-center justify-center rounded-full border-2 border-white bg-[#dee2e6] text-[10px] font-bold text-[#0f172a]">
-                +{event.participantCount}
+              <span className="text-sm font-semibold text-slate-600">
+                {participantsLabel(formatNumber(event.participantCount, locale))}
               </span>
             ) : null}
           </div>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }

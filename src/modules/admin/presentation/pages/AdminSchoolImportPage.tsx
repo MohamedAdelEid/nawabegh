@@ -27,9 +27,10 @@ import { Input } from "@/shared/presentation/components/ui/input";
 import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
 import { notify } from "@/shared/application/lib/toast";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 import { cn } from "@/shared/application/lib/cn";
 
-const MAX_IMPORT_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_IMPORT_SIZE_BYTES = UPLOAD_LIMITS.documentBytes;
 const PAGE_SIZE = 20;
 const ACCEPTED_EXTENSIONS = [".xlsx", ".csv"];
 

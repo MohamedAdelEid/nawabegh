@@ -23,6 +23,7 @@ import {
 import type { InteractiveBookDetail } from "@/modules/admin/domain/data/interactiveBooksDashboardData";
 import { emptyInteractiveBookManagePageData } from "@/modules/admin/domain/data/interactiveBookManagePageData";
 import { uploadAdminFile } from "@/modules/admin/infrastructure/api/fileUploadApi";
+import { INTERACTIVE_BOOK_PDF_MAX_BYTES } from "@/shared/infrastructure/files/uploadLimits";
 import {
   createHotspot,
   deleteHotspot,
@@ -69,7 +70,7 @@ import { Label } from "@/shared/presentation/components/ui/label";
 import { StatusSwitch } from "@/shared/presentation/components/ui/StatusSwitch";
 
 const INTERACTIVE_BOOK_PDF_UPLOAD_FOLDER = "interactive-books";
-const MAX_PDF_SIZE_BYTES = 50 * 1024 * 1024;
+const MAX_PDF_SIZE_BYTES = INTERACTIVE_BOOK_PDF_MAX_BYTES;
 const PDF_SCALE_MIN = 0.5;
 const PDF_SCALE_MAX = 2;
 const PDF_SCALE_STEP = 0.25;

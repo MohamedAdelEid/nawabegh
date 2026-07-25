@@ -29,6 +29,7 @@ import {
   ModalShell,
   ModalTitle,
 } from "@/shared/presentation/components/ui/modal-shell";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 interface Props {
   journeyId: string;
@@ -39,7 +40,8 @@ const DIFFICULTY_OPTIONS: FlashcardDifficultyId[] = ["easy", "medium", "hard"];
 const CARD_COUNT_OPTIONS = [5, 10, 15, 20];
 const REVIEW_TIME_OPTIONS = [10, 15, 20, 30];
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"] as const;
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_BYTES = UPLOAD_LIMITS.imageBytes;
+const MAX_ATTACHMENT_BYTES = UPLOAD_LIMITS.documentBytes;
 const FLASHCARD_IMAGE_UPLOAD_FOLDER = "flashcard-cards/images";
 const FLASHCARD_ATTACHMENT_UPLOAD_FOLDER = "flashcard-cards/attachments";
 
@@ -166,6 +168,22 @@ export function AdminJourneyFlashcardAddPage({
     if (imageInputRef.current) imageInputRef.current.value = "";
   };
 
+  const processAttachmentFile = (file: File) => {
+    if (file.size > MAX_ATTACHMENT_BYTES) {
+      notify.error(t("flashcardAdd.upload.maxSizeExceeded"));
+      return;
+    }
+    updateCurrentCard({
+      attachmentFile: file,
+      attachmentMeta: {
+        name: file.name,
+        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+        extension: getFileExtension(file.name),
+        sizeBytes: file.size,
+      },
+    });
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -180,7 +198,7 @@ export function AdminJourneyFlashcardAddPage({
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
-      notify.error(t("flashcardAdd.upload.imageFormats"));
+      notify.error(t("flashcardAdd.upload.imageTooLarge"));
       return;
     }
 
@@ -475,17 +493,7 @@ export function AdminJourneyFlashcardAddPage({
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) {
-                    updateCurrentCard({
-                      attachmentFile: file,
-                      attachmentMeta: {
-                        name: file.name,
-                        size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-                        extension: getFileExtension(file.name),
-                        sizeBytes: file.size,
-                      },
-                    });
-                  }
+                  if (file) processAttachmentFile(file);
                 }}
               />
 
@@ -516,17 +524,7 @@ export function AdminJourneyFlashcardAddPage({
                     e.preventDefault();
                     e.stopPropagation();
                     const file = e.dataTransfer.files[0];
-                    if (file) {
-                      updateCurrentCard({
-                        attachmentFile: file,
-                        attachmentMeta: {
-                          name: file.name,
-                          size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
-                          extension: getFileExtension(file.name),
-                          sizeBytes: file.size,
-                        },
-                      });
-                    }
+                    if (file) processAttachmentFile(file);
                   }}
                 >
                   <div

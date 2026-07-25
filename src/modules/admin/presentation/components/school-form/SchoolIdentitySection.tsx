@@ -9,9 +9,10 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { LabeledTextarea } from "@/shared/presentation/components/ui/labeled-textarea";
 import { SchoolFormSectionCard } from "./SchoolFormSectionCard";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 interface SchoolIdentitySectionProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;

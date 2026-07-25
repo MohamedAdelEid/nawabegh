@@ -43,6 +43,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch";
 import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 interface Props {
   journeyId: string;
@@ -58,7 +59,7 @@ type PendingSourceFile = LiveBroadcastAttachment & {
 const DURATION_OPTIONS = [5, 10, 15, 30] as const;
 const DIFFICULTY_OPTIONS: FlashcardDifficultyId[] = ["easy", "medium", "hard"];
 const ATTEMPTS_OPTIONS: ExamStation["maxAttempts"][] = ["one", "two", "three", "unlimited"];
-const MAX_SOURCE_FILE_BYTES = 100 * 1024 * 1024;
+const MAX_SOURCE_FILE_BYTES = UPLOAD_LIMITS.documentBytes;
 const QUIZ_SOURCE_UPLOAD_FOLDER = "quizzes/sources";
 const ACCEPTED_SOURCE_EXTENSIONS = new Set(["pdf", "pptx", "mp4"]);
 const DIFFICULTY_TO_API: Record<FlashcardDifficultyId, DifficultyLevel> = {

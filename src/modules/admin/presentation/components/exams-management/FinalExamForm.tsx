@@ -28,6 +28,7 @@ import { ToggleSwitch } from "@/shared/presentation/components/ui/toggle-switch"
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { Skeleton } from "@/shared/presentation/components/ui/skeleton";
 import { SearchableSelect } from "@/shared/presentation/components/ui/searchable-select";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const DEFAULT_VALUES: FinalExamFormValues = {
   courseId: "",
@@ -39,7 +40,7 @@ const DEFAULT_VALUES: FinalExamFormValues = {
   shuffleQuestions: true,
 };
 
-const MAX_FILE_BYTES = 20 * 1024 * 1024;
+const MAX_FILE_BYTES = UPLOAD_LIMITS.documentBytes;
 const ACCEPTED_EXTENSIONS = new Set(["pdf", "docx"]);
 const POLL_INTERVAL_MS = 3000;
 

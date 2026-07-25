@@ -25,10 +25,10 @@
         "label": "Attachments",
         "add": "Add file",
         "remove": "Remove file",
-        "hint": "Images or PDF, up to 10 MB each (max 5 files).",
+        "hint": "Images up to 20 MB or PDF up to 100 MB each (max 5 files).",
         "empty": "No attachments added.",
         "invalidType": "Only images and PDF files are allowed.",
-        "maxSize": "Each file must be 10 MB or smaller."
+        "maxSize": "Images must not exceed 20 MB. PDFs must not exceed 100 MB."
       },
       "cancel": "Cancel",
       "submit": "Create ticket",

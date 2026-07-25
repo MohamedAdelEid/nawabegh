@@ -153,7 +153,7 @@
         "aiButton": "Generate questions with AI",
         "drag": "Drag educational files here or click to browse",
         "formats": "PDF, DOCX",
-        "maxSize": "Up to 20 MB",
+        "maxSize": "Up to 100 MB",
         "uploaded": "Uploaded successfully",
         "uploading": "Uploading…",
         "invalidFormat": "Unsupported file format. Use PDF or DOCX.",

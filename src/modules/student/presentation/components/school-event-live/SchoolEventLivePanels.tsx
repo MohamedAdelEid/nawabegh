@@ -1,21 +1,37 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDate } from "@/shared/application/lib/format";
+import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user/UserAvatarImageOrInitials";
+import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import type {
   SchoolEventHonorEntry,
-  SchoolEventScheduleMatch,
+  SchoolEventMatch,
 } from "@/modules/student/domain/types/schoolEvent.types";
 
 type SchoolEventSchedulePanelProps = {
-  matches: SchoolEventScheduleMatch[];
+  matches: SchoolEventMatch[];
+  isLoading?: boolean;
 };
 
-export function SchoolEventSchedulePanel({ matches }: SchoolEventSchedulePanelProps) {
+export function SchoolEventSchedulePanel({
+  matches,
+  isLoading,
+}: SchoolEventSchedulePanelProps) {
   const t = useTranslations("student.dashboard.schoolEventLive");
+  const locale = useLocale();
+
+  if (isLoading) {
+    return (
+      <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+        {t("schedule.loading")}
+      </p>
+    );
+  }
 
   if (matches.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-[#e2e8f0] bg-white px-6 py-16 text-center text-[#64748b]">
+      <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center text-slate-500">
         {t("schedule.empty")}
       </p>
     );
@@ -24,24 +40,36 @@ export function SchoolEventSchedulePanel({ matches }: SchoolEventSchedulePanelPr
   return (
     <div className="space-y-4">
       {matches.map((match) => {
-        const [teamA, teamB] = match.teams;
+        const scoreLabel =
+          match.homeScore != null && match.awayScore != null
+            ? `${match.homeScore} : ${match.awayScore}`
+            : null;
+        const scheduledLabel = match.startsAt
+          ? formatDate(match.startsAt, locale)
+          : "";
+
         return (
           <article
-            key={match.matchId}
-            className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-[#e2e8f0] bg-white p-5 shadow-[0px_4px_0px_rgba(0,0,0,0.04)]"
+            key={match.id}
+            className="flex flex-wrap items-center justify-between gap-4 rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm"
           >
             <div className="space-y-1 text-start">
-              <p className="text-xs font-medium text-[#94a3b8]">{match.roundLabel}</p>
+              {match.roundLabel ? (
+                <p className="text-xs font-medium text-slate-400">{match.roundLabel}</p>
+              ) : null}
               <p className="text-base font-bold text-[#0f172a]">
-                {teamA?.name}{" "}
-                <span className="font-medium text-[#94a3b8]">vs</span> {teamB?.name}
+                {match.homeTeamName}{" "}
+                <span className="font-medium text-slate-400">{t("nextMatch.vs")}</span>{" "}
+                {match.awayTeamName}
               </p>
-              <p className="text-sm text-[#64748b]">{match.scheduledLabel}</p>
+              {scheduledLabel ? (
+                <p className="text-sm text-slate-500">{scheduledLabel}</p>
+              ) : null}
             </div>
             <div className="text-end">
-              <p className="text-sm font-bold text-[#2b415e]">{match.statusLabel}</p>
-              {match.scoreLabel ? (
-                <p className="text-lg font-bold tabular-nums text-[#0f172a]">{match.scoreLabel}</p>
+              <p className="text-sm font-bold text-[#1e3a5f]">{match.statusLabel}</p>
+              {scoreLabel ? (
+                <p className="text-lg font-bold tabular-nums text-[#0f172a]">{scoreLabel}</p>
               ) : null}
             </div>
           </article>
@@ -53,14 +81,26 @@ export function SchoolEventSchedulePanel({ matches }: SchoolEventSchedulePanelPr
 
 type SchoolEventHonorBoardPanelProps = {
   entries: SchoolEventHonorEntry[];
+  isLoading?: boolean;
 };
 
-export function SchoolEventHonorBoardPanel({ entries }: SchoolEventHonorBoardPanelProps) {
+export function SchoolEventHonorBoardPanel({
+  entries,
+  isLoading,
+}: SchoolEventHonorBoardPanelProps) {
   const t = useTranslations("student.dashboard.schoolEventLive");
+
+  if (isLoading) {
+    return (
+      <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-500">
+        {t("honorBoard.loading")}
+      </p>
+    );
+  }
 
   if (entries.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-[#e2e8f0] bg-white px-6 py-16 text-center text-[#64748b]">
+      <p className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center text-slate-500">
         {t("honorBoard.empty")}
       </p>
     );
@@ -70,12 +110,27 @@ export function SchoolEventHonorBoardPanel({ entries }: SchoolEventHonorBoardPan
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {entries.map((entry) => (
         <article
-          key={entry.id}
-          className="rounded-2xl border-2 border-[#e2e8f0] bg-white p-5 text-start shadow-[0px_4px_0px_rgba(0,0,0,0.04)]"
+          key={`${entry.rank}-${entry.fullName}`}
+          className="rounded-[1.5rem] border border-slate-200 bg-white p-5 text-start shadow-sm"
         >
-          <p className="text-lg font-bold text-[#0f172a]">{entry.title}</p>
-          <p className="mt-1 text-sm text-[#64748b]">{entry.subtitle}</p>
-          <p className="mt-3 text-sm font-bold text-[#c7af6d]">{entry.pointsLabel}</p>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="text-sm font-bold text-slate-400">#{entry.rank}</span>
+            <UserAvatarImageOrInitials
+              trackKey={`${entry.rank}-${entry.fullName}`}
+              name={entry.fullName}
+              imageUrl={resolveFileUrl(entry.avatarUrl)}
+              size="sm"
+            />
+          </div>
+          <p className="text-lg font-bold text-[#0f172a]">{entry.fullName}</p>
+          <p className="mt-1 text-sm text-slate-500">
+            {[entry.roleLabel, entry.teamName, entry.gradeLabel]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          <p className="mt-3 text-sm font-bold text-[#c4a574]">
+            {entry.pointsLabel || t("standings.points", { points: entry.points })}
+          </p>
         </article>
       ))}
     </div>

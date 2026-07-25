@@ -494,7 +494,7 @@
           "pdf": {
             "label": "Upload PDF file",
             "hint": "Click to upload or drag and drop",
-            "subhint": "Maximum file size 50 MB (PDF only)"
+            "subhint": "Maximum file size 100 MB (PDF only)"
           },
           "subject": {
             "label": "Subject",
@@ -638,7 +638,7 @@
           "subjectsLoadError": "Could not load subjects",
           "pdfUploading": "Uploading PDF…",
           "pdfInvalidType": "Please choose a PDF file only.",
-          "pdfTooLarge": "PDF must be 50 MB or smaller.",
+          "pdfTooLarge": "PDF must not exceed 100 MB.",
           "coursePlaceholder": "Select a course",
           "courseSearchPlaceholder": "Search courses…",
           "coursesEmpty": "No courses match your search",
@@ -1333,7 +1333,7 @@
           "coverHint": "Drag the image here or browse files",
           "coverUploading": "Uploading cover...",
           "coverUploaded": "Cover uploaded",
-          "coverRequirements": "JPG, PNG — 16:9 ratio — max 5 MB",
+          "coverRequirements": "JPG, PNG — 16:9 ratio — max 20 MB",
           "basePrice": "Original price (OMR)",
           "offerPrice": "Price after discount (OMR)"
         },

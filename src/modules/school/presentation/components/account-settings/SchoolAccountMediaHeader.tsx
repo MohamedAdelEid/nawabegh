@@ -6,9 +6,10 @@ import { Building2, ImagePlus, Pencil } from "lucide-react";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import { cn } from "@/shared/application/lib/cn";
 import { notify } from "@/shared/application/lib/toast";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 type SchoolAccountMediaHeaderProps = {
   schoolName: string;

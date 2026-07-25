@@ -111,7 +111,7 @@
       "descriptionLabel": "Badge description",
       "descriptionPlaceholder": "Write a brief description of how to earn this badge...",
       "uploadIcon": "Upload icon",
-      "uploadHint": "PNG or JPG — up to 5 MB",
+      "uploadHint": "PNG or JPG — up to 20 MB",
       "activeToggle": "Activate badge in Nawabegh",
       "activeToggleHint": "Students will be able to see this badge in the list",
       "requiredPointsLabel": "Required points",

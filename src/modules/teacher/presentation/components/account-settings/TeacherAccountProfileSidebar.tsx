@@ -12,9 +12,10 @@ import { formatNumber } from "@/shared/application/lib/format";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
 import { UserAvatarImageOrInitials } from "@/shared/presentation/components/user";
 import { cn } from "@/shared/application/lib/cn";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 function formatCompactCount(value: number, locale: string): string {
   return new Intl.NumberFormat(locale, {

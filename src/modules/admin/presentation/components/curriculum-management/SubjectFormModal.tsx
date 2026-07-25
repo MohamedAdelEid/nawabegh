@@ -17,9 +17,10 @@ import {
 } from "@/shared/presentation/components/ui/modal-shell";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
 import AddPhoto from "@/modules/admin/presentation/assets/icons/AddPhoto";
+import { UPLOAD_LIMITS } from "@/shared/infrastructure/files/uploadLimits";
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_IMAGE_SIZE_BYTES = UPLOAD_LIMITS.imageBytes;
 
 export type SubjectFormValues = {
   nameAr: string;
