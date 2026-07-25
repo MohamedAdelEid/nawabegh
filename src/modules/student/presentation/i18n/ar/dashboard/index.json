@@ -203,6 +203,7 @@
       "page": {
         "title": "دورات نوابغ المتاحة",
         "description": "استعراض كافة الدورات المتاحة في منصة نوابغ",
+        "subtitleCount": "اختر بين {count} دورة",
         "breadcrumbHome": "الرئيسية",
         "breadcrumbCurrent": "كافة الدورات",
         "myCoursesAction": "عرض دوراتي"
@@ -219,6 +220,9 @@
         "teacherSearch": "ابحث عن معلم...",
         "allTeachers": "كل المعلمين",
         "allSubjects": "كل المواد",
+        "grades": "الصفوف",
+        "allGrades": "الكل",
+        "coursesCount": "{count} دورة",
         "noTeachers": "لا يوجد معلمون",
         "teachersError": "تعذر تحميل المعلمين"
       },
@@ -691,14 +695,40 @@
         "subtitle": "استكمل رحلتك التعليمية الممتعة اليوم",
         "enrolledBadge": "طالب مشترك"
       },
+      "surfaces": {
+        "aria": "أقسام رحلة التفوق",
+        "journey": "رحلة التفوق",
+        "chat": "مجموعة الدردشة",
+        "interactiveBook": {
+          "label": "الكتاب التفاعلي",
+          "title": "الكتاب التفاعلي",
+          "subtitle": "تصفح الكتاب التفاعلي لهذه الدورة",
+          "forCourse": "كتاب دورة {course}",
+          "unavailableTitle": "مفيش كتاب تفاعلي",
+          "notFound": "الدورة دي لسه مفيهاش كتاب تفاعلي متاح حالياً.",
+          "noPdf": "تعذر عرض ملف الكتاب التفاعلي.",
+          "loadError": "تعذر تحميل الكتاب التفاعلي.",
+          "retry": "إعادة المحاولة"
+        },
+        "helpFiles": {
+          "label": "الملفات المساعدة",
+          "title": "الملفات المساعدة",
+          "subtitle": "محطات الملفات المساعدة ضمن مسارات هذه الدورة",
+          "empty": "لا توجد محطات ملفات مساعدة في هذه الدورة حالياً.",
+          "error": "تعذر تحميل الملفات المساعدة.",
+          "retry": "إعادة المحاولة"
+        }
+      },
       "tabs": {
         "courses": "الدورات",
-        "paths": "مسارات التعلم"
+        "paths": "مسارات التعلم",
+        "exploreMore": "استكشف دورات أخرى"
       },
       "banner": {
         "progress": "{value}% مكتمل",
         "defaultPath": "مسار التعلم",
-        "unit": "الوحدة {index}"
+        "unit": "الوحدة {index}",
+        "nextPath": "المسار التالي"
       },
       "locked": {
         "notice": "هذا المسار مقفل حالياً. يمكنك استعراض محطاته، لكن لا يمكنك الدخول إليها حتى يتم فتحه."
@@ -726,6 +756,7 @@
       },
       "empty": {
         "noCourses": "لم تُسجَّل في أي دورة بعد.",
+        "noPaths": "لا توجد مسارات تعلم في هذه الدورة حالياً.",
         "exploreCourses": "استكشف الدورات"
       },
       "errors": {
@@ -1300,220 +1331,6 @@
           "twitter": "تويتر / X",
           "linkedin": "لينكدإن"
         }
-      },
-      "challengeStation": {
-        "page": {
-          "title": "محطة التحدي",
-          "hubTitle": "ساحة التحدي"
-        },
-        "errors": {
-          "load": "تعذر تحميل محطة التحدي. حاول مرة أخرى."
-        },
-        "breadcrumb": {
-          "home": "الرئيسية",
-          "challenge": "التحدي"
-        },
-        "modes": {
-          "titleFallback": "تحدي الدورة",
-          "subtitle": "اختر نوع التحدي الذي يناسبك اليوم. هل أنت مستعد لاختبار ذكائك وسرعتك؟",
-          "backToJourney": "العودة لرحلة التفوق",
-          "duration": {
-            "oneMinute": "دقيقة واحدة",
-            "minutes": "{minutes} دقائق",
-            "unlimited": "غير محدود"
-          },
-          "quick": {
-            "difficulty": "سهل",
-            "title": "تحدي سريع",
-            "description": "سؤال واحد فقط، اختبر حدسك وتركيزك. مثالي للمراجعة السريعة.",
-            "cta": "العب الآن"
-          },
-          "ranked": {
-            "difficulty": "صعب جداً",
-            "title": "المباراة المصنفة",
-            "description": "تحدٍّ تنافسي ضد طلاب من مستواك. اكسب نقاطاً مضاعفة وارفع ترتيبك العالمي.",
-            "cta": "دخول الساحة"
-          },
-          "practice": {
-            "difficulty": "تجريبي",
-            "title": "تدريب",
-            "description": "طوّر مهاراتك بدون ضغط الوقت أو التقييم. اختر المواضيع التي تريد تقويتها.",
-            "cta": "ابدأ التدريب"
-          }
-        },
-        "matchmaking": {
-          "title": "جارٍ البحث عن منافس مناسب...",
-          "subtitle": "نحن نبحث في قاعدة بيانات الطلاب عن منافس من مستواك.",
-          "cancel": "إلغاء البحث والعودة للرئيسية",
-          "meta": {
-            "type": "نوع التحدي",
-            "level": "المستوى",
-            "wait": "وقت الانتظار",
-            "waitValue": "{seconds} ثانية",
-            "subject": "المادة",
-            "subjectFallback": "—"
-          },
-          "type": {
-            "quick": "سريع",
-            "ranked": "مصنف",
-            "practice": "تدريب"
-          },
-          "warmup": {
-            "bonus": "اكسب +50 نقطة إضافية أثناء الانتظار",
-            "active": "نشط الآن",
-            "question": "ما هو ناتج ضرب العدد 7 في 8؟"
-          }
-        },
-        "arena": {
-          "title": "ساحة التحدي",
-          "subtitle": "مواجهة مباشرة",
-          "close": "إغلاق",
-          "question": "السؤال {current}/{total}"
-        },
-        "lobby": {
-          "title": "تم العثور على منافس!",
-          "topTenHint": "الفائز يقترب من أفضل 10",
-          "opponent": "الخصم",
-          "you": "أنت",
-          "youFallback": "أنت",
-          "opponentFallback": "منافس",
-          "level": "المستوى {level}",
-          "points": "النقاط",
-          "rank": "الرتبة",
-          "ready": "استعد! ستبدأ المنافسة فور انتهاء العد التنازلي.",
-          "hint": "تلميح: السرعة في الإجابة تمنحك نقاطاً إضافية!",
-          "cta": "تحدي الآن"
-        },
-        "duel": {
-          "streakBonus": "بونص متتالي",
-          "speedBonus": "سرعة الإجابة",
-          "youShort": "أنت",
-          "opponentShort": "الخصم",
-          "opponentAnswering": "الخصم يجيب الآن...",
-          "streak": "STREAK",
-          "combo": "X{count} COMBO",
-          "ready": "جاهز",
-          "level": "مستوى {level}"
-        },
-        "results": {
-          "winTitle": "نصر مؤزر!",
-          "lossTitle": "حظ أوفر!",
-          "tieTitle": "تعادل!",
-          "winSubtitle": "أداء أكاديمي متميز في تحدي {subject}",
-          "lossSubtitle": "كل خسارة هي خطوة نحو المعرفة. لا تستسلم يا بطل!",
-          "subjectFallback": "العلوم",
-          "levelApproaching": "مستوى جديد يقترب",
-          "levelComplete": "اكتمال المستوى",
-          "progress": "التقدم",
-          "pointsToNext": "تحتاج إلى {points} نقطة إضافية للمستوى {level}",
-          "levelBadge": "مستوى {level}",
-          "rankBadge": "رتبة فضية",
-          "totalXp": "إجمالي نقاط الخبرة",
-          "topTenNudge": "اربح تحديًا آخر لدخول أفضل 10",
-          "xpLabel": "نقاط الخبرة",
-          "correctLabel": "الإجابات الصحيحة",
-          "closeToGoal": "لقد اقتربت من الهدف!",
-          "dailyMissions": "المهام اليومية",
-          "completed": "مكتمل!",
-          "inProgress": "قيد التقدم",
-          "newChallenge": "تحدي جديد",
-          "backDashboard": "العودة للوحة التحكم",
-          "retry": "إعادة التحدي",
-          "backHome": "العودة للرئيسية"
-        },
-        "hub": {
-          "badge": "تحدي الأسبوع",
-          "title": "هل أنت جاهز للمنافسة؟",
-          "subtitle": "واجه طلاباً من مختلف المستويات وأثبت مهاراتك الأكاديمية لتصدر لوحة الشرف.",
-          "start": "ابدأ التحدي",
-          "practice": "وضع التدريب",
-          "statsTitle": "إحصائياتك",
-          "points": "النقاط",
-          "rank": "الرتبة",
-          "level": "المستوى",
-          "toNext": "للمستوى التالي",
-          "missionsTitle": "المهام اليومية",
-          "rewardsTitle": "مكافآت التحدي",
-          "winReward": "+{points} نقطة عند الفوز",
-          "speedReward": "مضاعفة النقاط عند الإجابة السريعة",
-          "activityTitle": "النشاط الأخير",
-          "activityEmpty": "لا يوجد نشاط حديث بعد."
-        }
-      },
-      "chatGroups": {
-        "title": "مجموعات الدردشة",
-        "subtitle": "تواصل مع زملائك ومعلميك في مكان واحد",
-        "searchPlaceholder": "البحث عن مجموعة...",
-        "filters": {
-          "all": "الكل",
-          "active": "نشطة",
-          "unread": "غير مقروءة"
-        },
-        "studentsCount": "{count} طالب",
-        "empty": "لا توجد مجموعات دردشة حالياً",
-        "emptySearch": "لا توجد نتائج مطابقة للبحث",
-        "error": "تعذر تحميل مجموعات الدردشة",
-        "retry": "إعادة المحاولة",
-        "loading": "جاري التحميل...",
-        "conversation": {
-          "error": "فشل تحميل المحادثة",
-          "sendError": "فشل إرسال الرسالة",
-          "empty": "لا توجد رسائل بعد. كن أول من يبدأ النقاش.",
-          "locked": "الدردشة مقفلة حالياً",
-          "teachersOnly": "يمكن للمعلمين فقط الكتابة في هذه المجموعة",
-          "inputPlaceholder": "اكتب رسالتك...",
-          "members": "الأعضاء",
-          "mute": "كتم الصوت",
-          "unmute": "إلغاء كتم الصوت",
-          "muteError": "فشل تحديث كتم التنبيهات",
-          "more": "المزيد",
-          "attachments": {
-            "image": "إرفاق صورة",
-            "file": "إرفاق ملف",
-            "voice": "تسجيل رسالة صوتية",
-            "recording": "جاري التسجيل...",
-            "recordCancel": "إلغاء التسجيل",
-            "recordSend": "إرسال الرسالة الصوتية",
-            "recordPermissionError": "يلزم السماح بالوصول إلى الميكروفون لتسجيل الرسائل الصوتية",
-            "recordUnsupported": "تسجيل الصوت غير مدعوم في هذا المتصفح"
-          },
-          "actions": {
-            "menu": "إجراءات الرسالة",
-            "reply": "رد",
-            "replyingTo": "الرد على {name}",
-            "pinnedLabel": "مثبتة",
-            "react": "تفاعل {emoji}",
-            "reactionError": "فشل تحديث التفاعل"
-          }
-        },
-        "members": {
-          "error": "فشل تحميل معلومات المجموعة",
-          "settingsError": "فشل تحديث إعدادات المجموعة",
-          "headerTitle": "معلومات المجموعة",
-          "share": "مشاركة",
-          "shareCopied": "تم نسخ رابط المجموعة",
-          "noDescription": "لا يوجد وصف للمجموعة",
-          "createdAt": "تم الإنشاء في {date}",
-          "participantsTitle": "المشاركون ({count})",
-          "viewAll": "عرض الكل",
-          "teacherBadge": "المعلم",
-          "emptyParticipants": "لا يوجد مشاركون بعد",
-          "settings": {
-            "title": "الإعدادات",
-            "mute": "كتم التنبيهات",
-            "pin": "تثبيت المجموعة"
-          },
-          "media": {
-            "title": "الوسائط",
-            "files": "الملفات",
-            "viewAll": "عرض الكل",
-            "empty": "لا توجد وسائط مشتركة بعد",
-            "recentDocs": "المستندات الأخيرة"
-          },
-          "files": {
-            "empty": "لا توجد ملفات مشتركة بعد"
-          }
-        }
       }
     },
     "profile": {
@@ -1615,6 +1432,222 @@
         "load": "تعذر تحميل الملف الشخصي. يرجى المحاولة مرة أخرى.",
         "retry": "إعادة المحاولة",
         "continue": "تعذر بدء متابعة التعلم. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "challengeStation": {
+      "page": {
+        "title": "محطة التحدي",
+        "hubTitle": "ساحة التحدي"
+      },
+      "errors": {
+        "load": "تعذر تحميل محطة التحدي. حاول مرة أخرى."
+      },
+      "breadcrumb": {
+        "home": "الرئيسية",
+        "challenge": "التحدي"
+      },
+      "modes": {
+        "titleFallback": "تحدي الدورة",
+        "subtitle": "اختر نوع التحدي الذي يناسبك اليوم. هل أنت مستعد لاختبار ذكائك وسرعتك؟",
+        "backToJourney": "العودة لرحلة التفوق",
+        "duration": {
+          "oneMinute": "دقيقة واحدة",
+          "minutes": "{minutes} دقائق",
+          "unlimited": "غير محدود"
+        },
+        "quick": {
+          "difficulty": "سهل",
+          "title": "تحدي سريع",
+          "description": "سؤال واحد فقط، اختبر حدسك وتركيزك. مثالي للمراجعة السريعة.",
+          "cta": "العب الآن"
+        },
+        "ranked": {
+          "difficulty": "صعب جداً",
+          "title": "المباراة المصنفة",
+          "description": "تحدٍّ تنافسي ضد طلاب من مستواك. اكسب نقاطاً مضاعفة وارفع ترتيبك العالمي.",
+          "cta": "دخول الساحة"
+        },
+        "practice": {
+          "difficulty": "تجريبي",
+          "title": "تدريب",
+          "description": "طوّر مهاراتك بدون ضغط الوقت أو التقييم. اختر المواضيع التي تريد تقويتها.",
+          "cta": "ابدأ التدريب"
+        }
+      },
+      "matchmaking": {
+        "title": "جارٍ البحث عن منافس مناسب...",
+        "subtitle": "نحن نبحث في قاعدة بيانات الطلاب عن منافس من مستواك.",
+        "cancel": "إلغاء البحث والعودة للرئيسية",
+        "meta": {
+          "type": "نوع التحدي",
+          "level": "المستوى",
+          "wait": "وقت الانتظار",
+          "waitValue": "{seconds} ثانية",
+          "subject": "المادة",
+          "subjectFallback": "—"
+        },
+        "type": {
+          "quick": "سريع",
+          "ranked": "مصنف",
+          "practice": "تدريب"
+        },
+        "warmup": {
+          "bonus": "اكسب +50 نقطة إضافية أثناء الانتظار",
+          "active": "نشط الآن",
+          "question": "ما هو ناتج ضرب العدد 7 في 8؟"
+        }
+      },
+      "arena": {
+        "title": "ساحة التحدي",
+        "subtitle": "مواجهة مباشرة",
+        "close": "إغلاق",
+        "question": "السؤال {current}/{total}"
+      },
+      "lobby": {
+        "title": "تم العثور على منافس!",
+        "topTenHint": "الفائز يقترب من أفضل 10",
+        "opponent": "الخصم",
+        "you": "أنت",
+        "youFallback": "أنت",
+        "opponentFallback": "منافس",
+        "level": "المستوى {level}",
+        "points": "النقاط",
+        "rank": "الرتبة",
+        "ready": "استعد! ستبدأ المنافسة فور انتهاء العد التنازلي.",
+        "hint": "تلميح: السرعة في الإجابة تمنحك نقاطاً إضافية!",
+        "cta": "تحدي الآن"
+      },
+      "duel": {
+        "streakBonus": "بونص متتالي",
+        "speedBonus": "سرعة الإجابة",
+        "youShort": "أنت",
+        "opponentShort": "الخصم",
+        "opponentAnswering": "الخصم يجيب الآن...",
+        "streak": "STREAK",
+        "combo": "X{count} COMBO",
+        "ready": "جاهز",
+        "level": "مستوى {level}"
+      },
+      "results": {
+        "winTitle": "نصر مؤزر!",
+        "lossTitle": "حظ أوفر!",
+        "tieTitle": "تعادل!",
+        "winSubtitle": "أداء أكاديمي متميز في تحدي {subject}",
+        "lossSubtitle": "كل خسارة هي خطوة نحو المعرفة. لا تستسلم يا بطل!",
+        "subjectFallback": "العلوم",
+        "levelApproaching": "مستوى جديد يقترب",
+        "levelComplete": "اكتمال المستوى",
+        "progress": "التقدم",
+        "pointsToNext": "تحتاج إلى {points} نقطة إضافية للمستوى {level}",
+        "levelBadge": "مستوى {level}",
+        "rankBadge": "رتبة فضية",
+        "totalXp": "إجمالي نقاط الخبرة",
+        "topTenNudge": "اربح تحديًا آخر لدخول أفضل 10",
+        "xpLabel": "نقاط الخبرة",
+        "correctLabel": "الإجابات الصحيحة",
+        "closeToGoal": "لقد اقتربت من الهدف!",
+        "dailyMissions": "المهام اليومية",
+        "completed": "مكتمل!",
+        "inProgress": "قيد التقدم",
+        "newChallenge": "تحدي جديد",
+        "backDashboard": "العودة للوحة التحكم",
+        "retry": "إعادة التحدي",
+        "backHome": "العودة للرئيسية"
+      },
+      "hub": {
+        "badge": "تحدي الأسبوع",
+        "title": "هل أنت جاهز للمنافسة؟",
+        "subtitle": "واجه طلاباً من مختلف المستويات وأثبت مهاراتك الأكاديمية لتصدر لوحة الشرف.",
+        "start": "ابدأ التحدي",
+        "practice": "وضع التدريب",
+        "statsTitle": "إحصائياتك",
+        "points": "النقاط",
+        "rank": "الرتبة",
+        "level": "المستوى",
+        "toNext": "للمستوى التالي",
+        "missionsTitle": "المهام اليومية",
+        "rewardsTitle": "مكافآت التحدي",
+        "winReward": "+{points} نقطة عند الفوز",
+        "speedReward": "مضاعفة النقاط عند الإجابة السريعة",
+        "activityTitle": "النشاط الأخير",
+        "activityEmpty": "لا يوجد نشاط حديث بعد."
+      }
+    },
+    "chatGroups": {
+      "title": "مجموعات الدردشة",
+      "subtitle": "تواصل مع زملائك ومعلميك في مكان واحد",
+      "searchPlaceholder": "البحث عن مجموعة...",
+      "filters": {
+        "all": "الكل",
+        "active": "نشطة",
+        "unread": "غير مقروءة"
+      },
+      "studentsCount": "{count} طالب",
+      "empty": "لا توجد مجموعات دردشة حالياً",
+      "emptySearch": "لا توجد نتائج مطابقة للبحث",
+      "error": "تعذر تحميل مجموعات الدردشة",
+      "retry": "إعادة المحاولة",
+      "loading": "جاري التحميل...",
+      "conversation": {
+        "error": "فشل تحميل المحادثة",
+        "noChat": "المجموعة دي ملهاش دردشة حالياً.",
+        "backToGroups": "العودة لمجموعات الدردشة",
+        "sendError": "فشل إرسال الرسالة",
+        "empty": "لا توجد رسائل بعد. كن أول من يبدأ النقاش.",
+        "locked": "الدردشة مقفلة حالياً",
+        "teachersOnly": "يمكن للمعلمين فقط الكتابة في هذه المجموعة",
+        "inputPlaceholder": "اكتب رسالتك...",
+        "members": "الأعضاء",
+        "mute": "كتم الصوت",
+        "unmute": "إلغاء كتم الصوت",
+        "muteError": "فشل تحديث كتم التنبيهات",
+        "more": "المزيد",
+        "attachments": {
+          "image": "إرفاق صورة",
+          "file": "إرفاق ملف",
+          "voice": "تسجيل رسالة صوتية",
+          "recording": "جاري التسجيل...",
+          "recordCancel": "إلغاء التسجيل",
+          "recordSend": "إرسال الرسالة الصوتية",
+          "recordPermissionError": "يلزم السماح بالوصول إلى الميكروفون لتسجيل الرسائل الصوتية",
+          "recordUnsupported": "تسجيل الصوت غير مدعوم في هذا المتصفح"
+        },
+        "actions": {
+          "menu": "إجراءات الرسالة",
+          "reply": "رد",
+          "replyingTo": "الرد على {name}",
+          "pinnedLabel": "مثبتة",
+          "react": "تفاعل {emoji}",
+          "reactionError": "فشل تحديث التفاعل"
+        }
+      },
+      "members": {
+        "error": "فشل تحميل معلومات المجموعة",
+        "settingsError": "فشل تحديث إعدادات المجموعة",
+        "headerTitle": "معلومات المجموعة",
+        "share": "مشاركة",
+        "shareCopied": "تم نسخ رابط المجموعة",
+        "noDescription": "لا يوجد وصف للمجموعة",
+        "createdAt": "تم الإنشاء في {date}",
+        "participantsTitle": "المشاركون ({count})",
+        "viewAll": "عرض الكل",
+        "teacherBadge": "المعلم",
+        "emptyParticipants": "لا يوجد مشاركون بعد",
+        "settings": {
+          "title": "الإعدادات",
+          "mute": "كتم التنبيهات",
+          "pin": "تثبيت المجموعة"
+        },
+        "media": {
+          "title": "الوسائط",
+          "files": "الملفات",
+          "viewAll": "عرض الكل",
+          "empty": "لا توجد وسائط مشتركة بعد",
+          "recentDocs": "المستندات الأخيرة"
+        },
+        "files": {
+          "empty": "لا توجد ملفات مشتركة بعد"
+        }
       }
     }
   }

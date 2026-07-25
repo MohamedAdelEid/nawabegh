@@ -18,7 +18,7 @@ import type {
 } from "@/modules/admin/domain/data/userManagementDashboardData";
 import type { BackendApiResponse, BackendStatus } from "@/shared/domain/types/api.types";
 import { FILE_UPLOAD_URL, resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
-import { unwrapUploadRecord } from "@/modules/admin/infrastructure/api/fileUploadApi";
+import { unwrapUploadRecord, FILE_UPLOAD_TIMEOUT_MS } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader, type XPaginationMeta } from "@/shared/infrastructure/http/xPagination";
 import { splitPhoneForApi } from "@/shared/domain/utils/phoneCountry.utils";
@@ -1205,6 +1205,7 @@ export async function uploadUserImage(
       url: FILE_UPLOAD_URL,
       data: formData,
       isFormData: true,
+      timeout: FILE_UPLOAD_TIMEOUT_MS,
     });
 
     const uploaded = mapUploadedFileData(response);

@@ -4,8 +4,10 @@ export type VoiceRecorderStatus = "idle" | "recording";
 
 function resolveRecorderMimeType(): string {
   if (typeof MediaRecorder === "undefined") return "";
-  if (MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";
+  // Prefer mp4/m4a to match mobile voice notes (`audio/mp4`).
   if (MediaRecorder.isTypeSupported("audio/mp4")) return "audio/mp4";
+  if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) return "audio/webm;codecs=opus";
+  if (MediaRecorder.isTypeSupported("audio/webm")) return "audio/webm";
   if (MediaRecorder.isTypeSupported("audio/ogg")) return "audio/ogg";
   return "";
 }

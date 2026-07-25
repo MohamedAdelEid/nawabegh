@@ -51,7 +51,10 @@ export type ShortQuizAttemptDto = {
   attemptNumber: number;
   startedAt: string | null;
   deadlineAt: string | null;
+  submittedAt: string | null;
   remainingSeconds: number;
+  /** Explicit elapsed seconds from API when provided. */
+  timeSpentSeconds: number | null;
   totalQuestions: number;
   answeredQuestionsCount: number;
   resumeFromQuestionOrder: number;

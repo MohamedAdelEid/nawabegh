@@ -1,6 +1,7 @@
 import type { LiveBroadcastStation } from "@/modules/admin/domain/data/journeyEditorData";
 import type { LiveSession } from "@/modules/admin/infrastructure/api/liveSessionsApi";
 import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
+import { parseScheduleDateMs } from "@/shared/domain/utils/scheduleTime";
 
 function formatDisplayTime(time: string) {
   if (!time.trim()) return "";
@@ -25,9 +26,9 @@ function formatDisplayDate(isoDate: string) {
 }
 
 function computeCountdown(scheduledAt: string) {
-  const target = new Date(scheduledAt).getTime();
+  const target = parseScheduleDateMs(scheduledAt);
   const now = Date.now();
-  const diffMs = Math.max(0, target - now);
+  const diffMs = target == null ? 0 : Math.max(0, target - now);
   const totalSeconds = Math.floor(diffMs / 1000);
 
   return {
@@ -39,8 +40,9 @@ function computeCountdown(scheduledAt: string) {
 
 function formatTimeFromIso(iso: string) {
   if (!iso.trim()) return "";
-  const parsed = new Date(iso);
-  if (Number.isNaN(parsed.getTime())) return "";
+  const parsedMs = parseScheduleDateMs(iso);
+  if (parsedMs == null) return "";
+  const parsed = new Date(parsedMs);
   const hours = parsed.getHours();
   const minutes = String(parsed.getMinutes()).padStart(2, "0");
   const period = hours >= 12 ? "م" : "ص";

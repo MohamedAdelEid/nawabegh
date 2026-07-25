@@ -150,6 +150,34 @@ function readNumber(record: UnknownRecord | null, keys: string[], fallback?: num
   return fallback ?? null;
 }
 
+/** API may send numeric enums (1–4) or string names ("Image", "Voice", …). */
+function parseAttachmentType(value: unknown, fallback = 0): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string") return fallback;
+
+  const raw = value.trim();
+  if (!raw) return fallback;
+  if (!Number.isNaN(Number(raw))) return Number(raw);
+
+  switch (raw.toLowerCase()) {
+    case "image":
+      return 1;
+    case "document":
+    case "file":
+    case "pdf":
+      return 2;
+    case "presentation":
+    case "ppt":
+    case "pptx":
+      return 3;
+    case "voice":
+    case "audio":
+      return 4;
+    default:
+      return fallback;
+  }
+}
+
 function readBoolean(record: UnknownRecord | null, keys: string[], fallback = false): boolean {
   if (!record) return fallback;
   for (const key of keys) {
@@ -213,7 +241,7 @@ function mapAttachment(record: UnknownRecord): ChatMessageAttachmentDto | null {
 
   return {
     id,
-    attachmentType: readNumber(record, ["attachmentType"]) ?? 0,
+    attachmentType: parseAttachmentType(record.attachmentType, 0),
     url,
     previewUrl: readNullableString(record, ["previewUrl"]),
     fileName: readString(record, ["fileName"], "file"),
@@ -323,7 +351,7 @@ function mapFileItem(record: UnknownRecord): ChatFileItemDto | null {
     sizeInBytes: readNumber(record, ["sizeInBytes"]) ?? 0,
     sharedAt: readString(record, ["sharedAt", "createdAt"], ""),
     senderName: readString(record, ["senderName"], ""),
-    attachmentType: readNumber(record, ["attachmentType"]) ?? 2,
+    attachmentType: parseAttachmentType(record.attachmentType, 2),
   };
 }
 

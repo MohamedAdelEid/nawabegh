@@ -203,6 +203,7 @@
       "page": {
         "title": "Available Nawabegh Courses",
         "description": "Browse all courses available on the Nawabegh platform",
+        "subtitleCount": "Choose from {count} courses",
         "breadcrumbHome": "Home",
         "breadcrumbCurrent": "All Courses",
         "myCoursesAction": "View My Courses"
@@ -219,6 +220,9 @@
         "teacherSearch": "Search teachers...",
         "allTeachers": "All teachers",
         "allSubjects": "All subjects",
+        "grades": "Grades",
+        "allGrades": "All",
+        "coursesCount": "{count} courses",
         "noTeachers": "No teachers found",
         "teachersError": "Could not load teachers"
       },
@@ -691,14 +695,40 @@
         "subtitle": "Continue your exciting learning journey today",
         "enrolledBadge": "Enrolled student"
       },
+      "surfaces": {
+        "aria": "Excellence journey sections",
+        "journey": "Excellence Journey",
+        "chat": "Subject Chat",
+        "interactiveBook": {
+          "label": "Interactive Book",
+          "title": "Interactive Book",
+          "subtitle": "Browse the interactive book for this course",
+          "forCourse": "Book for {course}",
+          "unavailableTitle": "No interactive book",
+          "notFound": "This course doesn't have an interactive book available yet.",
+          "noPdf": "Could not display the interactive book file.",
+          "loadError": "Could not load the interactive book.",
+          "retry": "Retry"
+        },
+        "helpFiles": {
+          "label": "Helper Files",
+          "title": "Helper Files",
+          "subtitle": "Helper-file stations across this course paths",
+          "empty": "No helper-file stations in this course yet.",
+          "error": "Could not load helper files.",
+          "retry": "Retry"
+        }
+      },
       "tabs": {
         "courses": "Courses",
-        "paths": "Learning paths"
+        "paths": "Learning paths",
+        "exploreMore": "Explore more courses"
       },
       "banner": {
         "progress": "{value}% complete",
         "defaultPath": "Learning path",
-        "unit": "Unit {index}"
+        "unit": "Unit {index}",
+        "nextPath": "Next path"
       },
       "locked": {
         "notice": "This path is locked for now. You can preview its stations, but you can't join any until it's unlocked."
@@ -726,6 +756,7 @@
       },
       "empty": {
         "noCourses": "You are not enrolled in any courses yet.",
+        "noPaths": "No learning paths in this course yet.",
         "exploreCourses": "Explore courses"
       },
       "errors": {
@@ -1300,220 +1331,6 @@
           "twitter": "Twitter / X",
           "linkedin": "LinkedIn"
         }
-      },
-      "challengeStation": {
-        "page": {
-          "title": "Challenge station",
-          "hubTitle": "Challenge arena"
-        },
-        "errors": {
-          "load": "Could not load the challenge station. Please try again."
-        },
-        "breadcrumb": {
-          "home": "Home",
-          "challenge": "Challenge"
-        },
-        "modes": {
-          "titleFallback": "Course challenge",
-          "subtitle": "Choose the challenge type that suits you today. Ready to test your speed and intelligence?",
-          "backToJourney": "Back to excellence journey",
-          "duration": {
-            "oneMinute": "One minute",
-            "minutes": "{minutes} minutes",
-            "unlimited": "Unlimited"
-          },
-          "quick": {
-            "difficulty": "Easy",
-            "title": "Quick challenge",
-            "description": "One question only — test your intuition and focus. Perfect for a quick review.",
-            "cta": "Play now"
-          },
-          "ranked": {
-            "difficulty": "Very hard",
-            "title": "Ranked match",
-            "description": "Compete against students at your level. Earn more points and climb the global ranking.",
-            "cta": "Enter arena"
-          },
-          "practice": {
-            "difficulty": "Practice",
-            "title": "Training",
-            "description": "Build your skills without time pressure or ranking. Strengthen the topics you need.",
-            "cta": "Start training"
-          }
-        },
-        "matchmaking": {
-          "title": "Searching for a suitable opponent...",
-          "subtitle": "We are searching the student database for someone at your level.",
-          "cancel": "Cancel search and return home",
-          "meta": {
-            "type": "Challenge type",
-            "level": "Level",
-            "wait": "Wait time",
-            "waitValue": "{seconds} sec",
-            "subject": "Subject",
-            "subjectFallback": "—"
-          },
-          "type": {
-            "quick": "Quick",
-            "ranked": "Ranked",
-            "practice": "Practice"
-          },
-          "warmup": {
-            "bonus": "Earn +50 bonus XP while waiting",
-            "active": "Active now",
-            "question": "What is 7 × 8?"
-          }
-        },
-        "arena": {
-          "title": "Challenge arena",
-          "subtitle": "Live match",
-          "close": "Close",
-          "question": "Question {current}/{total}"
-        },
-        "lobby": {
-          "title": "Opponent found!",
-          "topTenHint": "The winner is closing in on the top 10",
-          "opponent": "Opponent",
-          "you": "You",
-          "youFallback": "You",
-          "opponentFallback": "Opponent",
-          "level": "Level {level}",
-          "points": "Points",
-          "rank": "Rank",
-          "ready": "Get ready! The match starts when the countdown ends.",
-          "hint": "Hint: Faster answers earn bonus points!",
-          "cta": "Challenge now"
-        },
-        "duel": {
-          "streakBonus": "Streak bonus",
-          "speedBonus": "Answer speed",
-          "youShort": "You",
-          "opponentShort": "Opponent",
-          "opponentAnswering": "Opponent is answering...",
-          "streak": "STREAK",
-          "combo": "X{count} COMBO",
-          "ready": "Ready",
-          "level": "Level {level}"
-        },
-        "results": {
-          "winTitle": "Triumphant victory!",
-          "lossTitle": "Better luck next time!",
-          "tieTitle": "It's a tie!",
-          "winSubtitle": "Outstanding academic performance in the {subject} challenge",
-          "lossSubtitle": "Every loss is a step toward knowledge. Don't give up!",
-          "subjectFallback": "Science",
-          "levelApproaching": "A new level is near",
-          "levelComplete": "Level completion",
-          "progress": "Progress",
-          "pointsToNext": "You need {points} more points to reach level {level}",
-          "levelBadge": "Level {level}",
-          "rankBadge": "Silver rank",
-          "totalXp": "Total XP",
-          "topTenNudge": "Win another challenge to enter the top 10",
-          "xpLabel": "Experience points",
-          "correctLabel": "Correct answers",
-          "closeToGoal": "You were close to the goal!",
-          "dailyMissions": "Daily missions",
-          "completed": "Completed!",
-          "inProgress": "In progress",
-          "newChallenge": "New challenge",
-          "backDashboard": "Back to dashboard",
-          "retry": "Retry challenge",
-          "backHome": "Back home"
-        },
-        "hub": {
-          "badge": "Challenge of the week",
-          "title": "Are you ready to compete?",
-          "subtitle": "Face students from different levels and prove your academic skills on the honor board.",
-          "start": "Start challenge",
-          "practice": "Training mode",
-          "statsTitle": "Your stats",
-          "points": "Points",
-          "rank": "Rank",
-          "level": "Level",
-          "toNext": "To next level",
-          "missionsTitle": "Daily missions",
-          "rewardsTitle": "Challenge rewards",
-          "winReward": "+{points} points on winning",
-          "speedReward": "Point multipliers for fast answers",
-          "activityTitle": "Recent activity",
-          "activityEmpty": "No recent activity yet."
-        }
-      },
-      "chatGroups": {
-        "title": "Chat groups",
-        "subtitle": "Connect with classmates and teachers in one place",
-        "searchPlaceholder": "Search for a group...",
-        "filters": {
-          "all": "All",
-          "active": "Active",
-          "unread": "Unread"
-        },
-        "studentsCount": "{count} students",
-        "empty": "No chat groups yet",
-        "emptySearch": "No matching groups",
-        "error": "Could not load chat groups",
-        "retry": "Retry",
-        "loading": "Loading...",
-        "conversation": {
-          "error": "Failed to load conversation",
-          "sendError": "Failed to send message",
-          "empty": "No messages yet. Be the first to start the discussion.",
-          "locked": "This chat is currently locked",
-          "teachersOnly": "Only teachers can write in this group",
-          "inputPlaceholder": "Write your message...",
-          "members": "Members",
-          "mute": "Mute",
-          "unmute": "Unmute",
-          "muteError": "Failed to update mute preference",
-          "more": "More",
-          "attachments": {
-            "image": "Attach image",
-            "file": "Attach file",
-            "voice": "Record voice message",
-            "recording": "Recording...",
-            "recordCancel": "Cancel recording",
-            "recordSend": "Send voice message",
-            "recordPermissionError": "Microphone permission is required to record voice messages",
-            "recordUnsupported": "Voice recording is not supported in this browser"
-          },
-          "actions": {
-            "menu": "Message actions",
-            "reply": "Reply",
-            "replyingTo": "Replying to {name}",
-            "pinnedLabel": "Pinned",
-            "react": "React {emoji}",
-            "reactionError": "Failed to update reaction"
-          }
-        },
-        "members": {
-          "error": "Failed to load group info",
-          "settingsError": "Failed to update group settings",
-          "headerTitle": "Group information",
-          "share": "Share",
-          "shareCopied": "Group link copied",
-          "noDescription": "No group description",
-          "createdAt": "Created on {date}",
-          "participantsTitle": "Participants ({count})",
-          "viewAll": "View all",
-          "teacherBadge": "Teacher",
-          "emptyParticipants": "No participants yet",
-          "settings": {
-            "title": "Settings",
-            "mute": "Mute notifications",
-            "pin": "Pin group"
-          },
-          "media": {
-            "title": "Media",
-            "files": "Files",
-            "viewAll": "View all",
-            "empty": "No shared media yet",
-            "recentDocs": "Recent documents"
-          },
-          "files": {
-            "empty": "No shared files yet"
-          }
-        }
       }
     },
     "profile": {
@@ -1615,6 +1432,222 @@
         "load": "Could not load your profile. Please try again.",
         "retry": "Retry",
         "continue": "Could not continue learning. Please try again."
+      }
+    },
+    "challengeStation": {
+      "page": {
+        "title": "Challenge station",
+        "hubTitle": "Challenge arena"
+      },
+      "errors": {
+        "load": "Could not load the challenge station. Please try again."
+      },
+      "breadcrumb": {
+        "home": "Home",
+        "challenge": "Challenge"
+      },
+      "modes": {
+        "titleFallback": "Course challenge",
+        "subtitle": "Choose the challenge type that suits you today. Ready to test your speed and intelligence?",
+        "backToJourney": "Back to excellence journey",
+        "duration": {
+          "oneMinute": "One minute",
+          "minutes": "{minutes} minutes",
+          "unlimited": "Unlimited"
+        },
+        "quick": {
+          "difficulty": "Easy",
+          "title": "Quick challenge",
+          "description": "One question only — test your intuition and focus. Perfect for a quick review.",
+          "cta": "Play now"
+        },
+        "ranked": {
+          "difficulty": "Very hard",
+          "title": "Ranked match",
+          "description": "Compete against students at your level. Earn more points and climb the global ranking.",
+          "cta": "Enter arena"
+        },
+        "practice": {
+          "difficulty": "Practice",
+          "title": "Training",
+          "description": "Build your skills without time pressure or ranking. Strengthen the topics you need.",
+          "cta": "Start training"
+        }
+      },
+      "matchmaking": {
+        "title": "Searching for a suitable opponent...",
+        "subtitle": "We are searching the student database for someone at your level.",
+        "cancel": "Cancel search and return home",
+        "meta": {
+          "type": "Challenge type",
+          "level": "Level",
+          "wait": "Wait time",
+          "waitValue": "{seconds} sec",
+          "subject": "Subject",
+          "subjectFallback": "—"
+        },
+        "type": {
+          "quick": "Quick",
+          "ranked": "Ranked",
+          "practice": "Practice"
+        },
+        "warmup": {
+          "bonus": "Earn +50 bonus XP while waiting",
+          "active": "Active now",
+          "question": "What is 7 × 8?"
+        }
+      },
+      "arena": {
+        "title": "Challenge arena",
+        "subtitle": "Live match",
+        "close": "Close",
+        "question": "Question {current}/{total}"
+      },
+      "lobby": {
+        "title": "Opponent found!",
+        "topTenHint": "The winner is closing in on the top 10",
+        "opponent": "Opponent",
+        "you": "You",
+        "youFallback": "You",
+        "opponentFallback": "Opponent",
+        "level": "Level {level}",
+        "points": "Points",
+        "rank": "Rank",
+        "ready": "Get ready! The match starts when the countdown ends.",
+        "hint": "Hint: Faster answers earn bonus points!",
+        "cta": "Challenge now"
+      },
+      "duel": {
+        "streakBonus": "Streak bonus",
+        "speedBonus": "Answer speed",
+        "youShort": "You",
+        "opponentShort": "Opponent",
+        "opponentAnswering": "Opponent is answering...",
+        "streak": "STREAK",
+        "combo": "X{count} COMBO",
+        "ready": "Ready",
+        "level": "Level {level}"
+      },
+      "results": {
+        "winTitle": "Triumphant victory!",
+        "lossTitle": "Better luck next time!",
+        "tieTitle": "It's a tie!",
+        "winSubtitle": "Outstanding academic performance in the {subject} challenge",
+        "lossSubtitle": "Every loss is a step toward knowledge. Don't give up!",
+        "subjectFallback": "Science",
+        "levelApproaching": "A new level is near",
+        "levelComplete": "Level completion",
+        "progress": "Progress",
+        "pointsToNext": "You need {points} more points to reach level {level}",
+        "levelBadge": "Level {level}",
+        "rankBadge": "Silver rank",
+        "totalXp": "Total XP",
+        "topTenNudge": "Win another challenge to enter the top 10",
+        "xpLabel": "Experience points",
+        "correctLabel": "Correct answers",
+        "closeToGoal": "You were close to the goal!",
+        "dailyMissions": "Daily missions",
+        "completed": "Completed!",
+        "inProgress": "In progress",
+        "newChallenge": "New challenge",
+        "backDashboard": "Back to dashboard",
+        "retry": "Retry challenge",
+        "backHome": "Back home"
+      },
+      "hub": {
+        "badge": "Challenge of the week",
+        "title": "Are you ready to compete?",
+        "subtitle": "Face students from different levels and prove your academic skills on the honor board.",
+        "start": "Start challenge",
+        "practice": "Training mode",
+        "statsTitle": "Your stats",
+        "points": "Points",
+        "rank": "Rank",
+        "level": "Level",
+        "toNext": "To next level",
+        "missionsTitle": "Daily missions",
+        "rewardsTitle": "Challenge rewards",
+        "winReward": "+{points} points on winning",
+        "speedReward": "Point multipliers for fast answers",
+        "activityTitle": "Recent activity",
+        "activityEmpty": "No recent activity yet."
+      }
+    },
+    "chatGroups": {
+      "title": "Chat groups",
+      "subtitle": "Connect with classmates and teachers in one place",
+      "searchPlaceholder": "Search for a group...",
+      "filters": {
+        "all": "All",
+        "active": "Active",
+        "unread": "Unread"
+      },
+      "studentsCount": "{count} students",
+      "empty": "No chat groups yet",
+      "emptySearch": "No matching groups",
+      "error": "Could not load chat groups",
+      "retry": "Retry",
+      "loading": "Loading...",
+      "conversation": {
+        "error": "Failed to load conversation",
+        "noChat": "This group doesn't have a chat yet.",
+        "backToGroups": "Back to chat groups",
+        "sendError": "Failed to send message",
+        "empty": "No messages yet. Be the first to start the discussion.",
+        "locked": "This chat is currently locked",
+        "teachersOnly": "Only teachers can write in this group",
+        "inputPlaceholder": "Write your message...",
+        "members": "Members",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "muteError": "Failed to update mute preference",
+        "more": "More",
+        "attachments": {
+          "image": "Attach image",
+          "file": "Attach file",
+          "voice": "Record voice message",
+          "recording": "Recording...",
+          "recordCancel": "Cancel recording",
+          "recordSend": "Send voice message",
+          "recordPermissionError": "Microphone permission is required to record voice messages",
+          "recordUnsupported": "Voice recording is not supported in this browser"
+        },
+        "actions": {
+          "menu": "Message actions",
+          "reply": "Reply",
+          "replyingTo": "Replying to {name}",
+          "pinnedLabel": "Pinned",
+          "react": "React {emoji}",
+          "reactionError": "Failed to update reaction"
+        }
+      },
+      "members": {
+        "error": "Failed to load group info",
+        "settingsError": "Failed to update group settings",
+        "headerTitle": "Group information",
+        "share": "Share",
+        "shareCopied": "Group link copied",
+        "noDescription": "No group description",
+        "createdAt": "Created on {date}",
+        "participantsTitle": "Participants ({count})",
+        "viewAll": "View all",
+        "teacherBadge": "Teacher",
+        "emptyParticipants": "No participants yet",
+        "settings": {
+          "title": "Settings",
+          "mute": "Mute notifications",
+          "pin": "Pin group"
+        },
+        "media": {
+          "title": "Media",
+          "files": "Files",
+          "viewAll": "View all",
+          "empty": "No shared media yet",
+          "recentDocs": "Recent documents"
+        },
+        "files": {
+          "empty": "No shared files yet"
+        }
       }
     }
   }

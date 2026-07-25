@@ -1,21 +1,17 @@
 import {
   mapCurrentStationsDto,
-  mapInAppNotification,
   mapLeaderboardWidgetDto,
   mapStudentMyProfile,
 } from "@/modules/student/domain/home/student-home.utils";
 import type {
   CurrentStationsDto,
-  InAppNotification,
   LeaderboardWidgetDto,
   StudentMyProfile,
 } from "@/modules/student/domain/types/student-home.types";
 import {
   extractApiErrorMessage,
   resolveApiData,
-  resolveApiList,
 } from "@/shared/infrastructure/api/apiResponse.utils";
-import { mapApiItems } from "@/shared/infrastructure/api/mapApiItems";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 async function callStudentHomeApi<T>(
@@ -60,14 +56,4 @@ export async function getLeaderboardWidget(): Promise<LeaderboardWidgetDto> {
   }, "Failed to load leaderboard");
 }
 
-export async function getUnreadInAppNotifications(): Promise<InAppNotification[]> {
-  return callStudentHomeApi(async () => {
-    const response = await httpClient.get<unknown>({
-      url: "PushNotifications/in-app",
-      params: { pageNumber: 1, pageSize: 20, unreadOnly: true },
-    });
-    return mapApiItems(resolveApiList(response), mapInAppNotification).filter(
-      (item): item is InAppNotification => item != null,
-    );
-  }, "Failed to load notifications");
-}
+export { getUnreadInAppNotifications } from "@/shared/infrastructure/api/pushNotifications.api";

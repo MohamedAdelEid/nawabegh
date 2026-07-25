@@ -5,6 +5,9 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { CourseAccessType } from "@/shared/domain/enums/course.enums";
+import type {
+  ExploreGradeFilterOption,
+} from "@/shared/domain/types/course.types";
 import type { Subject } from "@/shared/domain/types/subject.types";
 import type { Teacher } from "@/shared/domain/types/teacher.types";
 import { mapExploreCourseToCard } from "@/shared/domain/utils/course.utils";
@@ -23,6 +26,7 @@ export type ExploreCoursesFilters = {
   keyword: string;
   subjectId: number | null;
   teacherId: string | null;
+  gradeId: number | null;
   accessType: CourseAccessType | null;
 };
 
@@ -42,6 +46,12 @@ function parseSubjectId(value: string | null): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function parseGradeId(value: string | null): number | null {
+  if (!value || value === "all") return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
   const locale = useLocale();
   const router = useRouter();
@@ -55,6 +65,9 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
   );
   const [teacherId, setTeacherId] = useState<string | null>(
     searchParams.get("teacher") || null,
+  );
+  const [gradeId, setGradeId] = useState<number | null>(
+    parseGradeId(searchParams.get("grade")),
   );
   const [accessType, setAccessType] = useState<CourseAccessType | null>(null);
   const [teacherSearch, setTeacherSearch] = useState("");
@@ -74,13 +87,15 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
     else params.delete("subject");
     if (teacherId) params.set("teacher", teacherId);
     else params.delete("teacher");
+    if (gradeId != null) params.set("grade", String(gradeId));
+    else params.delete("grade");
 
     const next = params.toString();
     const current = searchParams.toString();
     if (next !== current) {
       router.replace(next ? `${pathname}?${next}` : pathname, { scroll: false });
     }
-  }, [debouncedKeyword, subjectId, teacherId, pathname, router, searchParams]);
+  }, [debouncedKeyword, subjectId, teacherId, gradeId, pathname, router, searchParams]);
 
   const subjectsQuery = useQuery({
     queryKey: exploreCoursesQueryKeys.subjects(locale),
@@ -111,9 +126,10 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
       keyword: debouncedKeyword || undefined,
       subjectId: subjectId ?? undefined,
       teacherId: teacherId ?? undefined,
+      gradeId: gradeId ?? undefined,
       accessType: accessType ?? undefined,
     }),
-    [debouncedKeyword, subjectId, teacherId, accessType],
+    [debouncedKeyword, subjectId, teacherId, gradeId, accessType],
   );
 
   const coursesQuery = useInfiniteQuery({
@@ -143,6 +159,20 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
     return rows;
   }, [coursesQuery.data?.pages, locale]);
 
+  const gradeFilters = useMemo<ExploreGradeFilterOption[]>(() => {
+    const pages = coursesQuery.data?.pages ?? [];
+    if (pages.length === 0) return initial?.coursesPage.gradeFilters ?? [];
+    return pages[0]?.gradeFilters ?? [];
+  }, [coursesQuery.data?.pages, initial?.coursesPage.gradeFilters]);
+
+  const totalCoursesCount = useMemo(() => {
+    const pages = coursesQuery.data?.pages ?? [];
+    if (pages.length === 0) {
+      return initial?.coursesPage.totalCoursesCount ?? courses.length;
+    }
+    return pages[0]?.totalCoursesCount ?? courses.length;
+  }, [coursesQuery.data?.pages, initial?.coursesPage.totalCoursesCount, courses.length]);
+
   const updateSubjectId = (next: number | null) => {
     setSubjectId(next);
     setTeacherId(null);
@@ -155,6 +185,8 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
     setSubjectId: updateSubjectId,
     teacherId,
     setTeacherId,
+    gradeId,
+    setGradeId,
     accessType,
     setAccessType,
     teacherSearch,
@@ -163,10 +195,13 @@ export function useExploreCourses({ initial }: UseExploreCoursesOptions = {}) {
     teachersQuery,
     coursesQuery,
     courses,
+    gradeFilters,
+    totalCoursesCount,
     filters: {
       keyword,
       subjectId,
       teacherId,
+      gradeId,
       accessType,
     } satisfies ExploreCoursesFilters,
   };

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import {
   ArrowRight,
@@ -46,23 +47,27 @@ import {
 } from "@/shared/application/hooks/useVoiceRecorder";
 
 const CHAT_UPLOAD_FOLDER = "chat";
+/** Matches mobile course-chat voice notes (`uploads/course-chat/attachments/...`). */
+const CHAT_VOICE_UPLOAD_FOLDER = "course-chat/attachments";
+const CHAT_VOICE_ATTACHMENT_TYPE = 4;
 
 function resolveAttachmentType(file: File): number {
   if (file.type.startsWith("image/")) return 1;
   if (file.type.includes("pdf") || file.name.toLowerCase().endsWith(".pdf")) return 2;
   if (/\.pptx?$/i.test(file.name)) return 3;
-  if (file.type.startsWith("audio/")) return 4;
+  if (file.type.startsWith("audio/")) return CHAT_VOICE_ATTACHMENT_TYPE;
   return 2;
 }
 
 function voiceBlobToFile(blob: Blob): File {
-  const extension = blob.type.includes("mp4")
+  const mime = blob.type || "audio/webm";
+  const extension = mime.includes("mp4")
     ? "m4a"
-    : blob.type.includes("ogg")
+    : mime.includes("ogg")
       ? "ogg"
       : "webm";
-  return new File([blob], `voice-${Date.now()}.${extension}`, {
-    type: blob.type || "audio/webm",
+  return new File([blob], `chat_voice_${Date.now()}.${extension}`, {
+    type: mime,
   });
 }
 
@@ -70,6 +75,8 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
   const t = useTranslations("teacher.dashboard.chatGroups.conversation");
   const tCommon = useTranslations("teacher.dashboard");
   const router = useRouter();
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id ?? null;
   const { data, isLoading, isError } = useTeacherChatConversation(courseId);
   const sendMutation = useTeacherChatSendMessage(courseId);
   const { pinMutation, deleteMutation, reactionMutation } = useTeacherChatMessageActions(courseId);
@@ -79,6 +86,7 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
   const [deleteTarget, setDeleteTarget] = useState<TeacherChatMessage | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const voiceRecorder = useVoiceRecorder();
   const {
     isRecording: isVoiceRecording,
@@ -126,6 +134,11 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
     resetVoiceRecorder();
   }, [voiceRecorderError, resetVoiceRecorder, t]);
 
+  useEffect(() => {
+    if (!data) return;
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [data]);
+
   const handleAttachmentUpload = async (file: File) => {
     try {
       const upload = await uploadAdminFile(file, CHAT_UPLOAD_FOLDER);
@@ -170,7 +183,28 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
       const blob = await stopVoiceRecord();
       if (!blob) return;
 
-      await handleAttachmentUpload(voiceBlobToFile(blob));
+      // Voice notes: upload to course-chat folder + attachmentType 4 (no text content).
+      const file = voiceBlobToFile(blob);
+      const upload = await uploadAdminFile(file, CHAT_VOICE_UPLOAD_FOLDER);
+      if (!upload.ok) {
+        notify.error(upload.errorMessage);
+        return;
+      }
+
+      await sendMutation.mutateAsync({
+        content: undefined,
+        replyToMessageId: replyTo?.id ?? null,
+        attachments: [
+          {
+            attachmentType: CHAT_VOICE_ATTACHMENT_TYPE,
+            url: upload.filePath,
+            fileName: file.name,
+            mimeType: file.type || "audio/mp4",
+            sizeInBytes: file.size,
+          },
+        ],
+      });
+      setReplyTo(null);
     } catch (error) {
       notify.error(error instanceof Error ? error.message : t("sendError"));
     }
@@ -352,23 +386,25 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                   </span>
                 </div>
                 <div className="space-y-5">
-                  {group.messages.map((message) => (
-                    <div key={message.id} className="group relative space-y-1">
-                      {message.isPinned ? (
-                        <div className="flex justify-end">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-                            <Pin className="h-3 w-3" />
-                            {t("actions.pinnedLabel")}
-                          </span>
-                        </div>
-                      ) : null}
-                      <div
-                        className={cn(
-                          "flex items-start gap-2",
-                          message.sender.role === "teacher" ? "flex-row-reverse" : "flex-row",
-                        )}
-                      >
-                        <div className="min-w-0 flex-1">
+                  {group.messages.map((message) => {
+                    const isMine = Boolean(currentUserId && message.sender.id === currentUserId);
+
+                    return (
+                      <div key={message.id} className="group relative space-y-1">
+                        {message.isPinned ? (
+                          <div className={cn(isMine ? "ml-auto" : "mr-auto")}>
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+                              <Pin className="h-3 w-3" />
+                              {t("actions.pinnedLabel")}
+                            </span>
+                          </div>
+                        ) : null}
+                        <div
+                          className={cn(
+                            "relative w-fit max-w-full",
+                            isMine ? "ml-auto" : "mr-auto",
+                          )}
+                        >
                           <ChatMessageBubble
                             message={message}
                             senderName={message.sender.name}
@@ -376,12 +412,12 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                             replyToName={message.replyTo?.senderName}
                             replyToContent={message.replyTo?.content}
                             fileName={message.fileName}
+                            isMine={isMine}
                             onReact={(emoji) => void handleReact(message, emoji)}
                           />
-                        </div>
-                        <div className="shrink-0 self-center">
                           <TeacherChatMessageActions
                             message={message}
+                            side={isMine ? "left" : "right"}
                             disabled={isBusy}
                             onReply={setReplyTo}
                             onPin={(target) => void handlePin(target)}
@@ -390,12 +426,13 @@ export function TeacherChatConversationView({ courseId }: { courseId: string }) 
                           />
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         <footer className="border-t border-slate-200 bg-white px-4 py-4 md:px-6">

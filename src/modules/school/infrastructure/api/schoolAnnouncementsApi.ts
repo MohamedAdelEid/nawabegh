@@ -2,6 +2,7 @@ import axiosClient from "@/shared/infrastructure/http/axiosClient";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
 import { FILE_UPLOAD_URL } from "@/shared/infrastructure/files/fileUrl";
+import { FILE_UPLOAD_TIMEOUT_MS } from "@/modules/admin/infrastructure/api/fileUploadApi";
 import type {
   CreateSchoolAnnouncementResult,
   SchoolAnnouncementAttachment,
@@ -643,6 +644,7 @@ export async function uploadSchoolAnnouncementAttachment(
     url: FILE_UPLOAD_URL,
     data: formData,
     isFormData: true,
+    timeout: FILE_UPLOAD_TIMEOUT_MS,
   });
 
   const record = asRecord(unwrapData(response) ?? response);

@@ -175,7 +175,7 @@ export function ShortQuizIntroView({
         </section>
 
         <section className="rounded-2xl border border-[#e2e8f0] bg-white p-6 shadow-sm sm:p-8">
-          <div className="mb-6 flex items-center justify-end gap-3">
+          <div className="mb-6 flex items-center gap-3">
             <h3 className="text-xl font-bold text-[#1e293b]">{t("intro.instructionsTitle")}</h3>
             <Info className="size-5 text-[#2c4260]" />
           </div>
@@ -185,10 +185,10 @@ export function ShortQuizIntroView({
                 key={item}
                 className="flex items-start gap-4 rounded-xl bg-[#f8fafc] px-4 py-4"
               >
-                <p className="flex-1 text-end text-base leading-relaxed text-[#334155]">{item}</p>
                 <span className="mt-1 flex size-6 shrink-0 items-center justify-center rounded-full bg-[#dcfce7]">
                   <CheckCircle2 className="size-3.5 text-[#16a34a]" />
                 </span>
+                <p className="flex-1 text-base leading-relaxed text-[#334155]">{item}</p>
               </li>
             ))}
           </ul>

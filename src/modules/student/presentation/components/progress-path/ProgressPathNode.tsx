@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Check, Lock } from "lucide-react";
+import { useScheduleCountdown } from "@/modules/student/application/hooks/useCountdown";
 import type { PathStationProgressDto } from "@/modules/student/domain/progress/progress.types";
 import { formatCountdown } from "@/modules/student/domain/progress/progress.utils";
 import { cn } from "@/shared/application/lib/cn";
@@ -23,10 +24,16 @@ export function ProgressPathNode({
   const visual = resolveProgressPathNodeVisual(station, pathLocked);
   const isLocked = visual.variant === "locked";
   const isCompleted = visual.variant === "completed";
+  const showCountdown = visual.showLivePulse && visual.countdownSeconds != null;
+  const remainingSeconds = useScheduleCountdown(
+    station.liveSessionSchedule?.scheduledAt,
+    visual.countdownSeconds,
+    showCountdown,
+  );
 
   return (
     <div className="flex flex-col items-center gap-2">
-      {visual.showLivePulse && visual.countdownSeconds != null ? (
+      {showCountdown ? (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -37,7 +44,7 @@ export function ProgressPathNode({
             <span className="relative inline-flex size-2 rounded-full bg-[#ff4d4f]" />
           </span>
           <span className="text-[11px] font-semibold leading-tight text-[#ff4b4b]">
-            {formatCountdown(visual.countdownSeconds)}
+            {formatCountdown(remainingSeconds)}
           </span>
         </motion.div>
       ) : null}

@@ -12,12 +12,32 @@ type ValidationErrorsInput =
 
 export class ApiRequestError extends Error {
   validationErrors?: ValidationErrorsInput;
+  statusCode?: number;
 
-  constructor(message: string, validationErrors?: ValidationErrorsInput) {
+  constructor(
+    message: string,
+    validationErrors?: ValidationErrorsInput,
+    statusCode?: number,
+  ) {
     super(message);
     this.name = "ApiRequestError";
     this.validationErrors = validationErrors;
+    this.statusCode = statusCode;
   }
+}
+
+export function getErrorHttpStatus(error: unknown): number | null {
+  if (error instanceof ApiRequestError && typeof error.statusCode === "number") {
+    return error.statusCode;
+  }
+  if (axios.isAxiosError(error)) {
+    return error.response?.status ?? null;
+  }
+  if (error && typeof error === "object" && "status" in error) {
+    const status = (error as { status: unknown }).status;
+    if (typeof status === "number" && Number.isFinite(status)) return status;
+  }
+  return null;
 }
 
 export function flattenValidationErrors(validationErrors: ValidationErrorsInput): string[] {

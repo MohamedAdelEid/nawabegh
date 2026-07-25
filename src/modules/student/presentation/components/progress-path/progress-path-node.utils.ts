@@ -4,6 +4,7 @@ import {
 } from "@/modules/student/domain/progress/progress.enums";
 import type { PathStationProgressDto } from "@/modules/student/domain/progress/progress.types";
 import { StationType } from "@/shared/domain/enums/learning-path.enums";
+import { secondsUntilSchedule } from "@/shared/domain/utils/scheduleTime";
 import { JOURNEY_ASSETS } from "./journey.assets";
 
 export type ProgressPathNodeVariant =
@@ -56,8 +57,14 @@ export function resolveProgressPathNodeVisual(
   pathLocked = false,
 ): ProgressPathNodeVisual {
   const isLive = station.stationType === StationType.LiveStream;
-  const liveMode = station.liveSessionSchedule?.runtimeMode;
-  const countdown = station.liveSessionSchedule?.countdownSeconds ?? null;
+  const schedule = station.liveSessionSchedule;
+  const liveMode = schedule?.runtimeMode;
+  /** Prefer scheduledAt over API countdownSeconds (often timezone-skewed). */
+  const countdownFromSchedule = schedule?.scheduledAt
+    ? secondsUntilSchedule(schedule.scheduledAt)
+    : null;
+  const countdown =
+    countdownFromSchedule ?? schedule?.countdownSeconds ?? null;
   const stoneSrc = resolveStationStoneSrc(station.stationType);
 
   if (pathLocked) {

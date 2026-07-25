@@ -16,7 +16,7 @@ import { useShortQuizResult } from "@/modules/student/application/hooks/useShort
 import {
   canRetryAttempt,
   countCorrectAnswers,
-  formatElapsedTime,
+  formatAttemptDuration,
 } from "@/modules/student/domain/short-quiz/short-quiz.utils";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -143,7 +143,7 @@ export function ShortQuizResultsView({ stationId }: ShortQuizResultsViewProps) {
           <StatCard
             icon={Clock3}
             label={t("results.timeSpent")}
-            value={formatElapsedTime(attempt.startedAt)}
+            value={formatAttemptDuration(attempt)}
           />
           <StatCard icon={Award} label={t("results.points")} value={`+${points}`} />
           <StatCard

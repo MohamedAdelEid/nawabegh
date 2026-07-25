@@ -1,7 +1,6 @@
 import type {
   ChallengeStation,
   CurrentStationsDto,
-  InAppNotification,
   LeaderboardEntry,
   LeaderboardWidgetDto,
   LiveSessionStation,
@@ -193,19 +192,7 @@ export function mapLeaderboardWidgetDto(raw: unknown): LeaderboardWidgetDto {
   };
 }
 
-export function mapInAppNotification(raw: unknown): InAppNotification | null {
-  const record = asRecord(raw);
-  if (!record) return null;
-  const id = readString(record, ["id", "notificationId"]);
-  if (!id) return null;
-  return {
-    id,
-    title: readString(record, ["title", "subject"]),
-    body: readString(record, ["body", "message", "content"]),
-    isRead: readBoolean(record, ["isRead", "read"]),
-    createdAtUtc: readString(record, ["createdAtUtc", "createdAt", "sentAtUtc"]),
-  };
-}
+export { mapInAppNotification } from "@/shared/domain/utils/notification.utils";
 
 const POINTS_PER_LEVEL = 165;
 

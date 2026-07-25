@@ -8,7 +8,7 @@ import { ArrowLeft, CheckCircle2, XCircle } from "lucide-react";
 import { useShortQuizResult } from "@/modules/student/application/hooks/useShortQuizStation";
 import {
   countCorrectAnswers,
-  formatElapsedTime,
+  formatAttemptDuration,
 } from "@/modules/student/domain/short-quiz/short-quiz.utils";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { Button } from "@/shared/presentation/components/ui/button";
@@ -71,7 +71,7 @@ export function ShortQuizReviewListView({ stationId }: ShortQuizReviewListViewPr
       <main className="mx-auto max-w-[900px] space-y-6 px-4 py-6">
         <section className="grid grid-cols-3 gap-3">
           <SummaryChip label={t("results.finalScore")} value={`${attempt.scorePercent ?? 0}%`} />
-          <SummaryChip label={t("results.timeSpent")} value={formatElapsedTime(attempt.startedAt)} />
+          <SummaryChip label={t("results.timeSpent")} value={formatAttemptDuration(attempt)} />
           <SummaryChip
             label={t("results.rank")}
             value={

@@ -79,19 +79,39 @@ function isImageUrl(url: string | null | undefined): boolean {
   return /\.(jpe?g|png|gif|webp|bmp|svg|avif)(\?|$)/i.test(url);
 }
 
-function resolveMessageType(message: ChatMessageDto): TeacherChatMessageType {
-  if (message.replyToMessageId) return "reply";
+function isAudioUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  return /\.(m4a|mp3|ogg|wav|webm|aac|mp4)(\?|$)/i.test(url);
+}
 
+function resolveAttachmentMessageType(
+  attachment: ChatMessageDto["attachments"][number],
+): TeacherChatMessageType | null {
+  if (attachment.attachmentType === 1) return "image";
+  if (attachment.attachmentType === 4) return "voice";
+  if ([2, 3].includes(attachment.attachmentType)) return "file";
+
+  const mime = attachment.mimeType.toLowerCase();
+  if (mime.startsWith("image/") || isImageUrl(attachment.url)) return "image";
+  if (mime.startsWith("audio/") || isAudioUrl(attachment.url)) return "voice";
+  if (attachment.url) return "file";
+  return null;
+}
+
+function resolveMessageType(message: ChatMessageDto): TeacherChatMessageType {
   const primaryAttachment = message.attachments[0];
   if (primaryAttachment) {
-    if (primaryAttachment.attachmentType === 1) return "image";
-    if (primaryAttachment.attachmentType === 4) return "voice";
-    if ([2, 3].includes(primaryAttachment.attachmentType)) return "file";
+    const fromAttachment = resolveAttachmentMessageType(primaryAttachment);
+    if (fromAttachment) return fromAttachment;
   }
 
   if (message.attachmentUrl) {
-    return isImageUrl(message.attachmentUrl) ? "image" : "file";
+    if (isImageUrl(message.attachmentUrl)) return "image";
+    if (isAudioUrl(message.attachmentUrl)) return "voice";
+    return "file";
   }
+
+  if (message.replyToMessageId) return "reply";
   return "text";
 }
 
@@ -190,7 +210,16 @@ export function mapChatConversationWorkspace(
       .map((participant) => participant.userId),
   );
 
-  const mappedMessages = messages.map((message) => {
+  // API returns newest-first; chat UI needs oldest at top → newest at bottom.
+  const chronologicalMessages = [...messages].sort((a, b) => {
+    const aTime = new Date(a.createdAt).getTime();
+    const bTime = new Date(b.createdAt).getTime();
+    const safeA = Number.isFinite(aTime) ? aTime : 0;
+    const safeB = Number.isFinite(bTime) ? bTime : 0;
+    return safeA - safeB;
+  });
+
+  const mappedMessages = chronologicalMessages.map((message) => {
     const mapped = mapMessage(message, locale);
     mapped.sender.role = teacherIds.has(message.senderId) ? "teacher" : "student";
     return mapped;
