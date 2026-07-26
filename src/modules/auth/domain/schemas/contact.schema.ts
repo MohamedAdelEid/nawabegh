@@ -1,16 +1,16 @@
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
+import { isPhoneReadyForSubmit } from "@/modules/auth/domain/utils/phoneNumber.utils";
 
 const optionalPhone = z
   .string()
   .trim()
-  .refine((value) => !value || isValidPhoneNumber(value), { message: "invalidPhone" });
+  .refine((value) => !value || isPhoneReadyForSubmit(value), { message: "invalidPhone" });
 
 const requiredPhone = z
   .string()
   .trim()
   .min(1, { message: "required" })
-  .refine((value) => isValidPhoneNumber(value), { message: "invalidPhone" });
+  .refine((value) => isPhoneReadyForSubmit(value), { message: "invalidPhone" });
 
 export const contactSchema = z.object({
   whatsApp: requiredPhone,

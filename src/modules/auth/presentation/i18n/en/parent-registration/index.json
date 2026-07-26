@@ -14,6 +14,10 @@
         "submit": "Create new account"
       },
       "fields": {
+        "fullName": {
+          "label": "Full name",
+          "placeholder": "e.g. Ahmed Mohamed"
+        },
         "country": {
           "label": "Country",
           "placeholder": "Select country",
@@ -23,7 +27,7 @@
         },
         "phone": {
           "label": "Mobile number",
-          "placeholder": "5xxxxxxxx",
+          "placeholder": "9xxxxxxx",
           "countrySearchPlaceholder": "Search for a country...",
           "countryEmpty": "No matching countries"
         },
@@ -38,7 +42,7 @@
         "password": {
           "label": "Password",
           "placeholder": "••••••••",
-          "hint": "Must be at least 8 characters"
+          "hint": "At least 8 characters, including a number and a symbol"
         }
       },
       "footerLinks": {
@@ -49,7 +53,7 @@
       "validation": {
         "required": "This field is required",
         "invalidEmail": "Enter a valid email",
-        "invalidPhone": "Enter a valid phone number",
+        "invalidPhone": "Enter the mobile number only, without the country code",
         "passwordMin": "Password must be at least 8 characters",
         "passwordNumber": "Password must include a number",
         "passwordSymbol": "Password must include a symbol"

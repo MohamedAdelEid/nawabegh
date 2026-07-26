@@ -7,6 +7,7 @@ import { PhoneCountrySelect } from "@/shared/presentation/components/ui/phone-in
 import {
   buildE164Phone,
   parseE164Phone,
+  stripLeadingCallingCode,
   type Country,
 } from "@/shared/presentation/components/ui/phone-input/phone-input.utils";
 
@@ -74,12 +75,15 @@ export function PhoneInput({
   );
 
   const handleCountryChange = (nextCountry: Country) => {
+    const digits = stripLeadingCallingCode(nextCountry, nationalDigits);
     setCountry(nextCountry);
-    emitChange(nextCountry, nationalDigits);
+    setNationalDigits(digits);
+    emitChange(nextCountry, digits);
   };
 
   const handleNationalChange = (nextNational: string) => {
-    const digits = nextNational.replace(/\D/g, "");
+    // Digits only — no maxLength. Strip country calling code if pasted into the national field.
+    const digits = stripLeadingCallingCode(country, nextNational);
     setNationalDigits(digits);
     emitChange(country, digits);
   };
@@ -87,7 +91,7 @@ export function PhoneInput({
   return (
     <div
       className={cn(
-        "flex w-full items-stretch gap-2",
+        "flex w-full items-stretch gap-2.5",
         locale === "ar" ? "flex-row-reverse" : "flex-row",
         className,
       )}
@@ -100,6 +104,7 @@ export function PhoneInput({
         invalid={invalid}
         searchPlaceholder={countrySearchPlaceholder}
         emptyMessage={countryEmptyMessage}
+        className="min-w-[6.75rem] shrink-0"
       />
 
       <Input
@@ -112,7 +117,7 @@ export function PhoneInput({
         value={nationalDigits}
         onChange={(event) => handleNationalChange(event.target.value)}
         placeholder={placeholder}
-        className="min-w-0 flex-1"
+        className="min-w-[9rem] flex-[2]"
         showClear={false}
       />
     </div>

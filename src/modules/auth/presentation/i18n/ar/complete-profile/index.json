@@ -1,0 +1,69 @@
+{
+  "auth": {
+    "completeProfile": {
+      "meta": {
+        "title": "إكمال الملف الشخصي | نوابغ"
+      },
+      "brandAlt": "أكاديمية نوابغ",
+      "title": "أكمل ملفك الشخصي",
+      "subtitle": "خطوة أخيرة قبل الدخول إلى لوحة التحكم",
+      "actions": {
+        "submit": "حفظ والمتابعة",
+        "submitting": "جارٍ الحفظ..."
+      },
+      "fields": {
+        "country": {
+          "label": "الدولة",
+          "placeholder": "اختر الدولة",
+          "searchPlaceholder": "ابحث عن دولة...",
+          "empty": "لا توجد دول مطابقة",
+          "loadError": "تعذر تحميل قائمة الدول"
+        },
+        "phone": {
+          "label": "رقم الجوال",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "ابحث عن الدولة...",
+          "countryEmpty": "لا توجد دول مطابقة"
+        },
+        "whatsApp": {
+          "label": "واتساب",
+          "placeholder": "5xxxxxxxx"
+        },
+        "address": {
+          "label": "العنوان",
+          "placeholder": "المدينة، الحي، الشارع"
+        },
+        "username": {
+          "label": "اسم المستخدم",
+          "placeholder": "ahmed_student"
+        },
+        "educationLevel": {
+          "label": "المستوى التعليمي",
+          "placeholder": "اختر المستوى"
+        },
+        "grade": {
+          "label": "الصف",
+          "placeholder": "اختر الصف"
+        },
+        "jobTitle": {
+          "label": "المسمى الوظيفي",
+          "placeholder": "معلم رياضيات"
+        },
+        "schoolName": {
+          "label": "اسم المدرسة",
+          "placeholder": "اسم المدرسة"
+        }
+      },
+      "validation": {
+        "required": "هذا الحقل مطلوب",
+        "invalidPhone": "أدخل رقم هاتف صالحاً (بدون رمز الدولة)",
+        "usernameMin": "اسم المستخدم يجب أن يكون 3 أحرف على الأقل"
+      },
+      "messages": {
+        "submitError": "تعذر إكمال الملف الشخصي. حاول مرة أخرى.",
+        "submitSuccess": "تم إكمال الملف الشخصي بنجاح",
+        "alreadyComplete": "تم إكمال الملف الشخصي مسبقاً"
+      }
+    }
+  }
+}

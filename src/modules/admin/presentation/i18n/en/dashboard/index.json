@@ -432,6 +432,10 @@
           "label": "Teachers",
           "indicator": "+3%"
         },
+        "parents": {
+          "label": "Parents",
+          "indicator": ""
+        },
         "activeSubscriptions": {
           "label": "Active subscriptions",
           "indicator": "Excellent"
@@ -3092,7 +3096,8 @@
         },
         "messages": {
           "loading": "Loading live session…",
-          "noDescription": "No description was added for this session."
+          "noDescription": "No description was added for this session.",
+          "attachmentOpenError": "Could not open the file. Please try again."
         },
         "live": "LIVE",
         "status": {
@@ -3259,6 +3264,7 @@
         "actions": {
           "createExam": "Create Exam",
           "generateQuestions": "Generate Questions",
+          "generatingQuestions": "Generating... {elapsed}",
           "saveAndPublish": "Save and Create Exam",
           "preview": "Preview Full Exam",
           "saveSettings": "Save Settings"
@@ -3275,11 +3281,19 @@
           "titleRequired": "Exam name is required",
           "generateQuestionsSuccess": "Question generation started",
           "generateQuestionsError": "Failed to generate questions",
-          "quizRequiredForAi": "Create the exam first before generating questions"
+          "generateQuestionsTimeout": "Question generation timed out. Refresh later.",
+          "generateQuestionsEmpty": "No questions were generated. Upload a valid source and try again.",
+          "generateQuestionsComplete": "Generated {count} questions successfully",
+          "quizRequiredForAi": "Create the exam first before generating questions",
+          "sourceRequiredForAi": "Upload at least one source file before generating questions",
+          "questionsCountRequired": "Save the question count in exam settings before generating questions",
+          "generatingQuestionsTitle": "AI is generating questions",
+          "generatingQuestionsDescription": "This may take several minutes. Please keep this page open until it finishes."
         },
         "sidebar": {
           "title": "Exam Summary",
-          "questionsCount": "Questions Count",
+          "questionsCount": "Requested questions",
+          "generatedQuestions": "Generated questions",
           "questions": "question",
           "time": "Allocated Time",
           "minutes": "min",
@@ -3299,6 +3313,7 @@
           "examName": "Exam Name",
           "examNamePlaceholder": "Enter the educational exam title...",
           "duration": "Duration (minutes)",
+          "questionsCount": "Number of questions",
           "difficulty": "Difficulty Level",
           "passingGrade": "Passing Grade",
           "attempts": "Allowed Attempts",
@@ -3334,8 +3349,7 @@
         "title": "Preview Exam Questions: {name}",
         "description": "Create an interactive exam station for your students.",
         "actions": {
-          "editQuestions": "Edit Questions",
-          "exportPdf": "Export PDF"
+          "editQuestions": "Edit Questions"
         },
         "status": {
           "published": "Published",
@@ -3346,6 +3360,10 @@
         "stats": {
           "totalQuestions": "Total",
           "questions": "questions"
+        },
+        "emptyState": {
+          "title": "No questions yet",
+          "description": "Generate questions from the uploaded sources to preview them here."
         },
         "info": {
           "subject": "Subject",
@@ -3402,9 +3420,14 @@
           "editQuestion": "Edit Question",
           "deleteQuestion": "Delete Question",
           "saveChanges": "Save Changes",
-          "cancel": "Cancel"
+          "cancel": "Cancel",
+          "correctAnswer": "Correct answer"
         },
         "addQuestion": "Add New Question",
+        "empty": {
+          "title": "No questions yet",
+          "description": "Add a new question or generate questions from the preview page."
+        },
         "messages": {
           "loadError": "Failed to load exam questions",
           "deleteSuccess": "Question deleted",
@@ -3419,14 +3442,44 @@
           "correctAnswer": "Correct answer",
           "points": "Points"
         },
-        "addModal": {
-          "title": "Add New Question",
+        "editModal": {
+          "title": "Edit question",
+          "subtitle": "Question {order}",
+          "subtitleFallback": "Update the question text and options",
           "questionType": "Question type",
           "multipleChoice": "Multiple choice",
           "trueFalse": "True or false",
           "questionText": "Question text",
           "points": "Points",
           "difficulty": "Difficulty",
+          "options": "Answer options",
+          "selectCorrect": "Select the correct answer",
+          "trueOption": "True",
+          "falseOption": "False",
+          "choicePlaceholder": "Choice {index}",
+          "cancel": "Cancel",
+          "submit": "Save changes",
+          "saving": "Saving...",
+          "saveSuccess": "Question updated",
+          "saveError": "Failed to update question",
+          "validation": {
+            "textRequired": "Question text is required",
+            "pointsInvalid": "Points must be greater than zero",
+            "choicesRequired": "All choices must have text",
+            "correctRequired": "Select a correct answer"
+          }
+        },
+        "addModal": {
+          "title": "Add New Question",
+          "subtitle": "Enter the question text, type, and answer options",
+          "questionType": "Question type",
+          "multipleChoice": "Multiple choice",
+          "trueFalse": "True or false",
+          "questionText": "Question text",
+          "points": "Points",
+          "difficulty": "Difficulty",
+          "options": "Answer options",
+          "selectCorrect": "Select the correct answer",
           "trueOption": "True",
           "falseOption": "False",
           "choicePlaceholder": "Choice {index}",

@@ -115,3 +115,26 @@ export function getUploadTooLargeMessage(
   const category = getUploadLimitCategory(file);
   return locale === "en" ? UPLOAD_TOO_LARGE_EN[category] : UPLOAD_TOO_LARGE_AR[category];
 }
+
+/**
+ * Remap stale API copy (e.g. old 20 MB image message applied to PDFs)
+ * to the correct client message for the file category.
+ */
+export function normalizeUploadErrorMessage(
+  message: string,
+  file: File | string,
+  locale: "ar" | "en" = "ar",
+): string {
+  const trimmed = message.trim();
+  if (!trimmed) return getUploadTooLargeMessage(file, locale);
+
+  const category = getUploadLimitCategory(file);
+  const looksLikeStaleSizeLimit =
+    /20\s*ميجا|20\s*MB|50\s*ميجا|50\s*MB|ضغط الصورة|compress the image/i.test(trimmed);
+
+  if (looksLikeStaleSizeLimit && (category === "document" || category === "audio" || category === "request")) {
+    return getUploadTooLargeMessage(file, locale);
+  }
+
+  return trimmed;
+}

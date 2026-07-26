@@ -11,7 +11,6 @@ import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 import { parseXPaginationHeader } from "@/shared/infrastructure/http/xPagination";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
-
 type UnknownRecord = Record<string, unknown>;
 
 function asRecord(value: unknown): UnknownRecord | null {
@@ -259,7 +258,7 @@ function mapWorkspace(data: unknown, locale: string): TeacherSessionDetails | nu
       const resourceId = readString(row, ["id", "fileId"], "");
       const title = readString(row, ["fileName", "title", "name"], "");
       if (!resourceId && !title) return null;
-      const fileUrl = resolveFileUrl(readString(row, ["fileUrl", "url"], ""));
+      const fileUrlRaw = readString(row, ["fileUrl", "url"], "").trim();
       const fileTypeRaw = readString(row, ["fileType", "type"], "");
       const fileSizeBytes = readNumber(row, ["fileSizeBytes", "fileSize"]);
       const sizeLabel =
@@ -271,7 +270,8 @@ function mapWorkspace(data: unknown, locale: string): TeacherSessionDetails | nu
         fileType: mapFileType(fileTypeRaw),
         mediaKind: readString(row, ["mediaKind"], "") || null,
         sizeLabel,
-        fileUrl: fileUrl || undefined,
+        // Keep relative/API path — never rewrite to private S3 public base.
+        fileUrl: fileUrlRaw || undefined,
       };
     })
     .filter((resource): resource is NonNullable<typeof resource> => resource !== null);

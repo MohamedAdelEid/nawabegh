@@ -101,7 +101,9 @@ export function AdminHelperFileManagementAddPage({
             })),
           );
         } else {
-          const coursesResult = await getResourceFileCoursesDropdown();
+          const coursesResult = await getResourceFileCoursesDropdown({
+            pageSize: 200,
+          });
           if (!alive) return;
           if (coursesResult.errorMessage) {
             notify.error(coursesResult.errorMessage);
@@ -109,7 +111,9 @@ export function AdminHelperFileManagementAddPage({
             setCourseOptions(
               coursesResult.data.map((course) => ({
                 value: course.id,
-                label: course.courseName,
+                label: course.teacherName
+                  ? `${course.courseName} — ${course.teacherName}`
+                  : course.courseName,
               })),
             );
           }

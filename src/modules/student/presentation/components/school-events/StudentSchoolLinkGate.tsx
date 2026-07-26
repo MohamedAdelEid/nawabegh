@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { studentHomeQueryKeys } from "@/modules/student/application/constants/studentHomeQueryKeys";
 import { schoolEventsQueryKeys } from "@/modules/student/application/constants/schoolEventsQueryKeys";
+import { studentProfileQueryKeys } from "@/modules/student/application/constants/studentProfileQueryKeys";
 import type { StudentMyProfile } from "@/modules/student/domain/types/student-home.types";
 import type { UpdateStudentProfilePayload } from "@/modules/student/domain/profile/profile.types";
 import { updateStudentMyProfile } from "@/modules/student/infrastructure/api/studentProfile.api";
@@ -127,6 +128,8 @@ export function StudentSchoolLinkGate({ profile }: StudentSchoolLinkGateProps) {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: studentHomeQueryKeys.profile() }),
         queryClient.invalidateQueries({ queryKey: schoolEventsQueryKeys.all }),
+        queryClient.invalidateQueries({ queryKey: studentProfileQueryKeys.schoolRank() }),
+        queryClient.invalidateQueries({ queryKey: studentProfileQueryKeys.schoolLeaders() }),
       ]);
     },
   });

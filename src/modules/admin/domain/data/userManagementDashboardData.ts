@@ -80,6 +80,15 @@ export const userManagementDashboardData: UserManagementDashboardData = {
       iconToneClassName: "bg-[#F8EFD5] text-[#A17A12]",
     },
     {
+      id: "parents",
+      labelKey: "userManagement.stats.parents.label",
+      value: "0",
+      indicatorKey: "userManagement.stats.parents.indicator",
+      accentClassName: "before:bg-[#5B8DEF] before:h-full before:top-0",
+      icon: UserRoundPlus,
+      iconToneClassName: "bg-[#E8F0FE] text-[#3B6FD8]",
+    },
+    {
       id: "activeSubscriptions",
       labelKey: "userManagement.stats.activeSubscriptions.label",
       value: "92%",

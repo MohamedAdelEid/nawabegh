@@ -6,10 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { helperResourceStationQueryKeys } from "@/modules/student/application/constants/helperResourceStationQueryKeys";
 import { progressQueryKeys } from "@/modules/student/application/constants/progressQueryKeys";
 import type { HelperResourceMediaFilter } from "@/modules/student/domain/helper-resource/helper-resource.utils";
-import {
-  getViewerKind,
-  triggerBrowserDownload,
-} from "@/modules/student/domain/helper-resource/helper-resource.utils";
+import { getViewerKind } from "@/modules/student/domain/helper-resource/helper-resource.utils";
 import type {
   ResourceFileMediaKind,
   StudentHelperResourceFileDto,
@@ -21,7 +18,7 @@ import {
   saveHelperResourceProgress,
 } from "@/modules/student/infrastructure/api/helperResourceStation.api";
 import { getCourseProgress } from "@/modules/student/infrastructure/api/progress.api";
-import { resolveProtectedFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { openProtectedFile } from "@/shared/infrastructure/files/openProtectedFile";
 
 const PROGRESS_DEBOUNCE_MS = 2500;
 
@@ -143,9 +140,10 @@ export function useHelperResourceStation({
   }, []);
 
   const downloadFile = useCallback((file: StudentHelperResourceFileDto) => {
-    const url = resolveProtectedFileUrl(file.fileUrl) ?? file.fileUrl;
-    if (!url) return;
-    triggerBrowserDownload(url, file.fileName);
+    void openProtectedFile(file.fileUrl, {
+      fileName: file.fileName,
+      download: true,
+    });
   }, []);
 
   const syncProgress = useCallback(

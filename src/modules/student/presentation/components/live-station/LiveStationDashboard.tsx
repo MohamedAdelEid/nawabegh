@@ -10,6 +10,7 @@ import { LiveStationSkeleton } from "./LiveStationSkeleton";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { openProtectedFile } from "@/shared/infrastructure/files/openProtectedFile";
 import { notify } from "@/shared/application/lib/toast";
 
 type LiveStationDashboardProps = {
@@ -39,14 +40,24 @@ export function LiveStationDashboard({
     );
   };
 
-  const openAttachments = () => {
+  const openAttachments = async () => {
     const attachments = session.info?.attachments ?? [];
     const first = attachments[0];
     if (!first) {
       notify.info(t("attachments.empty"));
       return;
     }
-    window.open(first.fileUrl, "_blank", "noopener,noreferrer");
+
+    const result = await openProtectedFile(first.fileUrl, {
+      fileName: first.fileName,
+    });
+    if (!result.ok) {
+      notify.error(
+        result.reason === "not_found"
+          ? t("attachments.notFound")
+          : t("attachments.openError"),
+      );
+    }
   };
 
   if (session.phase === "loading") {

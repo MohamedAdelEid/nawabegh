@@ -23,6 +23,9 @@ function reasonFromHttpStatus(status: number | undefined): FetchFileFailureReaso
   return status === 404 ? "not_found" : "failed";
 }
 
+/** Large PDFs / PPTX through FileUpload/download can exceed the default API timeout. */
+const FILE_VIEWER_TIMEOUT_MS = 120_000;
+
 /**
  * Loads a file for in-browser viewers (e.g. react-pdf).
  * Prefer authenticated FileUpload/download for stored uploads (including S3-backed
@@ -58,9 +61,29 @@ export async function fetchFileForViewer(pathOrUrl: string): Promise<FetchFileRe
 
     const response: AxiosResponse<ArrayBuffer> = await axiosClient.get(url, {
       responseType: "arraybuffer",
+      timeout: FILE_VIEWER_TIMEOUT_MS,
+      // Default instance Content-Type: application/json forces a CORS preflight
+      // and can break FileUpload/download from the browser. Navigation works
+      // without that header — strip it for binary GETs.
+      headers: {
+        "Content-Type": false,
+      },
+      transformRequest: [
+        (data, headers) => {
+          if (headers && typeof headers === "object") {
+            delete (headers as Record<string, unknown>)["Content-Type"];
+            delete (headers as Record<string, unknown>)["content-type"];
+          }
+          return data;
+        },
+      ],
     });
     const data = response.data;
-    if (data instanceof ArrayBuffer && data.byteLength > 0) return success(data);
+    if (data instanceof ArrayBuffer && data.byteLength > 0) {
+      // Guard against JSON error payloads returned as arraybuffer.
+      if (looksLikeJsonErrorPayload(data)) return failure("failed");
+      return success(data);
+    }
 
     return failure("failed");
   } catch (error) {
@@ -68,6 +91,18 @@ export async function fetchFileForViewer(pathOrUrl: string): Promise<FetchFileRe
       return failure(reasonFromHttpStatus(error.response?.status));
     }
     return failure("failed");
+  }
+}
+
+function looksLikeJsonErrorPayload(data: ArrayBuffer): boolean {
+  if (data.byteLength < 2 || data.byteLength > 8_192) return false;
+  try {
+    const text = new TextDecoder().decode(data).trim();
+    if (!text.startsWith("{") && !text.startsWith("[")) return false;
+    const parsed = JSON.parse(text) as { isSuccess?: boolean; statusCode?: number };
+    return parsed.isSuccess === false || typeof parsed.statusCode === "number";
+  } catch {
+    return false;
   }
 }
 

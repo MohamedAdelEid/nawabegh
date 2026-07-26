@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useState, type FormEvent } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import type { StudentMyProfile } from "@/modules/student/domain/types/student-home.types";
 import type { UpdateStudentProfilePayload } from "@/modules/student/domain/profile/profile.types";
 import {
@@ -11,7 +11,9 @@ import {
 } from "@/shared/presentation/components/ui/modal-shell";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
+import { PhoneInput } from "@/shared/presentation/components/ui/phone-input";
 import { ApiFailureAlert } from "@/shared/presentation/components/ui/ApiFailureAlert";
+import { buildE164FromApiParts, splitPhoneForApi } from "@/shared/domain/utils/phoneCountry.utils";
 
 type ProfileEditDialogProps = {
   open: boolean;
@@ -31,10 +33,10 @@ export function ProfileEditDialog({
   onSave,
 }: ProfileEditDialogProps) {
   const t = useTranslations("student.dashboard.profile.edit");
+  const locale = useLocale();
   const [fullName, setFullName] = useState(profile.fullName);
-  const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
-  const [phoneCountryCode, setPhoneCountryCode] = useState(
-    profile.phoneCountryCode != null ? String(profile.phoneCountryCode) : "",
+  const [phoneValue, setPhoneValue] = useState(() =>
+    buildE164FromApiParts(profile.phoneNumber ?? "", profile.phoneCountryCode),
   );
   const [address, setAddress] = useState(profile.address);
   const [localError, setLocalError] = useState<string | null>(null);
@@ -42,15 +44,12 @@ export function ProfileEditDialog({
   useEffect(() => {
     if (!open) return;
     setFullName(profile.fullName);
-    setPhoneNumber(profile.phoneNumber);
-    setPhoneCountryCode(
-      profile.phoneCountryCode != null ? String(profile.phoneCountryCode) : "",
-    );
+    setPhoneValue(buildE164FromApiParts(profile.phoneNumber ?? "", profile.phoneCountryCode));
     setAddress(profile.address);
     setLocalError(null);
   }, [open, profile]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const trimmedName = fullName.trim();
     if (!trimmedName) {
@@ -58,9 +57,8 @@ export function ProfileEditDialog({
       return;
     }
 
-    const countryCode =
-      phoneCountryCode.trim() === "" ? null : Number(phoneCountryCode.trim());
-    if (phoneCountryCode.trim() !== "" && !Number.isFinite(countryCode)) {
+    const phoneParts = phoneValue.trim() ? splitPhoneForApi(phoneValue) : null;
+    if (phoneValue.trim() && !phoneParts) {
       setLocalError(t("errors.invalidCountryCode"));
       return;
     }
@@ -68,8 +66,8 @@ export function ProfileEditDialog({
     setLocalError(null);
     await onSave({
       fullName: trimmedName,
-      phoneNumber: phoneNumber.trim() || null,
-      phoneCountryCode: countryCode,
+      phoneNumber: phoneParts?.phoneNumber ?? null,
+      phoneCountryCode: phoneParts?.phoneCountryCode ?? null,
       address: address.trim() || null,
       profileImageUrl: profile.profileImageUrl,
       whatsAppNumber: profile.whatsAppNumber || null,
@@ -79,7 +77,7 @@ export function ProfileEditDialog({
       schoolId: profile.schoolId || null,
       academicTerm: profile.academicTerm,
     });
-  };
+  }
 
   return (
     <ModalShell open={open} onOpenChange={(next) => !next && onClose()}>
@@ -128,26 +126,15 @@ export function ProfileEditDialog({
           />
         </label>
 
-        <div className="grid gap-3 sm:grid-cols-[1fr_120px]">
-          <label className="block space-y-1.5 text-end">
-            <span className="text-sm font-medium text-[#64748b]">{t("phone")}</span>
-            <Input
-              value={phoneNumber}
-              onChange={(event) => setPhoneNumber(event.target.value)}
-              className="h-11 rounded-xl text-end"
-              disabled={isSaving}
-            />
-          </label>
-          <label className="block space-y-1.5 text-end">
-            <span className="text-sm font-medium text-[#64748b]">{t("countryCode")}</span>
-            <Input
-              value={phoneCountryCode}
-              onChange={(event) => setPhoneCountryCode(event.target.value)}
-              className="h-11 rounded-xl text-end"
-              disabled={isSaving}
-            />
-          </label>
-        </div>
+        <label className="block space-y-1.5 text-end">
+          <span className="text-sm font-medium text-[#64748b]">{t("phone")}</span>
+          <PhoneInput
+            value={phoneValue}
+            onChange={setPhoneValue}
+            locale={locale}
+            disabled={isSaving}
+          />
+        </label>
 
         <label className="block space-y-1.5 text-end">
           <span className="text-sm font-medium text-[#64748b]">{t("address")}</span>

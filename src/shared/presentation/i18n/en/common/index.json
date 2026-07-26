@@ -11,6 +11,8 @@
       "error": "Could not load notifications.",
       "retry": "Retry",
       "openAction": "Open",
+      "close": "Close",
+      "detailTitle": "Notification details",
       "unreadBadge": "{count} unread"
     }
   }

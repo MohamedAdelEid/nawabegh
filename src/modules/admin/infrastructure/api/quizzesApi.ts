@@ -23,6 +23,7 @@ export type CreateQuizPayload = {
   passScore: number;
   maxAttempts: number;
   durationMinutes: number;
+  questionCount: number;
   difficulty: number;
   shuffleQuestions: boolean;
   aiSourceFileUrl: string;
@@ -68,6 +69,8 @@ export type Quiz = {
   passScore: number;
   maxAttempts: number;
   durationMinutes: number;
+  questionCount: number;
+  questionGenerationStatus: number;
   difficulty: number;
   shuffleQuestions: boolean;
   aiSourceFileUrl: string;
@@ -108,6 +111,7 @@ export type UpdateQuizSettingsPayload = {
   passScore: number;
   maxAttempts: number;
   durationMinutes: number;
+  questionCount: number;
   difficulty: number;
   shuffleQuestions: boolean;
   aiSourceFileUrl: string;
@@ -243,11 +247,30 @@ function mapQuizQuestion(data: unknown): QuizQuestion | null {
   };
 }
 
+function readGenerationStatus(record: UnknownRecord | null): number {
+  if (!record) return 0;
+  const value = record.questionGenerationStatus;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "none") return 0;
+    if (normalized === "processing") return 1;
+    if (normalized === "completed") return 2;
+    if (normalized === "failed") return 3;
+    if (normalized !== "" && !Number.isNaN(Number(normalized))) return Number(normalized);
+  }
+  return 0;
+}
+
 function mapQuiz(data: unknown): Quiz | null {
   const record = asRecord(extractEnvelopeData(data));
   if (!record) return null;
   const id = readString(record, ["id", "quizId"], "").trim();
   if (!id) return null;
+
+  const questions = readArray(record, ["questions"])
+    .map(mapQuizQuestion)
+    .filter((question): question is QuizQuestion => Boolean(question));
 
   return {
     id,
@@ -256,15 +279,15 @@ function mapQuiz(data: unknown): Quiz | null {
     passScore: readNumber(record, ["passScore", "passingGradePct"]),
     maxAttempts: readNumber(record, ["maxAttempts"]),
     durationMinutes: readNumber(record, ["durationMinutes", "durationMin"]),
+    questionCount: readNumber(record, ["questionCount", "questionsCount"], questions.length),
+    questionGenerationStatus: readGenerationStatus(record),
     difficulty: readNumber(record, ["difficulty"]),
     shuffleQuestions: readBoolean(record, ["shuffleQuestions", "randomOrder"], true),
     aiSourceFileUrl: readString(record, ["aiSourceFileUrl"], ""),
     quizAttachments: readArray(record, ["quizAttachments", "attachments"])
       .map(mapQuizAttachment)
       .filter((attachment): attachment is QuizAttachment => Boolean(attachment)),
-    questions: readArray(record, ["questions"])
-      .map(mapQuizQuestion)
-      .filter((question): question is QuizQuestion => Boolean(question)),
+    questions,
   };
 }
 
@@ -392,6 +415,7 @@ export async function generateQuizQuestions(quizId: string): Promise<QuizApiResu
     const response = await httpClient.post<unknown>({
       url: `/api/v1/quizzes/${quizId}/generate-questions`,
       data: {},
+      timeout: 0,
     });
 
     return {

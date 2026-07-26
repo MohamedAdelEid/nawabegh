@@ -11,6 +11,8 @@
       "error": "تعذر تحميل الإشعارات.",
       "retry": "إعادة المحاولة",
       "openAction": "فتح",
+      "close": "إغلاق",
+      "detailTitle": "تفاصيل الإشعار",
       "unreadBadge": "{count} غير مقروء"
     }
   }

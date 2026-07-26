@@ -52,7 +52,42 @@ export async function loginWithGoogle(
     cache: "no-store",
   });
 
-  return response.json() as Promise<LoginApiResponse>;
+  let json: LoginApiResponse;
+  try {
+    json = (await response.json()) as LoginApiResponse;
+  } catch {
+    return {
+      isSuccess: false,
+      message:
+        locale === "ar"
+          ? "تعذر قراءة رد الخادم لتسجيل الدخول عبر Google."
+          : "Unable to parse Google login response.",
+      data: null,
+      error: {
+        message:
+          locale === "ar"
+            ? "رمز Google غير صالح أو منتهي الصلاحية"
+            : "Google token is invalid or expired",
+        validationErrors: null,
+      },
+    } as LoginApiResponse;
+  }
+
+  // Ensure failed HTTP statuses are treated as failure even if envelope is odd.
+  if (!response.ok && json.isSuccess !== true) {
+    return {
+      ...json,
+      isSuccess: false,
+      message:
+        json.message ??
+        json.error?.message ??
+        (locale === "ar"
+          ? "رمز Google غير صالح أو منتهي الصلاحية"
+          : "Google token is invalid or expired"),
+    };
+  }
+
+  return json;
 }
 
 export async function refreshAuthToken(

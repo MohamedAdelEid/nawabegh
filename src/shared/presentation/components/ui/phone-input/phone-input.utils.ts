@@ -11,8 +11,27 @@ export function getAllPhoneCountries(): Country[] {
   return getCountries();
 }
 
-export function buildE164Phone(country: Country, nationalDigits: string): string {
+/** Strip a leading calling code if the user pasted it into the national field. */
+export function stripLeadingCallingCode(country: Country, nationalDigits: string): string {
   const digits = nationalDigits.replace(/\D/g, "");
+  if (!digits) return "";
+
+  const callingCode = String(getCountryCallingCode(country));
+  if (digits.startsWith(callingCode) && digits.length > callingCode.length) {
+    return digits.slice(callingCode.length);
+  }
+
+  // Common paste: "00{code}..."
+  const intlPrefix = `00${callingCode}`;
+  if (digits.startsWith(intlPrefix) && digits.length > intlPrefix.length) {
+    return digits.slice(intlPrefix.length);
+  }
+
+  return digits;
+}
+
+export function buildE164Phone(country: Country, nationalDigits: string): string {
+  const digits = stripLeadingCallingCode(country, nationalDigits);
   if (!digits) return "";
   return `+${getCountryCallingCode(country)}${digits}`;
 }
@@ -27,7 +46,10 @@ export function parseE164Phone(
 
   const parsed = parsePhoneNumber(value, { defaultCountry: fallbackCountry });
   if (!parsed) {
-    return { country: fallbackCountry, nationalDigits: value.replace(/\D/g, "") };
+    return {
+      country: fallbackCountry,
+      nationalDigits: stripLeadingCallingCode(fallbackCountry, value),
+    };
   }
 
   return {

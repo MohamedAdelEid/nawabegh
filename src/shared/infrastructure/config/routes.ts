@@ -226,6 +226,7 @@ export const ROUTES = {
       SUBSCRIPTIONS: "/student/subscriptions",
       DAILY_TASKS: "/student/daily-tasks",
       SCHEDULE: "/student/schedule",
+      SCHOOL: "/student/school",
       EVENTS: "/student/events",
       EVENT_LIVE: (eventId: string) =>
         `/student/events/${encodeURIComponent(eventId)}/live`,

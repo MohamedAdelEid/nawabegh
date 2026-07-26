@@ -12,6 +12,7 @@ declare module "next-auth" {
       id?: string;
       domainUid?: string | null;
       role?: string;
+      requiresProfileCompletion?: boolean;
     };
   }
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
     refreshToken?: string;
     accessTokenExpiresAt?: string;
     role?: string;
+    requiresProfileCompletion?: boolean;
   }
 }
 
@@ -34,6 +36,7 @@ declare module "next-auth/jwt" {
     domainUid?: string | null;
     role?: string;
     picture?: string | null;
+    requiresProfileCompletion?: boolean;
     error?: "RefreshAccessTokenError";
   }
 }

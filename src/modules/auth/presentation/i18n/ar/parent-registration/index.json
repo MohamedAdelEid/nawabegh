@@ -14,6 +14,10 @@
         "submit": "إنشاء حساب جديد"
       },
       "fields": {
+        "fullName": {
+          "label": "الاسم الكامل",
+          "placeholder": "مثال: أحمد محمد"
+        },
         "country": {
           "label": "الدولة",
           "placeholder": "اختر الدولة",
@@ -23,7 +27,7 @@
         },
         "phone": {
           "label": "رقم الجوال",
-          "placeholder": "5xxxxxxxx",
+          "placeholder": "9xxxxxxx",
           "countrySearchPlaceholder": "ابحث عن الدولة...",
           "countryEmpty": "لا توجد دول مطابقة"
         },
@@ -38,7 +42,7 @@
         "password": {
           "label": "كلمة المرور",
           "placeholder": "••••••••",
-          "hint": "يجب أن تحتوي على 8 أحرف على الأقل"
+          "hint": "8 أحرف على الأقل، مع رقم ورمز"
         }
       },
       "footerLinks": {
@@ -49,7 +53,7 @@
       "validation": {
         "required": "هذا الحقل مطلوب",
         "invalidEmail": "أدخل بريداً إلكترونياً صالحاً",
-        "invalidPhone": "أدخل رقم هاتف صالحاً",
+        "invalidPhone": "أدخل رقم الجوال فقط بدون رمز الدولة",
         "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
         "passwordNumber": "كلمة المرور يجب أن تحتوي على رقم",
         "passwordSymbol": "كلمة المرور يجب أن تحتوي على رمز"

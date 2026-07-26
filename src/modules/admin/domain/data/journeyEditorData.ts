@@ -204,12 +204,14 @@ export interface ExamStation {
   stationId: string;
   name: string;
   durationMin: 5 | 10 | 15 | 30;
+  questionsCount: 5 | 10 | 15 | 20;
   difficulty: FlashcardDifficultyId;
   passingGradePct: number;
   maxAttempts: "one" | "two" | "three" | "unlimited";
   randomOrder: boolean;
   aiSourceFileUrl: string;
   totalPoints: number;
+  questionGenerationStatus: number;
   questions: ExamQuestion[];
   sourceFiles: LiveBroadcastAttachment[];
 }
@@ -463,12 +465,14 @@ export const mockExamStation: ExamStation = {
   stationId: "st-3",
   name: "مقدمة في تاريخ العمارة",
   durationMin: 15,
+  questionsCount: 10,
   difficulty: "easy",
   passingGradePct: 75,
   maxAttempts: "one",
   randomOrder: true,
   aiSourceFileUrl: "",
   totalPoints: 120,
+  questionGenerationStatus: 0,
   sourceFiles: [
     { id: "sf-1", name: "ملخص القوانين النهائية - الوحدة الأولى.pdf", type: "pdf", sizeLabel: "2.4 MB" },
     { id: "sf-2", name: "العرض التقديمي للتفاعلات الكيميائية.pptx", type: "pptx", sizeLabel: "15.8 MB" },

@@ -94,6 +94,13 @@ export function mapQuizToExamStation(quiz: Quiz, stationId: string): ExamStation
     ? (quiz.durationMinutes as ExamStation["durationMin"])
     : 15;
 
+  const questionsCountOptions = [5, 10, 15, 20] as const;
+  const questionsCount = questionsCountOptions.includes(
+    quiz.questionCount as (typeof questionsCountOptions)[number],
+  )
+    ? (quiz.questionCount as ExamStation["questionsCount"])
+    : 10;
+
   const questions = quiz.questions
     .map((question) => mapQuizQuestionToExamQuestion(question, quiz.id))
     .sort((a, b) => a.order - b.order);
@@ -103,12 +110,14 @@ export function mapQuizToExamStation(quiz: Quiz, stationId: string): ExamStation
     stationId: quiz.stationId || stationId,
     name: quiz.title,
     durationMin,
+    questionsCount,
     difficulty: API_TO_DIFFICULTY[quiz.difficulty] ?? "medium",
     passingGradePct: quiz.passScore || 75,
     maxAttempts: API_TO_ATTEMPTS[quiz.maxAttempts] ?? "one",
     randomOrder: quiz.shuffleQuestions,
     aiSourceFileUrl: quiz.aiSourceFileUrl,
     totalPoints: questions.reduce((sum, question) => sum + question.points, 0),
+    questionGenerationStatus: quiz.questionGenerationStatus,
     questions,
     sourceFiles: quiz.quizAttachments.map((attachment, index) => ({
       id: `sf-${index}`,
@@ -129,6 +138,7 @@ export function mapExamStationToUpdateSettingsPayload(
     passScore: exam.passingGradePct,
     maxAttempts: ATTEMPTS_TO_API[exam.maxAttempts],
     durationMinutes: exam.durationMin,
+    questionCount: exam.questionsCount,
     difficulty: DIFFICULTY_TO_API[exam.difficulty],
     shuffleQuestions: exam.randomOrder,
     aiSourceFileUrl:
@@ -166,13 +176,29 @@ export function mapExamQuestionToAddPayload(
 
 export function mapExamQuestionToUpdatePayload(
   question: ExamQuestion,
-  overrides?: Partial<Pick<ExamQuestion, "text" | "type" | "points" | "difficulty">>,
+  overrides?: Partial<Pick<ExamQuestion, "text" | "type" | "points" | "difficulty">> & {
+    choices?: Array<{ text: string; imageUrl?: string; isCorrect: boolean; order: number }>;
+  },
 ): UpdateQuizQuestionPayload {
   const text = overrides?.text ?? question.text;
   const type = overrides?.type ?? question.type;
   const points = overrides?.points ?? question.points;
   const difficulty = overrides?.difficulty ?? question.difficulty;
   const correctOptionId = question.correctOptionId;
+
+  const choices =
+    overrides?.choices?.map((choice) => ({
+      text: choice.text.trim(),
+      imageUrl: choice.imageUrl ?? "",
+      isCorrect: choice.isCorrect,
+      order: choice.order,
+    })) ??
+    question.options.map((option, index) => ({
+      text: option.text.trim(),
+      imageUrl: "",
+      isCorrect: option.id === correctOptionId,
+      order: index,
+    }));
 
   return {
     questionId: question.id,
@@ -181,11 +207,6 @@ export function mapExamQuestionToUpdatePayload(
     type: QUESTION_TYPE_TO_API[type],
     points,
     difficulty: DIFFICULTY_TO_API[difficulty],
-    choices: question.options.map((option, index) => ({
-      text: option.text.trim(),
-      imageUrl: "",
-      isCorrect: option.id === correctOptionId,
-      order: index,
-    })),
+    choices,
   };
 }

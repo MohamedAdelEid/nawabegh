@@ -432,6 +432,10 @@
           "label": "المعلمون",
           "indicator": "+3%"
         },
+        "parents": {
+          "label": "أولياء الأمور",
+          "indicator": ""
+        },
         "activeSubscriptions": {
           "label": "اشتراكات نشطة",
           "indicator": "ممتاز"
@@ -3095,7 +3099,8 @@
         },
         "messages": {
           "loading": "جاري تحميل الحصة المباشرة…",
-          "noDescription": "لم تتم إضافة وصف لهذه الحصة."
+          "noDescription": "لم تتم إضافة وصف لهذه الحصة.",
+          "attachmentOpenError": "تعذر فتح الملف. حاول مرة أخرى."
         },
         "live": "مباشر",
         "status": {
@@ -3262,6 +3267,7 @@
         "actions": {
           "createExam": "إنشاء الاختبار",
           "generateQuestions": "إنشاء الأسئلة",
+          "generatingQuestions": "جاري الإنشاء... {elapsed}",
           "saveAndPublish": "حفظ وإنشاء الاختبار",
           "preview": "معاينة الاختبار بالكامل",
           "saveSettings": "حفظ الإعدادات"
@@ -3278,11 +3284,19 @@
           "titleRequired": "اسم الاختبار مطلوب",
           "generateQuestionsSuccess": "بدأ إنشاء الأسئلة",
           "generateQuestionsError": "فشل إنشاء الأسئلة",
-          "quizRequiredForAi": "أنشئ الاختبار أولًا قبل إنشاء الأسئلة"
+          "generateQuestionsTimeout": "انتهت مهلة إنشاء الأسئلة. حدّث الصفحة لاحقًا.",
+          "generateQuestionsEmpty": "لم يتم إنشاء أي أسئلة. تأكد من رفع مصدر صالح ثم أعد المحاولة.",
+          "generateQuestionsComplete": "تم إنشاء {count} سؤال بنجاح",
+          "quizRequiredForAi": "أنشئ الاختبار أولًا قبل إنشاء الأسئلة",
+          "sourceRequiredForAi": "ارفع ملف مصدر واحد على الأقل قبل إنشاء الأسئلة",
+          "questionsCountRequired": "احفظ عدد الأسئلة في إعدادات الاختبار قبل إنشاء الأسئلة",
+          "generatingQuestionsTitle": "الذكاء الاصطناعي ينشئ الأسئلة",
+          "generatingQuestionsDescription": "قد يستغرق ذلك عدة دقائق. يرجى إبقاء هذه الصفحة مفتوحة حتى ينتهي."
         },
         "sidebar": {
           "title": "ملخص الاختبار",
-          "questionsCount": "عدد الأسئلة",
+          "questionsCount": "عدد الأسئلة المطلوب",
+          "generatedQuestions": "الأسئلة المُنشأة",
           "questions": "سؤال",
           "time": "الوقت المحدد",
           "minutes": "دقيقة",
@@ -3302,6 +3316,7 @@
           "examName": "اسم الاختبار",
           "examNamePlaceholder": "أدخل عنوان الاختبار التعليمي...",
           "duration": "المدة الزمنية (دقيقة)",
+          "questionsCount": "عدد الأسئلة",
           "difficulty": "مستوى الصعوبة",
           "passingGrade": "درجة النجاح",
           "attempts": "عدد المحاولات المسموحة",
@@ -3337,8 +3352,7 @@
         "title": "عرض أسئلة اختبار {name}",
         "description": "قم بإنشاء محطة اختبار تفاعلية لطلابك.",
         "actions": {
-          "editQuestions": "تعديل الأسئلة",
-          "exportPdf": "تصدير PDF"
+          "editQuestions": "تعديل الأسئلة"
         },
         "status": {
           "published": "مؤشف",
@@ -3349,6 +3363,10 @@
         "stats": {
           "totalQuestions": "إجمالي",
           "questions": "سؤال"
+        },
+        "emptyState": {
+          "title": "لا توجد أسئلة بعد",
+          "description": "أنشئ الأسئلة من المصادر المرفوعة لمعاينتها هنا."
         },
         "info": {
           "subject": "المادة",
@@ -3405,9 +3423,14 @@
           "editQuestion": "تعديل السؤال",
           "deleteQuestion": "حذف السؤال",
           "saveChanges": "حفظ التعديلات",
-          "cancel": "إلغاء"
+          "cancel": "إلغاء",
+          "correctAnswer": "الإجابة الصحيحة"
         },
         "addQuestion": "إضافة سؤال جديد",
+        "empty": {
+          "title": "لا توجد أسئلة بعد",
+          "description": "أضف سؤالًا جديدًا أو أنشئ الأسئلة من صفحة المعاينة."
+        },
         "messages": {
           "loadError": "فشل تحميل أسئلة الاختبار",
           "deleteSuccess": "تم حذف السؤال",
@@ -3422,14 +3445,44 @@
           "correctAnswer": "الإجابة الصحيحة",
           "points": "الدرجة"
         },
-        "addModal": {
-          "title": "إضافة سؤال جديد",
+        "editModal": {
+          "title": "تعديل السؤال",
+          "subtitle": "سؤال رقم {order}",
+          "subtitleFallback": "عدّل نص السؤال وخياراته",
           "questionType": "نوع السؤال",
           "multipleChoice": "اختيار من متعدد",
           "trueFalse": "صح أو خطأ",
           "questionText": "نص السؤال",
           "points": "الدرجة",
           "difficulty": "الصعوبة",
+          "options": "خيارات الإجابة",
+          "selectCorrect": "حدد الإجابة الصحيحة",
+          "trueOption": "صح",
+          "falseOption": "خطأ",
+          "choicePlaceholder": "الخيار {index}",
+          "cancel": "إلغاء",
+          "submit": "حفظ التعديلات",
+          "saving": "جاري الحفظ...",
+          "saveSuccess": "تم تحديث السؤال",
+          "saveError": "فشل تحديث السؤال",
+          "validation": {
+            "textRequired": "نص السؤال مطلوب",
+            "pointsInvalid": "الدرجة يجب أن تكون أكبر من صفر",
+            "choicesRequired": "يجب تعبئة جميع الخيارات",
+            "correctRequired": "حدد الإجابة الصحيحة"
+          }
+        },
+        "addModal": {
+          "title": "إضافة سؤال جديد",
+          "subtitle": "أدخل نص السؤال وحدد نوعه وخيارات الإجابة",
+          "questionType": "نوع السؤال",
+          "multipleChoice": "اختيار من متعدد",
+          "trueFalse": "صح أو خطأ",
+          "questionText": "نص السؤال",
+          "points": "الدرجة",
+          "difficulty": "الصعوبة",
+          "options": "خيارات الإجابة",
+          "selectCorrect": "حدد الإجابة الصحيحة",
           "trueOption": "صح",
           "falseOption": "خطأ",
           "choicePlaceholder": "الخيار {index}",

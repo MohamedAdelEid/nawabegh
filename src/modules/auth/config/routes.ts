@@ -10,4 +10,5 @@ export const AUTH_ROUTES = {
   REGISTER_TEACHER: "/auth/register/teacher",
   REGISTER_VERIFY: "/auth/register/verify",
   REGISTER_SUCCESS: "/auth/register/success",
+  COMPLETE_PROFILE: "/auth/complete-profile",
 } as const;

@@ -27,7 +27,7 @@ const SUMMARY_CARD_VISUALS: Record<string, SummaryCardVisual> = {
   schools: { icon: Building2, tone: "info" },
   teachers: { icon: GraduationCap, tone: "success" },
   students: { icon: Users, tone: "info" },
-  parents: { icon: Users, tone: "neutral" },
+  parents: { icon: UserRound, tone: "info" },
   totalUsers: { icon: Users, tone: "primary" },
 };
 

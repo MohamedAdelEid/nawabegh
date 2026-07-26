@@ -2,12 +2,13 @@ import { extractUploadFilePath, FILE_UPLOAD_URL } from "@/shared/infrastructure/
 import {
   getUploadTooLargeMessage,
   isFileWithinUploadLimit,
+  normalizeUploadErrorMessage,
   UPLOAD_LIMITS,
 } from "@/shared/infrastructure/files/uploadLimits";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
-/** Large PDFs / documents can exceed the default 15s axios timeout. */
-const UPLOAD_REQUEST_TIMEOUT_MS = 0;
+/** Large PDFs / documents can exceed the default 15s axios timeout. `0` = no timeout. */
+export const FILE_UPLOAD_TIMEOUT_MS = 0;
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -136,7 +137,7 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
       url: FILE_UPLOAD_URL,
       data: formData,
       isFormData: true,
-      timeout: UPLOAD_REQUEST_TIMEOUT_MS,
+      timeout: FILE_UPLOAD_TIMEOUT_MS,
     });
 
     const record = unwrapUploadRecord(response);
@@ -151,10 +152,19 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
 
     // Some responses omit `success` but still return `filePath`.
     if (!hasPath && !explicitSuccess) {
-      return { ok: false, errorMessage: message || "Upload failed" };
+      return {
+        ok: false,
+        errorMessage: normalizeUploadErrorMessage(message || "Upload failed", file),
+      };
     }
     if (!hasPath) {
-      return { ok: false, errorMessage: message || "Upload failed: missing file path" };
+      return {
+        ok: false,
+        errorMessage: normalizeUploadErrorMessage(
+          message || "Upload failed: missing file path",
+          file,
+        ),
+      };
     }
 
     return { ok: true, filePath, message: message || undefined };
@@ -165,7 +175,7 @@ export async function uploadAdminFile(file: File, folder: string): Promise<Uploa
         errorMessage: getUploadTooLargeMessage(file),
       };
     }
-    const msg = error instanceof Error ? error.message : "Upload failed";
+    const msg = extractUploadFailureMessage(error, file);
     return { ok: false, errorMessage: msg };
   }
 }
@@ -236,6 +246,22 @@ function isRequestEntityTooLargeError(error: unknown): boolean {
   );
 }
 
+function extractUploadFailureMessage(error: unknown, file: File): string {
+  const axiosError = asRecord(error);
+  const response = asRecord(axiosError?.response);
+  const data = asRecord(response?.data) ?? asRecord(axiosError?.data);
+  const apiMessage =
+    readString(data, ["message", "messageAr", "title"], "") ||
+    readString(asRecord(data?.error), ["message", "messageAr"], "");
+
+  const raw =
+    apiMessage ||
+    (error instanceof Error ? error.message : "") ||
+    "Upload failed";
+
+  return normalizeUploadErrorMessage(raw, file);
+}
+
 async function uploadAdminFilesBatch(
   files: File[],
   folder: string,
@@ -250,7 +276,7 @@ async function uploadAdminFilesBatch(
     url: "/api/FileUpload/upload-multiple",
     data: formData,
     isFormData: true,
-    timeout: UPLOAD_REQUEST_TIMEOUT_MS,
+    timeout: FILE_UPLOAD_TIMEOUT_MS,
   });
 
   const envelope = unwrapUploadMultipleEnvelope(response);
@@ -304,7 +330,7 @@ export async function uploadAdminFiles(files: File[], folder: string): Promise<U
           errorMessage: getUploadTooLargeMessage(file),
         };
       }
-      const msg = error instanceof Error ? error.message : "Upload failed";
+      const msg = extractUploadFailureMessage(error, file);
       if (uploaded.length === 0) {
         return { ok: false, errorMessage: msg };
       }

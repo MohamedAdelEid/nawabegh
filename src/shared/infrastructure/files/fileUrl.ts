@@ -28,6 +28,8 @@ export function isApiHostedUrl(url: string, baseUrl: string = apiBase): boolean 
 /**
  * Extracts a stored relative upload path (`uploads/...`) from a path or absolute URL.
  * S3/CDN absolute URLs are private — callers should use FileUpload/download with auth.
+ * Also unwraps `FileUpload/download?filePath=uploads/...` so we never treat
+ * the word "download" as a filename.
  */
 export function extractUploadFilePath(pathOrUrl: string | null | undefined): string | null {
   if (!pathOrUrl) return null;
@@ -35,19 +37,43 @@ export function extractUploadFilePath(pathOrUrl: string | null | undefined): str
   if (!value) return null;
 
   if (!/^https?:\/\//i.test(value)) {
+    const fromQuery = extractFilePathQueryParam(value);
+    if (fromQuery) return fromQuery;
     const normalized = value.replace(/^\/+/, "");
     return normalized || null;
   }
 
   try {
-    const pathname = new URL(value).pathname.replace(/^\/+/, "");
+    const parsed = new URL(value);
+    const fromQuery = extractFilePathQueryParam(parsed.searchParams.get("filePath") ?? "");
+    if (fromQuery) return fromQuery;
+
+    const pathname = parsed.pathname.replace(/^\/+/, "");
     if (!pathname) return null;
     const uploadsIndex = pathname.indexOf("uploads/");
     if (uploadsIndex >= 0) return pathname.slice(uploadsIndex);
+    // Avoid returning "api/FileUpload/download" as if it were a file path.
+    if (/fileupload\/download$/i.test(pathname)) return null;
     return pathname;
   } catch {
     return null;
   }
+}
+
+function extractFilePathQueryParam(raw: string): string | null {
+  const value = raw.trim();
+  if (!value) return null;
+  let decoded = value;
+  try {
+    decoded = decodeURIComponent(value);
+  } catch {
+    decoded = value;
+  }
+  const normalized = decoded.replace(/^\/+/, "").replace(/\\/g, "/");
+  const uploadsIndex = normalized.indexOf("uploads/");
+  if (uploadsIndex >= 0) return normalized.slice(uploadsIndex);
+  if (normalized.startsWith("uploads/")) return normalized;
+  return null;
 }
 
 /**
@@ -86,6 +112,13 @@ export function resolveProtectedFileUrl(pathOrUrl: string | null | undefined): s
   const value = pathOrUrl.trim();
   if (!value) return null;
 
+  // Already a FileUpload/download URL — keep it (do not re-wrap).
+  if (isFileUploadDownloadUrl(value)) {
+    return value.startsWith("http://") || value.startsWith("https://")
+      ? value
+      : `${apiBase}${value.startsWith("/") ? "" : "/"}${value}`;
+  }
+
   if (value.startsWith("http://") || value.startsWith("https://")) {
     if (isApiHostedUrl(value)) return value;
     const uploadPath = extractUploadFilePath(value);
@@ -97,4 +130,16 @@ export function resolveProtectedFileUrl(pathOrUrl: string | null | undefined): s
 
   const normalizedPath = value.replace(/^\/+/, "");
   return `${FILE_DOWNLOAD_URL}${encodeURIComponent(normalizedPath)}`;
+}
+
+function isFileUploadDownloadUrl(value: string): boolean {
+  try {
+    if (/^https?:\/\//i.test(value)) {
+      const parsed = new URL(value);
+      return /\/api\/FileUpload\/download$/i.test(parsed.pathname);
+    }
+    return /(?:^|\/)api\/FileUpload\/download(?:\?|$)/i.test(value);
+  } catch {
+    return false;
+  }
 }

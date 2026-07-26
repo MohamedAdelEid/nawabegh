@@ -42,6 +42,7 @@
         "dailyTasks": "Today's tasks",
         "friendChallenges": "Friend challenge",
         "challengeArena": "Challenge arena",
+        "mySchool": "My school",
         "schoolEvents": "School events",
         "studyMaterials": "Study materials",
         "allCourses": "Available Nawabegh Courses",
@@ -340,11 +341,48 @@
         "next": "Next page"
       }
     },
+    "mySchool": {
+      "page": {
+        "title": "My school",
+        "description": "Follow your school ranking, points, and school events in one place.",
+        "breadcrumbHome": "Home",
+        "breadcrumbCurrent": "My school"
+      },
+      "eventsCta": {
+        "title": "School events",
+        "description": "Browse live and upcoming events and open event details.",
+        "button": "View school events"
+      },
+      "kpis": {
+        "schoolRank": "My school rank",
+        "myPoints": "My points",
+        "ongoingEvents": "Ongoing events",
+        "schoolName": "My school"
+      },
+      "leaderboard": {
+        "title": "School leaders",
+        "subtitle": "Top students in your school by points — track your rank among them.",
+        "you": "Your school rank",
+        "points": "{count} pts",
+        "othersTitle": "Rest of the leaders",
+        "empty": "No school leaders to show yet"
+      },
+      "currentEvents": {
+        "title": "Current events",
+        "viewAll": "View all",
+        "empty": "No current events for your school"
+      },
+      "errors": {
+        "load": "Could not load your school page",
+        "retry": "Retry"
+      }
+    },
     "schoolEvents": {
       "page": {
         "title": "School events overview",
         "description": "Follow school events, sports activities, and cultural competitions in one place.",
         "breadcrumbHome": "Home",
+        "breadcrumbMySchool": "My school",
         "breadcrumbCurrent": "School events"
       },
       "filters": {
@@ -406,6 +444,7 @@
         "title": "Event view",
         "description": "Follow the live stream, scores, and updates for your school event.",
         "breadcrumbHome": "Home",
+        "breadcrumbMySchool": "My school",
         "breadcrumbEvents": "School events"
       },
       "tabs": {
@@ -976,7 +1015,9 @@
         "description": "The recording is being prepared. Refresh later to watch it."
       },
       "attachments": {
-        "empty": "No attachments for this session"
+        "empty": "No attachments for this session",
+        "openError": "Could not open the file. Please try again.",
+        "notFound": "File not found"
       },
       "actions": {
         "join": "Enter live broadcast",

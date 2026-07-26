@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, useForm } from "react-hook-form";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Loader2, Lock, Mail, MapPin, UserPlus } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Lock, Mail, MapPin, User, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/shared/presentation/components/ui/button";
 import {
@@ -54,6 +54,7 @@ export function ParentRegistrationPage({
   const form = useForm<ParentRegistrationSchemaInput>({
     resolver: zodResolver(parentRegistrationSchema),
     defaultValues: {
+      fullName: "",
       countryId: defaultCountryId ?? 0,
       phone: "",
       email: "",
@@ -81,11 +82,16 @@ export function ParentRegistrationPage({
   };
 
   const countryId = form.watch("countryId");
+  const selectedCountry = countries.find((country) => country.id === countryId);
+  const phoneDefaultCountry = countryIdToPhoneCountry(
+    countryId || undefined,
+    selectedCountry?.name,
+  );
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(undefined);
     const phone = splitE164ForApi(values.phone);
-    if (!phone) {
+    if (!phone?.phoneNumber || !phone.phoneCountryCode) {
       form.setError("phone", { message: "invalidPhone" });
       return;
     }
@@ -94,6 +100,7 @@ export function ParentRegistrationPage({
     try {
       await submitParentRegistration(
         {
+          fullName: values.fullName.trim(),
           countryId: values.countryId,
           email: values.email.trim(),
           password: values.password,
@@ -122,7 +129,7 @@ export function ParentRegistrationPage({
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="flex w-full max-w-[540px] flex-col items-center gap-10"
+          className="flex w-full max-w-[560px] flex-col items-center gap-10"
         >
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex size-16 items-center justify-center rounded-2xl bg-[#dbe3f3] text-[var(--dashboard-primary)] shadow-[0_4px_0_0_#d1dae8]">
@@ -139,27 +146,7 @@ export function ParentRegistrationPage({
           <div className="w-full rounded-[20px] border-2 border-[#f1f5f9] bg-white px-6 py-8 shadow-[0_8px_0_0_rgba(0,0,0,0.05)] sm:px-[34px]">
             <form onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
               <FieldGroup>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <Field invalid={Boolean(form.formState.errors.phone)}>
-                    <FieldLabel htmlFor="parent-phone" required>
-                      {t("fields.phone.label")}
-                    </FieldLabel>
-                    <PhoneInput
-                      id="parent-phone"
-                      value={form.watch("phone")}
-                      onChange={(value) =>
-                        form.setValue("phone", value, { shouldValidate: true })
-                      }
-                      defaultCountry={countryIdToPhoneCountry(countryId || undefined)}
-                      locale={locale}
-                      invalid={Boolean(form.formState.errors.phone)}
-                      placeholder={t("fields.phone.placeholder")}
-                      countrySearchPlaceholder={t("fields.phone.countrySearchPlaceholder")}
-                      countryEmptyMessage={t("fields.phone.countryEmpty")}
-                    />
-                    <FieldError message={resolveError(form.formState.errors.phone?.message)} />
-                  </Field>
-
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.55fr)]">
                   <Controller
                     name="countryId"
                     control={form.control}
@@ -178,7 +165,48 @@ export function ParentRegistrationPage({
                       />
                     )}
                   />
+
+                  <Field invalid={Boolean(form.formState.errors.phone)}>
+                    <FieldLabel htmlFor="parent-phone" required>
+                      {t("fields.phone.label")}
+                    </FieldLabel>
+                    <PhoneInput
+                      id="parent-phone"
+                      value={form.watch("phone")}
+                      onChange={(value) =>
+                        form.setValue("phone", value, { shouldValidate: true })
+                      }
+                      defaultCountry={phoneDefaultCountry}
+                      locale={locale}
+                      invalid={Boolean(form.formState.errors.phone)}
+                      placeholder={t("fields.phone.placeholder")}
+                      countrySearchPlaceholder={t("fields.phone.countrySearchPlaceholder")}
+                      countryEmptyMessage={t("fields.phone.countryEmpty")}
+                      className="[&_button]:min-w-[6.75rem] [&_button]:shrink-0 [&_input]:min-w-[10rem] [&_input]:flex-[2] [&_input]:px-4"
+                    />
+                    <FieldError message={resolveError(form.formState.errors.phone?.message)} />
+                  </Field>
                 </div>
+
+                <Field invalid={Boolean(form.formState.errors.fullName)}>
+                  <FieldLabel
+                    htmlFor="parent-full-name"
+                    required
+                    icon={<User className="size-3.5" aria-hidden />}
+                  >
+                    {t("fields.fullName.label")}
+                  </FieldLabel>
+                  <Input
+                    id="parent-full-name"
+                    value={form.watch("fullName")}
+                    onChange={(event) =>
+                      form.setValue("fullName", event.target.value, { shouldValidate: true })
+                    }
+                    placeholder={t("fields.fullName.placeholder")}
+                    autoComplete="name"
+                  />
+                  <FieldError message={resolveError(form.formState.errors.fullName?.message)} />
+                </Field>
 
                 <Field invalid={Boolean(form.formState.errors.email)}>
                   <FieldLabel

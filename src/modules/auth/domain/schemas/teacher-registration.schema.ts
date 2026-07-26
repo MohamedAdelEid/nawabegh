@@ -1,5 +1,5 @@
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
+import { isPhoneReadyForSubmit } from "@/modules/auth/domain/utils/phoneNumber.utils";
 
 export const teacherRegistrationSchema = z
   .object({
@@ -10,7 +10,7 @@ export const teacherRegistrationSchema = z
       .string()
       .trim()
       .min(1, { message: "required" })
-      .refine((value) => isValidPhoneNumber(value), { message: "invalidPhone" }),
+      .refine((value) => isPhoneReadyForSubmit(value), { message: "invalidPhone" }),
     countryId: z.number().int().positive({ message: "required" }),
     address: z.string().trim().optional(),
     password: z

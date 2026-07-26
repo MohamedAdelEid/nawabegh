@@ -20,7 +20,7 @@ const schema = z.object({
     .string()
     .min(1)
     .default(
-      "1089222314346-a8mc4fs5u0urid9tbvb3gqekkojk4unj.apps.googleusercontent.com",
+      "838663747604-topagstnbge6ut6fe88thdik6bjlqh3p.apps.googleusercontent.com",
     ),
 });
 

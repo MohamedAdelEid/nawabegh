@@ -11,6 +11,7 @@ import type {
   AdminHomeSummaryCard,
   AdminHomeTopStudent,
 } from "@/modules/admin/domain/types/adminHomeDashboard.types";
+import { getUserManagementStats } from "@/modules/admin/infrastructure/api/userManagementApi";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
 
 type UnknownRecord = Record<string, unknown>;
@@ -204,18 +205,53 @@ function mapAdminHomeDashboard(data: unknown): AdminHomeDashboard {
   };
 }
 
+function ensureParentsSummaryCard(
+  cards: AdminHomeSummaryCard[],
+  totalParents: number,
+): AdminHomeSummaryCard[] {
+  if (cards.some((card) => card.key === "parents")) return cards;
+
+  const parentsCard: AdminHomeSummaryCard = {
+    key: "parents",
+    count: totalParents,
+    changePercent: 0,
+  };
+
+  const teachersIndex = cards.findIndex((card) => card.key === "teachers");
+  const studentsIndex = cards.findIndex((card) => card.key === "students");
+  const insertAt =
+    teachersIndex >= 0 ? teachersIndex + 1 : studentsIndex >= 0 ? studentsIndex + 1 : cards.length;
+
+  const next = [...cards];
+  next.splice(insertAt, 0, parentsCard);
+  return next;
+}
+
 export async function getAdminHomeDashboard(
   params: AdminHomeDashboardParams = {},
 ): Promise<AdminHomeDashboard> {
-  const response = await httpClient.get<unknown>({
-    url: "/api/v1/admin/dashboard",
-    params: {
-      schoolRankingLimit: params.schoolRankingLimit,
-      topStudentsLimit: params.topStudentsLimit,
-      newUsersChartMonths: params.newUsersChartMonths,
-      recentActivityLimit: params.recentActivityLimit,
-    },
-  });
+  const [response, statsResult] = await Promise.all([
+    httpClient.get<unknown>({
+      url: "/api/v1/admin/dashboard",
+      params: {
+        schoolRankingLimit: params.schoolRankingLimit,
+        topStudentsLimit: params.topStudentsLimit,
+        newUsersChartMonths: params.newUsersChartMonths,
+        recentActivityLimit: params.recentActivityLimit,
+      },
+    }),
+    getUserManagementStats().catch(() => null),
+  ]);
 
-  return mapAdminHomeDashboard(response.data);
+  const dashboard = mapAdminHomeDashboard(response.data);
+  const totalParents = statsResult?.data?.totalParents;
+
+  if (typeof totalParents === "number") {
+    return {
+      ...dashboard,
+      summaryCards: ensureParentsSummaryCard(dashboard.summaryCards, totalParents),
+    };
+  }
+
+  return dashboard;
 }

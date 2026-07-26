@@ -103,6 +103,7 @@ export function TeacherRegistrationPage({
   };
 
   const countryId = form.watch("countryId");
+  const selectedCountry = countries.find((country) => country.id === countryId);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setSubmitError(undefined);
@@ -214,7 +215,10 @@ export function TeacherRegistrationPage({
                       onChange={(value) =>
                         form.setValue("phone", value, { shouldValidate: true })
                       }
-                      defaultCountry={countryIdToPhoneCountry(countryId || undefined)}
+                      defaultCountry={countryIdToPhoneCountry(
+                        countryId || undefined,
+                        selectedCountry?.name,
+                      )}
                       locale={locale}
                       invalid={Boolean(form.formState.errors.phone)}
                       placeholder={t("fields.phone.placeholder")}

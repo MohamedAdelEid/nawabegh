@@ -6,7 +6,7 @@ export type LoginCredentials = {
 };
 
 /** Roles allowed for Google sign-in (`POST /api/v1/Auth/google`). */
-export type GoogleAuthRole = "Student" | "Parent";
+export type GoogleAuthRole = "Student" | "Parent" | "Teacher";
 
 export type GoogleLoginCredentials = {
   idToken: string;
@@ -71,6 +71,7 @@ export type AuthSessionUser = {
   email: string;
   role: string;
   avatar?: string | null;
+  requiresProfileCompletion?: boolean;
 };
 
 export type AuthTokenClaims = {

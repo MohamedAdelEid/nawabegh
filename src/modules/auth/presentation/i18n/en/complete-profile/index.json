@@ -1,0 +1,69 @@
+{
+  "auth": {
+    "completeProfile": {
+      "meta": {
+        "title": "Complete profile | Nawabegh"
+      },
+      "brandAlt": "Nawabegh Academy",
+      "title": "Complete your profile",
+      "subtitle": "One last step before entering your dashboard",
+      "actions": {
+        "submit": "Save and continue",
+        "submitting": "Saving..."
+      },
+      "fields": {
+        "country": {
+          "label": "Country",
+          "placeholder": "Select country",
+          "searchPlaceholder": "Search countries...",
+          "empty": "No matching countries",
+          "loadError": "Could not load countries"
+        },
+        "phone": {
+          "label": "Mobile number",
+          "placeholder": "5xxxxxxxx",
+          "countrySearchPlaceholder": "Search country...",
+          "countryEmpty": "No matching countries"
+        },
+        "whatsApp": {
+          "label": "WhatsApp",
+          "placeholder": "5xxxxxxxx"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "City, district, street"
+        },
+        "username": {
+          "label": "Username",
+          "placeholder": "ahmed_student"
+        },
+        "educationLevel": {
+          "label": "Education level",
+          "placeholder": "Select level"
+        },
+        "grade": {
+          "label": "Grade",
+          "placeholder": "Select grade"
+        },
+        "jobTitle": {
+          "label": "Job title",
+          "placeholder": "Math teacher"
+        },
+        "schoolName": {
+          "label": "School name",
+          "placeholder": "School name"
+        }
+      },
+      "validation": {
+        "required": "This field is required",
+        "invalidPhone": "Enter a valid phone number (without country code)",
+        "usernameMin": "Username must be at least 3 characters"
+      },
+      "messages": {
+        "submitError": "Could not complete profile. Please try again.",
+        "submitSuccess": "Profile completed successfully",
+        "alreadyComplete": "Profile was already completed"
+      }
+    }
+  }
+}

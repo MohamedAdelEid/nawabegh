@@ -131,6 +131,7 @@ export const authOptions: NextAuthOptions = {
         role: { type: "text" },
         avatar: { type: "text" },
         domainUid: { type: "text" },
+        requiresProfileCompletion: { type: "text" },
       },
       async authorize(credentials) {
         if (!credentials) {
@@ -155,6 +156,7 @@ export const authOptions: NextAuthOptions = {
             email,
             photo: credentials.avatar || null,
             roles: credentials.role ? [credentials.role] : ["Student"],
+            requiresProfileCompletion: credentials.requiresProfileCompletion === "true",
           },
         });
 
@@ -172,6 +174,7 @@ export const authOptions: NextAuthOptions = {
           accessToken: sessionPayload.accessToken,
           refreshToken: sessionPayload.refreshToken,
           accessTokenExpiresAt: sessionPayload.accessTokenExpiresAt,
+          requiresProfileCompletion: sessionPayload.user.requiresProfileCompletion,
         };
       },
     }),
@@ -188,7 +191,7 @@ export const authOptions: NextAuthOptions = {
         const role = credentials?.role?.trim() as GoogleAuthRole | undefined;
         const locale = credentials?.locale === "en" ? "en" : "ar";
 
-        if (!idToken || (role !== "Student" && role !== "Parent")) {
+        if (!idToken || (role !== "Student" && role !== "Parent" && role !== "Teacher")) {
           throw new Error("Missing Google credentials or role.");
         }
 
@@ -208,6 +211,7 @@ export const authOptions: NextAuthOptions = {
           accessToken: sessionPayload.accessToken,
           refreshToken: sessionPayload.refreshToken,
           accessTokenExpiresAt: sessionPayload.accessTokenExpiresAt,
+          requiresProfileCompletion: sessionPayload.user.requiresProfileCompletion,
         };
       },
     }),
@@ -221,7 +225,14 @@ export const authOptions: NextAuthOptions = {
     maxAge: SESSION_MAX_AGE_SECONDS,
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session) {
+        const patch = session as { requiresProfileCompletion?: boolean };
+        if (typeof patch.requiresProfileCompletion === "boolean") {
+          token.requiresProfileCompletion = patch.requiresProfileCompletion;
+        }
+      }
+
       if (user) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
@@ -232,6 +243,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.picture = user.image ?? null;
+        token.requiresProfileCompletion = user.requiresProfileCompletion ?? false;
         token.error = undefined;
       }
 
@@ -240,7 +252,7 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      if (!user) {
+      if (!user && trigger !== "update") {
         return refreshJwtToken(token);
       }
 
@@ -258,6 +270,7 @@ export const authOptions: NextAuthOptions = {
         email: token.email ?? session.user?.email ?? "",
         image: token.picture ?? session.user?.image ?? null,
         role: token.role,
+        requiresProfileCompletion: Boolean(token.requiresProfileCompletion),
       };
       session.error = token.error;
 

@@ -205,6 +205,8 @@ function mapStatsValues(
         return { ...stat, value: apiStats.totalStudents.toLocaleString() };
       case "teachers":
         return { ...stat, value: apiStats.totalTeachers.toLocaleString() };
+      case "parents":
+        return { ...stat, value: apiStats.totalParents.toLocaleString() };
       case "activeSubscriptions":
         return { ...stat, value: apiStats.totalActiveUsers.toLocaleString() };
       case "blockedAccounts":
@@ -795,7 +797,7 @@ export function UserManagementDashboard() {
       ) : (
         <>
           <UserManagementAnimatedSection delay={0.02}>
-            <section className="grid gap-5 lg:grid-cols-4">
+            <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
               {statCards.map((stat) => (
                 <UserManagementStatCard
                   key={stat.id}

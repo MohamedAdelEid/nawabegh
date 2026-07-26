@@ -1,4 +1,5 @@
 export type ParentRegistrationRequest = {
+  fullName: string;
   countryId: number;
   email: string;
   password: string;

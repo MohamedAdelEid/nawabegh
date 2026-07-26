@@ -13,6 +13,8 @@ import arParentRegistration from "./presentation/i18n/ar/parent-registration/ind
 import enParentRegistration from "./presentation/i18n/en/parent-registration/index.json";
 import arTeacherRegistration from "./presentation/i18n/ar/teacher-registration/index.json";
 import enTeacherRegistration from "./presentation/i18n/en/teacher-registration/index.json";
+import arCompleteProfile from "./presentation/i18n/ar/complete-profile/index.json";
+import enCompleteProfile from "./presentation/i18n/en/complete-profile/index.json";
 import arDiscover from "./presentation/i18n/ar/discover/index.json";
 import enDiscover from "./presentation/i18n/en/discover/index.json";
 import arPassword from "./presentation/i18n/ar/password/index.json";
@@ -52,6 +54,12 @@ function teacherRegistrationForLocale(locale: AppLocale) {
     : enTeacherRegistration.auth.teacherRegistration;
 }
 
+function completeProfileForLocale(locale: AppLocale) {
+  return locale === "ar"
+    ? arCompleteProfile.auth.completeProfile
+    : enCompleteProfile.auth.completeProfile;
+}
+
 function discoverForLocale(locale: AppLocale) {
   return locale === "ar" ? arDiscover.auth.discover : enDiscover.auth.discover;
 }
@@ -69,6 +77,7 @@ export const authModule = {
     "schoolActivation",
     "parentRegistration",
     "teacherRegistration",
+    "completeProfile",
     "discover",
     "password",
   ],
@@ -80,6 +89,7 @@ export const authModule = {
       schoolActivation: schoolActivationForLocale(locale),
       parentRegistration: parentRegistrationForLocale(locale),
       teacherRegistration: teacherRegistrationForLocale(locale),
+      completeProfile: completeProfileForLocale(locale),
       discover: discoverForLocale(locale),
       password: passwordForLocale(locale),
     };

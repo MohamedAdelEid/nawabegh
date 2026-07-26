@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState, type ReactNode } from "react";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useLocale, useTranslations } from "next-intl";
-import { Loader2, X } from "lucide-react";
+import { GraduationCap, Loader2, UserRound, Users, X } from "lucide-react";
 import {
   ModalDescription,
   ModalShell,
@@ -15,20 +14,29 @@ import type { GoogleAuthRole } from "@/modules/auth/domain/types/login.types";
 
 type GoogleRoleOption = {
   role: GoogleAuthRole;
-  iconSrc: string;
+  labelKey: "student" | "parent" | "teacher";
+  icon: ReactNode;
   iconBgClass: string;
 };
 
 const GOOGLE_ROLE_OPTIONS: GoogleRoleOption[] = [
   {
     role: "Student",
-    iconSrc: "/images/auth/account-type/student-icon.svg",
-    iconBgClass: "bg-[#dbe3f3]",
+    labelKey: "student",
+    icon: <Users className="h-7 w-7" aria-hidden />,
+    iconBgClass: "bg-[#dbe3f3] text-[#2C4260]",
   },
   {
     role: "Parent",
-    iconSrc: "/images/auth/account-type/parent-icon.svg",
-    iconBgClass: "bg-[#dcf4cb]",
+    labelKey: "parent",
+    icon: <UserRound className="h-7 w-7" aria-hidden />,
+    iconBgClass: "bg-[#dcf4cb] text-[#3f7a1f]",
+  },
+  {
+    role: "Teacher",
+    labelKey: "teacher",
+    icon: <GraduationCap className="h-7 w-7" aria-hidden />,
+    iconBgClass: "bg-[#f8efd5] text-[#A17A12]",
   },
 ];
 
@@ -79,7 +87,7 @@ export function GoogleLoginRoleModal({
     <ModalShell
       open={open}
       onOpenChange={handleOpenChange}
-      panelClassName="w-[min(95vw,28rem)] p-6 sm:p-7"
+      panelClassName="w-[min(95vw,32rem)] p-6 sm:p-7"
       overlayClassName="bg-[rgba(44,66,96,0.55)] backdrop-blur-[2px]"
     >
       <div className="relative" dir={isArabic ? "rtl" : "ltr"}>
@@ -100,10 +108,9 @@ export function GoogleLoginRoleModal({
           {t("roleDescription")}
         </ModalDescription>
 
-        <div className="mt-6 grid grid-cols-2 gap-3">
+        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {GOOGLE_ROLE_OPTIONS.map((option) => {
             const selected = selectedRole === option.role;
-            const labelKey = option.role === "Student" ? "student" : "parent";
 
             return (
               <button
@@ -127,17 +134,10 @@ export function GoogleLoginRoleModal({
                     option.iconBgClass,
                   )}
                 >
-                  <Image
-                    src={option.iconSrc}
-                    alt=""
-                    width={28}
-                    height={28}
-                    className="h-7 w-7 object-contain"
-                    aria-hidden
-                  />
+                  {option.icon}
                 </span>
                 <span className="text-sm font-bold text-[var(--dashboard-primary)]">
-                  {t(labelKey)}
+                  {t(option.labelKey)}
                 </span>
               </button>
             );
@@ -164,6 +164,8 @@ export function GoogleLoginRoleModal({
                 }}
                 onError={() => onError(t("cancelled"))}
                 useOneTap={false}
+                auto_select={false}
+                ux_mode="popup"
                 theme="outline"
                 size="large"
                 text="signin_with"

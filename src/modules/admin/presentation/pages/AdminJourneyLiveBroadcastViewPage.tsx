@@ -25,6 +25,7 @@ import { useScopedDashboardRoutes } from "@/shared/application/hooks/useScopedDa
 import { useAuth } from "@/shared/application/hooks/useAuth";
 import { LiveSessionRuntimeMode } from "@/shared/domain/enums/cms.enums";
 import { resolveFileUrl } from "@/shared/infrastructure/files/fileUrl";
+import { openProtectedFile } from "@/shared/infrastructure/files/openProtectedFile";
 import { JourneyEditorStationPageSkeleton } from "@/modules/admin/presentation/components/journey-editor";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard";
 import { Card, CardContent } from "@/shared/presentation/components/ui/card";
@@ -312,7 +313,6 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
               <CardContent className="space-y-2 p-4">
                 <h3 className="text-sm font-bold text-slate-700">{t("sections.attachments")}</h3>
                 {station.attachments.map((att) => {
-                  const attachmentUrl = resolveFileUrl(att.fileUrl);
                   const row = (
                     <>
                       <span className="text-xs text-slate-500">{att.sizeLabel}</span>
@@ -325,16 +325,21 @@ export function AdminJourneyLiveBroadcastViewPage({ journeyId, stationId }: Prop
                     </>
                   );
 
-                  return attachmentUrl ? (
-                    <a
+                  return att.fileUrl ? (
+                    <button
                       key={att.id}
-                      href={attachmentUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 transition-colors hover:border-[#C8AC59]/40 hover:bg-amber-50/50"
+                      type="button"
+                      onClick={() => {
+                        void openProtectedFile(att.fileUrl, { fileName: att.name }).then((result) => {
+                          if (!result.ok) {
+                            notify.error(t("messages.attachmentOpenError"));
+                          }
+                        });
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-right transition-colors hover:border-[#C8AC59]/40 hover:bg-amber-50/50 cursor-pointer"
                     >
                       {row}
-                    </a>
+                    </button>
                   ) : (
                     <div
                       key={att.id}

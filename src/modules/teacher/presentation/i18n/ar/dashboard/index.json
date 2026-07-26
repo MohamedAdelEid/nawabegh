@@ -858,6 +858,7 @@
       "resources": {
         "title": "مصادر التعلم",
         "download": "تحميل",
+        "downloadError": "تعذر تحميل الملف. حاول مرة أخرى.",
         "openInHelperFiles": "فتح في محطة التلخيص",
         "unavailable": "المعاينة غير متاحة لهذا الملف."
       },

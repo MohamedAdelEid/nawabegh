@@ -97,6 +97,10 @@ export function SchoolEventsDashboard({ initial }: SchoolEventsDashboardProps) {
           <DashboardBreadcrumb
             items={[
               { label: t("page.breadcrumbHome"), href: ROUTES.USER.STUDENT.HOME },
+              {
+                label: t("page.breadcrumbMySchool"),
+                href: ROUTES.USER.STUDENT.SCHOOL,
+              },
               { label: t("page.breadcrumbCurrent") },
             ]}
           />
@@ -120,6 +124,10 @@ export function SchoolEventsDashboard({ initial }: SchoolEventsDashboardProps) {
         <DashboardBreadcrumb
           items={[
             { label: t("page.breadcrumbHome"), href: ROUTES.USER.STUDENT.HOME },
+            {
+              label: t("page.breadcrumbMySchool"),
+              href: ROUTES.USER.STUDENT.SCHOOL,
+            },
             { label: t("page.breadcrumbCurrent") },
           ]}
         />

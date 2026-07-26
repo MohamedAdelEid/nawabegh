@@ -4,6 +4,8 @@ import { Download, ExternalLink, Video } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useTeacherSessionDetails } from "@/modules/teacher/application/hooks/useTeacherSessionDetails";
+import { openProtectedFile } from "@/shared/infrastructure/files/openProtectedFile";
+import { notify } from "@/shared/application/lib/toast";
 import { HelperResourceFilePreview } from "@/modules/admin/presentation/components/helper-file-management";
 import { DashboardPageHeader } from "@/shared/presentation/components/dashboard/DashboardPageHeader";
 import { DashboardBadge } from "@/shared/presentation/components/dashboard/DashboardBadge";
@@ -159,11 +161,23 @@ export function TeacherSessionDetailsView({ sessionId }: { sessionId: string }) 
                             </Button>
                           ) : null}
                           {resource.fileUrl ? (
-                            <Button variant="outline" size="sm" className="rounded-xl" asChild>
-                              <a href={resource.fileUrl} download target="_blank" rel="noreferrer">
-                                <Download className="ml-2 h-4 w-4" />
-                                {t("sessionDetails.resources.download")}
-                              </a>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="rounded-xl cursor-pointer"
+                              onClick={() => {
+                                void openProtectedFile(resource.fileUrl, {
+                                  fileName: resource.title,
+                                  download: true,
+                                }).then((result) => {
+                                  if (!result.ok) {
+                                    notify.error(t("sessionDetails.resources.downloadError"));
+                                  }
+                                });
+                              }}
+                            >
+                              <Download className="ml-2 h-4 w-4" />
+                              {t("sessionDetails.resources.download")}
                             </Button>
                           ) : null}
                         </div>

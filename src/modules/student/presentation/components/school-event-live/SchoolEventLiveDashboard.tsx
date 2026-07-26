@@ -90,6 +90,10 @@ export function SchoolEventLiveDashboard({
             items={[
               { label: t("page.breadcrumbHome"), href: ROUTES.USER.STUDENT.HOME },
               {
+                label: t("page.breadcrumbMySchool"),
+                href: ROUTES.USER.STUDENT.SCHOOL,
+              },
+              {
                 label: t("page.breadcrumbEvents"),
                 href: ROUTES.USER.STUDENT.EVENTS,
               },
@@ -147,6 +151,10 @@ export function SchoolEventLiveDashboard({
         <DashboardBreadcrumb
           items={[
             { label: t("page.breadcrumbHome"), href: ROUTES.USER.STUDENT.HOME },
+            {
+              label: t("page.breadcrumbMySchool"),
+              href: ROUTES.USER.STUDENT.SCHOOL,
+            },
             {
               label: t("page.breadcrumbEvents"),
               href: ROUTES.USER.STUDENT.EVENTS,

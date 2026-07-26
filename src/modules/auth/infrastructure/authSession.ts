@@ -10,7 +10,9 @@ import type {
 } from "@/modules/auth/domain/types/login.types";
 import type { ConfirmEmailOtpData } from "@/modules/auth/domain/types/student-registration.types";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
+import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
+import { resolveApiErrorMessage } from "@/shared/infrastructure/api/apiErrorMessage.utils";
 
 const NAME_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
 const ID_CLAIM = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
@@ -107,6 +109,7 @@ function mapNestedUserLogin(data: LoginApiData): AuthSessionPayload | null {
     email: apiUser.email ?? claims.email ?? claims.sub ?? "",
     role,
     avatar: apiUser.photo ?? data.imageUrl ?? null,
+    requiresProfileCompletion: Boolean(apiUser.requiresProfileCompletion),
   };
 
   return {
@@ -169,6 +172,7 @@ export function mapConfirmOtpResponseToSession(
     email: apiUser.email ?? claims.email ?? claims.sub ?? "",
     role,
     avatar: apiUser.photo ?? null,
+    requiresProfileCompletion: Boolean(apiUser.requiresProfileCompletion),
   };
 
   return {
@@ -210,12 +214,15 @@ export function mapRefreshResponseToTokens(
 }
 
 export function getAuthErrorMessage(response: BackendApiResponse<unknown> & { status?: string | number }) {
+  const localized = resolveApiErrorMessage(response, "");
+  if (localized) return localized;
+
   if (response.error?.message) return response.error.message;
   if (response.message) return response.message;
   if (response.statusCode === "Unauthorized" || response.status === "Unauthorized") {
-    return "Invalid email or password.";
+    return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
   }
-  return "Unable to sign in right now.";
+  return "تعذر تسجيل الدخول حالياً. حاول مرة أخرى.";
 }
 
 export function getRedirectPathForRole(role?: string | null) {
@@ -225,6 +232,21 @@ export function getRedirectPathForRole(role?: string | null) {
   if (r === "Teacher") return ROUTES.USER.TEACHER.HOME;
   if (r === "Parent") return ROUTES.USER.PARENT.HOME;
   return ROUTES.USER.STUDENT.HOME;
+}
+
+export function getCompleteProfilePath() {
+  return AUTH_ROUTES.COMPLETE_PROFILE;
+}
+
+export function resolvePostAuthPath(options: {
+  role?: string | null;
+  requiresProfileCompletion?: boolean;
+  callbackUrl?: string | null;
+}) {
+  if (options.requiresProfileCompletion) {
+    return getCompleteProfilePath();
+  }
+  return options.callbackUrl?.trim() || getRedirectPathForRole(options.role);
 }
 
 export function getSettingsPathForRole(role?: string | null) {

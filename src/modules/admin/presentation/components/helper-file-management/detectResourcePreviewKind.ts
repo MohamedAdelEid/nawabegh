@@ -20,11 +20,33 @@ const AUDIO_EXTENSIONS = new Set(["mp3", "wav", "ogg", "m4a", "aac"]);
 const IFRAME_EXTENSIONS = new Set(["txt", "html", "htm"]);
 
 function extensionFromPath(pathOrUrl: string) {
-  const withoutQuery = pathOrUrl.split(/[?#]/)[0] ?? pathOrUrl;
+  const filePathParam = extractFilePathFromDownloadUrl(pathOrUrl);
+  const candidate = filePathParam || pathOrUrl;
+  const withoutQuery = candidate.split(/[?#]/)[0] ?? candidate;
   const segment = withoutQuery.split("/").pop() ?? "";
   const dot = segment.lastIndexOf(".");
   if (dot <= 0) return "";
   return segment.slice(dot + 1).toLowerCase();
+}
+
+function extractFilePathFromDownloadUrl(pathOrUrl: string): string | null {
+  try {
+    if (/^https?:\/\//i.test(pathOrUrl) || pathOrUrl.includes("?")) {
+      const parsed = /^https?:\/\//i.test(pathOrUrl)
+        ? new URL(pathOrUrl)
+        : new URL(pathOrUrl, "https://local.invalid");
+      const raw = parsed.searchParams.get("filePath");
+      if (!raw) return null;
+      try {
+        return decodeURIComponent(raw);
+      } catch {
+        return raw;
+      }
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }
 
 export function detectResourcePreviewKind(

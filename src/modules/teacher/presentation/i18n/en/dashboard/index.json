@@ -858,6 +858,7 @@
       "resources": {
         "title": "Learning resources",
         "download": "Download",
+        "downloadError": "Could not download the file. Please try again.",
         "openInHelperFiles": "Open in summarization station",
         "unavailable": "Preview is not available for this file."
       },

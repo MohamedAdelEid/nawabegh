@@ -13,3 +13,4 @@ export { ChallengeAiGenerationPanel, getChallengeGenerateLabel } from "./Challen
 export { ChallengeScheduleDateField } from "./ChallengeScheduleDateField";
 export { ScheduleDatePicker, ScheduleTimePicker } from "./ScheduleFields";
 export { AddExamQuestionModal } from "./AddExamQuestionModal";
+export { EditExamQuestionModal } from "./EditExamQuestionModal";

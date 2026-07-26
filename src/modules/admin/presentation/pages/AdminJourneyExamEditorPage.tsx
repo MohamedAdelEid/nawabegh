@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ClipboardList,
   Eye,
   FileUp,
   Plus,
@@ -57,6 +56,7 @@ type PendingSourceFile = LiveBroadcastAttachment & {
 };
 
 const DURATION_OPTIONS = [5, 10, 15, 30] as const;
+const QUESTIONS_COUNT_OPTIONS: ExamStation["questionsCount"][] = [5, 10, 15, 20];
 const DIFFICULTY_OPTIONS: FlashcardDifficultyId[] = ["easy", "medium", "hard"];
 const ATTEMPTS_OPTIONS: ExamStation["maxAttempts"][] = ["one", "two", "three", "unlimited"];
 const MAX_SOURCE_FILE_BYTES = UPLOAD_LIMITS.documentBytes;
@@ -274,6 +274,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
       passScore: exam.passingGradePct,
       maxAttempts: ATTEMPTS_TO_API[exam.maxAttempts],
       durationMinutes: exam.durationMin,
+      questionCount: exam.questionsCount,
       difficulty: DIFFICULTY_TO_API[exam.difficulty],
       shuffleQuestions: exam.randomOrder,
       aiSourceFileUrl,
@@ -288,7 +289,16 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
 
     storeQuizId(stationId, result.data.id);
     setHasQuiz(true);
-    setExam((prev) => (prev ? { ...prev, id: result.data!.id, name: result.data!.title } : prev));
+    setExam((prev) =>
+      prev
+        ? {
+            ...prev,
+            id: result.data!.id,
+            name: result.data!.title,
+            questionsCount: prev.questionsCount,
+          }
+        : prev,
+    );
     setSourceFiles((prev) =>
       prev.map((file, index) => ({
         ...file,
@@ -362,6 +372,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
             <Button
               className="h-12 gap-2 rounded-xl bg-[#2C4260] px-6 text-white hover:bg-[#243652] shadow-[0px_4px_0px_0px_#0000000D]"
               onClick={() => router.push(routes.journeyEditor.EXAM_PREVIEW(journeyId, stationId))}
+              disabled={saving}
             >
               <Eye className="h-4 w-4" />
               {t("actions.preview")}
@@ -426,25 +437,48 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
 
                 <div className="space-y-1.5 text-right">
                   <p className="text-sm font-semibold text-slate-600">
-                    {t("settings.difficulty")}
+                    {t("settings.questionsCount")}
                   </p>
                   <div className="flex gap-2">
-                    {DIFFICULTY_OPTIONS.map((d) => (
+                    {QUESTIONS_COUNT_OPTIONS.map((count) => (
                       <button
-                        key={d}
+                        key={count}
                         type="button"
-                        onClick={() => update("difficulty", d)}
+                        onClick={() => update("questionsCount", count)}
                         className={cn(
-                          "min-w-[5rem] rounded-xl py-2.5 text-xs font-semibold transition-colors",
-                          exam.difficulty === d
+                          "min-w-[5rem] rounded-xl py-2.5 text-xs font-bold transition-colors",
+                          exam.questionsCount === count
                             ? "bg-[#2C4260] text-white"
                             : "bg-slate-100 text-slate-500 hover:bg-slate-200",
                         )}
                       >
-                        {t(`difficulty.${d}`)}
+                        {count}
                       </button>
                     ))}
                   </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 text-right">
+                <p className="text-sm font-semibold text-slate-600">
+                  {t("settings.difficulty")}
+                </p>
+                <div className="flex gap-2">
+                  {DIFFICULTY_OPTIONS.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => update("difficulty", d)}
+                      className={cn(
+                        "min-w-[5rem] rounded-xl py-2.5 text-xs font-semibold transition-colors",
+                        exam.difficulty === d
+                          ? "bg-[#2C4260] text-white"
+                          : "bg-slate-100 text-slate-500 hover:bg-slate-200",
+                      )}
+                    >
+                      {t(`difficulty.${d}`)}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -580,6 +614,10 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
                 {[
                   {
                     label: t("sidebar.questionsCount"),
+                    value: `${exam.questionsCount} ${t("sidebar.questions")}`,
+                  },
+                  {
+                    label: t("sidebar.generatedQuestions"),
                     value: `${exam.questions.length} ${t("sidebar.questions")}`,
                   },
                   {
@@ -613,7 +651,7 @@ export function AdminJourneyExamEditorPage({ journeyId, stationId }: Props) {
 
               {hasQuiz ? (
                 <Button
-                  className="h-11 w-full gap-2 rounded-2xl bg-[#C8AC59] text-white hover:bg-[#B79A46]"
+                  className="h-11 w-full gap-2 rounded-2xl bg-white/15 text-white hover:bg-white/25"
                   onClick={() => void handleSaveSettings()}
                   disabled={saving}
                 >

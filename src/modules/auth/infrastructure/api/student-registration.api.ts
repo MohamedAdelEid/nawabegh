@@ -1,6 +1,10 @@
 import axios from "axios";
 import { httpClient } from "@/shared/infrastructure/http/httpClient";
-import { isApiSuccess } from "@/shared/infrastructure/api/apiResponse.utils";
+import {
+  ApiRequestError,
+  getApiErrorMessage,
+  isApiSuccess,
+} from "@/shared/infrastructure/api/apiResponse.utils";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 import type {
   ConfirmEmailOtpRequest,
@@ -14,34 +18,27 @@ const STUDENT_REGISTRATION_PATH = "/api/v1/Auth/student-registration";
 const RESEND_EMAIL_OTP_PATH = "/api/v1/Auth/resend-email-otp";
 const CONFIRM_EMAIL_OTP_PATH = "/api/v1/Auth/confirm-email-otp";
 
-type ApiErrorBody = {
-  error?: { message?: string } | null;
-  message?: string | null;
-};
-
-function isApiErrorBody(value: unknown): value is ApiErrorBody {
-  return value != null && typeof value === "object";
-}
-
 export function getRegistrationApiErrorMessage(
-  response: ApiErrorBody,
+  response: unknown,
   fallback: string,
 ): string {
-  const message = response.error?.message ?? response.message;
-  if (typeof message === "string" && message.trim()) return message.trim();
-  return fallback;
+  return getApiErrorMessage(response, fallback);
 }
 
 export function extractRegistrationApiError(error: unknown, fallback: string): string {
+  if (error instanceof ApiRequestError && error.message.trim()) {
+    return error.message.trim();
+  }
+
   if (axios.isAxiosError(error)) {
     const body = error.response?.data;
-    if (isApiErrorBody(body)) {
-      return getRegistrationApiErrorMessage(body, fallback);
+    if (body != null && typeof body === "object") {
+      return getApiErrorMessage(body, fallback);
     }
   }
 
   if (error instanceof Error && error.message.trim()) {
-    return error.message;
+    return getApiErrorMessage({ message: error.message }, error.message);
   }
 
   return fallback;

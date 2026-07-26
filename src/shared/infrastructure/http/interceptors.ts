@@ -3,7 +3,6 @@ import {
   ApiRequestError,
   getApiErrorMessage,
 } from "@/shared/infrastructure/api/apiResponse.utils";
-import type { BackendApiResponse } from "@/shared/domain/types/api.types";
 import { env } from "@/shared/infrastructure/config/env";
 import { isApiHostedUrl } from "@/shared/infrastructure/files/fileUrl";
 
@@ -25,6 +24,9 @@ export function applyRequestInterceptor(
   client.interceptors.request.use(async (config) => {
     const requestUrl = resolveRequestUrl(config);
     const isApiRequest = isApiHostedUrl(requestUrl);
+    const method = (config.method ?? "get").toLowerCase();
+    const isBinaryDownload =
+      method === "get" && /\/api\/FileUpload\/download(?:\?|$)/i.test(requestUrl);
 
     // Never send the login token (or Accept-Language) to S3/CDN file hosts —
     // those headers break CORS / signed URL access for previews.
@@ -33,6 +35,12 @@ export function applyRequestInterceptor(
       if (token) config.headers.Authorization = `Bearer ${token}`;
       if (!config.headers["Accept-Language"] && getLanguage) {
         config.headers["Accept-Language"] = await getLanguage();
+      }
+      // Binary file GETs must not send Content-Type: application/json —
+      // that triggers CORS preflight and breaks in-browser preview.
+      if (isBinaryDownload) {
+        delete config.headers["Content-Type"];
+        delete config.headers["content-type"];
       }
     } else {
       delete config.headers.Authorization;
@@ -57,9 +65,18 @@ export function applyResponseInterceptor(
 
       const body = error.response?.data;
       if (body && typeof body === "object") {
-        const apiMessage = getApiErrorMessage(body as BackendApiResponse<unknown>, "");
+        const apiMessage = getApiErrorMessage(body, "");
         if (apiMessage) {
-          return Promise.reject(new ApiRequestError(apiMessage, undefined, status));
+          const record = body as {
+            errors?: unknown;
+            error?: { validationErrors?: unknown };
+          };
+          const validationErrors =
+            (record.error?.validationErrors as never) ??
+            (record.errors as never) ??
+            undefined;
+
+          return Promise.reject(new ApiRequestError(apiMessage, validationErrors, status));
         }
       }
 

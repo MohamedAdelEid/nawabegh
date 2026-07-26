@@ -1,5 +1,9 @@
 import axios from "axios";
 import type { BackendApiResponse } from "@/shared/domain/types/api.types";
+import {
+  collectValidationMessages,
+  resolveApiErrorMessage,
+} from "@/shared/infrastructure/api/apiErrorMessage.utils";
 
 const AXIOS_STATUS_MESSAGE = /^Request failed with status code \d+$/;
 
@@ -57,17 +61,10 @@ export function flattenValidationErrors(validationErrors: ValidationErrorsInput)
 }
 
 export function getApiErrorMessage(
-  response: Pick<BackendApiResponse<unknown>, "error" | "message"> | null | undefined,
+  response: unknown,
   fallback = "Request failed",
 ): string {
-  const validationMessages = flattenValidationErrors(
-    response?.error?.validationErrors as ValidationErrorsInput,
-  );
-  if (validationMessages.length > 0) return validationMessages.join("\n");
-
-  const message = response?.error?.message ?? response?.message;
-  if (typeof message === "string" && message.trim()) return message.trim();
-  return fallback;
+  return resolveApiErrorMessage(response, fallback);
 }
 
 export function rejectApiResponse(response: BackendApiResponse<unknown>, fallback: string): never {
@@ -79,17 +76,29 @@ export function extractApiErrorMessage(error: unknown, fallback = "Request faile
   if (axios.isAxiosError(error)) {
     const body = error.response?.data;
     if (body && typeof body === "object") {
-      const apiMessage = getApiErrorMessage(body as BackendApiResponse<unknown>, "");
+      const apiMessage = resolveApiErrorMessage(body, "");
       if (apiMessage) return apiMessage;
+
+      const validations = collectValidationMessages(body);
+      if (validations.length > 0) {
+        return resolveApiErrorMessage(body, fallback);
+      }
     }
 
     const status = error.response?.status;
     if (status === 404) return fallback;
   }
 
+  if (error instanceof ApiRequestError) {
+    const msg = error.message.trim();
+    if (msg) return resolveApiErrorMessage({ message: msg, errors: error.validationErrors }, fallback);
+  }
+
   if (error instanceof Error) {
     const msg = error.message.trim();
-    if (msg && !AXIOS_STATUS_MESSAGE.test(msg)) return msg;
+    if (msg && !AXIOS_STATUS_MESSAGE.test(msg)) {
+      return resolveApiErrorMessage({ message: msg }, msg);
+    }
   }
 
   return fallback;

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useEffect, useState, type FormEvent } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import type {
   ParentChangePasswordPayload,
@@ -11,9 +11,11 @@ import type {
 import { extractApiErrorMessage } from "@/shared/infrastructure/api/apiResponse.utils";
 import { getCountriesDropdown } from "@/shared/infrastructure/api/country.api";
 import { notify } from "@/shared/application/lib/toast";
+import { buildE164FromApiParts, splitPhoneForApi } from "@/shared/domain/utils/phoneCountry.utils";
 import { Button } from "@/shared/presentation/components/ui/button";
 import { Input } from "@/shared/presentation/components/ui/input";
 import { Label } from "@/shared/presentation/components/ui/label";
+import { PhoneInput } from "@/shared/presentation/components/ui/phone-input";
 import {
   ModalClose,
   ModalDescription,
@@ -71,6 +73,7 @@ export function ParentProfileDialogs({
   isChangingPassword,
 }: ProfileDialogsProps) {
   const t = useTranslations("parent.dashboard.profilePage");
+  const locale = useLocale();
   const [form, setForm] = useState<UpdateParentProfilePayload>({
     fullName: profile.fullName,
     profileImageUrl: profile.profileImageUrl,
@@ -79,6 +82,9 @@ export function ParentProfileDialogs({
     countryId: profile.countryId,
     address: profile.address,
   });
+  const [phoneValue, setPhoneValue] = useState(() =>
+    buildE164FromApiParts(profile.phoneNumber, profile.phoneCountryCode),
+  );
   const [password, setPassword] =
     useState<ParentChangePasswordPayload>(emptyPassword);
   const [countries, setCountries] = useState<Array<{ id: number; name: string }>>(
@@ -95,15 +101,17 @@ export function ParentProfileDialogs({
       countryId: profile.countryId,
       address: profile.address,
     });
+    setPhoneValue(buildE164FromApiParts(profile.phoneNumber, profile.phoneCountryCode));
     void getCountriesDropdown().then(setCountries).catch(() => setCountries([]));
   }, [editOpen, profile]);
 
-  const submitProfile = async (event: React.FormEvent) => {
+  const submitProfile = async (event: FormEvent) => {
     event.preventDefault();
+    const phoneParts = splitPhoneForApi(phoneValue);
     if (
       !form.fullName.trim() ||
-      !form.phoneNumber.trim() ||
-      !form.phoneCountryCode ||
+      !phoneParts?.phoneNumber ||
+      !phoneParts.phoneCountryCode ||
       !form.countryId
     ) {
       notify.error(t("messages.requiredFields"));
@@ -114,7 +122,8 @@ export function ParentProfileDialogs({
       await onUpdate({
         ...form,
         fullName: form.fullName.trim(),
-        phoneNumber: form.phoneNumber.trim(),
+        phoneNumber: phoneParts.phoneNumber,
+        phoneCountryCode: phoneParts.phoneCountryCode,
         address: form.address.trim(),
         profileImageUrl: form.profileImageUrl?.trim() || null,
       });
@@ -125,7 +134,7 @@ export function ParentProfileDialogs({
     }
   };
 
-  const submitPassword = async (event: React.FormEvent) => {
+  const submitPassword = async (event: FormEvent) => {
     event.preventDefault();
     if (
       !password.currentPassword ||
@@ -187,27 +196,14 @@ export function ParentProfileDialogs({
             }
           />
           <Field label={t("fields.email")} value={profile.email} disabled />
-          <div className="grid gap-4 sm:grid-cols-[8rem_1fr]">
-            <Field
-              label={t("fields.phoneCountryCode")}
-              type="number"
-              value={form.phoneCountryCode}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  phoneCountryCode: Number(event.target.value),
-                }))
-              }
-            />
-            <Field
-              label={t("fields.phoneNumber")}
-              value={form.phoneNumber}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  phoneNumber: event.target.value,
-                }))
-              }
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-slate-700">
+              {t("fields.phoneNumber")}
+            </Label>
+            <PhoneInput
+              value={phoneValue}
+              onChange={setPhoneValue}
+              locale={locale}
             />
           </div>
           <label className="block space-y-2 text-sm font-semibold text-slate-700">

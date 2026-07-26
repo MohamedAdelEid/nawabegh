@@ -660,21 +660,67 @@ export async function deleteResourceFileBatch(
   };
 }
 
-export async function getResourceFileCoursesDropdown(): Promise<
-  ResourceFileApiResult<ResourceFileCourseOption[]>
-> {
+export async function getResourceFileCoursesDropdown(params?: {
+  keyword?: string;
+  pageNumber?: number;
+  pageSize?: number;
+}): Promise<ResourceFileApiResult<ResourceFileCourseOption[]>> {
+  const pageSize = Math.min(Math.max(params?.pageSize ?? 200, 1), 200);
+  const keyword = params?.keyword?.trim() || undefined;
+  const startPage = Math.max(params?.pageNumber ?? 1, 1);
+  // When caller asks for a specific page, return that page only.
+  const fetchAllPages = params?.pageNumber == null;
+
   try {
-    const response = await httpClient.get<unknown>({
-      url: "/api/v1/ResourceFile/courses-dropdown",
-    });
-    const items = extractListRows(response.data)
-      .map(mapCourseOption)
-      .filter((row): row is ResourceFileCourseOption => row !== null);
+    const collected: ResourceFileCourseOption[] = [];
+    const seen = new Set<string>();
+    let pageNumber = startPage;
+    let totalPages = 1;
+    let lastStatus = "Success";
+    let lastMessage: string | undefined;
+    let lastError: string | undefined;
+
+    do {
+      const response = await httpClient.get<unknown>({
+        url: "/api/v1/ResourceFile/courses-dropdown",
+        params: {
+          ...(keyword ? { keyword } : {}),
+          pageNumber,
+          pageSize,
+        },
+      });
+
+      lastStatus = response.status;
+      lastMessage = response.message;
+      lastError = response.error?.message;
+
+      const items = extractListRows(response.data)
+        .map(mapCourseOption)
+        .filter((row): row is ResourceFileCourseOption => row !== null);
+
+      for (const item of items) {
+        if (seen.has(item.id)) continue;
+        seen.add(item.id);
+        collected.push(item);
+      }
+
+      if (!fetchAllPages) break;
+
+      const headerMeta = parseXPaginationHeader(response.headers ?? {});
+      const envelope = asRecord(extractEnvelopeData(response.data));
+      const resolvedTotalPages =
+        headerMeta?.totalPages ??
+        readNumber(envelope, ["totalPages"], 1) ??
+        1;
+      totalPages = Math.max(1, resolvedTotalPages);
+      pageNumber += 1;
+    } while (pageNumber <= totalPages && pageNumber <= 20);
+
     return {
-      status: response.status,
-      message: response.message,
-      errorMessage: response.error?.message,
-      data: items,
+      status: lastStatus,
+      message: lastMessage,
+      errorMessage: lastError,
+      data: collected,
     };
   } catch (error) {
     return buildErrorResult(error, "Failed to load courses");

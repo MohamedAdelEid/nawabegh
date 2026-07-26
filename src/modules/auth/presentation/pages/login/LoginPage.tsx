@@ -21,7 +21,7 @@ import { Button } from "@/shared/presentation/components/ui/button";
 import { ROUTES } from "@/shared/infrastructure/config/routes";
 import { AUTH_ROUTES } from "@/modules/auth/config/routes";
 import { cn } from "@/shared/application/lib/cn";
-import { getRedirectPathForRole } from "@/modules/auth/infrastructure/authSession";
+import { resolvePostAuthPath } from "@/modules/auth/infrastructure/authSession";
 import { resolveStudentPostAuthPath } from "@/modules/student/application/lib/resolveStudentPostAuthPath";
 import type { GoogleAuthRole } from "@/modules/auth/domain/types/login.types";
 import { GoogleIcon, GoogleLoginRoleModal, LoginInput } from "../../components";
@@ -78,10 +78,21 @@ export function LoginPage() {
 
   async function redirectAfterAuth() {
     const session = await getSession();
-    let targetPath = callbackUrl ?? getRedirectPathForRole(session?.user?.role);
+    if (session?.user?.requiresProfileCompletion) {
+      router.replace(AUTH_ROUTES.COMPLETE_PROFILE);
+      router.refresh();
+      return;
+    }
+
+    let targetPath = resolvePostAuthPath({
+      role: session?.user?.role,
+      requiresProfileCompletion: session?.user?.requiresProfileCompletion,
+      callbackUrl,
+    });
 
     if (
       !callbackUrl &&
+      !session?.user?.requiresProfileCompletion &&
       session?.user?.role?.trim().toLowerCase() === "student" &&
       session.user.id
     ) {
@@ -118,22 +129,71 @@ export function LoginPage() {
     setIsGoogleSubmitting(true);
     setGoogleError(null);
 
-    const result = await signIn("google", {
-      redirect: false,
-      idToken,
-      role,
-      locale,
-    });
+    try {
+      const response = await fetch("/api/auth/google-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ idToken, role, locale }),
+      });
 
-    if (result?.error) {
+      const payload = (await response.json()) as {
+        ok?: boolean;
+        message?: string;
+        session?: {
+          accessToken: string;
+          refreshToken?: string;
+          accessTokenExpiresAt?: string;
+          userId: string;
+          userName: string;
+          email: string;
+          role: string;
+          avatar?: string;
+          domainUid?: string;
+          requiresProfileCompletion?: boolean;
+        };
+      };
+
+      if (!response.ok || !payload.ok || !payload.session) {
+        setGoogleError(payload.message?.trim() || t("validation.googleError"));
+        setIsGoogleSubmitting(false);
+        return;
+      }
+
+      const session = payload.session;
+      const result = await signIn("registration-otp", {
+        redirect: false,
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken ?? "",
+        accessTokenExpiresAt: session.accessTokenExpiresAt ?? "",
+        userId: session.userId,
+        userName: session.userName,
+        email: session.email,
+        role: session.role,
+        avatar: session.avatar ?? "",
+        domainUid: session.domainUid ?? "",
+        requiresProfileCompletion: session.requiresProfileCompletion ? "true" : "false",
+      });
+
+      if (result?.error) {
+        setGoogleError(t("validation.googleError"));
+        setIsGoogleSubmitting(false);
+        return;
+      }
+
+      setGoogleModalOpen(false);
+      setGoogleError(null);
+
+      if (session.requiresProfileCompletion) {
+        router.replace(AUTH_ROUTES.COMPLETE_PROFILE);
+        router.refresh();
+        return;
+      }
+
+      await redirectAfterAuth();
+    } catch {
       setGoogleError(t("validation.googleError"));
       setIsGoogleSubmitting(false);
-      return;
     }
-
-    setGoogleModalOpen(false);
-    setGoogleError(null);
-    await redirectAfterAuth();
   }
 
   return (
